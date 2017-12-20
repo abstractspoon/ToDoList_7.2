@@ -152,7 +152,8 @@ CGanttTreeListCtrl::CGanttTreeListCtrl(CGanttTreeCtrl& tree, CListCtrl& list)
 	m_ptLastDependPick(0),
 	m_pDependEdit(NULL),
 	m_dwMaxTaskID(0),
-	m_bReadOnly(FALSE)
+	m_bReadOnly(FALSE),
+	m_nPrevDropHilitedItem(-1)
 {
 
 }
@@ -1788,9 +1789,7 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 			GraphicsMisc::DrawExplorerItemBkgnd(pDC, m_list, nState, rItem, dwFlags);
 
 			// draw row
-			BOOL bSelected = IsListItemSelected(m_list, nItem);
-
-			DrawListItem(pDC, nItem, *pGI, bSelected);
+			DrawListItem(pDC, nItem, *pGI, (nState == GMIS_SELECTED));
 		}
 		return CDRF_SKIPDEFAULT;
 								
@@ -2367,21 +2366,9 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 			break;
 
 		case WM_MOUSEMOVE:
-			if (!m_bReadOnly)
+			if (OnMouseMove(FALSE, wp, lp))
 			{
-				if (IsDependencyEditing())
-				{
-					if (DrawDependencyPickLine(lp))
-					{
-						// track when the cursor leaves the list ctrl
-						TRACKMOUSEEVENT tme = { sizeof(tme), TME_LEAVE, hRealWnd, 0 };
-						TrackMouseEvent(&tme);
-					}
-				}
-				else if (UpdateDragging(lp))
-				{
-					return FALSE; // eat
-				}
+				return FALSE; // eat
 			}
 			break;
 
@@ -2439,6 +2426,13 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 
 		case WM_LBUTTONDBLCLK:
 			if (OnLButtonDblClk(TRUE, wp, lp))
+			{
+				return FALSE; // eat
+			}
+			break;
+
+		case WM_MOUSEMOVE:
+			if (OnMouseMove(TRUE, wp, lp))
 			{
 				return FALSE; // eat
 			}
@@ -2544,6 +2538,61 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 	}
 	
 	return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
+}
+
+BOOL CGanttTreeListCtrl::OnMouseMove(BOOL bTree, UINT /*nFlags*/, CPoint point)
+{
+	if (!m_bReadOnly)
+	{
+		// Tree and list
+		if (IsPickingDependencyFromTask() || IsPickingDependencyToTask())
+		{
+			HTREEITEM htiHot = NULL;
+			int nHotItem = -1;
+
+			if (bTree)
+			{
+				htiHot = m_tree.HitTest(point);
+
+				if (htiHot)
+					nHotItem = FindListItem(GetTaskID(htiHot));
+			}
+			else // list
+			{
+				nHotItem = m_list.HitTest(point);
+
+				if (nHotItem != -1)
+					htiHot = GetTreeItem(m_tree, m_list, nHotItem);
+			}
+
+			if (m_nPrevDropHilitedItem != -1)
+				m_list.SetItemState(m_nPrevDropHilitedItem, 0, LVIS_DROPHILITED);
+
+			m_tree.SelectDropTarget(htiHot);
+			m_list.SetItemState(nHotItem, LVIS_DROPHILITED, LVIS_DROPHILITED);
+
+			m_nPrevDropHilitedItem = nHotItem;
+		}
+		else if (!bTree)
+		{
+			if (IsDependencyEditing())
+			{
+				if (DrawDependencyPickLine(point))
+				{
+					// track when the cursor leaves the list ctrl
+					TRACKMOUSEEVENT tme = { sizeof(tme), TME_LEAVE, m_list, 0 };
+					TrackMouseEvent(&tme);
+				}
+			}
+			else if (UpdateDragging(point))
+			{
+				return TRUE; // eat
+			}
+		}
+	}
+
+	// not handled
+	return FALSE;
 }
 
 BOOL CGanttTreeListCtrl::OnLButtonDown(BOOL bTree, UINT /*nFlags*/, CPoint point)
@@ -2761,7 +2810,7 @@ BOOL CGanttTreeListCtrl::OnLButtonDblClk(BOOL bTree, UINT nFlags, CPoint point)
 		if (nHit == -1)
 			return FALSE;
 
-		hti = (HTREEITEM)m_list.GetItemData(nHit);
+		hti = GetTreeItem(m_tree, m_list, nHit);
 		ASSERT(hti == GetTreeSelItem(m_tree));
 	}
 
@@ -4849,7 +4898,12 @@ void CGanttTreeListCtrl::OnEndDepedencyEdit()
 	
 	ResetDependencyPickLinePos();
 	SetFocus();
+
+	m_tree.SelectDropTarget(NULL);
+	m_list.SetItemState(m_nPrevDropHilitedItem, 0, LVIS_DROPHILITED);
 	m_list.InvalidateRect(NULL, TRUE);
+
+	m_nPrevDropHilitedItem = -1;
 }
 
 void CGanttTreeListCtrl::EndDependencyEdit()

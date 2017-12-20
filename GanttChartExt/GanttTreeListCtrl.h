@@ -152,6 +152,7 @@ protected:
 	int m_nMonthWidth;
 	CString m_sMilestoneTag;
 	GTLC_DRAG m_nDragging;
+	int m_nPrevDropHilitedItem;
 
 	CGanttTreeCtrl& m_tree;
 	CListCtrl& m_list;
@@ -182,6 +183,7 @@ protected:
 	BOOL OnLButtonDown(BOOL bTree, UINT nFlags, CPoint point);
 	BOOL OnLButtonUp(BOOL bTree, UINT nFlags, CPoint point);
 	BOOL OnLButtonDblClk(BOOL bTree, UINT nFlags, CPoint point);
+	BOOL OnMouseMove(BOOL bTree, UINT nFlags, CPoint point);
 
 	void DrawTreeItem(CDC* pDC, HTREEITEM hti, const GANTTITEM& gi, BOOL bSelected, COLORREF crBack = CLR_NONE);
 	void DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, const GANTTITEM& gi, BOOL bSelected, COLORREF crBack = CLR_NONE);
