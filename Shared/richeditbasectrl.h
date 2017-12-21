@@ -244,7 +244,7 @@ protected:
 	//{{AFX_MSG(CRichEditBaseCtrl)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
-	afx_msg LRESULT OnFindReplaceCmd(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnFindReplaceMsg(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg LRESULT OnEditSetSelection(WPARAM wParam, LPARAM lParam);

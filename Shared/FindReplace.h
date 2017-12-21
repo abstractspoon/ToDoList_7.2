@@ -58,8 +58,18 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void HandleFindReplaceMsg(IFindReplace* pFindReplace, FIND_STATE* pState, 
-							WPARAM /*wParam*/, LPARAM lParam);
+BOOL InitialiseFindReplace(CWnd* pParent, 
+							IFindReplace* pFindReplace, 
+							FIND_STATE* pState, 
+							BOOL bFindOnly, 
+							BOOL bShowSearchUp,
+							LPCTSTR szTitle,
+							LPCTSTR szFind = NULL);
+
+void HandleFindReplaceMsg(IFindReplace* pFindReplace, 
+							FIND_STATE* pState, 
+							WPARAM wParam, 
+							LPARAM lParam);
 
 ////////////////////////////////////////////////////////////////////////////////
 

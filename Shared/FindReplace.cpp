@@ -19,6 +19,78 @@ CFindReplaceDialog* IFindReplace::NewFindReplaceDlg()
 
 /////////////////////////////////////////////////////////////////////////////
 
+BOOL InitialiseFindReplace(CWnd* pParent, 
+							IFindReplace* pFindReplace, 
+							FIND_STATE* pState, 
+							BOOL bFindOnly, 
+							BOOL bShowSearchUp,
+							LPCTSTR szTitle,
+							LPCTSTR szFind)
+{
+	ASSERT(pParent);
+	ASSERT(pFindReplace);
+	ASSERT(pState);
+
+	if (pState->pFindReplaceDlg != NULL)
+	{
+		if (pState->bFindOnly == bFindOnly)
+		{
+			pState->pFindReplaceDlg->SetActiveWindow();
+			pState->pFindReplaceDlg->ShowWindow(SW_SHOW);
+
+			return TRUE;
+		}
+
+		// else
+		pState->pFindReplaceDlg->SendMessage(WM_CLOSE); // deletes as well
+		ASSERT(pState->pFindReplaceDlg == NULL);
+	}
+
+	CString strFind(szFind);
+
+	// if selection is empty or spans multiple lines use old find text
+	if (strFind.IsEmpty() || (strFind.FindOneOf(_T("\n\r")) != -1))
+		strFind = pState->strFind;
+
+	CString strReplace = pState->strReplace;
+	pState->pFindReplaceDlg = pFindReplace->NewFindReplaceDlg();
+	ASSERT(pState->pFindReplaceDlg != NULL);
+
+	DWORD dwFlags = NULL;
+
+	if (pState->bNext)
+		dwFlags |= FR_DOWN;
+
+	if (pState->bCase)
+		dwFlags |= FR_MATCHCASE;
+
+	if (pState->bWord)
+		dwFlags |= FR_WHOLEWORD;
+
+	if (!bShowSearchUp)
+		dwFlags |= FR_HIDEUPDOWN;
+
+	if (!pState->pFindReplaceDlg->Create(bFindOnly, strFind, strReplace, dwFlags, pParent))
+	{
+		pState->pFindReplaceDlg = NULL;
+		return FALSE;
+	}
+
+	ASSERT(pState->pFindReplaceDlg != NULL);
+
+	// set the title
+	if (szTitle && *szTitle)
+		pState->pFindReplaceDlg->SetWindowText(szTitle);
+
+	pState->bFindOnly = bFindOnly;
+	pState->pFindReplaceDlg->SetActiveWindow();
+	pState->pFindReplaceDlg->ShowWindow(SW_SHOW);
+
+	return TRUE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 void HandleFindReplaceMsg(IFindReplace* pFindReplace, 
 							FIND_STATE* pState, 
 							WPARAM /*wParam*/, 

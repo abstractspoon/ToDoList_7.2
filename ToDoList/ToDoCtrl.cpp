@@ -10935,10 +10935,17 @@ BOOL CToDoCtrl::HasLockedTasks() const
 	return m_data.HasLockedTasks();
 }
 
+// External
 BOOL CToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
 {
+	return SelectTask(sPart, nSelect, TDCA_ANYTEXTATTRIBUTE);
+}
+
+// Internal
+BOOL CToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib)
+{
 	SEARCHPARAMS params;
-	params.aRules.Add(SEARCHPARAM(TDCA_ANYTEXTATTRIBUTE, FOP_INCLUDES, sPart));
+	params.aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sPart));
 
 	SEARCHRESULT result;
 	DWORD dwFoundID = 0;
@@ -11456,6 +11463,84 @@ BOOL CToDoCtrl::SpellcheckItem(HTREEITEM hti, CSpellCheckDlg* pSpellChecker)
 	}
 	
 	return TRUE;
+}
+
+void CToDoCtrl::DoFindReplaceOnTitles()
+{
+	ASSERT_VALID(this);
+
+//	CEnString sTitle/*(nIDTitle)*/;
+	VERIFY(InitialiseFindReplace(this, this, &m_findState, IsReadOnly(), TRUE, NULL));
+
+	ASSERT_VALID(this);
+}
+
+void CToDoCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord)
+{
+	m_findState.strFind = lpszFind;
+	m_findState.bCase = bCase;
+	m_findState.bWord = bWord;
+	m_findState.bNext = bNext;
+
+	if (SelectTask(lpszFind, (bNext ? TDC_SELECTNEXT : TDC_SELECTPREV)))
+	{
+		// AdjustDialogPosition(m_findState.pFindReplaceDlg);
+	}
+	else
+	{
+		// TextNotFound(m_findState.strFind);
+	}
+}
+
+void CToDoCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
+							 BOOL bWord, LPCTSTR lpszReplace)
+{
+	ASSERT(!IsReadOnly());
+
+	m_findState.strFind = lpszFind;
+	m_findState.strReplace = lpszReplace;
+	m_findState.bCase = bCase;
+	m_findState.bWord = bWord;
+	m_findState.bNext = bNext;
+
+	CString sSelTitle = GetSelectedTaskTitle();
+
+	if (sSelTitle.Replace(lpszFind, lpszReplace))
+	{
+		VERIFY(SetSelectedTaskTitle(sSelTitle));
+	}
+
+	OnFindNext(lpszFind, bNext, bCase, bWord);
+}
+
+void CToDoCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL bCase, BOOL bWord)
+{
+	ASSERT(!IsReadOnly());
+
+	// Search from the very first task
+	while (GotoNextTopLevelTask(TDCG_PREV));
+	
+	m_findState.strFind = lpszFind;
+	m_findState.strReplace = lpszReplace;
+	m_findState.bCase = bCase;
+	m_findState.bWord = bWord;
+	m_findState.bNext = TRUE;
+
+	CWaitCursor wait;
+
+	while (SelectTask(lpszFind, TDC_SELECTNEXT, TDCA_TASKNAME))
+	{
+		// AdjustDialogPosition(m_findState.pFindReplaceDlg);
+
+		CString sSelTitle = GetSelectedTaskTitle();
+
+		if (sSelTitle.Replace(lpszFind, lpszReplace))
+		{
+			VERIFY(SetSelectedTaskTitle(sSelTitle));
+		}
+	}
+
+	// TextNotFound(m_findState.strFind);
 }
 
 int CToDoCtrl::GetSelectedTaskCustomAttributeData(CTDCCustomAttributeDataMap& mapData, BOOL bFormatted) const

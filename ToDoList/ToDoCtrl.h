@@ -39,6 +39,7 @@
 #include "..\shared\datetimectrlex.h"
 #include "..\shared\mapex.h"
 #include "..\shared\icon.h"
+#include "..\shared\FindReplace.h"
 
 #include "..\3rdparty\colourpicker.h"
 
@@ -68,7 +69,7 @@ namespace OutlookAPI
 /////////////////////////////////////////////////////////////////////////////
 // CToDoCtrl dialog
 
-class CToDoCtrl : public CRuntimeDlg
+class CToDoCtrl : public CRuntimeDlg, protected IFindReplace
 {
 // Construction
 public:
@@ -204,6 +205,7 @@ public:
 	BOOL EditSelectedTask(BOOL bTaskIsNew = FALSE); 
 	void SpellcheckSelectedTask(BOOL bTitle); // else comments
 	BOOL CanSpellcheckSelectedTaskComments();
+	void DoFindReplaceOnTitles();
 	
 	BOOL GotoSelectedTaskDependency(); 
 	BOOL GotoSelectedReferenceTaskTarget();
@@ -485,6 +487,7 @@ protected:
 	TDI_RECURFROMOPTION m_nDefRecurFrom;
 	TDI_RECURREUSEOPTION m_nDefRecurReuse;
 	CDWordArray m_aRecreateTaskIDs;
+	FIND_STATE m_findState;
 
 	const CContentMgr& m_mgrContent;
 
@@ -733,6 +736,13 @@ protected:
 	virtual HTREEITEM RebuildTree(const void* pContext = NULL);
 	virtual BOOL WantAddTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const void* pContext) const;
 
+	// IFindReplace
+	virtual void OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord);
+	virtual void OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
+								BOOL bWord, LPCTSTR lpszReplace);
+	virtual void OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace,
+								BOOL bCase, BOOL bWord);
+	
 	// -------------------------------------------------------------------------------
 	
 	void ResetTimeTracking() { m_dwTickLast = GetTickCount(); }
@@ -856,7 +866,8 @@ protected:
 	void ShowTaskHasCircularDependenciesError(const CDWordArray& aTaskIDs) const;
 
 	BOOL MoveSelection(TDC_MOVETASK nDirection);
-
+	BOOL SelectTask(CString sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib);
+	
 	typedef CMap<DWORD, DWORD, DWORD, DWORD&> CMapID2ID;
 	void PrepareTasksForPaste(CTaskFile& tasks, TDC_RESETIDS nResetID, BOOL bResetCreation) const;
 	void BuildTaskIDMapForPaste(CTaskFile& tasks, HTASKITEM hTask, DWORD& dwNextID, 
