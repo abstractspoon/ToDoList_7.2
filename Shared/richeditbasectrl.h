@@ -68,7 +68,7 @@ enum // REBC_BORDERS
 /////////////////////////////////////////////////////////////////////////////
 // CRichEditBaseCtrl window
 
-class CRichEditBaseCtrl : public CRichEditCtrl
+class CRichEditBaseCtrl : public CRichEditCtrl, protected IFindReplace
 {
 // Construction
 public:
@@ -230,7 +230,6 @@ protected:
 		BOOL bWord, LPCTSTR lpszReplace);
 	virtual void OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace,
 		BOOL bCase, BOOL bWord);
-	virtual CFindReplaceDialog* NewFindReplaceDlg() { return new CFindReplaceDialog; }
 	
 	//{{AFX_MSG(CRichEditBaseCtrl)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

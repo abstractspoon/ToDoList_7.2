@@ -5,6 +5,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+////////////////////////////////////////////////////////////////////////////////
+
 #ifndef FINDTEXTEX
 #	ifdef _UNICODE
 #		define TEXTRANGE	TEXTRANGEW
@@ -20,6 +22,12 @@
 #		define FINDTEXTEX	FINDTEXTEXA
 #	endif
 #endif
+
+////////////////////////////////////////////////////////////////////////////////
+
+const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
+
+////////////////////////////////////////////////////////////////////////////////
 
 struct FIND_STATE
 {
@@ -42,5 +50,35 @@ struct FIND_STATE
 	BOOL bWord;								// TRUE==match whole word, FALSE==not
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+class IFindReplace
+{
+public:
+	virtual void OnFindNext(LPCTSTR lpszFind, 
+							BOOL bNext, 
+							BOOL bCase, 
+							BOOL bWord) = 0;
+
+	virtual void OnReplaceSel(LPCTSTR lpszFind, 
+								BOOL bNext, 
+								BOOL bCase,
+								BOOL bWord, 
+								LPCTSTR lpszReplace) = 0;
+
+	virtual void OnReplaceAll(LPCTSTR lpszFind, 
+								LPCTSTR lpszReplace,
+								BOOL bCase, 
+								BOOL bWord) = 0;
+
+	virtual CFindReplaceDialog* NewFindReplaceDlg();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+void HandleFindReplaceMsg(IFindReplace* pFindReplace, FIND_STATE* pState, 
+							WPARAM /*wParam*/, LPARAM lParam);
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // !defined(AFX_RICHEDITBASECTRL_H__E7F84BEA_24A6_42D4_BE92_4B8891484048__INCLUDED_)

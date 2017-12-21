@@ -25,8 +25,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
-const CRect DEFMARGINS = CRect(8, 4, 8, 0);
+const CRect DEFMARGINS					= CRect(8, 4, 8, 0);
 
 const LPCSTR  DEFAULTRTF				= "{\\rtf1\\ansi\\deff0\\f0\\fs60}";
 const LPCTSTR RTF_TABLE_HEADER			= _T("{\\rtf1{\\pard{{\\trowd");
@@ -794,36 +793,12 @@ void CRichEditBaseCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL
 	ASSERT_VALID(this);
 }
 
-LRESULT CRichEditBaseCtrl::OnFindReplaceCmd(WPARAM, LPARAM lParam)
+LRESULT CRichEditBaseCtrl::OnFindReplaceCmd(WPARAM wParam, LPARAM lParam)
 {
 	ASSERT_VALID(this);
-	CFindReplaceDialog* pDialog = CFindReplaceDialog::GetNotifier(lParam);
-	ASSERT(pDialog != NULL);
-	
-	ASSERT(pDialog == m_findState.pFindReplaceDlg);
-	if (pDialog->IsTerminating())
-	{
-		m_findState.pFindReplaceDlg = NULL;
-		SetFocus();
-	}
-	else if (pDialog->FindNext())
-	{
-		OnFindNext(pDialog->GetFindString(), pDialog->SearchDown(),
-			pDialog->MatchCase(), pDialog->MatchWholeWord());
-	}
-	else if (pDialog->ReplaceCurrent())
-	{
-		ASSERT(!m_findState.bFindOnly);
-		OnReplaceSel(pDialog->GetFindString(),
-			pDialog->SearchDown(), pDialog->MatchCase(), pDialog->MatchWholeWord(),
-			pDialog->GetReplaceString());
-	}
-	else if (pDialog->ReplaceAll())
-	{
-		ASSERT(!m_findState.bFindOnly);
-		OnReplaceAll(pDialog->GetFindString(), pDialog->GetReplaceString(),
-			pDialog->MatchCase(), pDialog->MatchWholeWord());
-	}
+
+	HandleFindReplaceMsg(this, &m_findState, wParam, lParam);
+
 	ASSERT_VALID(this);
 	return 0;
 }
