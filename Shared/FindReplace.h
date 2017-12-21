@@ -58,21 +58,24 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-BOOL InitialiseFindReplace(CWnd* pParent, 
-							IFindReplace* pFindReplace, 
-							FIND_STATE* pState, 
-							BOOL bFindOnly, 
-							BOOL bShowSearchUp,
-							LPCTSTR szTitle,
-							LPCTSTR szFind = NULL);
+namespace FindReplace
+{
+	BOOL Initialise(CWnd* pParent, 
+					IFindReplace* pFindReplace, 
+					FIND_STATE* pState, 
+					BOOL bFindOnly, 
+					BOOL bShowSearchUp,
+					LPCTSTR szTitle,
+					LPCTSTR szFind = NULL);
 
-void HandleFindReplaceMsg(IFindReplace* pFindReplace, 
-							FIND_STATE* pState, 
-							WPARAM wParam, 
-							LPARAM lParam);
+	void HandleCmd(IFindReplace* pFindReplace, 
+					FIND_STATE* pState, 
+					WPARAM wParam, 
+					LPARAM lParam);
 
-void AdjustFindReplaceDialogPosition(FIND_STATE* pState, 
-									CPoint ptScreen);
+	void AdjustDialogPosition(FIND_STATE* pState, 
+								const CPoint& ptScreen);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

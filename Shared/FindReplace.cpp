@@ -19,7 +19,7 @@ CFindReplaceDialog* IFindReplace::NewFindReplaceDlg()
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL InitialiseFindReplace(CWnd* pParent, 
+BOOL FindReplace::Initialise(CWnd* pParent, 
 							IFindReplace* pFindReplace, 
 							FIND_STATE* pState, 
 							BOOL bFindOnly, 
@@ -91,7 +91,7 @@ BOOL InitialiseFindReplace(CWnd* pParent,
 
 /////////////////////////////////////////////////////////////////////////////
 
-void HandleFindReplaceMsg(IFindReplace* pFindReplace, 
+void FindReplace::HandleCmd(IFindReplace* pFindReplace, 
 							FIND_STATE* pState, 
 							WPARAM /*wParam*/, 
 							LPARAM lParam)
@@ -140,7 +140,7 @@ void HandleFindReplaceMsg(IFindReplace* pFindReplace,
 
 /////////////////////////////////////////////////////////////////////////////
 
-void AdjustFindReplaceDialogPosition(FIND_STATE* pState, CPoint ptScreen)
+void FindReplace::AdjustDialogPosition(FIND_STATE* pState, const CPoint& ptScreen)
 {
 	ASSERT(pState);
 	ASSERT(pState->pFindReplaceDlg != NULL);

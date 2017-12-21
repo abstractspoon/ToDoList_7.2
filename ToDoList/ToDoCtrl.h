@@ -663,6 +663,7 @@ protected:
 	afx_msg LRESULT OnEditEnd(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnEditCancel(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnRecreateRecurringTask(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnFindReplaceMsg(WPARAM wParam, LPARAM lParam);
 
 	// custom data notifications
 	afx_msg void OnCustomAttributeChange(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);

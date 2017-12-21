@@ -470,6 +470,7 @@ BEGIN_MESSAGE_MAP(CToDoCtrl, CRuntimeDlg)
 	ON_REGISTERED_MESSAGE(WM_TLDT_DROP, OnDropObject)
 	ON_REGISTERED_MESSAGE(WM_TLDT_CANDROP, OnCanDropObject)
  	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnEEBtnClick)
+	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplaceMsg)
 
 	ON_NOTIFY_RANGE(DTN_DATETIMECHANGE, IDC_FIRST_CUSTOMEDITFIELD, IDC_LAST_CUSTOMEDITFIELD, OnCustomAttributeChange)
 	ON_CONTROL_RANGE(EN_CHANGE, IDC_FIRST_CUSTOMEDITFIELD, IDC_LAST_CUSTOMEDITFIELD, OnCustomAttributeChange)
@@ -11470,9 +11471,19 @@ void CToDoCtrl::DoFindReplaceOnTitles()
 	ASSERT_VALID(this);
 
 //	CEnString sTitle/*(nIDTitle)*/;
-	VERIFY(InitialiseFindReplace(this, this, &m_findState, IsReadOnly(), TRUE, NULL));
+	VERIFY(FindReplace::Initialise(this, this, &m_findState, IsReadOnly(), TRUE, NULL));
 
 	ASSERT_VALID(this);
+}
+
+LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
+{
+	ASSERT_VALID(this);
+
+	FindReplace::HandleCmd(this, &m_findState, wParam, lParam);
+
+	ASSERT_VALID(this);
+	return 0;
 }
 
 void CToDoCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord)

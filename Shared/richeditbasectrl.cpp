@@ -653,7 +653,7 @@ void CRichEditBaseCtrl::AdjustFindDialogPosition()
 	CPoint point = GetCharPos(lStart);
 	ClientToScreen(&point);
 
-	AdjustFindReplaceDialogPosition(&m_findState, point);
+	FindReplace::AdjustDialogPosition(&m_findState, point);
 }
 
 void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
@@ -661,7 +661,7 @@ void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
 	ASSERT_VALID(this);
 
 	CEnString sTitle(nIDTitle), sSelText(GetSelText());
-	VERIFY(InitialiseFindReplace(this, this, &m_findState, bFindOnly, FALSE, sTitle, sSelText));
+	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, FALSE, sTitle, sSelText));
 
 	ASSERT_VALID(this);
 }
@@ -744,7 +744,7 @@ LRESULT CRichEditBaseCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
 {
 	ASSERT_VALID(this);
 
-	HandleFindReplaceMsg(this, &m_findState, wParam, lParam);
+	FindReplace::HandleCmd(this, &m_findState, wParam, lParam);
 
 	ASSERT_VALID(this);
 	return 0;
