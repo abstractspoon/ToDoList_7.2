@@ -253,7 +253,7 @@ protected:
 	
 	DECLARE_MESSAGE_MAP()
 		
-	void AdjustDialogPosition(CDialog* pDlg);
+	void AdjustFindDialogPosition();
 	BOOL FindText(LPCTSTR lpszFind, BOOL bCase = TRUE, BOOL bWord = TRUE, BOOL bWrap = TRUE);
 	void TextNotFound(LPCTSTR lpszFind);
 	BOOL FindText(BOOL bWrap = TRUE);

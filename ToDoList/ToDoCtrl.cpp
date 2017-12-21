@@ -11488,7 +11488,7 @@ void CToDoCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord)
 	}
 	else
 	{
-		// TextNotFound(m_findState.strFind);
+		MessageBeep(MB_ICONHAND);
 	}
 }
 
@@ -11540,7 +11540,8 @@ void CToDoCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL bCase, 
 		}
 	}
 
-	// TextNotFound(m_findState.strFind);
+	// Signal no more
+	MessageBeep(MB_ICONHAND);
 }
 
 int CToDoCtrl::GetSelectedTaskCustomAttributeData(CTDCCustomAttributeDataMap& mapData, BOOL bFormatted) const

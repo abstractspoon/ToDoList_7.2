@@ -645,27 +645,15 @@ void CRichEditBaseCtrl::DoEditReplace(UINT nIDTitle)
 		DoEditFindReplace(FALSE, nIDTitle);
 }
 
-void CRichEditBaseCtrl::AdjustDialogPosition(CDialog* pDlg)
+void CRichEditBaseCtrl::AdjustFindDialogPosition()
 {
-	ASSERT(pDlg != NULL);
 	long lStart, lEnd;
 	GetSel(lStart, lEnd);
+
 	CPoint point = GetCharPos(lStart);
 	ClientToScreen(&point);
-	CRect rectDlg;
-	pDlg->GetWindowRect(&rectDlg);
-	if (rectDlg.PtInRect(point))
-	{
-		if (point.y > rectDlg.Height())
-			rectDlg.OffsetRect(0, point.y - rectDlg.bottom - 20);
-		else
-		{
-			int nVertExt = GetSystemMetrics(SM_CYSCREEN);
-			if (point.y + rectDlg.Height() < nVertExt)
-				rectDlg.OffsetRect(0, 40 + point.y - rectDlg.top);
-		}
-		pDlg->MoveWindow(&rectDlg);
-	}
+
+	AdjustFindReplaceDialogPosition(&m_findState, point);
 }
 
 void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
@@ -690,7 +678,7 @@ void CRichEditBaseCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOO
 	if (!FindText())
 		TextNotFound(m_findState.strFind);
 	else
-		AdjustDialogPosition(m_findState.pFindReplaceDlg);
+		AdjustFindDialogPosition();
 
 	ASSERT_VALID(this);
 }
@@ -713,8 +701,9 @@ void CRichEditBaseCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
 			TextNotFound(m_findState.strFind);
 			return;
 		}
-		else
-			AdjustDialogPosition(m_findState.pFindReplaceDlg);
+
+		// else
+		AdjustFindDialogPosition();
 	}
 
 	ReplaceSel(m_findState.strReplace, TRUE);
@@ -722,7 +711,7 @@ void CRichEditBaseCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
 	if (!FindText())
 		TextNotFound(m_findState.strFind);
 	else
-		AdjustDialogPosition(m_findState.pFindReplaceDlg);
+		AdjustFindDialogPosition();
 
 	ASSERT_VALID(this);
 }

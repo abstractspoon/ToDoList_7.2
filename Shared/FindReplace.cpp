@@ -138,3 +138,33 @@ void HandleFindReplaceMsg(IFindReplace* pFindReplace,
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+void AdjustFindReplaceDialogPosition(FIND_STATE* pState, CPoint ptScreen)
+{
+	ASSERT(pState);
+	ASSERT(pState->pFindReplaceDlg != NULL);
+
+	CRect rectDlg;
+	pState->pFindReplaceDlg->GetWindowRect(&rectDlg);
+
+	if (rectDlg.PtInRect(ptScreen))
+	{
+		if (ptScreen.y > rectDlg.Height())
+		{
+			rectDlg.OffsetRect(0, ptScreen.y - rectDlg.bottom - 20);
+		}
+		else
+		{
+			int nVertExt = GetSystemMetrics(SM_CYSCREEN);
+
+			if (ptScreen.y + rectDlg.Height() < nVertExt)
+				rectDlg.OffsetRect(0, 40 + ptScreen.y - rectDlg.top);
+		}
+
+		pState->pFindReplaceDlg->MoveWindow(&rectDlg);
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////

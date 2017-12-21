@@ -71,6 +71,9 @@ void HandleFindReplaceMsg(IFindReplace* pFindReplace,
 							WPARAM wParam, 
 							LPARAM lParam);
 
+void AdjustFindReplaceDialogPosition(FIND_STATE* pState, 
+									CPoint ptScreen);
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #endif // !defined(AFX_RICHEDITBASECTRL_H__E7F84BEA_24A6_42D4_BE92_4B8891484048__INCLUDED_)
