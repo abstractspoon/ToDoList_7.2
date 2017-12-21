@@ -975,6 +975,9 @@
     <ClInclude Include="AcceleratorString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FindReplace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

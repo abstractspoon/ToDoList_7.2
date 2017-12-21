@@ -5,6 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "findreplace.h"
 #include "tooltipctrlex.h"
 #include <richole.h>
 
@@ -155,34 +156,9 @@ protected:
 	BOOL m_bInOnFocus;
 	CRect m_rMargins;
 	BOOL m_bAutoRTL;
-	CToolTipCtrlEx m_tooltip;
 
-#undef FINDTEXTEX
-#undef TEXTRANGE
-#ifdef _UNICODE
-#define TEXTRANGE	TEXTRANGEW
-#define FINDTEXTEX	FINDTEXTEXW
-#else
-#define TEXTRANGE	TEXTRANGEA
-#define FINDTEXTEX	FINDTEXTEXA
-#endif /* UNICODE */
-
-	struct FIND_STATE
-	{
-		FIND_STATE() : pFindReplaceDlg(NULL), bFindOnly(FALSE), bCase(FALSE), bNext(TRUE), bWord(FALSE) { }
-
-		CFindReplaceDialog* pFindReplaceDlg; // find or replace dialog
-		BOOL bFindOnly; // Is pFindReplace the find or replace?
-		CString strFind;    // last find string
-		CString strReplace; // last replace string
-		BOOL bCase; // TRUE==case sensitive, FALSE==not
-		int bNext;  // TRUE==search down, FALSE== search up
-		BOOL bWord; // TRUE==match whole word, FALSE==not
-	};
 	FIND_STATE m_findState;
-	
-	// Operations
-public:
+	CToolTipCtrlEx m_tooltip;
 	
 	// Overrides
 	// ClassWizard generated virtual function overrides

@@ -737,6 +737,7 @@
     <ClInclude Include="fileedit.h" />
     <ClInclude Include="FILEMISC.H" />
     <ClInclude Include="FileRegister.h" />
+    <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FocusWatcher.h" />
     <ClInclude Include="FolderDialog.h" />
     <ClInclude Include="FontCache.h" />
