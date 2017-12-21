@@ -7,24 +7,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FINDTEXTEX
-#	ifdef _UNICODE
-#		define TEXTRANGE	TEXTRANGEW
-#	else
-#		define TEXTRANGE	TEXTRANGEA
-#	endif
-#endif
-
-#ifndef TEXTRANGE
-#	ifdef _UNICODE
-#		define FINDTEXTEX	FINDTEXTEXW
-#	else
-#		define FINDTEXTEX	FINDTEXTEXA
-#	endif
-#endif
-
-////////////////////////////////////////////////////////////////////////////////
-
 const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
 ////////////////////////////////////////////////////////////////////////////////
