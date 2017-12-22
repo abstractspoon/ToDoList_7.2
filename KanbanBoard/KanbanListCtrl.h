@@ -58,7 +58,7 @@ public:
 
 	int FindTask(DWORD dwTaskID) const;
 	int FindTask(const CPoint& ptScreen) const;
-	int FindTask(const CString& sPart, int nStart, BOOL bNext) const;
+	int FindTask(const CString& sTitlePart, IUI_ATTRIBUTE nAttrib, BOOL bNext, BOOL bCaseSensitive, BOOL bWholeWord, int nStart = 0) const;
 
 	DWORD GetTaskID(int nItem) const { return GetItemData(nItem); }
 	BOOL DeleteTask(DWORD dwTaskID);

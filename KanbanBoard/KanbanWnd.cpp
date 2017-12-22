@@ -22,6 +22,7 @@
 #include "..\3rdparty\T64Utils.h"
 
 #include "..\Interfaces\ipreferences.h"
+#include "..\Interfaces\IUIExtension.h"
 
 #include <afxpriv.h>
 
@@ -605,8 +606,16 @@ bool CKanbanWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 	case IUI_SELECTLASTTASK:
 		if (dwExtra)
 		{
-			LPCTSTR szText = (LPCTSTR)dwExtra;
-			return (m_ctrlKanban.SelectTask(szText, nCmd) != FALSE);
+			const IUISELECTTASK* pSelect = (IUISELECTTASK*)dwExtra;
+			return (m_ctrlKanban.SelectTask(nCmd, *pSelect) != FALSE);
+		}
+		break;
+
+	case IUI_FINDREPLACE:
+		if (dwExtra)
+		{
+			const IUIFINDREPLACE* pFindReplace = (IUIFINDREPLACE*)dwExtra;
+			return false;//(m_ctrlKanban.SelectTask(nCmd, *pSelect) != FALSE);
 		}
 		break;
 	}
@@ -653,6 +662,9 @@ bool CKanbanWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_SELECTPREVTASK:
 	case IUI_SELECTLASTTASK:
 		return (m_ctrlKanban.GetVisibleTaskCount() > 0);
+
+	case IUI_FINDREPLACE:
+		return false; //(m_ctrlKanban.GetVisibleTaskCount() > 0);
 	}
 
 	// all else

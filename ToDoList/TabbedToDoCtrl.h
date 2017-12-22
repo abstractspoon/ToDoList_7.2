@@ -112,6 +112,7 @@ public:
 	BOOL CanGotoNextTask(TDC_GOTO nDirection) const;
 	BOOL GotoNextTopLevelTask(TDC_GOTO nDirection); 
 	BOOL CanGotoNextTopLevelTask(TDC_GOTO nDirection) const;
+	BOOL CanDoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME) const;
 
 	virtual BOOL CanExpandTasks(TDC_EXPANDCOLLAPSE nWhat, BOOL bExpand) const;
 	virtual void ExpandTasks(TDC_EXPANDCOLLAPSE nWhat, BOOL bExpand = TRUE);

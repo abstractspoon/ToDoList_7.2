@@ -205,7 +205,8 @@ public:
 	BOOL EditSelectedTask(BOOL bTaskIsNew = FALSE); 
 	void SpellcheckSelectedTask(BOOL bTitle); // else comments
 	BOOL CanSpellcheckSelectedTaskComments();
-	void DoFindReplaceOnTitles();
+	void DoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME);
+	BOOL CanDoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME) const;
 	
 	BOOL GotoSelectedTaskDependency(); 
 	BOOL GotoSelectedReferenceTaskTarget();

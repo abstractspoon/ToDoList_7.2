@@ -11471,10 +11471,8 @@ BOOL CToDoCtrl::SpellcheckItem(HTREEITEM hti, CSpellCheckDlg* pSpellChecker)
 	return TRUE;
 }
 
-void CToDoCtrl::DoFindReplaceOnTitles()
+void CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 {
-	ASSERT_VALID(this);
-
 	BOOL bFindOnly = IsReadOnly();
 	CEnString sTitle(bFindOnly ? IDS_FINDINTASKTITLES : IDS_REPLACEINTASKTITLES);
 	CString sFind(GetSelectedTaskTitle());
@@ -11482,8 +11480,11 @@ void CToDoCtrl::DoFindReplaceOnTitles()
 	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sFind));
 
 	AdjustFindReplaceDialogPosition(TRUE);
+}
 
-	ASSERT_VALID(this);
+BOOL CToDoCtrl::CanDoFindReplace(TDC_ATTRIBUTE nAttrib) const
+{
+	return ((nAttrib == TDCA_TASKNAME) && (GetTaskCount() > 0));
 }
 
 void CToDoCtrl::AdjustFindReplaceDialogPosition(BOOL bFirstTime)
@@ -11500,11 +11501,7 @@ void CToDoCtrl::AdjustFindReplaceDialogPosition(BOOL bFirstTime)
 
 LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
 {
-	ASSERT_VALID(this);
-
 	FindReplace::HandleCmd(this, &m_findState, wParam, lParam);
-
-	ASSERT_VALID(this);
 	return 0;
 }
 

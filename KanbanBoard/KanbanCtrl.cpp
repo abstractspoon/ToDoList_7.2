@@ -346,13 +346,11 @@ BOOL CKanbanCtrl::SelectTask(DWORD dwTaskID)
 	return (pList != NULL);
 }
 
-BOOL CKanbanCtrl::SelectTask(const CString& sPart, IUI_APPCOMMAND nCmd)
+BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
 {
-	ASSERT(!sPart.IsEmpty());
-
 	CKanbanListCtrl* pList = NULL;
 	int nStartItem = -1;
-	BOOL bForward = TRUE;
+	BOOL bNext = TRUE;
 
 	switch (nCmd)
 	{
@@ -374,13 +372,13 @@ BOOL CKanbanCtrl::SelectTask(const CString& sPart, IUI_APPCOMMAND nCmd)
 	case IUI_SELECTPREVTASK:
 		pList = m_pSelectedList;
 		nStartItem = (pList->GetFirstSelectedItem() - 1);
-		bForward = FALSE;
+		bNext = FALSE;
 		break;
 
 	case IUI_SELECTLASTTASK:
 		pList = m_aListCtrls.GetLastNonEmpty();
 		nStartItem = (pList->GetItemCount() - 1);
-		bForward = FALSE;
+		bNext = FALSE;
 		break;
 
 	default:
@@ -393,14 +391,15 @@ BOOL CKanbanCtrl::SelectTask(const CString& sPart, IUI_APPCOMMAND nCmd)
 		const CKanbanListCtrl* pStartList = pList;
 		int nItem = nStartItem;
 		
-		if (bForward)
+		if (bNext)
 			nItem = max(0, nItem);
 		else
 			nItem = min(nItem, (pList->GetItemCount() - 1));
 
 		do
 		{
-			nItem = pList->FindTask(sPart, nItem, bForward);
+			nItem = pList->FindTask(select.szWords, select.nAttrib, bNext, 
+									select.bCaseSensitive, select.bWholeWord, nItem);
 
 			if (nItem != -1)
 			{
@@ -411,8 +410,8 @@ BOOL CKanbanCtrl::SelectTask(const CString& sPart, IUI_APPCOMMAND nCmd)
 			}
 
 			// else
-			pList = GetNextListCtrl(pList, bForward, TRUE);
-			nItem = (bForward ? 0 : (pList->GetItemCount() - 1));
+			pList = GetNextListCtrl(pList, bNext, TRUE);
+			nItem = (bNext ? 0 : (pList->GetItemCount() - 1));
 		}
 		while (pList != pStartList);
 	}

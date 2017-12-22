@@ -349,7 +349,7 @@ BOOL KANBANITEM::HasTrackedAttributeValues(LPCTSTR szAttrib) const
 	return (pArray && pArray->GetSize());
 }
 
-BOOL KANBANITEM::MatchesAttribute(const CString& sText, IUI_ATTRIBUTE nAttrib) const
+BOOL KANBANITEM::MatchesAttribute(const CString& sText, IUI_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord) const
 {
 	CString sAttrib;
 	
@@ -364,7 +364,7 @@ BOOL KANBANITEM::MatchesAttribute(const CString& sText, IUI_ATTRIBUTE nAttrib) c
 		break;
 	}
 
-	return (!sAttrib.IsEmpty() && (Misc::Find(sText, sAttrib, FALSE) != -1));
+	return (!sAttrib.IsEmpty() && (Misc::Find(sText, sAttrib, bCaseSensitive, bWholeWord) != -1));
 }
 
 CString KANBANITEM::GetAttributeDisplayValue(IUI_ATTRIBUTE nAttrib) const

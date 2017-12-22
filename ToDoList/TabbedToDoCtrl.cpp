@@ -4837,6 +4837,45 @@ BOOL CTabbedToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
 	return CToDoCtrl::SelectTask(sPart, nSelect);
 }
 
+BOOL CTabbedToDoCtrl::CanDoFindReplace(TDC_ATTRIBUTE nAttrib) const
+{
+	if (!CToDoCtrl::CanDoFindReplace(nAttrib))
+		return FALSE;
+
+	FTC_VIEW nView = GetTaskView();
+
+	switch (nView)
+	{
+	case FTCV_TASKTREE:
+	case FTCV_UNSET:
+	case FTCV_TASKLIST:
+		return TRUE; // checked above
+
+	case FTCV_UIEXTENSION1:
+	case FTCV_UIEXTENSION2:
+	case FTCV_UIEXTENSION3:
+	case FTCV_UIEXTENSION4:
+	case FTCV_UIEXTENSION5:
+	case FTCV_UIEXTENSION6:
+	case FTCV_UIEXTENSION7:
+	case FTCV_UIEXTENSION8:
+	case FTCV_UIEXTENSION9:
+	case FTCV_UIEXTENSION10:
+	case FTCV_UIEXTENSION11:
+	case FTCV_UIEXTENSION12:
+	case FTCV_UIEXTENSION13:
+	case FTCV_UIEXTENSION14:
+	case FTCV_UIEXTENSION15:
+	case FTCV_UIEXTENSION16:
+		return ExtensionCanDoAppCommand(nView, IUI_FINDREPLACE);
+
+	default:
+		ASSERT(0);
+	}
+
+	return FALSE;
+}
+
 BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
 									BOOL bCaseSensitive, BOOL bWholeWord)
 {
@@ -4905,12 +4944,18 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 
 			if (pExtWnd && pExtWnd->CanDoAppCommand(nCmdID))
 			{
-				return (pExtWnd->DoAppCommand(nCmdID, (DWORD)(LPCTSTR)sPart) ? TRUE : FALSE);
+				IUISELECTTASK select;
+
+				select.nAttrib = IUI_TASKNAME;//TDC::MapAttributeToIUIAttribute(nAttrib);
+				select.szWords = sPart;
+				select.bCaseSensitive = (bCaseSensitive != FALSE);
+				select.bWholeWord = (bWholeWord != FALSE);
+
+				return (pExtWnd->DoAppCommand(nCmdID, (DWORD)&select) ? TRUE : FALSE);
 			}
-			else // fallback
-			{
-				return CToDoCtrl::SelectTask(sPart, nSelect);
-			}
+
+			// fallback
+			return CToDoCtrl::SelectTask(sPart, nSelect, nAttrib, bCaseSensitive, bWholeWord);
 		}
 		break;
 
