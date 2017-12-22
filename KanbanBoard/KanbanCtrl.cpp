@@ -398,8 +398,7 @@ BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
 
 		do
 		{
-			nItem = pList->FindTask(select.szWords, select.nAttrib, bNext, 
-									select.bCaseSensitive, select.bWholeWord, nItem);
+			nItem = pList->FindTask(select, bNext, nItem);
 
 			if (nItem != -1)
 			{

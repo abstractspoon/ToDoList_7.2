@@ -349,22 +349,28 @@ BOOL KANBANITEM::HasTrackedAttributeValues(LPCTSTR szAttrib) const
 	return (pArray && pArray->GetSize());
 }
 
-BOOL KANBANITEM::MatchesAttribute(const CString& sText, IUI_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord) const
+BOOL KANBANITEM::MatchesAttribute(const IUISELECTTASK& select) const
 {
+	ASSERT(!Misc::IsEmpty(select.szWords));
+
 	CString sAttrib;
 	
-	switch (nAttrib)
+	switch (select.nAttrib)
 	{
 	case IUI_TASKNAME:
 		sAttrib = sTitle;
 		break;
 
 	default:	
-		sAttrib = GetAttributeDisplayValue(nAttrib);
+		sAttrib = GetAttributeDisplayValue(select.nAttrib);
 		break;
 	}
 
-	return (!sAttrib.IsEmpty() && (Misc::Find(sText, sAttrib, bCaseSensitive, bWholeWord) != -1));
+	if (sAttrib.IsEmpty())
+		return FALSE;
+
+	// else
+	return (Misc::Find(select.szWords, sAttrib, select.bCaseSensitive, select.bWholeWord) != -1);
 }
 
 CString KANBANITEM::GetAttributeDisplayValue(IUI_ATTRIBUTE nAttrib) const

@@ -1829,11 +1829,8 @@ int CKanbanListCtrl::FindTask(const CPoint& ptScreen) const
 	return CListCtrl::HitTest(ptClient);
 }
 
-int CKanbanListCtrl::FindTask(const CString& sTitlePart, IUI_ATTRIBUTE nAttrib, BOOL bNext, 
-								BOOL bCaseSensitive, BOOL bWholeWord, int nStart) const
+int CKanbanListCtrl::FindTask(const IUISELECTTASK& select, BOOL bNext, int nStart) const
 {
-	ASSERT(!sTitlePart.IsEmpty());
-
 	int nFrom = nStart;
 	int nTo = (bNext ? GetItemCount() : -1);
 	int nInc = (bNext ? 1 : -1);
@@ -1843,7 +1840,7 @@ int CKanbanListCtrl::FindTask(const CString& sTitlePart, IUI_ATTRIBUTE nAttrib, 
 		DWORD dwTaskID = GetTaskID(nItem);
 		const KANBANITEM* pKI = GetKanbanItem(dwTaskID);
 
-		if (pKI->MatchesAttribute(sTitlePart, nAttrib, bCaseSensitive, bWholeWord))
+		if (pKI->MatchesAttribute(select))
 		{
 			return nItem;
 		}
