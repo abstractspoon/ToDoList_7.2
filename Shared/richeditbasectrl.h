@@ -78,7 +78,7 @@ enum // REBC_BORDERS
 /////////////////////////////////////////////////////////////////////////////
 // CRichEditBaseCtrl window
 
-class CRichEditBaseCtrl : public CRichEditCtrl, protected IFindReplace
+class CRichEditBaseCtrl : public CRichEditCtrl, protected IFindReplaceCmdHandler
 {
 // Construction
 public:

@@ -69,7 +69,7 @@ namespace OutlookAPI
 /////////////////////////////////////////////////////////////////////////////
 // CToDoCtrl dialog
 
-class CToDoCtrl : public CRuntimeDlg, protected IFindReplace
+class CToDoCtrl : public CRuntimeDlg, protected IFindReplaceCmdHandler
 {
 // Construction
 public:

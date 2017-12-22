@@ -24,7 +24,7 @@ struct FIND_STATE
 	}
 
 	CFindReplaceDialog* pFindReplaceDlg;	// find or replace dialog
-	BOOL bFindOnly;							// Is pFindReplace the find or replace?
+	BOOL bFindOnly;							// Is pFindReplaceDlg the find or replace?
 	CString strFind;						// last find string
 	CString strReplace;						// last replace string
 	BOOL bCase;								// TRUE==case sensitive, FALSE==not
@@ -34,7 +34,7 @@ struct FIND_STATE
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class IFindReplace
+class IFindReplaceCmdHandler
 {
 public:
 	virtual void OnFindNext(LPCTSTR lpszFind, 
@@ -61,14 +61,14 @@ public:
 namespace FindReplace
 {
 	BOOL Initialise(CWnd* pParent, 
-					IFindReplace* pFindReplace, 
+					IFindReplaceCmdHandler* pCmdHandler, 
 					FIND_STATE* pState, 
 					BOOL bFindOnly, 
 					BOOL bShowSearchUp,
 					LPCTSTR szTitle,
 					LPCTSTR szFind = NULL);
 
-	void HandleCmd(IFindReplace* pFindReplace, 
+	void HandleCmd(IFindReplaceCmdHandler* pCmdHandler, 
 					FIND_STATE* pState, 
 					WPARAM wParam, 
 					LPARAM lParam);

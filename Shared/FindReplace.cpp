@@ -12,7 +12,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-CFindReplaceDialog* IFindReplace::NewFindReplaceDlg()
+CFindReplaceDialog* IFindReplaceCmdHandler::NewFindReplaceDlg()
 {
 	return new CFindReplaceDialog;
 }
@@ -20,7 +20,7 @@ CFindReplaceDialog* IFindReplace::NewFindReplaceDlg()
 /////////////////////////////////////////////////////////////////////////////
 
 BOOL FindReplace::Initialise(CWnd* pParent, 
-							IFindReplace* pFindReplace, 
+							IFindReplaceCmdHandler* pCmdHandler, 
 							FIND_STATE* pState, 
 							BOOL bFindOnly, 
 							BOOL bShowSearchUp,
@@ -28,7 +28,7 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 							LPCTSTR szFind)
 {
 	ASSERT(pParent);
-	ASSERT(pFindReplace);
+	ASSERT(pCmdHandler);
 	ASSERT(pState);
 
 	if (pState->pFindReplaceDlg != NULL)
@@ -53,7 +53,7 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 		strFind = pState->strFind;
 
 	CString strReplace = pState->strReplace;
-	pState->pFindReplaceDlg = pFindReplace->NewFindReplaceDlg();
+	pState->pFindReplaceDlg = pCmdHandler->NewFindReplaceDlg();
 	ASSERT(pState->pFindReplaceDlg != NULL);
 
 	DWORD dwFlags = NULL;
@@ -91,13 +91,13 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 
 /////////////////////////////////////////////////////////////////////////////
 
-void FindReplace::HandleCmd(IFindReplace* pFindReplace, 
+void FindReplace::HandleCmd(IFindReplaceCmdHandler* pCmdHandler, 
 							FIND_STATE* pState, 
 							WPARAM /*wParam*/, 
 							LPARAM lParam)
 {
 	ASSERT(lParam);
-	ASSERT(pFindReplace);
+	ASSERT(pCmdHandler);
 	ASSERT(lParam);
 
 	CFindReplaceDialog* pDialog = CFindReplaceDialog::GetNotifier(lParam);
@@ -112,7 +112,7 @@ void FindReplace::HandleCmd(IFindReplace* pFindReplace,
 	}
 	else if (pDialog->FindNext())
 	{
-		pFindReplace->OnFindNext(pDialog->GetFindString(), 
+		pCmdHandler->OnFindNext(pDialog->GetFindString(), 
 									pDialog->SearchDown(),
 									pDialog->MatchCase(), 
 									pDialog->MatchWholeWord());
@@ -121,7 +121,7 @@ void FindReplace::HandleCmd(IFindReplace* pFindReplace,
 	{
 		ASSERT(!pState->bFindOnly);
 
-		pFindReplace->OnReplaceSel(pDialog->GetFindString(),
+		pCmdHandler->OnReplaceSel(pDialog->GetFindString(),
 									pDialog->SearchDown(), 
 									pDialog->MatchCase(), 
 									pDialog->MatchWholeWord(),
@@ -131,7 +131,7 @@ void FindReplace::HandleCmd(IFindReplace* pFindReplace,
 	{
 		ASSERT(!pState->bFindOnly);
 
-		pFindReplace->OnReplaceAll(pDialog->GetFindString(), 
+		pCmdHandler->OnReplaceAll(pDialog->GetFindString(), 
 									pDialog->GetReplaceString(),
 									pDialog->MatchCase(), 
 									pDialog->MatchWholeWord());
