@@ -12,6 +12,27 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
+FIND_STATE::FIND_STATE() : pFindReplaceDlg(NULL), bFindOnly(FALSE), bCaseSensitive(FALSE), bFindNext(TRUE), bWholeWord(FALSE) 
+{
+}
+
+void FIND_STATE::UpdateState(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)
+{
+	strFind = sFind;
+	bFindNext = bNext;
+	bCaseSensitive = bCase;
+	bWholeWord = bWord;
+}
+
+void FIND_STATE::UpdateState(const CString& sFind, const CString& sReplace, BOOL bNext, BOOL bCase, BOOL bWord)
+{
+	UpdateState(sFind, bNext, bCase, bWord);
+
+	strReplace = sReplace;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 CFindReplaceDialog* IFindReplaceCmdHandler::NewFindReplaceDlg()
 {
 	return new CFindReplaceDialog;
@@ -58,13 +79,13 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 
 	DWORD dwFlags = 0;
 
-	if (pState->bNext)
+	if (pState->bFindNext)
 		dwFlags |= FR_DOWN;
 
-	if (pState->bCase)
+	if (pState->bCaseSensitive)
 		dwFlags |= FR_MATCHCASE;
 
-	if (pState->bWord)
+	if (pState->bWholeWord)
 		dwFlags |= FR_WHOLEWORD;
 
 // 	if (!bShowSearchUp)
@@ -124,10 +145,10 @@ void FindReplace::HandleCmd(IFindReplaceCmdHandler* pCmdHandler,
 		ASSERT(!pState->bFindOnly);
 
 		pCmdHandler->OnReplaceSel(pDialog->GetFindString(),
+									pDialog->GetReplaceString(),
 									pDialog->SearchDown(), 
 									pDialog->MatchCase(), 
-									pDialog->MatchWholeWord(),
-									pDialog->GetReplaceString());
+									pDialog->MatchWholeWord());
 	}
 	else if (pDialog->ReplaceAll())
 	{

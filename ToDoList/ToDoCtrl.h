@@ -191,7 +191,7 @@ public:
 	BOOL SelectTask(DWORD dwTaskID) { return SelectTask(dwTaskID, TRUE); }
 	BOOL SelectTasks(const CDWordArray& aTaskIDs) { return SelectTasks(aTaskIDs, TRUE); }
 	void SelectAll();
-	BOOL SelectTask(CString sPart, TDC_SELECTTASK nSelect);
+	BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect);
 	
 	int CacheTreeSelection(TDCSELECTIONCACHE& cache, BOOL bIncBreadcrumbs = TRUE) const;
 	BOOL RestoreTreeSelection(const TDCSELECTIONCACHE& cache);
@@ -736,12 +736,13 @@ protected:
 	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);
 	virtual HTREEITEM RebuildTree(const void* pContext = NULL);
 	virtual BOOL WantAddTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const void* pContext) const;
+	virtual void AdjustFindReplaceDialogPosition(BOOL bFirstTime);
 
 	// IFindReplace
-	virtual void OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord);
-	virtual void OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
-								BOOL bWord, LPCTSTR lpszReplace);
-	virtual void OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace,
+	virtual void OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);
+	virtual void OnReplaceSel(const CString& sFind, const CString& szReplace, 
+								BOOL bNext, BOOL bCase, BOOL bWord);
+	virtual void OnReplaceAll(const CString& sFind, const CString& sReplace,
 								BOOL bCase, BOOL bWord);
 	
 	// -------------------------------------------------------------------------------
@@ -867,7 +868,7 @@ protected:
 	void ShowTaskHasCircularDependenciesError(const CDWordArray& aTaskIDs) const;
 
 	BOOL MoveSelection(TDC_MOVETASK nDirection);
-	BOOL SelectTask(CString sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib);
+	BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord);
 	
 	typedef CMap<DWORD, DWORD, DWORD, DWORD&> CMapID2ID;
 	void PrepareTasksForPaste(CTaskFile& tasks, TDC_RESETIDS nResetID, BOOL bResetCreation) const;

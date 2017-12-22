@@ -658,43 +658,28 @@ void CRichEditBaseCtrl::AdjustFindDialogPosition()
 
 void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
 {
-	ASSERT_VALID(this);
-
 	CEnString sTitle(nIDTitle), sSelText(GetSelText());
 	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, FALSE, sTitle, sSelText));
-
-	ASSERT_VALID(this);
 }
 
-void CRichEditBaseCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord)
+void CRichEditBaseCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)
 {
-	ASSERT_VALID(this);
-	
-	m_findState.strFind = lpszFind;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = bNext;
+	// Update state information for next time
+	m_findState.UpdateState(sFind, bCase, bWord, bNext);
 
 	if (!FindText())
 		TextNotFound(m_findState.strFind);
 	else
 		AdjustFindDialogPosition();
-
-	ASSERT_VALID(this);
 }
 
-void CRichEditBaseCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
-	BOOL bWord, LPCTSTR lpszReplace)
+void CRichEditBaseCtrl::OnReplaceSel(const CString& sFind, const CString& sReplace, 
+									BOOL bNext, BOOL bCase, BOOL bWord)
 {
-	ASSERT_VALID(this);
-	
-	m_findState.strFind = lpszFind;
-	m_findState.strReplace = lpszReplace;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = bNext;
+	// Update state information for next time
+	m_findState.UpdateState(sFind, sReplace, bCase, bWord, bNext);
 
-	if (!SameAsSelected(m_findState.strFind, m_findState.bCase, m_findState.bWord))
+	if (!SameAsSelected(m_findState.strFind, m_findState.bCaseSensitive, m_findState.bWholeWord))
 	{
 		if (!FindText())
 		{
@@ -712,22 +697,15 @@ void CRichEditBaseCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
 		TextNotFound(m_findState.strFind);
 	else
 		AdjustFindDialogPosition();
-
-	ASSERT_VALID(this);
 }
 
-void CRichEditBaseCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL bCase, BOOL bWord)
+void CRichEditBaseCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord)
 {
-	ASSERT_VALID(this);
-	
+	// Update state information for next time
+	m_findState.UpdateState(sFind, sReplace, bCase, bWord, TRUE);
+
 	// start searching at the beginning of the text so that we know to stop at the end
 	SetSel(0, 0);
-
-	m_findState.strFind = lpszFind;
-	m_findState.strReplace = lpszReplace;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = TRUE;
 
 	CWaitCursor wait;
 
@@ -736,8 +714,6 @@ void CRichEditBaseCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL
 
 	TextNotFound(m_findState.strFind);
 	HideSelection(FALSE, FALSE);
-
-	ASSERT_VALID(this);
 }
 
 LRESULT CRichEditBaseCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
@@ -767,7 +743,7 @@ BOOL CRichEditBaseCtrl::SameAsSelected(LPCTSTR lpszCompare, BOOL bCase, BOOL /*b
 
 BOOL CRichEditBaseCtrl::FindText(BOOL bWrap)
 {
-	return FindText(m_findState.strFind, m_findState.bCase, m_findState.bWord, bWrap);
+	return FindText(m_findState.strFind, m_findState.bCaseSensitive, m_findState.bWholeWord, bWrap);
 }
 
 BOOL CRichEditBaseCtrl::FindText(LPCTSTR lpszFind, BOOL bCase, BOOL bWord, BOOL bWrap)

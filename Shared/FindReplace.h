@@ -13,23 +13,18 @@ const UINT WM_FINDREPLACE = ::RegisterWindowMessage(FINDMSGSTRING);
 
 struct FIND_STATE
 {
-	FIND_STATE() 
-		: 
-		pFindReplaceDlg(NULL), 
-		bFindOnly(FALSE), 
-		bCase(FALSE), 
-		bNext(TRUE), 
-		bWord(FALSE) 
-	{
-	}
+	FIND_STATE();
+
+	void UpdateState(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);
+	void UpdateState(const CString& sFind, const CString& sReplace, BOOL bNext, BOOL bCase, BOOL bWord);
 
 	CFindReplaceDialog* pFindReplaceDlg;	// find or replace dialog
 	BOOL bFindOnly;							// Is pFindReplaceDlg the find or replace?
 	CString strFind;						// last find string
 	CString strReplace;						// last replace string
-	BOOL bCase;								// TRUE==case sensitive, FALSE==not
-	int bNext;								// TRUE==search down, FALSE== search up
-	BOOL bWord;								// TRUE==match whole word, FALSE==not
+	BOOL bFindNext;							// TRUE==search down, FALSE== search up
+	BOOL bCaseSensitive;					// TRUE==case sensitive, FALSE==not
+	BOOL bWholeWord;						// TRUE==match whole word, FALSE==not
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,19 +32,19 @@ struct FIND_STATE
 class IFindReplaceCmdHandler
 {
 public:
-	virtual void OnFindNext(LPCTSTR lpszFind, 
+	virtual void OnFindNext(const CString& sFind, 
 							BOOL bNext, 
 							BOOL bCase, 
 							BOOL bWord) = 0;
 
-	virtual void OnReplaceSel(LPCTSTR lpszFind, 
+	virtual void OnReplaceSel(const CString& sFind, 
+								const CString& sReplace, 
 								BOOL bNext, 
 								BOOL bCase,
-								BOOL bWord, 
-								LPCTSTR lpszReplace) = 0;
+								BOOL bWord) = 0;
 
-	virtual void OnReplaceAll(LPCTSTR lpszFind, 
-								LPCTSTR lpszReplace,
+	virtual void OnReplaceAll(const CString& sFind, 
+								const CString& sReplace,
 								BOOL bCase, 
 								BOOL bWord) = 0;
 

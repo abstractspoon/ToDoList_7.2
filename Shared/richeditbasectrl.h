@@ -235,11 +235,11 @@ protected:
 	virtual HRESULT GetContextMenu(WORD /*seltyp*/, LPOLEOBJECT /*lpoleobj*/, CHARRANGE FAR* /*lpchrg*/,
 		HMENU FAR* /*lphmenu*/) { return S_OK; }
 	
-	virtual void OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord);
-	virtual void OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
-		BOOL bWord, LPCTSTR lpszReplace);
-	virtual void OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace,
-		BOOL bCase, BOOL bWord);
+	virtual void OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);
+	virtual void OnReplaceSel(const CString& sFind, const CString& sReplace, 
+								BOOL bNext, BOOL bCase,	BOOL bWord);
+	virtual void OnReplaceAll(const CString& sFind, const CString& sReplace,
+								BOOL bCase, BOOL bWord);
 	
 	//{{AFX_MSG(CRichEditBaseCtrl)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

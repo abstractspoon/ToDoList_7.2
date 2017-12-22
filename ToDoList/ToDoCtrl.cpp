@@ -10937,16 +10937,21 @@ BOOL CToDoCtrl::HasLockedTasks() const
 }
 
 // External
-BOOL CToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
+BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect)
 {
-	return SelectTask(sPart, nSelect, TDCA_ANYTEXTATTRIBUTE);
+	return SelectTask(sPart, nSelect, TDCA_ANYTEXTATTRIBUTE, FALSE, FALSE);
 }
 
 // Internal
-BOOL CToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib)
+BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
+							BOOL bCaseSensitive, BOOL bWholeWord)
 {
 	SEARCHPARAMS params;
-	params.aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sPart));
+	SEARCHPARAM rule(nAttrib, FOP_INCLUDES, sPart);
+
+	params.aRules.Add(rule);
+	params.bCaseSensitive = bCaseSensitive;
+	params.bMatchWholeWord = bWholeWord;
 
 	SEARCHRESULT result;
 	DWORD dwFoundID = 0;
@@ -11473,7 +11478,21 @@ void CToDoCtrl::DoFindReplaceOnTitles()
 //	CEnString sTitle/*(nIDTitle)*/;
 	VERIFY(FindReplace::Initialise(this, this, &m_findState, IsReadOnly(), TRUE, NULL));
 
+	AdjustFindReplaceDialogPosition(TRUE);
+
 	ASSERT_VALID(this);
+}
+
+void CToDoCtrl::AdjustFindReplaceDialogPosition(BOOL bFirstTime)
+{
+	CRect rExclude;
+
+	if (bFirstTime)
+		m_taskTree.Tree().GetWindowRect(rExclude);
+	else
+		GetLabelEditRect(rExclude);
+
+	FindReplace::AdjustDialogPosition(&m_findState, rExclude, !bFirstTime);
 }
 
 LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
@@ -11486,73 +11505,69 @@ LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void CToDoCtrl::OnFindNext(LPCTSTR lpszFind, BOOL bNext, BOOL bCase, BOOL bWord)
+void CToDoCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)
 {
-	m_findState.strFind = lpszFind;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = bNext;
+	// Update state information for next time
+	m_findState.UpdateState(sFind, bCase, bWord, bNext);
 
-	if (SelectTask(lpszFind, (bNext ? TDC_SELECTNEXT : TDC_SELECTPREV)))
+	if (SelectTask(sFind, (bNext ? TDC_SELECTNEXT : TDC_SELECTPREV), TDCA_TASKNAME, bCase, bWord))
+		AdjustFindReplaceDialogPosition(FALSE);
+	else
+		MessageBeep(MB_ICONHAND);
+}
+
+void CToDoCtrl::OnReplaceSel(const CString& sFind, const CString& sReplace, 
+							BOOL bNext, BOOL bCase, BOOL bWord)
+{
+	ASSERT(!IsReadOnly());
+
+	// Update state information for next time
+	m_findState.UpdateState(sFind, sReplace, bCase, bWord, bNext);
+
+	CString sSelTitle = GetSelectedTaskTitle();
+
+	if (Misc::Replace(sFind, sReplace, sSelTitle, bCase, bWord))
+		VERIFY(SetSelectedTaskTitle(sSelTitle));
+
+	OnFindNext(sFind, bNext, bCase, bWord);
+}
+
+void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord)
+{
+	ASSERT(!IsReadOnly());
+
+	// Update state information for next time
+	m_findState.UpdateState(sFind, sReplace, bCase, bWord, TRUE);
+
+	// Much quicker and can be treated as a single edit
+	IMPLEMENT_UNDO_EDIT(m_data);
+
+	POSITION pos = m_data.GetFirstTaskPosition();
+	int nNumReplaced = 0;
+
+	while (pos)
 	{
-		// AdjustDialogPosition(m_findState.pFindReplaceDlg);
+		DWORD dwTaskID = m_data.GetNextTaskID(pos);
+		ASSERT(dwTaskID);
+
+		CString sTitle = m_data.GetTaskTitle(dwTaskID);
+
+		if (Misc::Replace(sFind, sReplace, sTitle, bCase, bWord))
+		{
+			VERIFY(m_data.SetTaskTitle(dwTaskID, sTitle) == SET_CHANGE);
+			nNumReplaced++;
+		}
+	}
+
+	if (nNumReplaced > 0)
+	{
+		Invalidate(FALSE);
+		UpdateWindow();
 	}
 	else
 	{
 		MessageBeep(MB_ICONHAND);
 	}
-}
-
-void CToDoCtrl::OnReplaceSel(LPCTSTR lpszFind, BOOL bNext, BOOL bCase,
-							 BOOL bWord, LPCTSTR lpszReplace)
-{
-	ASSERT(!IsReadOnly());
-
-	m_findState.strFind = lpszFind;
-	m_findState.strReplace = lpszReplace;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = bNext;
-
-	CString sSelTitle = GetSelectedTaskTitle();
-
-	if (sSelTitle.Replace(lpszFind, lpszReplace))
-	{
-		VERIFY(SetSelectedTaskTitle(sSelTitle));
-	}
-
-	OnFindNext(lpszFind, bNext, bCase, bWord);
-}
-
-void CToDoCtrl::OnReplaceAll(LPCTSTR lpszFind, LPCTSTR lpszReplace, BOOL bCase, BOOL bWord)
-{
-	ASSERT(!IsReadOnly());
-
-	// Search from the very first task
-	while (GotoNextTopLevelTask(TDCG_PREV));
-	
-	m_findState.strFind = lpszFind;
-	m_findState.strReplace = lpszReplace;
-	m_findState.bCase = bCase;
-	m_findState.bWord = bWord;
-	m_findState.bNext = TRUE;
-
-	CWaitCursor wait;
-
-	while (SelectTask(lpszFind, TDC_SELECTNEXT, TDCA_TASKNAME))
-	{
-		// AdjustDialogPosition(m_findState.pFindReplaceDlg);
-
-		CString sSelTitle = GetSelectedTaskTitle();
-
-		if (sSelTitle.Replace(lpszFind, lpszReplace))
-		{
-			VERIFY(SetSelectedTaskTitle(sSelTitle));
-		}
-	}
-
-	// Signal no more
-	MessageBeep(MB_ICONHAND);
 }
 
 int CToDoCtrl::GetSelectedTaskCustomAttributeData(CTDCCustomAttributeDataMap& mapData, BOOL bFormatted) const
