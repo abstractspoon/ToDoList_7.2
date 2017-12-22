@@ -353,18 +353,7 @@ BOOL KANBANITEM::MatchesAttribute(const IUISELECTTASK& select) const
 {
 	ASSERT(!Misc::IsEmpty(select.szWords));
 
-	CString sAttrib;
-	
-	switch (select.nAttrib)
-	{
-	case IUI_TASKNAME:
-		sAttrib = sTitle;
-		break;
-
-	default:	
-		sAttrib = GetAttributeDisplayValue(select.nAttrib);
-		break;
-	}
+	CString sAttrib = GetAttributeDisplayValue(select.nAttrib);
 
 	if (sAttrib.IsEmpty())
 		return FALSE;
@@ -377,6 +366,9 @@ CString KANBANITEM::GetAttributeDisplayValue(IUI_ATTRIBUTE nAttrib) const
 {
 	switch (nAttrib)
 	{
+	case IUI_TASKNAME:
+		return sTitle;
+
 	case IUI_ALLOCTO:	
 	case IUI_ALLOCBY:	
 	case IUI_STATUS:	
