@@ -732,11 +732,13 @@ protected:
 
 	virtual int GetArchivableTasks(CTaskFile& tasks, BOOL bSelectedOnly = FALSE) const;
 	virtual BOOL RemoveArchivedTask(DWORD dwTaskID);
-	virtual BOOL SelectTask(DWORD dwTaskID, BOOL bTrue);
-	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);
 	virtual HTREEITEM RebuildTree(const void* pContext = NULL);
 	virtual BOOL WantAddTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const void* pContext) const;
 	virtual void AdjustFindReplaceDialogPosition(BOOL bFirstTime);
+
+	virtual BOOL SelectTask(DWORD dwTaskID, BOOL bTrue);
+	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);
+	virtual BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord);
 
 	// IFindReplace
 	virtual void OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);
@@ -868,7 +870,6 @@ protected:
 	void ShowTaskHasCircularDependenciesError(const CDWordArray& aTaskIDs) const;
 
 	BOOL MoveSelection(TDC_MOVETASK nDirection);
-	BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord);
 	
 	typedef CMap<DWORD, DWORD, DWORD, DWORD&> CMapID2ID;
 	void PrepareTasksForPaste(CTaskFile& tasks, TDC_RESETIDS nResetID, BOOL bResetCreation) const;

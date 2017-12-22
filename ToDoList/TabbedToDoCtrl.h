@@ -223,6 +223,7 @@ protected:
 	virtual void BeginTimeTracking(DWORD dwTaskID, BOOL bNotify);
 	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);
 	virtual DWORD GetNextNonSelectedTaskID() const;
+	virtual BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord);
 
 	virtual BOOL LoadTasks(const CTaskFile& tasks);
 	virtual void SaveTasksState(CPreferences& prefs, BOOL bRebuildTree = FALSE) const; 
@@ -237,7 +238,8 @@ protected:
 	void UpdateTreeSelection();
 	void UpdateSelectedTaskPath();
 	void InvalidateItem(HTREEITEM hti, BOOL bUpdate);
-	int FindListTask(const CString& sPart, int nStart = 0, BOOL bNext = TRUE) const;
+	int FindListTask(const CString& sPart, TDC_ATTRIBUTE nAttrib, int nStart, BOOL bNext, 
+						BOOL bCaseSensitive, BOOL bWholeWord) const;
 	void SetEditTitleTaskID(DWORD dwTaskID);
 	void ResortSelectedTaskParents();
 	void LoadPrefs();

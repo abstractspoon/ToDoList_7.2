@@ -4832,8 +4832,13 @@ int CTabbedToDoCtrl::FindTasks(const SEARCHPARAMS& params, CResultArray& aResult
 	return aResults.GetSize();
 }
 
-
 BOOL CTabbedToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
+{
+	return CToDoCtrl::SelectTask(sPart, nSelect);
+}
+
+BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
+									BOOL bCaseSensitive, BOOL bWholeWord)
 {
 	FTC_VIEW nView = GetTaskView();
 
@@ -4841,7 +4846,7 @@ BOOL CTabbedToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
 	{
 	case FTCV_TASKTREE:
 	case FTCV_UNSET:
-		return CToDoCtrl::SelectTask(sPart, nSelect);
+		return CToDoCtrl::SelectTask(sPart, nSelect, nAttrib, bCaseSensitive, bWholeWord);
 
 	case FTCV_TASKLIST:
 		{
@@ -4850,23 +4855,23 @@ BOOL CTabbedToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
 			switch (nSelect)
 			{
 			case TDC_SELECTFIRST:
-				nFind = FindListTask(sPart);
+				nFind = FindListTask(sPart, nAttrib, 0, TRUE, bCaseSensitive, bWholeWord);
 				break;
 			
 			case TDC_SELECTNEXT:
-				nFind = FindListTask(sPart, (nSelItem + 1));
+				nFind = FindListTask(sPart, nAttrib, (nSelItem + 1), TRUE, bCaseSensitive, bWholeWord);
 				break;
 			
 			case TDC_SELECTNEXTINCLCURRENT:
-				nFind = FindListTask(sPart, nSelItem);
+				nFind = FindListTask(sPart, nAttrib, nSelItem, TRUE, bCaseSensitive, bWholeWord);
 				break;
 			
 			case TDC_SELECTPREV:
-				nFind = FindListTask(sPart, (nSelItem - 1), FALSE);
+				nFind = FindListTask(sPart, nAttrib, (nSelItem - 1), FALSE, bCaseSensitive, bWholeWord);
 				break;
 			
 			case TDC_SELECTLAST:
-				nFind = FindListTask(sPart, m_taskList.GetItemCount() - 1, FALSE);
+				nFind = FindListTask(sPart, nAttrib, m_taskList.GetItemCount() - 1, FALSE, bCaseSensitive, bWholeWord);
 				break;
 			}
 
@@ -4917,11 +4922,16 @@ BOOL CTabbedToDoCtrl::SelectTask(CString sPart, TDC_SELECTTASK nSelect)
 	return FALSE;
 }
 
-int CTabbedToDoCtrl::FindListTask(const CString& sPart, int nStart, BOOL bNext) const
+int CTabbedToDoCtrl::FindListTask(const CString& sPart, TDC_ATTRIBUTE nAttrib, int nStart, 
+									BOOL bNext, BOOL bCaseSensitive, BOOL bWholeWord) const
 {
 	// build a search query
 	SEARCHPARAMS params;
-	params.aRules.Add(SEARCHPARAM(TDCA_ANYTEXTATTRIBUTE, FOP_INCLUDES, sPart));
+	SEARCHPARAM rule(nAttrib, FOP_INCLUDES, sPart);
+
+	params.aRules.Add(rule);
+	params.bCaseSensitive = bCaseSensitive;
+	params.bMatchWholeWord = bWholeWord;
 
 	// we need to do this manually because CListCtrl::FindItem 
 	// only looks at the start of the string
