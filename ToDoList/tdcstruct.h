@@ -1681,7 +1681,11 @@ public:
 
 struct SEARCHPARAMS
 {
-	SEARCHPARAMS() : bIgnoreDone(FALSE), bIgnoreOverDue(FALSE), bWantAllSubtasks(FALSE), bIgnoreFilteredOut(TRUE) {}
+	SEARCHPARAMS()
+	{
+		Clear();
+	}
+
 	SEARCHPARAMS(const SEARCHPARAMS& params)
 	{
 		*this = params;
@@ -1693,6 +1697,8 @@ struct SEARCHPARAMS
 		bIgnoreOverDue = params.bIgnoreOverDue;
 		bWantAllSubtasks = params.bWantAllSubtasks;
 		bIgnoreFilteredOut = params.bIgnoreFilteredOut;
+		bCaseSensitive = params.bCaseSensitive;
+		bMatchWholeWord = params.bMatchWholeWord;
 
 		aRules.Copy(params.aRules);
 		aAttribDefs.Copy(params.aAttribDefs);
@@ -1707,12 +1713,14 @@ struct SEARCHPARAMS
 
 	BOOL operator==(const SEARCHPARAMS& params) const
 	{
-		return Misc::MatchAllT(aRules, params.aRules, TRUE) && 
+		return (Misc::MatchAllT(aRules, params.aRules, TRUE) && 
 				Misc::MatchAllT(aAttribDefs, params.aAttribDefs, FALSE) &&
 				(bIgnoreDone == params.bIgnoreDone) && 
 				(bIgnoreOverDue == params.bIgnoreOverDue) && 
 				(bIgnoreFilteredOut == params.bIgnoreFilteredOut) && 
-				(bWantAllSubtasks == params.bWantAllSubtasks);
+				(bWantAllSubtasks == params.bWantAllSubtasks) &&
+				(bCaseSensitive == params.bCaseSensitive) &&
+				(bMatchWholeWord == params.bMatchWholeWord));
 	}
 
 	void Clear()
@@ -1721,7 +1729,9 @@ struct SEARCHPARAMS
 		bIgnoreOverDue = FALSE;
 		bWantAllSubtasks = FALSE;
 		bIgnoreFilteredOut = TRUE;
-
+		bCaseSensitive = FALSE;
+		bMatchWholeWord = FALSE;
+		
 		aRules.RemoveAll();
 		aAttribDefs.RemoveAll();
 	}
@@ -1763,7 +1773,13 @@ struct SEARCHPARAMS
 
 	CSearchParamArray aRules;
 	CTDCCustomAttribDefinitionArray aAttribDefs;
-	BOOL bIgnoreDone, bIgnoreOverDue, bWantAllSubtasks, bIgnoreFilteredOut;
+
+	BOOL bIgnoreDone;
+	BOOL bIgnoreOverDue;
+	BOOL bWantAllSubtasks;
+	BOOL bIgnoreFilteredOut;
+	BOOL bCaseSensitive;
+	BOOL bMatchWholeWord;
 };
 
 struct SEARCHRESULT
