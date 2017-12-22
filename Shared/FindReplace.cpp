@@ -23,7 +23,7 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 							IFindReplaceCmdHandler* pCmdHandler, 
 							FIND_STATE* pState, 
 							BOOL bFindOnly, 
-							BOOL bShowSearchUp,
+							BOOL /*bShowSearchUp*/, // Not currently supported
 							LPCTSTR szTitle,
 							LPCTSTR szFind)
 {
@@ -56,7 +56,7 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 	pState->pFindReplaceDlg = pCmdHandler->NewFindReplaceDlg();
 	ASSERT(pState->pFindReplaceDlg != NULL);
 
-	DWORD dwFlags = NULL;
+	DWORD dwFlags = 0;
 
 	if (pState->bNext)
 		dwFlags |= FR_DOWN;
@@ -67,8 +67,10 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 	if (pState->bWord)
 		dwFlags |= FR_WHOLEWORD;
 
-	if (!bShowSearchUp)
-		dwFlags |= FR_HIDEUPDOWN;
+// 	if (!bShowSearchUp)
+// 		dwFlags |= FR_HIDEUPDOWN;
+// 	else
+// 		dwFlags |= FR_DOWN;
 
 	if (!pState->pFindReplaceDlg->Create(bFindOnly, strFind, strReplace, dwFlags, pParent))
 	{
@@ -140,31 +142,66 @@ void FindReplace::HandleCmd(IFindReplaceCmdHandler* pCmdHandler,
 
 /////////////////////////////////////////////////////////////////////////////
 
-void FindReplace::AdjustDialogPosition(FIND_STATE* pState, const CPoint& ptScreen)
+void FindReplace::AdjustDialogPosition(FIND_STATE* pState, const CPoint& ptScreen, BOOL bUpDown)
 {
 	ASSERT(pState);
 	ASSERT(pState->pFindReplaceDlg != NULL);
 
-	CRect rectDlg;
-	pState->pFindReplaceDlg->GetWindowRect(&rectDlg);
+	CRect rExclude(ptScreen.x - 1, ptScreen.y - 1, ptScreen.x + 1, ptScreen.y + 1);
+	AdjustDialogPosition(pState, rExclude);
+}
 
-	if (rectDlg.PtInRect(ptScreen))
+void FindReplace::AdjustDialogPosition(FIND_STATE* pState, const CRect& rExcludeScreen, BOOL bUpDown)
+{
+	CRect rDlg;
+	pState->pFindReplaceDlg->GetWindowRect(&rDlg);
+
+	if (CRect().IntersectRect(rDlg, rExcludeScreen))
 	{
-		if (ptScreen.y > rectDlg.Height())
+		const int PADDING = 20;
+		CRect rScreen(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+
+		if (bUpDown)
 		{
-			rectDlg.OffsetRect(0, ptScreen.y - rectDlg.bottom - 20);
+			// Move find dialog above or below the exclusion rect
+			// depending on where there is most space. Ideally stay
+			// on the same if possible
+			BOOL bMoveAbove = (rExcludeScreen.CenterPoint().y > rDlg.CenterPoint().y);
+
+			// Check for space
+			if (bMoveAbove)
+				bMoveAbove = (rDlg.top > rDlg.Height());
+			else
+				bMoveAbove = ((rScreen.bottom - rDlg.bottom) < rDlg.Height());
+
+			// Adjust the pos
+			if (bMoveAbove)
+				rDlg.OffsetRect(0, rExcludeScreen.top - rDlg.bottom - PADDING);
+			else
+				rDlg.OffsetRect(0, rExcludeScreen.bottom - rDlg.top + PADDING);
 		}
 		else
 		{
-			int nVertExt = GetSystemMetrics(SM_CYSCREEN);
+			// Move find dialog left or right of the exclusion rect
+			// depending on where there is most space. Ideally stay
+			// on the same if possible
+			BOOL bMoveLeft = (rExcludeScreen.CenterPoint().x > rDlg.CenterPoint().x);
 
-			if (ptScreen.y + rectDlg.Height() < nVertExt)
-				rectDlg.OffsetRect(0, 40 + ptScreen.y - rectDlg.top);
+			// Check for space
+			if (bMoveLeft)
+				bMoveLeft = (rDlg.left > rDlg.Width());
+			else
+				bMoveLeft = ((rScreen.right - rDlg.right) < rDlg.Width());
+
+			// Adjust the pos
+			if (bMoveLeft)
+				rDlg.OffsetRect(rExcludeScreen.left - rDlg.right - PADDING, 0);
+			else
+				rDlg.OffsetRect(rExcludeScreen.right - rDlg.left + PADDING, 0);
 		}
 
-		pState->pFindReplaceDlg->MoveWindow(&rectDlg);
+		pState->pFindReplaceDlg->MoveWindow(&rDlg);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////

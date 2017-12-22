@@ -74,7 +74,12 @@ namespace FindReplace
 					LPARAM lParam);
 
 	void AdjustDialogPosition(FIND_STATE* pState, 
-								const CPoint& ptScreen);
+								const CPoint& ptScreen,
+								BOOL bUpDown = TRUE);
+
+	void AdjustDialogPosition(FIND_STATE* pState, 
+								const CRect& rScreen,
+								BOOL bUpDown = TRUE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
