@@ -59,7 +59,6 @@ namespace FindReplace
 					IFindReplaceCmdHandler* pCmdHandler, 
 					FIND_STATE* pState, 
 					BOOL bFindOnly, 
-					BOOL bShowSearchUp,
 					LPCTSTR szTitle,
 					LPCTSTR szFind = NULL);
 

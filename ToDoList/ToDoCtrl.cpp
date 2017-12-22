@@ -11475,8 +11475,11 @@ void CToDoCtrl::DoFindReplaceOnTitles()
 {
 	ASSERT_VALID(this);
 
-//	CEnString sTitle/*(nIDTitle)*/;
-	VERIFY(FindReplace::Initialise(this, this, &m_findState, IsReadOnly(), TRUE, NULL));
+	BOOL bFindOnly = IsReadOnly();
+	CEnString sTitle(bFindOnly ? IDS_FINDINTASKTITLES : IDS_REPLACEINTASKTITLES);
+	CString sFind(GetSelectedTaskTitle());
+	
+	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sFind));
 
 	AdjustFindReplaceDialogPosition(TRUE);
 

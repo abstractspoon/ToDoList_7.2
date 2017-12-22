@@ -659,7 +659,7 @@ void CRichEditBaseCtrl::AdjustFindDialogPosition()
 void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
 {
 	CEnString sTitle(nIDTitle), sSelText(GetSelText());
-	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, FALSE, sTitle, sSelText));
+	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sSelText));
 }
 
 void CRichEditBaseCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)

@@ -44,7 +44,6 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 							IFindReplaceCmdHandler* pCmdHandler, 
 							FIND_STATE* pState, 
 							BOOL bFindOnly, 
-							BOOL /*bShowSearchUp*/, // Not currently supported
 							LPCTSTR szTitle,
 							LPCTSTR szFind)
 {
@@ -87,11 +86,6 @@ BOOL FindReplace::Initialise(CWnd* pParent,
 
 	if (pState->bWholeWord)
 		dwFlags |= FR_WHOLEWORD;
-
-// 	if (!bShowSearchUp)
-// 		dwFlags |= FR_HIDEUPDOWN;
-// 	else
-// 		dwFlags |= FR_DOWN;
 
 	if (!pState->pFindReplaceDlg->Create(bFindOnly, strFind, strReplace, dwFlags, pParent))
 	{
