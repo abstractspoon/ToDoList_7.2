@@ -3034,6 +3034,9 @@ BEGIN
         MENUITEM "Select A&ll",                 ID_EDIT_SELECTALL
         MENUITEM SEPARATOR
         MENUITEM "&Find Tasks...",              ID_EDIT_FINDTASKS
+        MENUITEM "Find/&Replace in Task Titles...", 
+                                                ID_EDIT_FINDREPLACEINTASKTITLES
+
         MENUITEM SEPARATOR
         MENUITEM "&Quick Find",                 ID_EDIT_QUICKFIND
         MENUITEM "Find Ne&xt",                  ID_EDIT_QUICKFINDNEXT
