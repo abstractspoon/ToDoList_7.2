@@ -4867,7 +4867,7 @@ BOOL CTabbedToDoCtrl::CanDoFindReplace(TDC_ATTRIBUTE nAttrib) const
 	case FTCV_UIEXTENSION14:
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
-		return ExtensionCanDoAppCommand(nView, IUI_FINDREPLACE);
+		return ExtensionCanDoAppCommand(nView, IUI_SELECTNEXTTASK);
 
 	default:
 		ASSERT(0);

@@ -11471,8 +11471,14 @@ BOOL CToDoCtrl::SpellcheckItem(HTREEITEM hti, CSpellCheckDlg* pSpellChecker)
 	return TRUE;
 }
 
-void CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
+BOOL CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 {
+	if (nAttrib != TDCA_TASKNAME)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
 	BOOL bFindOnly = IsReadOnly();
 	CEnString sTitle(bFindOnly ? IDS_FINDINTASKTITLES : IDS_REPLACEINTASKTITLES);
 	CString sFind(GetSelectedTaskTitle());
@@ -11480,6 +11486,8 @@ void CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sFind));
 
 	AdjustFindReplaceDialogPosition(TRUE);
+
+	return TRUE;
 }
 
 BOOL CToDoCtrl::CanDoFindReplace(TDC_ATTRIBUTE nAttrib) const
@@ -11539,35 +11547,49 @@ void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL
 	// Update state information for next time
 	m_findState.UpdateState(sFind, sReplace, bCase, bWord, TRUE);
 
-	// Much quicker and can be treated as a single edit
+	// Treat as a single edit
 	IMPLEMENT_UNDO_EDIT(m_data);
 
+	CDWordArray aModifiedTaskIDs;
 	POSITION pos = m_data.GetFirstTaskPosition();
-	int nNumReplaced = 0;
+	const TODOITEM* pTDI = NULL;
 
 	while (pos)
 	{
-		DWORD dwTaskID = m_data.GetNextTaskID(pos);
-		ASSERT(dwTaskID);
+		DWORD dwTaskID = m_data.GetNextTask(pos, pTDI);
+
+		// Ignore references
+		if (pTDI->IsReference())
+			continue;
 
 		CString sTitle = m_data.GetTaskTitle(dwTaskID);
 
 		if (Misc::Replace(sFind, sReplace, sTitle, bCase, bWord))
 		{
 			VERIFY(m_data.SetTaskTitle(dwTaskID, sTitle) == SET_CHANGE);
-			nNumReplaced++;
+			aModifiedTaskIDs.Add(dwTaskID);
 		}
 	}
 
-	if (nNumReplaced > 0)
+	switch (aModifiedTaskIDs.GetSize())
 	{
-		Invalidate(FALSE);
-		UpdateWindow();
-	}
-	else
-	{
+	case 0:
 		MessageBeep(MB_ICONHAND);
+		return;
+
+	case 1:
+		SelectTask(aModifiedTaskIDs[0]);
+		SetModified(TRUE, TDCA_TASKNAME, aModifiedTaskIDs[0]);
+		break;
+
+	default: // > 1
+		SelectTasks(aModifiedTaskIDs);
+		SetModified(TRUE, TDCA_TASKNAME, 0);
+		break;
 	}
+
+	Invalidate(FALSE);
+	UpdateWindow();
 }
 
 int CToDoCtrl::GetSelectedTaskCustomAttributeData(CTDCCustomAttributeDataMap& mapData, BOOL bFormatted) const

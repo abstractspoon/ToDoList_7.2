@@ -635,14 +635,6 @@ bool CGanttChartWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 			// TODO
 		}
 		break;
-
-	case IUI_FINDREPLACE:
-		if (dwExtra)
-		{
-			const IUIFINDREPLACE* pFindReplace = (IUIFINDREPLACE*)dwExtra;
-			// TODO
-		}
-		break;
 	}
 
 	return false;
@@ -705,9 +697,6 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_SELECTNEXTTASKINCLCURRENT:
 	case IUI_SELECTPREVTASK:
 	case IUI_SELECTLASTTASK:
-		return /*true*/false;
-
-	case IUI_FINDREPLACE:
 		return /*true*/false;
 	}
 

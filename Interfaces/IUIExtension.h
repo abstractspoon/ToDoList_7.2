@@ -163,7 +163,6 @@ enum IUI_APPCOMMAND
 	IUI_SELECTNEXTTASKINCLCURRENT,	// dwExtra is IUISELECTTASK*	[in]
 	IUI_SELECTPREVTASK,				// dwExtra is IUISELECTTASK*	[in]
 	IUI_SELECTLASTTASK,				// dwExtra is IUISELECTTASK*	[in]
-	IUI_FINDREPLACE,				// dwExtra is IUIFINDREPLACE*	[in] 
 
 	// new values here
 //  IUI_
@@ -250,7 +249,7 @@ struct IUITASKMOD
 	// Extra info
 	union
 	{
-		TDC_UNITS nTimeUnits;		// IUI_TIMEEST, IUI_TIMESPENT, IUI_CUSTOMATTRIB
+		TDC_UNITS nTimeUnits;	// IUI_TIMEEST, IUI_TIMESPENT, IUI_CUSTOMATTRIB
 	};
 };
 
@@ -275,18 +274,6 @@ struct IUISELECTTASK
 	IUI_ATTRIBUTE nAttrib; // IUI_TASKNAME, IUI_TASKNAMEORCOMMENTS or IUI_ANYTEXTATTRIBUTE
 
 	LPCWSTR szWords;	
-	bool bCaseSensitive;
-	bool bWholeWord;	
-};
-
-//////////////////////////////////////////////////////////////////////
-
-struct IUIFINDREPLACE
-{
-	IUI_ATTRIBUTE nAttrib; // Currently IUI_TASKNAME only
-
-	LPCWSTR szWords;	
-	LPCWSTR szReplace;	
 	bool bCaseSensitive;
 	bool bWholeWord;	
 };

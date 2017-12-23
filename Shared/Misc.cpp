@@ -599,7 +599,7 @@ int Misc::Find(TCHAR cSearchFor, const CString& sSearchIn, BOOL bCaseSensitive, 
 int Misc::Find(const CString& sSearchFor, const CString& sSearchIn, BOOL bCaseSensitive, BOOL bWholeWord, int iStart)
 {
 	if (sSearchFor.GetLength() > sSearchIn.GetLength())
-		return FALSE;
+		return -1;
 
 	CString sWord(sSearchFor), sText(sSearchIn);
 	Trim(sWord);

@@ -610,14 +610,6 @@ bool CKanbanWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 			return (m_ctrlKanban.SelectTask(nCmd, *pSelect) != FALSE);
 		}
 		break;
-
-	case IUI_FINDREPLACE:
-		if (dwExtra)
-		{
-			const IUIFINDREPLACE* pFindReplace = (IUIFINDREPLACE*)dwExtra;
-			return false;//(m_ctrlKanban.SelectTask(nCmd, *pSelect) != FALSE);
-		}
-		break;
 	}
 
 	return false;
@@ -662,9 +654,6 @@ bool CKanbanWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_SELECTPREVTASK:
 	case IUI_SELECTLASTTASK:
 		return (m_ctrlKanban.GetVisibleTaskCount() > 0);
-
-	case IUI_FINDREPLACE:
-		return false; //(m_ctrlKanban.GetVisibleTaskCount() > 0);
 	}
 
 	// all else

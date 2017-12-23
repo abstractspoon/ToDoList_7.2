@@ -205,7 +205,7 @@ public:
 	BOOL EditSelectedTask(BOOL bTaskIsNew = FALSE); 
 	void SpellcheckSelectedTask(BOOL bTitle); // else comments
 	BOOL CanSpellcheckSelectedTaskComments();
-	void DoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME);
+	BOOL DoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME);
 	BOOL CanDoFindReplace(TDC_ATTRIBUTE nAttrib = TDCA_TASKNAME) const;
 	
 	BOOL GotoSelectedTaskDependency(); 
@@ -743,10 +743,8 @@ protected:
 
 	// IFindReplace
 	virtual void OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);
-	virtual void OnReplaceSel(const CString& sFind, const CString& szReplace, 
-								BOOL bNext, BOOL bCase, BOOL bWord);
-	virtual void OnReplaceAll(const CString& sFind, const CString& sReplace,
-								BOOL bCase, BOOL bWord);
+	virtual void OnReplaceSel(const CString& sFind, const CString& szReplace, BOOL bNext, BOOL bCase, BOOL bWord);
+	virtual void OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord);
 	
 	// -------------------------------------------------------------------------------
 	
