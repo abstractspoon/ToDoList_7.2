@@ -264,6 +264,9 @@ CToDoCtrl::CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, con
 	// misc
 	m_cpColour.SetSelectionMode(CP_MODE_TEXT);
 	m_data.SetDefaultCommentsFormat(m_cfDefault);
+
+	m_findState.bCaseSensitive = TRUE;
+	m_findState.bWholeWord = TRUE;
 }
 
 CToDoCtrl::~CToDoCtrl()
@@ -2718,6 +2721,10 @@ BOOL CToDoCtrl::SetSelectedTaskComments(const CString& sComments, const CBinaryD
 BOOL CToDoCtrl::SetSelectedTaskTitle(const CString& sTitle)
 {
 	if (!CanEditSelectedTask() || (GetSelectedCount() != 1))
+		return FALSE;
+
+	// Prevent empty task titles
+	if (sTitle.IsEmpty())
 		return FALSE;
 
 	Flush();
@@ -11467,10 +11474,14 @@ BOOL CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 
 	BOOL bFindOnly = IsReadOnly();
 	CEnString sTitle(bFindOnly ? IDS_FINDINTASKTITLES : IDS_REPLACEINTASKTITLES);
-	CString sFind(GetSelectedTaskTitle());
+
+	// There may be multiple tasks selected so initialise with the first
+	DWORD dwSelTaskID = GetSelectedTaskID();
+	CString sFind(m_data.GetTaskTitle(dwSelTaskID));
 	
 	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sFind));
-
+	VERIFY(SelectTask(sFind, TDC_SELECTNEXTINCLCURRENT, TDCA_TASKNAME, m_findState.bCaseSensitive, m_findState.bWholeWord));
+	
 	AdjustFindReplaceDialogPosition(TRUE);
 
 	return TRUE;
@@ -11522,6 +11533,22 @@ void CToDoCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bW
 	AdjustFindReplaceDialogPosition(FALSE);
 }
 
+BOOL CToDoCtrl::ReplaceSelectedTaskTitle(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord)
+{
+	CString sSelTitle = GetSelectedTaskTitle();
+
+	if (Misc::Replace(sFind, sReplace, sSelTitle, bCase, bWord))
+	{
+		Misc::Trim(sSelTitle);
+
+		if (SetSelectedTaskTitle(sSelTitle))
+			return TRUE;
+	}
+
+	MessageBeep(MB_ICONHAND);
+	return FALSE;
+}
+
 void CToDoCtrl::OnReplaceSel(const CString& sFind, const CString& sReplace, 
 							BOOL bNext, BOOL bCase, BOOL bWord)
 {
@@ -11532,12 +11559,8 @@ void CToDoCtrl::OnReplaceSel(const CString& sFind, const CString& sReplace,
 	// Update state information for next time
 	m_findState.UpdateState(sFind, sReplace, bCase, bWord, bNext);
 
-	CString sSelTitle = GetSelectedTaskTitle();
-
-	if (Misc::Replace(sFind, sReplace, sSelTitle, bCase, bWord))
-		VERIFY(SetSelectedTaskTitle(sSelTitle));
-
-	OnFindNext(sFind, bNext, bCase, bWord);
+	if (ReplaceSelectedTaskTitle(sFind, sReplace, bCase, bWord))
+		OnFindNext(sFind, bNext, bCase, bWord);
 }
 
 void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord)
@@ -11563,10 +11586,8 @@ void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL
 	{
 		ASSERT(GetSelectedCount() == 1);
 
-		CString sSelTitle = GetSelectedTaskTitle();
-
-		if (Misc::Replace(sFind, sReplace, sSelTitle, bCase, bWord))
-			VERIFY(SetSelectedTaskTitle(sSelTitle));
+		if (!ReplaceSelectedTaskTitle(sFind, sReplace, bCase, bWord))
+			return;
 	} 
 	while (SelectTask(sFind, TDC_SELECTNEXT, TDCA_TASKNAME, bCase, bWord));
 }

@@ -761,6 +761,7 @@ protected:
 	int GetNextPercentDone(int nPercent, BOOL bUp);
 	BOOL ShowLabelEdit(const CRect& rPos);
 	BOOL UpdateCommentsFont(BOOL bResendComments);
+	BOOL ReplaceSelectedTaskTitle(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord);
 
 	// internal versions so we can tell how we've been called
 	BOOL SetSelectedTaskComments(const CString& sComments, const CBinaryData& customComments, BOOL bInternal);

@@ -66,7 +66,7 @@ public:
 	// Finds tasks only in the tree
 	int FindTasks(const SEARCHPARAMS& params, CResultArray& aResults) const;
 	HTREEITEM FindFirstTask(const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards = TRUE) const;
-	HTREEITEM FindNextTask(HTREEITEM hti, const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards = TRUE) const;
+	HTREEITEM FindNextTask(HTREEITEM htiStart, const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards = TRUE) const;
 
 protected:
 	CTreeCtrl& m_tree; 
