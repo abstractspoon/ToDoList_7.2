@@ -11261,6 +11261,10 @@ void CToDoCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 			Resize();
 		}
 	}
+	else
+	{
+		m_findState.CloseDialog();
+	}
 }
 
 LRESULT CToDoCtrl::OnTimeUnitsChange(WPARAM wParam, LPARAM /*lParam*/)
@@ -11479,7 +11483,7 @@ BOOL CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 	DWORD dwSelTaskID = GetSelectedTaskID();
 	CString sFind(m_data.GetTaskTitle(dwSelTaskID));
 	
-	VERIFY(FindReplace::Initialise(this, this, &m_findState, bFindOnly, sTitle, sFind));
+	VERIFY(m_findState.Initialise(this, this, bFindOnly, sTitle, sFind));
 	VERIFY(SelectTask(sFind, TDC_SELECTNEXTINCLCURRENT, TDCA_TASKNAME, m_findState.bCaseSensitive, m_findState.bWholeWord));
 	
 	AdjustFindReplaceDialogPosition(TRUE);
@@ -11501,12 +11505,12 @@ void CToDoCtrl::AdjustFindReplaceDialogPosition(BOOL bFirstTime)
 	else
 		GetLabelEditRect(rExclude);
 
-	FindReplace::AdjustDialogPosition(&m_findState, rExclude, !bFirstTime);
+	m_findState.AdjustDialogPosition(rExclude, !bFirstTime);
 }
 
 LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
 {
-	FindReplace::HandleCmd(this, &m_findState, wParam, lParam);
+	m_findState.HandleCmd(this, wParam, lParam);
 	return 0;
 }
 
