@@ -52,6 +52,7 @@ public:
 
 	DWORD GetSelectedTaskID() const;
 	BOOL SelectTask(DWORD dwTaskID);
+	BOOL SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select);
 	HTREEITEM GetSelectedItem() const;
 	BOOL GetSelectedTaskDates(COleDateTime& dtStart, COleDateTime& dtDue) const;
 	DWORD GetNextTask(DWORD dwTaskID, IUI_APPCOMMAND nCmd) const;
@@ -297,6 +298,8 @@ protected:
 	DWORD HitTestTask(const CPoint& point, BOOL bScreen, int& nItem) const;
 	int FindListItem(DWORD dwTaskID, const CHTIMap& mapItems) const;
 	int FindListItem(DWORD dwTaskID) const;
+	BOOL SelectTask(HTREEITEM hti, const IUISELECTTASK& select, BOOL bForwards);
+	BOOL SelectItem(HTREEITEM hti);
 
 	DWORD GetTaskID(HTREEITEM hti) const;
 	DWORD GetTaskID(int nItem) const;

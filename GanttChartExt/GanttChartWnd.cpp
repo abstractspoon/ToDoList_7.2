@@ -632,7 +632,8 @@ bool CGanttChartWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 		if (dwExtra)
 		{
 			const IUISELECTTASK* pSelect = (IUISELECTTASK*)dwExtra;
-			// TODO
+			
+			return (m_ctrlGantt.SelectTask(nCmd, *pSelect) != FALSE);
 		}
 		break;
 	}
@@ -697,7 +698,7 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_SELECTNEXTTASKINCLCURRENT:
 	case IUI_SELECTPREVTASK:
 	case IUI_SELECTLASTTASK:
-		return /*true*/false;
+		return true;
 	}
 
 	// all else

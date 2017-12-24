@@ -47,7 +47,7 @@ CKanbanWnd::CKanbanWnd(CWnd* pParent /*=NULL*/)
 	: 
 	CDialog(IDD_KANBANTREE_DIALOG, pParent), 
 	m_bReadOnly(FALSE),
-	m_bInSelectTask(FALSE),
+//	m_bInSelectTask(FALSE),
 	m_nTrackedAttrib(IUI_NONE),
 	m_ctrlKanban(),
 #pragma warning(disable:4355)
@@ -464,7 +464,7 @@ bool CKanbanWnd::SelectTask(DWORD dwTaskID)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	
-	CAutoFlag af(m_bInSelectTask, TRUE);
+//	CAutoFlag af(m_bInSelectTask, TRUE);
 
 	return (m_ctrlKanban.SelectTask(dwTaskID) != FALSE);
 }
@@ -473,7 +473,7 @@ bool CKanbanWnd::SelectTasks(const DWORD* pdwTaskIDs, int nTaskCount)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	CAutoFlag af(m_bInSelectTask, TRUE);
+//	CAutoFlag af(m_bInSelectTask, TRUE);
 	CDWordArray aTaskIDs;
 
 	if (nTaskCount)
@@ -743,8 +743,8 @@ BOOL CKanbanWnd::OnEraseBkgnd(CDC* pDC)
 
 void CKanbanWnd::SendParentSelectionUpdate()
 {
-	if (m_bInSelectTask)
-		return;
+// 	if (m_bInSelectTask)
+// 		return;
 
 	CDWordArray aSelIDs;
 	m_ctrlKanban.GetSelectedTaskIDs(aSelIDs);

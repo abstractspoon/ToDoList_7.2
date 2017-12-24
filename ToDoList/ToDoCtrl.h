@@ -546,6 +546,7 @@ protected:
 	BOOL m_bDelayLoaded;
 	BOOL m_bFirstLoadCommentsPrefs;
 	BOOL m_bDeletingTasks;
+	BOOL m_bFindReplacing;
 
 	static int s_nCommentsSize; // TDCS_SHAREDCOMMENTSHEIGHT
 

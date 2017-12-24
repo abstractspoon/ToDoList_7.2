@@ -297,6 +297,11 @@ BOOL CGanttTreeListCtrl::SelectTask(DWORD dwTaskID)
 {
 	HTREEITEM hti = FindTreeItem(m_tree, dwTaskID);
 
+	return SelectItem(hti);
+}
+
+BOOL CGanttTreeListCtrl::SelectItem(HTREEITEM hti)
+{
 	if (hti == NULL)
 		return FALSE;
 
@@ -309,6 +314,68 @@ BOOL CGanttTreeListCtrl::SelectTask(DWORD dwTaskID)
 		ExpandList();
 
 	return TRUE;
+}
+
+BOOL CGanttTreeListCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
+{
+	HTREEITEM htiStart = NULL;
+	BOOL bForwards = TRUE;
+
+	switch (nCmd)
+	{
+	case IUI_SELECTFIRSTTASK:
+		htiStart = m_tree.TCH().GetFirstItem();
+		break;
+
+	case IUI_SELECTNEXTTASK:
+		htiStart = m_tree.TCH().GetNextItem(GetSelectedItem());
+		break;
+		
+	case IUI_SELECTNEXTTASKINCLCURRENT:
+		htiStart = GetSelectedItem();
+		break;
+
+	case IUI_SELECTPREVTASK:
+		htiStart = m_tree.TCH().GetPrevItem(GetSelectedItem());
+
+		if (htiStart == NULL) // we were on the first task
+			htiStart = m_tree.TCH().GetLastItem();
+		
+		bForwards = FALSE;
+		break;
+
+	case IUI_SELECTLASTTASK:
+		htiStart = m_tree.TCH().GetLastItem();
+		bForwards = FALSE;
+		break;
+
+	default:
+		return FALSE;
+	}
+
+	return SelectTask(htiStart, select, bForwards);
+}
+
+BOOL CGanttTreeListCtrl::SelectTask(HTREEITEM hti, const IUISELECTTASK& select, BOOL bForwards)
+{
+	if (!hti)
+		return FALSE;
+
+	CString sTitle = m_tree.GetItemText(hti);
+
+	if (Misc::Find(select.szWords, sTitle, select.bCaseSensitive, select.bWholeWord) != -1)
+	{
+		if (SelectItem(hti))
+			return TRUE;
+
+		ASSERT(0);
+	}
+
+	if (bForwards)
+		return SelectTask(m_tree.TCH().GetNextItem(hti), select, TRUE);
+
+	// else
+	return SelectTask(m_tree.TCH().GetPrevItem(hti), select, FALSE);
 }
 
 void CGanttTreeListCtrl::RecalcParentDates()

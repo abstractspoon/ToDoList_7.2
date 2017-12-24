@@ -326,23 +326,27 @@ BOOL CKanbanCtrl::SelectTasks(const CDWordArray& aTaskIDs)
 
 BOOL CKanbanCtrl::SelectTask(DWORD dwTaskID)
 {
+	// Check for 'no change'
+	CDWordArray aSelTaskIDs;
+	GetSelectedTaskIDs(aSelTaskIDs);
+
+	if ((aSelTaskIDs.GetSize() == 1) && (aSelTaskIDs[0] == dwTaskID))
+		return TRUE;
+	
 	int nItem = -1;
 	CKanbanListCtrl* pList = LocateTask(dwTaskID, nItem, TRUE);
 
 	if (pList && (nItem != -1))
 	{
-		CDWordArray aItemIDs;
-		aItemIDs.Add(dwTaskID);
-
 		m_pSelectedList = pList;
-		FixupFocus();
+		pList->SelectItem(nItem, TRUE);
 
-		pList->SelectTasks(aItemIDs);
+		FixupFocus();
 
 		ScrollToSelectedTask();
 		ClearOtherListSelections(pList);
 	}
-	
+
 	return (pList != NULL);
 }
 
@@ -350,7 +354,7 @@ BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
 {
 	CKanbanListCtrl* pList = NULL;
 	int nStartItem = -1;
-	BOOL bNext = TRUE;
+	BOOL bForwards = TRUE;
 
 	switch (nCmd)
 	{
@@ -372,13 +376,13 @@ BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
 	case IUI_SELECTPREVTASK:
 		pList = m_pSelectedList;
 		nStartItem = (pList->GetFirstSelectedItem() - 1);
-		bNext = FALSE;
+		bForwards = FALSE;
 		break;
 
 	case IUI_SELECTLASTTASK:
 		pList = m_aListCtrls.GetLastNonEmpty();
 		nStartItem = (pList->GetItemCount() - 1);
-		bNext = FALSE;
+		bForwards = FALSE;
 		break;
 
 	default:
@@ -391,26 +395,24 @@ BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
 		const CKanbanListCtrl* pStartList = pList;
 		int nItem = nStartItem;
 		
-		if (bNext)
+		if (bForwards)
 			nItem = max(0, nItem);
 		else
 			nItem = min(nItem, (pList->GetItemCount() - 1));
 
 		do
 		{
-			nItem = pList->FindTask(select, bNext, nItem);
+			nItem = pList->FindTask(select, bForwards, nItem);
 
 			if (nItem != -1)
 			{
 				SelectListCtrl(pList, FALSE);
-				pList->ClearSelection();
-
-				return pList->SelectTask(pList->GetTaskID(nItem));
+				return pList->SelectItem(nItem, FALSE);
 			}
 
 			// else
-			pList = GetNextListCtrl(pList, bNext, TRUE);
-			nItem = (bNext ? 0 : (pList->GetItemCount() - 1));
+			pList = GetNextListCtrl(pList, bForwards, TRUE);
+			nItem = (bForwards ? 0 : (pList->GetItemCount() - 1));
 		}
 		while (pList != pStartList);
 	}
@@ -2504,8 +2506,11 @@ void CKanbanCtrl::OnListSetFocus(NMHDR* pNMHDR, LRESULT* pResult)
 
 BOOL CKanbanCtrl::SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent)
 {
-	if (pList && (pList != m_pSelectedList))
+	if (pList)
 	{
+		if (pList == m_pSelectedList)
+			return TRUE;
+
 		CKanbanListCtrl* pPrevSelList = m_pSelectedList;
 		m_pSelectedList = pList;
 
@@ -2521,7 +2526,7 @@ BOOL CKanbanCtrl::SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent)
 				int nFirstVis = m_pSelectedList->GetTopIndex();
 				ASSERT(nFirstVis != -1);
 				
-				m_pSelectedList->SelectTask(m_pSelectedList->GetTaskID(nFirstVis));
+				m_pSelectedList->SelectItem(nFirstVis, FALSE);
 				m_pSelectedList->Invalidate(TRUE);
 			}
 			else

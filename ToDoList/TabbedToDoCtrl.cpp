@@ -3452,7 +3452,7 @@ void CTabbedToDoCtrl::ResortSelectedTaskParents()
 
 BOOL CTabbedToDoCtrl::ModNeedsResort(TDC_ATTRIBUTE nModType) const
 {
-	if (!HasStyle(TDCS_RESORTONMODIFY))
+	if (!HasStyle(TDCS_RESORTONMODIFY) || m_bFindReplacing)
 		return FALSE;
 
 	VIEWDATA* pLVData = GetViewData(FTCV_TASKLIST);
@@ -4889,30 +4889,35 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 
 	case FTCV_TASKLIST:
 		{
-			int nFind = -1, nSelItem = m_taskList.GetSelectedItem();
+			int nStart = -1;
+			BOOL bForwards = TRUE;
 
 			switch (nSelect)
 			{
 			case TDC_SELECTFIRST:
-				nFind = FindListTask(sPart, nAttrib, 0, TRUE, bCaseSensitive, bWholeWord);
+				nStart = 0;
 				break;
 			
 			case TDC_SELECTNEXT:
-				nFind = FindListTask(sPart, nAttrib, (nSelItem + 1), TRUE, bCaseSensitive, bWholeWord);
+				nStart = (m_taskList.GetSelectedItem() + 1);
 				break;
 			
 			case TDC_SELECTNEXTINCLCURRENT:
-				nFind = FindListTask(sPart, nAttrib, nSelItem, TRUE, bCaseSensitive, bWholeWord);
+				nStart = m_taskList.GetSelectedItem();
 				break;
 			
 			case TDC_SELECTPREV:
-				nFind = FindListTask(sPart, nAttrib, (nSelItem - 1), FALSE, bCaseSensitive, bWholeWord);
+				nStart = (m_taskList.GetSelectedItem() - 1);
+				bForwards = FALSE;
 				break;
 			
 			case TDC_SELECTLAST:
-				nFind = FindListTask(sPart, nAttrib, m_taskList.GetItemCount() - 1, FALSE, bCaseSensitive, bWholeWord);
+				nStart = (m_taskList.GetItemCount() - 1);
+				bForwards = FALSE;
 				break;
 			}
+
+			int nFind = FindListTask(sPart, nAttrib, nStart, bForwards, bCaseSensitive, bWholeWord);
 
 			if (nFind != -1)
 				return SelectTask(GetTaskID(nFind));

@@ -65,7 +65,8 @@ public:
 
 	int GetSelectedTasks(CDWordArray& aTaskIDs) const;
 	BOOL SelectTasks(const CDWordArray& aTaskIDs);
-	BOOL SelectTask(DWORD dwTaskID);
+	BOOL SelectTask(DWORD dwTaskID, BOOL bAppend = FALSE);
+	BOOL SelectItem(int nItem, BOOL bFocus, BOOL bAppend = FALSE);
 	BOOL IsSelectingTask() const { return (m_dwSelectingTask != 0); }
 	void ScrollToSelection();
 	BOOL GetLabelEditRect(LPRECT pEdit);
@@ -162,7 +163,6 @@ protected:
 	BOOL GetItemLabelTextRect(int nItem, CRect& rItem, BOOL bEdit = FALSE) const;
 	BOOL InitTooltip();
 	BOOL GetItemTooltipRect(int nItem, CRect& rItem) const;
-	BOOL SelectItem(int nItem, BOOL bFocus = FALSE);
 
 	BOOL DrawItemCheckbox(CDC* pDC, const KANBANITEM* pKI, CRect& rItem);
 	BOOL DrawItemIcons(CDC* pDC, const KANBANITEM* pKI, const CRect& rItem) const;
