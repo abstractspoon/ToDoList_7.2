@@ -58,7 +58,7 @@ BOOL FIND_STATE::Initialise(CWnd* pParent,
 		}
 
 		// else
-		CloseDialog();
+		DestroyDialog();
 	}
 
 	CString strFind(szFind);
@@ -81,7 +81,7 @@ BOOL FIND_STATE::Initialise(CWnd* pParent,
 	if (bWholeWord)
 		dwFlags |= FR_WHOLEWORD;
 
-	if (!pFindReplaceDlg->Create(bFindOnly, strFind, strReplace, dwFlags, pParent))
+	if (!pFindReplaceDlg->Create(bFind, strFind, strReplace, dwFlags, pParent))
 	{
 		delete pFindReplaceDlg;
 		pFindReplaceDlg = NULL;
@@ -93,14 +93,15 @@ BOOL FIND_STATE::Initialise(CWnd* pParent,
 	if (szTitle && *szTitle)
 		pFindReplaceDlg->SetWindowText(szTitle);
 
-	bFindOnly = bFindOnly;
+	bFindOnly = bFind;
+
 	pFindReplaceDlg->SetActiveWindow();
 	pFindReplaceDlg->ShowWindow(SW_SHOW);
 
 	return TRUE;
 }
 
-void FIND_STATE::CloseDialog()
+void FIND_STATE::DestroyDialog()
 {
 	if (pFindReplaceDlg)
 	{

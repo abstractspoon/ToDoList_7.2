@@ -43,7 +43,7 @@ struct FIND_STATE
 	void UpdateState(const CString& sFind, const CString& sReplace, BOOL bNext, BOOL bCase, BOOL bWord);
 
 	BOOL Initialise(CWnd* pParent, IFindReplaceCmdHandler* pCmdHandler, BOOL bFindOnly, LPCTSTR szTitle, LPCTSTR szFind = NULL);
-	void CloseDialog();
+	void DestroyDialog();
 
 	void AdjustDialogPosition(const CPoint& ptScreen, BOOL bUpDown = TRUE);
 	void AdjustDialogPosition(const CRect& rScreen, BOOL bUpDown = TRUE);

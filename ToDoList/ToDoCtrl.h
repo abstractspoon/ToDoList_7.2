@@ -840,6 +840,8 @@ protected:
 	void LoadSplitPos(const CPreferences& prefs);
 	void SaveDefaultRecurrence(CPreferences& prefs) const;
 	void LoadDefaultRecurrence(const CPreferences& prefs);
+	void SaveFindReplace(CPreferences& prefs) const;
+	void LoadFindReplace(const CPreferences& prefs);
 
 	void ToggleTimeTracking(HTREEITEM hti);
 	BOOL AddTimeToTaskLogFile(DWORD dwTaskID, double dHours, const COleDateTime& dtWhen, const CString& sComment, BOOL bTracked);

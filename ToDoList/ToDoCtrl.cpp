@@ -264,9 +264,6 @@ CToDoCtrl::CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, con
 	// misc
 	m_cpColour.SetSelectionMode(CP_MODE_TEXT);
 	m_data.SetDefaultCommentsFormat(m_cfDefault);
-
-	m_findState.bCaseSensitive = TRUE;
-	m_findState.bWholeWord = TRUE;
 }
 
 CToDoCtrl::~CToDoCtrl()
@@ -6462,6 +6459,7 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 		SaveTasksState(prefs);
 		SaveSplitPos(prefs);
 		SaveAttributeVisibility(prefs);
+		SaveFindReplace(prefs);
 
 		///////////////////////////////////////////////////////////////////
 		FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Save state)"));
@@ -6498,6 +6496,7 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 	LoadSplitPos(prefs);
 	LoadDefaultRecurrence(prefs);
 	LoadAttributeVisibility(tasks, prefs);
+	LoadFindReplace(prefs);
 
 	if (tasks.IsPasswordPromptingDisabled())
 		SetStyle(TDCS_DISABLEPASSWORDPROMPTING);
@@ -6956,6 +6955,9 @@ void CToDoCtrl::OnDestroy()
 		SaveSplitPos(prefs);
 		SaveAttributeVisibility(prefs);
 		SaveDefaultRecurrence(prefs);
+		SaveFindReplace(prefs);
+
+		m_findState.DestroyDialog();
 	}
 	
 	// clean up custom controls
@@ -10618,6 +10620,22 @@ void CToDoCtrl::LoadSplitPos(const CPreferences& prefs)
 		m_nCommentsSize = s_nCommentsSize;
 }
 
+void CToDoCtrl::SaveFindReplace(CPreferences& prefs) const
+{
+	CString sKey = GetPreferencesKey(_T("FindReplace"));
+
+	prefs.WriteProfileInt(sKey, _T("CaseSensitive"), m_findState.bCaseSensitive);
+	prefs.WriteProfileInt(sKey, _T("MatchWholeWord"), m_findState.bWholeWord);
+}
+
+void CToDoCtrl::LoadFindReplace(const CPreferences& prefs)
+{
+	CString sKey = GetPreferencesKey(_T("FindReplace"));
+
+	m_findState.bCaseSensitive = prefs.GetProfileInt(sKey, _T("CaseSensitive"), TRUE);
+	m_findState.bWholeWord = prefs.GetProfileInt(sKey, _T("MatchWholeWord"), TRUE);
+}
+
 void CToDoCtrl::SaveAttributeVisibility(CTaskFile& tasks) const
 {
 	if (HasStyle(TDCS_SAVEUIVISINTASKLIST))
@@ -11263,7 +11281,7 @@ void CToDoCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 	}
 	else
 	{
-		m_findState.CloseDialog();
+		m_findState.DestroyDialog();
 	}
 }
 
@@ -11487,7 +11505,6 @@ BOOL CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 	VERIFY(SelectTask(sFind, TDC_SELECTNEXTINCLCURRENT, TDCA_TASKNAME, m_findState.bCaseSensitive, m_findState.bWholeWord));
 	
 	AdjustFindReplaceDialogPosition(TRUE);
-
 	return TRUE;
 }
 
@@ -11517,7 +11534,7 @@ LRESULT CToDoCtrl::OnFindReplaceMsg(WPARAM wParam, LPARAM lParam)
 void CToDoCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)
 {
 	// Update state information for next time
-	m_findState.UpdateState(sFind, bCase, bWord, bNext);
+	m_findState.UpdateState(sFind, bNext, bCase, bWord);
 
 	TDC_SELECTTASK nSelectWhat = (bNext ? TDC_SELECTNEXT : TDC_SELECTPREV);
 
@@ -11561,7 +11578,7 @@ void CToDoCtrl::OnReplaceSel(const CString& sFind, const CString& sReplace,
 	CAutoFlag af(m_bFindReplacing, TRUE);
 
 	// Update state information for next time
-	m_findState.UpdateState(sFind, sReplace, bCase, bWord, bNext);
+	m_findState.UpdateState(sFind, sReplace, bNext, bCase, bWord);
 
 	if (ReplaceSelectedTaskTitle(sFind, sReplace, bCase, bWord))
 		OnFindNext(sFind, bNext, bCase, bWord);
@@ -11574,7 +11591,7 @@ void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL
 	CAutoFlag af(m_bFindReplacing, TRUE);
 
 	// Update state information for next time
-	m_findState.UpdateState(sFind, sReplace, bCase, bWord, TRUE);
+	m_findState.UpdateState(sFind, sReplace, TRUE, bCase, bWord);
 
 	// Treat as a single edit
 	IMPLEMENT_UNDO_EDIT(m_data);

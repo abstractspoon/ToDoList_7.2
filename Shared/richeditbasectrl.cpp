@@ -155,7 +155,7 @@ LRESULT CRichEditBaseCtrl::OnEditSetSelection(WPARAM /*wParam*/, LPARAM /*lParam
 void CRichEditBaseCtrl::OnDestroy()
 {
 	// destroy the find dialog. it will delete itself
-	m_findState.CloseDialog();
+	m_findState.DestroyDialog();
 
 	CRichEditCtrl::OnDestroy();
 }
