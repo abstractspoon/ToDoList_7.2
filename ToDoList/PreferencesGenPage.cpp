@@ -93,7 +93,7 @@ void CPreferencesGenPage::DoDataExchange(CDataExchange* pDX)
 		if (m_bSpecifyGlobalHotkey)
 			m_hkGlobal.SetHotKey(m_dwGlobalHotkey);
 
-		if (!CDialogHelper::SelectItemByValue(m_cbNoEditTime, m_nMinimizeNoEditTime))
+		if (CB_ERR == SelectItemByValue(m_cbNoEditTime, m_nMinimizeNoEditTime))
 		{
 			m_nMinimizeNoEditTime = 10;
 			CDialogHelper::SelectItemByValue(m_cbNoEditTime, m_nMinimizeNoEditTime);

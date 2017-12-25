@@ -117,13 +117,13 @@ void CPreferencesUITasklistColorsPage::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		if (!CDialogHelper::SelectItemByValue(m_cbTreeFontSize, m_nTreeFontSize))
+		if (CB_ERR == SelectItemByValue(m_cbTreeFontSize, m_nTreeFontSize))
 		{
 			m_nTreeFontSize = 9;
 			CDialogHelper::SelectItemByValue(m_cbTreeFontSize, m_nTreeFontSize);
 		}
 
-		if (!CDialogHelper::SelectItemByValue(m_cbCommentsFontSize, m_nCommentsFontSize))
+		if (CB_ERR == SelectItemByValue(m_cbCommentsFontSize, m_nCommentsFontSize))
 		{
 			m_nCommentsFontSize = 9;
 			CDialogHelper::SelectItemByValue(m_cbCommentsFontSize, m_nCommentsFontSize);

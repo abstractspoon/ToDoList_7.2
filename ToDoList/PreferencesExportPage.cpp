@@ -67,7 +67,7 @@ void CPreferencesExportPage::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		if (!CDialogHelper::SelectItemByValue(m_cbFontSize, m_nHtmlFontSize))
+		if (CB_ERR == SelectItemByValue(m_cbFontSize, m_nHtmlFontSize))
 		{
 			m_nHtmlFontSize = 3;
 			CDialogHelper::SelectItemByValue(m_cbFontSize, m_nHtmlFontSize);

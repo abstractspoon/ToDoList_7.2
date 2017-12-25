@@ -57,13 +57,13 @@ void CPreferencesMultiUserPage::DoDataExchange(CDataExchange* pDX)
 	}
 	else
 	{
-		if (!CDialogHelper::SelectItemByValue(m_cbRemoteFileCheck, m_nRemoteFileCheckFreq))
+		if (CB_ERR == SelectItemByValue(m_cbRemoteFileCheck, m_nRemoteFileCheckFreq))
 		{
 			m_nRemoteFileCheckFreq = 30;
 			CDialogHelper::SelectItemByValue(m_cbRemoteFileCheck, m_nRemoteFileCheckFreq);
 		}
 
-		if (!CDialogHelper::SelectItemByValue(m_cbNoEditTime, m_nCheckinNoEditTime))
+		if (CB_ERR == SelectItemByValue(m_cbNoEditTime, m_nCheckinNoEditTime))
 		{
 			m_nCheckinNoEditTime = 10;
 			CDialogHelper::SelectItemByValue(m_cbNoEditTime, m_nCheckinNoEditTime);

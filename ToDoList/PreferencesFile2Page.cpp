@@ -96,7 +96,7 @@ void CPreferencesFile2Page::DoDataExchange(CDataExchange* pDX)
 		m_nOtherExporter = (int)CDialogHelper::GetSelectedItemData(m_cbOtherExporters);
 		m_nKeepBackups = CDialogHelper::GetSelectedItemAsValue(m_cbKeepBackups);
 	}
-	else if (!CDialogHelper::SelectItemByValue(m_cbKeepBackups, m_nKeepBackups))
+	else if (CB_ERR == SelectItemByValue(m_cbKeepBackups, m_nKeepBackups))
 	{
 		CDialogHelper::SelectItemByData(m_cbOtherExporters, m_nOtherExporter);
 
