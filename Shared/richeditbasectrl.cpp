@@ -25,16 +25,6 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef TEXTRANGE
-#	ifdef _UNICODE
-#		define TEXTRANGE	TEXTRANGEW
-#	else
-#		define TEXTRANGE	TEXTRANGEA
-#	endif
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-
 const CRect DEFMARGINS					= CRect(8, 4, 8, 0);
 
 const LPCSTR  DEFAULTRTF				= "{\\rtf1\\ansi\\deff0\\f0\\fs60}";
