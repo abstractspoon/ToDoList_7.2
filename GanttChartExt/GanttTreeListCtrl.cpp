@@ -5169,8 +5169,9 @@ BOOL CGanttTreeListCtrl::RecalcTreeColumns(BOOL bResize)
 	// Only need recalc non-fixed column widths
 	BOOL bTitle = !m_treeHeader.IsItemTracked(GTLCC_TITLE);
 	BOOL bAllocTo = !m_treeHeader.IsItemTracked(GTLCC_ALLOCTO);
+	BOOL bTaskID = !m_treeHeader.IsItemTracked(GTLCC_TASKID);
 
-	if (bTitle || bAllocTo)
+	if (bTitle || bAllocTo || bTaskID)
 	{
 		CClientDC dc(&m_tree);
 
@@ -5179,6 +5180,9 @@ BOOL CGanttTreeListCtrl::RecalcTreeColumns(BOOL bResize)
 			
 		if (bAllocTo)
 			RecalcTreeColumnWidth(GTLCC_ALLOCTO, &dc);
+		
+		if (bTaskID)
+			RecalcTreeColumnWidth(GTLCC_TASKID, &dc);
 		
 		if (bResize)
 			Resize();
