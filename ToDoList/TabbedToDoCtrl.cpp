@@ -4877,7 +4877,7 @@ BOOL CTabbedToDoCtrl::CanDoFindReplace(TDC_ATTRIBUTE nAttrib) const
 }
 
 BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
-									BOOL bCaseSensitive, BOOL bWholeWord)
+									BOOL bCaseSensitive, BOOL bWholeWord, BOOL bFindReplace)
 {
 	FTC_VIEW nView = GetTaskView();
 
@@ -4885,7 +4885,7 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 	{
 	case FTCV_TASKTREE:
 	case FTCV_UNSET:
-		return CToDoCtrl::SelectTask(sPart, nSelect, nAttrib, bCaseSensitive, bWholeWord);
+		return CToDoCtrl::SelectTask(sPart, nSelect, nAttrib, bCaseSensitive, bWholeWord, bFindReplace);
 
 	case FTCV_TASKLIST:
 		{
@@ -4951,6 +4951,7 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 			{
 				IUISELECTTASK select;
 
+				select.bFindReplace = (bFindReplace != FALSE);
 				select.nAttrib = IUI_TASKNAME;//TDC::MapAttributeToIUIAttribute(nAttrib);
 				select.szWords = sPart;
 				select.bCaseSensitive = (bCaseSensitive != FALSE);
@@ -4958,9 +4959,6 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 
 				return (pExtWnd->DoAppCommand(nCmdID, (DWORD)&select) ? TRUE : FALSE);
 			}
-
-			// fallback
-			return CToDoCtrl::SelectTask(sPart, nSelect, nAttrib, bCaseSensitive, bWholeWord);
 		}
 		break;
 

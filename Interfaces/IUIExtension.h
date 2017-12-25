@@ -272,6 +272,7 @@ struct IUIMULTISORT
 struct IUISELECTTASK
 {
 	IUI_ATTRIBUTE nAttrib; // IUI_TASKNAME, IUI_TASKNAMEORCOMMENTS or IUI_ANYTEXTATTRIBUTE
+	bool bFindReplace;
 
 	LPCWSTR szWords;	
 	bool bCaseSensitive;

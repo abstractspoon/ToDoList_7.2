@@ -740,7 +740,7 @@ protected:
 
 	virtual BOOL SelectTask(DWORD dwTaskID, BOOL bTrue);
 	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);
-	virtual BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord);
+	virtual BOOL SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, BOOL bCaseSensitive, BOOL bWholeWord, BOOL bFindReplace);
 
 	// IFindReplace
 	virtual void OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord);

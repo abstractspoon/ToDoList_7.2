@@ -10970,12 +10970,12 @@ BOOL CToDoCtrl::HasLockedTasks() const
 // External
 BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect)
 {
-	return SelectTask(sPart, nSelect, TDCA_ANYTEXTATTRIBUTE, FALSE, FALSE);
+	return SelectTask(sPart, nSelect, TDCA_ANYTEXTATTRIBUTE, FALSE, FALSE, FALSE);
 }
 
 // Internal
 BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
-							BOOL bCaseSensitive, BOOL bWholeWord)
+							BOOL bCaseSensitive, BOOL bWholeWord, BOOL /*bFindReplace*/)
 {
 	SEARCHPARAMS params;
 	SEARCHPARAM rule(nAttrib, FOP_INCLUDES, sPart);
@@ -11502,7 +11502,7 @@ BOOL CToDoCtrl::DoFindReplace(TDC_ATTRIBUTE nAttrib)
 	CString sFind(m_data.GetTaskTitle(dwSelTaskID));
 	
 	VERIFY(m_findState.Initialise(this, this, bFindOnly, sTitle, sFind));
-	VERIFY(SelectTask(sFind, TDC_SELECTNEXTINCLCURRENT, TDCA_TASKNAME, m_findState.bCaseSensitive, m_findState.bWholeWord));
+	VERIFY(SelectTask(sFind, TDC_SELECTNEXTINCLCURRENT, TDCA_TASKNAME, m_findState.bCaseSensitive, m_findState.bWholeWord, TRUE));
 	
 	AdjustFindReplaceDialogPosition(TRUE);
 	return TRUE;
@@ -11538,12 +11538,12 @@ void CToDoCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bW
 
 	TDC_SELECTTASK nSelectWhat = (bNext ? TDC_SELECTNEXT : TDC_SELECTPREV);
 
-	if (!SelectTask(sFind, nSelectWhat, TDCA_TASKNAME, bCase, bWord))
+	if (!SelectTask(sFind, nSelectWhat, TDCA_TASKNAME, bCase, bWord, TRUE))
 	{
 		// Try again from start/end
 		TDC_SELECTTASK nSelectWhat = (bNext ? TDC_SELECTFIRST : TDC_SELECTLAST);
 
-		if (!SelectTask(sFind, nSelectWhat, TDCA_TASKNAME, bCase, bWord))
+		if (!SelectTask(sFind, nSelectWhat, TDCA_TASKNAME, bCase, bWord, TRUE))
 		{
 			MessageBeep(MB_ICONHAND);
 			return;
@@ -11597,7 +11597,7 @@ void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL
 	IMPLEMENT_UNDO_EDIT(m_data);
 
 	// Start at the beginning
-	if (!SelectTask(sFind, TDC_SELECTFIRST, TDCA_TASKNAME, bCase, bWord))
+	if (!SelectTask(sFind, TDC_SELECTFIRST, TDCA_TASKNAME, bCase, bWord, TRUE))
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -11610,7 +11610,7 @@ void CToDoCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL
 		if (!ReplaceSelectedTaskTitle(sFind, sReplace, bCase, bWord))
 			return;
 	} 
-	while (SelectTask(sFind, TDC_SELECTNEXT, TDCA_TASKNAME, bCase, bWord));
+	while (SelectTask(sFind, TDC_SELECTNEXT, TDCA_TASKNAME, bCase, bWord, TRUE));
 }
 
 int CToDoCtrl::GetSelectedTaskCustomAttributeData(CTDCCustomAttributeDataMap& mapData, BOOL bFormatted) const
