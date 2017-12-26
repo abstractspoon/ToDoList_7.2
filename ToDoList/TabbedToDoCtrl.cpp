@@ -5573,7 +5573,7 @@ BOOL CTabbedToDoCtrl::IsExtensionView(HWND hWnd) const
 	{
 		const IUIExtensionWindow* pExtWnd = m_aExtViews[nView];
 
-		if ((pExtWnd != NULL) && (pExtWnd->GetHwnd() == hWnd))
+		if ((pExtWnd != NULL) && (CDialogHelper::IsChildOrSame(pExtWnd->GetHwnd(), hWnd)))
 			return TRUE;
 	}
 
