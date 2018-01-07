@@ -4271,6 +4271,7 @@ BEGIN
     IDS_PRINTFAILED         "ToDoList was unable to print the active tasklist via your default  browser, which may mean that your browser does not support the 'print' command.\n\nPlease see your browser help for more information."
     IDS_SAVEBEFORECLOSE     "Would you like to save the changes to '%s' \nbefore closing?"
     IDS_TABSWITCHTOOLTIP    "Use '%s' to switch tasklists"
+    IDS_PREF_TASKVIEWVISIBILITY "User Interface>General>Task View Visibility"
     IDS_READONLYTOWRITABLE  "The status of the file '%s' has changed \nfrom 'read-only' to 'writable'."
     IDS_WRITABLETOREADONLY  "The status of the file '%s' has changed \nfrom 'writable' to 'read-only'."
     IDS_TASKLISTSRELOADED   "The following tasklists have been reloaded:\n\n%s"
