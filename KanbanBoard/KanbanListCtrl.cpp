@@ -2054,6 +2054,8 @@ void CKanbanListCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 BOOL CKanbanListCtrl::HandleLButtonClick(CPoint point)
 {
+	m_tooltip.Pop();
+
 	m_dwSelectingTask = 0;
 
 	// don't let the selection to be set to -1
