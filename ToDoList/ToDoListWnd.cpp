@@ -200,8 +200,8 @@ CToDoListWnd::CToDoListWnd()
 	CFilteredToDoCtrl::EnableExtendedSelection(FALSE, TRUE);
 
 	m_bAutoMenuEnable = FALSE;
-
 	m_cbQuickFind.SetMinDLUHeight(8);
+	m_nFlags |= WF_STAYACTIVE;
 }
 
 CToDoListWnd::~CToDoListWnd()
@@ -3685,7 +3685,7 @@ BOOL CToDoListWnd::Export2Html(const CTaskFile& tasks, const CString& sFilePath,
 	}
 	
 	// else default export
-	return m_mgrImportExport.ExportTaskListToHtml(&tasks, sFilePath);
+	return (m_mgrImportExport.ExportTaskListToHtml(&tasks, sFilePath) == IIER_SUCCESS);
 }
 
 void CToDoListWnd::OnSaveas() 
