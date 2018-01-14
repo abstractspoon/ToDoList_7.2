@@ -3846,7 +3846,9 @@ void CToDoListWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 	}
 	else
+	{
 		CFrameWnd::OnContextMenu(pWnd, point);
+	}
 }
 
 void CToDoListWnd::OnTrayiconShow() 

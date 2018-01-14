@@ -4924,16 +4924,24 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 	if (IsReadOnly())
 		return FALSE;
 
-	// can't handle multiple selection
-	if (GetSelectedCount() > 1)
-		return FALSE;
+	int nNumSel = GetSelectedCount();
 
 	HTREEITEM htiParent = NULL, htiAfter = NULL;
-	VERIFY (m_taskTree.GetInsertLocation(nInsertWhere, htiParent, htiAfter));
 
-	// inserting at root is always okay
-	if (htiParent == TVI_ROOT || htiParent == NULL)
-		return TRUE;
+	switch (nNumSel)
+	{
+	case 1:
+		VERIFY (m_taskTree.GetInsertLocation(nInsertWhere, htiParent, htiAfter));
+		break;
+
+	case 0:
+		// parent and sibling are NULL
+		break; 
+
+	default:
+		// can't handle multiple selection
+		return FALSE;
+	}
 
 	switch (nInsertWhere)
 	{
@@ -4941,14 +4949,21 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 	case TDC_INSERTATBOTTOM:
 		return TRUE;
 
-	// parent cannot be reference
+	// parent cannot be reference or NULL
 	case TDC_INSERTATTOPOFSELTASKPARENT:
 	case TDC_INSERTATBOTTOMOFSELTASKPARENT:
 	case TDC_INSERTAFTERSELTASK:
 	case TDC_INSERTBEFORESELTASK:
 	case TDC_INSERTATTOPOFSELTASK: 
 	case TDC_INSERTATBOTTOMOFSELTASK:
-		return (!m_data.IsTaskReference(GetTaskID(htiParent)));
+		{
+			if (htiParent == NULL)
+				return FALSE;
+		
+			// else
+			return (!m_data.IsTaskReference(GetTaskID(htiParent)));
+		}
+		break;
 	}
 
 	ASSERT(0);
