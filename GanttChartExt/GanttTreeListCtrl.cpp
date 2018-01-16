@@ -2583,6 +2583,10 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				// notify parent
 				GetCWnd()->SendMessage(WM_GTLC_NOTIFYZOOM, nPrevDisplay, m_nMonthDisplay);
 			}
+
+			CHoldHScroll hhs(m_tree);
+
+			return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
 		}
 		break;
 
