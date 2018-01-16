@@ -2530,14 +2530,6 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
 			}
 			break;
-
-		case WM_VSCROLL:
-			{
-				CHoldHScroll hhs(hRealWnd);
-				
-				return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
-			}
-			break;
 		}
 	}
 
@@ -2609,6 +2601,14 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 			SendMessage(WM_NOTIFY, ::GetDlgCtrlID(hRealWnd), (LPARAM)&tvkd);
 			return lr;
 		}
+		
+	case WM_VSCROLL:
+		{
+			CHoldHScroll hhs(m_tree);
+			
+			return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
+		}
+		break;
 	}
 	
 	return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
