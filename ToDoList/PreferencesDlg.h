@@ -167,6 +167,7 @@ public:
 	BOOL GetDisplayLogConfirm() const { return m_pageTask.GetDisplayLogConfirm(); }
 	int GetTrackReminderFrequency() const { return m_pageTask.GetTrackReminderFrequency(); }
 	int GetShowTimeTracker() const { return m_pageTask.GetShowTimeTracker(); }
+	CString GetTrackReminderSoundFile() const { return m_pageTask.GetTrackReminderSoundFile(); }
 
 	// CPreferencesTaskCalcPage
 	BOOL GetAveragePercentSubCompletion() const { return m_pageTaskCalc.GetAveragePercentSubCompletion(); }

@@ -70,7 +70,7 @@ protected:
 	afx_msg void OnSelchangeLeadin();
 	afx_msg void OnChangeRelative();
 	//}}AFX_MSG
-	LRESULT OnPlaySound(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnPlaySound(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	static COleDateTime GetNextNearestHour();

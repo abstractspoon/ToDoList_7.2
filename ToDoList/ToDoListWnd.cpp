@@ -81,8 +81,10 @@
 #include <windowsx.h>
 #include <direct.h>
 #include <math.h>
-
 #include <afxpriv.h>        // for WM_KICKIDLE
+
+#pragma warning(disable: 4201)
+#include <Mmsystem.h> 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -6647,6 +6649,12 @@ void CToDoListWnd::OnTimerTimeTrackReminder()
 	{
 		CEnString sMessage(IDS_TIMETRACKREMINDER, sTasksTracking);
 		m_trayIcon.ShowBalloon(sMessage, CEnString(IDS_TIMETRACKREMINDER_BALLOONTITLE), NIIF_INFO);
+
+		// And play sound
+		CString sSoundFile = Prefs().GetTrackReminderSoundFile();
+
+		if (!sSoundFile.IsEmpty())
+			PlaySound(sSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
 	}
 }
 

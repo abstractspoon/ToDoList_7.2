@@ -28,10 +28,12 @@ static char THIS_FILE[] = __FILE__;
 #pragma comment(lib, "winmm.lib")
 
 /////////////////////////////////////////////////////////////////////////////
-// CTDLSetReminderDlg dialog
 
 #define ID_PLAYSOUNDBTN 0xfff0
 #define NO_SOUND _T("None")
+
+/////////////////////////////////////////////////////////////////////////////
+// CTDLSetReminderDlg dialog
 
 CTDLSetReminderDlg::CTDLSetReminderDlg(CWnd* pParent /*=NULL*/)
 	: 
@@ -230,7 +232,7 @@ void CTDLSetReminderDlg::OnSelchangeLeadin()
 
 LRESULT CTDLSetReminderDlg::OnPlaySound(WPARAM wParam, LPARAM lParam)
 {
-	if (wParam == IDC_PLAYSOUND && lParam == ID_PLAYSOUNDBTN)
+	if ((wParam == IDC_PLAYSOUND) && (lParam == ID_PLAYSOUNDBTN))
 	{
 		UpdateData();
 

@@ -353,55 +353,41 @@ BEGIN
     LTEXT           "Continue time-tracking a task even when:",IDC_STATIC,7,
                     40,386,8
     CONTROL         "&the task is not selected",IDC_TRACKNONSELECTEDTASKS,
-                    "Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | WS_TABSTOP,
-                    18,55,375,10
-    CONTROL         "t&he tasklist containing the task is not active",
-                    IDC_TRACKNONACTIVETASKLISTS,"Button",BS_AUTOCHECKBOX | 
-                    BS_LEFT | BS_TOP | WS_TABSTOP,18,70,375,10
-    CONTROL         "a &screensaver is running or the desktop is locked",
-                    IDC_TRACKSCREENSAVER,"Button",BS_AUTOCHECKBOX | BS_TOP | 
-                    WS_TABSTOP,18,85,375,10
-    CONTROL         "the &computer is hibernated or in stand-by",
-                    IDC_TRACKHIBERNATED,"Button",BS_AUTOCHECKBOX | BS_TOP | 
-                    WS_TABSTOP,18,100,375,10
-    CONTROL         "&Tracking a new task should stop the tracking of tasks in all other open tasklists",
-                    IDC_EXCLUSIVETRACKING,"Button",BS_AUTOCHECKBOX | BS_TOP | 
-                    WS_TABSTOP,7,115,386,10
-    CONTROL         "&Log tracked time",IDC_LOGTIME,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,130,386,10
-    CONTROL         "L&og each task to a separate file",
-                    IDC_LOGTASKSEPARATELY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,18,145,375,10
-    CONTROL         "Display confirmation dialog for each period logged",
-                    IDC_DISPLAYLOGCONFIRM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,18,160,378,10
-    CONTROL         "&Allow time-tracking on parent tasks",
-                    IDC_ALLOWPARENTRACKING,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,175,386,10
-    CONTROL         "When time-tracking, remind me every:",
-                    IDC_NOTIFYTIMETRACKING,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,190,385,10
-    EDITTEXT        IDC_NOTIFYTIMETRACKINGFREQUENCY,17,202,29,13,
-                    ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "minutes",IDC_STATIC,53,203,26,8
-    LTEXT           "Time Periods",IDC_TIMEGROUP,7,222,386,8
-    LTEXT           "One &day equals:",IDC_STATIC,7,237,85,8
-    COMBOBOX        IDC_HOURSINONEDAY,97,235,39,115,CBS_DROPDOWN | 
-                    WS_TABSTOP
-    LTEXT           "hours",IDC_STATIC,143,237,59,8
-    LTEXT           "One &week equals:",IDC_STATIC,7,252,85,8
-    EDITTEXT        IDC_DAYSINONEWEEK,97,251,39,12,ES_AUTOHSCROLL | 
-                    ES_READONLY | WS_DISABLED
-    LTEXT           "days",IDC_STATIC,143,252,60,8
-    LTEXT           "Th&e following days represent the weekend:",IDC_STATIC,
-                    7,269,387,8
-    LISTBOX         IDC_WEEKENDS,7,281,225,43,LBS_OWNERDRAWFIXED | 
-                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_MULTICOLUMN | 
-                    LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
+                    "Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | WS_TABSTOP,18,55,375,10
+    CONTROL         "t&he tasklist containing the task is not active",IDC_TRACKNONACTIVETASKLISTS,
+                    "Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | WS_TABSTOP,18,70,375,10
+    CONTROL         "a &screensaver is running or the desktop is locked",IDC_TRACKSCREENSAVER,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | WS_TABSTOP,18,85,375,10
+    CONTROL         "the &computer is hibernated or in stand-by",IDC_TRACKHIBERNATED,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | WS_TABSTOP,18,100,375,10
+    CONTROL         "&Tracking a new task should stop the tracking of tasks in all other open tasklists",IDC_EXCLUSIVETRACKING,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | WS_TABSTOP,7,115,386,10
+    CONTROL         "&Log tracked time",IDC_LOGTIME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,130,386,10
+    CONTROL         "L&og each task to a separate file",IDC_LOGTASKSEPARATELY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,145,375,10
+    CONTROL         "Display confirmation dialog for each period logged",IDC_DISPLAYLOGCONFIRM,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,160,378,10
+    CONTROL         "&Allow time-tracking on parent tasks",IDC_ALLOWPARENTRACKING,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,175,386,10
+    CONTROL         "When time-tracking, remind me every:",IDC_NOTIFYTIMETRACKING,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,190,385,10
+    EDITTEXT        IDC_NOTIFYTIMETRACKINGFREQUENCY,17,202,29,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "minutes",IDC_STATIC,53,204,90,8
+    LTEXT           "&Play this sound",IDC_STATIC,17,219,221,8
+    EDITTEXT        IDC_PLAYSOUND,17,231,215,14,ES_AUTOHSCROLL
+    LTEXT           "Time Periods",IDC_TIMEGROUP,7,254,386,8
+    LTEXT           "One &day equals:",IDC_STATIC,7,269,85,8
+    COMBOBOX        IDC_HOURSINONEDAY,97,267,39,115,CBS_DROPDOWN | WS_TABSTOP
+    LTEXT           "hours",IDC_STATIC,143,269,59,8
+    LTEXT           "One &week equals:",IDC_STATIC,7,284,85,8
+    EDITTEXT        IDC_DAYSINONEWEEK,97,283,39,12,ES_AUTOHSCROLL | ES_READONLY | WS_DISABLED
+    LTEXT           "days",IDC_STATIC,143,284,60,8
+    LTEXT           "Th&e following days represent the weekend:",IDC_STATIC,7,301,387,8
+    LISTBOX         IDC_WEEKENDS,7,313,225,43,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_MULTICOLUMN | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_PREFTASKDEF_PAGE DIALOG DISCARDABLE  0, 0, 398, 432
-STYLE WS_CHILD
+IDD_PREFTASKDEF_PAGE DIALOG 0, 0, 398, 432
+STYLE DS_SETFONT | WS_CHILD
 FONT 8, "Tahoma"
 BEGIN
     LTEXT           "Default Attributes",IDC_DEFGROUP,7,10,384,8

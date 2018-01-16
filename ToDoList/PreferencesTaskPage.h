@@ -10,6 +10,7 @@
 #include "..\shared\groupline.h"
 #include "..\shared\preferencesbase.h"
 #include "..\shared\DayOfWeekchecklistbox.h"
+#include "..\shared\FileEdit.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPreferencesTaskPage dialog
@@ -37,6 +38,7 @@ public:
 	DWORD GetWeekendDays() const { return m_dwWeekends; }
 	BOOL GetDisplayLogConfirm() const { return m_bDisplayLogConfirm; }
 	int GetTrackReminderFrequency() const { return m_bTrackReminder ? m_nTrackReminderFrequency : 0; }
+	CString GetTrackReminderSoundFile() const { return m_bTrackReminder ? m_sTrackReminderSoundFile : _T(""); }
 
 //	BOOL Get() const { return m_b; }
 
@@ -63,6 +65,9 @@ protected:
 	DWORD	m_dwWeekends;
 	CDayOfWeekCheckListBox m_lbWeekends;
 
+	CFileEdit m_ePlaySound;
+	CString	m_sTrackReminderSoundFile;
+
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesTaskPage)
@@ -79,6 +84,7 @@ protected:
 	afx_msg void OnChangeWeekends();
 	afx_msg void OnNotifyTimeTracking();
 	//}}AFX_MSG
+	afx_msg LRESULT OnPlaySound(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 protected:

@@ -6,15 +6,28 @@
 #include "PreferencesTaskPage.h"
 
 #include "..\shared\Misc.h"
+#include "..\shared\FileMisc.h"
 #include "..\shared\DateHelper.h"
+#include "..\shared\EnString.h"
 
-//#include <locale.h>
+#pragma warning(disable: 4201)
+#include <Mmsystem.h> 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+
+// for PlaySound
+#pragma comment(lib, "winmm.lib")
+
+/////////////////////////////////////////////////////////////////////////////
+
+#define ID_PLAYSOUNDBTN 0xfff0
+#define NO_SOUND _T("None")
 
 /////////////////////////////////////////////////////////////////////////////
 // CPreferencesTaskPage property page
@@ -27,6 +40,11 @@ CPreferencesTaskPage::CPreferencesTaskPage() :
 	//{{AFX_DATA_INIT(CPreferencesTaskPage)
 	//}}AFX_DATA_INIT
 
+	m_sTrackReminderSoundFile = FileMisc::GetWindowsFolder() + _T("\\media\\chimes.wav"); // default
+	
+	m_ePlaySound.SetFilter(CEnString(IDS_SOUNDFILEFILTER));
+	m_ePlaySound.AddButton(ID_PLAYSOUNDBTN, 0x38, CEnString(IDS_PLAYSOUNDBTNTIP), CALC_BTNWIDTH, _T("Marlett"));
+	m_ePlaySound.SetButtonTip(FEBTN_BROWSE, CEnString(IDS_BROWSE));
 }
 
 CPreferencesTaskPage::~CPreferencesTaskPage()
@@ -52,6 +70,8 @@ void CPreferencesTaskPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_TRACKHIBERNATED, m_bTrackHibernated);
 	DDX_Check(pDX, IDC_SHOWTIMETRACKER, m_bShowTimeTracker);
 	//}}AFX_DATA_MAP
+	DDX_Text(pDX, IDC_PLAYSOUND, m_sTrackReminderSoundFile);
+	DDX_Control(pDX, IDC_PLAYSOUND, m_ePlaySound);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -72,6 +92,7 @@ BEGIN_MESSAGE_MAP(CPreferencesTaskPage, CPreferencesPageBase)
 	ON_BN_CLICKED(IDC_NOTIFYTIMETRACKING, OnNotifyTimeTracking)
 	//}}AFX_MSG_MAP
 	ON_CONTROL(CLBN_CHKCHANGE, IDC_WEEKENDS, OnChangeWeekends)
+	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnPlaySound)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,12 +107,12 @@ BOOL CPreferencesTaskPage::OnInitDialog()
 
 	GetDlgItem(IDC_LOGTASKSEPARATELY)->EnableWindow(m_bLogTime);
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
+	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
 
 	CDialogHelper::RefreshMaxColumnWidth(m_lbWeekends);
 
 	UpdateData(FALSE);
-
-
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -146,6 +167,11 @@ void CPreferencesTaskPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR s
 	m_nTrackReminderFrequency = pPrefs->GetProfileInt(szKey, _T("TrackReminderFrequency"), 5);
 	m_bShowTimeTracker = pPrefs->GetProfileInt(szKey, _T("ShowTimeTracker"), TRUE);
 
+	m_sTrackReminderSoundFile = pPrefs->GetProfileString(_T("Reminders"), _T("SoundFile"), m_sTrackReminderSoundFile);
+
+	if (m_sTrackReminderSoundFile == NO_SOUND)
+		m_sTrackReminderSoundFile.Empty();
+
 	if (m_nTrackReminderFrequency <= 0)
 		m_bTrackReminder = FALSE;
 
@@ -176,6 +202,8 @@ void CPreferencesTaskPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey) 
 	pPrefs->WriteProfileInt(szKey, _T("TrackReminderFrequency"), m_nTrackReminderFrequency);
 	pPrefs->WriteProfileInt(szKey, _T("ShowTimeTracker"), m_bShowTimeTracker);
 
+	pPrefs->WriteProfileString(_T("Reminders"), _T("SoundFile"), m_sTrackReminderSoundFile.IsEmpty() ? NO_SOUND : m_sTrackReminderSoundFile);
+
 	// validate time periods before writing
 	CString sHoursInDay;
 	sHoursInDay.Format(_T("%.2f"), GetHoursInOneDay());
@@ -187,11 +215,26 @@ void CPreferencesTaskPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey) 
 //	pPrefs->WriteProfileInt(szKey, _T(""), m_b);
 }
 
-
-
 void CPreferencesTaskPage::OnNotifyTimeTracking() 
 {
 	UpdateData();
 
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
+	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
 }
+
+LRESULT CPreferencesTaskPage::OnPlaySound(WPARAM wParam, LPARAM lParam)
+{
+	if ((wParam == IDC_PLAYSOUND) && (lParam == ID_PLAYSOUNDBTN))
+	{
+		UpdateData();
+
+		if (!m_sTrackReminderSoundFile.IsEmpty())
+			PlaySound(m_sTrackReminderSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
+
+		return TRUE;
+	}
+
+	return 0;
+}
+
