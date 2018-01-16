@@ -679,8 +679,6 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 				pLVData->bNeedFontUpdate = FALSE;
 				m_taskList.SetFont(m_taskTree.GetFont());
 			}
-			
-			ResyncListSelection();
 		}
 		break;
 
@@ -761,8 +759,6 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 				pVData->bNeedFontUpdate = FALSE;
 				pExtWnd->DoAppCommand(IUI_SETTASKFONT, (DWORD)m_taskTree.GetFont());
 			}
-				
-			ResyncExtensionSelection(nNewView);
 		}
 		break;
 	}
@@ -782,6 +778,7 @@ LRESULT CTabbedToDoCtrl::OnPostTabViewChange(WPARAM nOldView, LPARAM nNewView)
 		break;
 
 	case FTCV_TASKLIST:
+		ResyncListSelection();
 		m_taskList.EnsureSelectionVisible();
 		break;
 		
@@ -5529,7 +5526,7 @@ void CTabbedToDoCtrl::UpdateSelectedTaskPath()
 		break;
 
 	case FTCV_TASKLIST:
-		//m_taskList.UpdateSelectedTaskPath();
+		m_taskList.UpdateSelectedTaskPath();
 		break;
 
 	case FTCV_UIEXTENSION1:
