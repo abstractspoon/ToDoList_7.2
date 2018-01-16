@@ -1013,6 +1013,21 @@ void CTDLTaskCtrlBase::RecalcColumnWidths()
 	RecalcColumnWidths(TRUE); // custom
 }
 
+void CTDLTaskCtrlBase::RecalcColumnWidths(const CSet<TDC_COLUMN>& aColIDs)
+{
+	if (aColIDs.Has(TDCC_ALL))
+	{
+		RecalcColumnWidths();
+	}
+	else
+	{
+		POSITION pos = aColIDs.GetStartPosition();
+
+		while (pos)
+			RecalcColumnWidth(aColIDs.GetNext(pos));
+	}
+}
+
 void CTDLTaskCtrlBase::RecalcColumnWidths(BOOL bCustom)
 {
 	CHoldRedraw hr(m_lcColumns);
@@ -4290,7 +4305,7 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 	BOOL bRedrawCols = FALSE, bRedrawTasks = ModCausesTaskTextColorChange(nAttrib);
 	
 	TDC_COLUMN nColID = TDC::MapAttributeToColumn(nAttrib);
-	TDC_COLUMN nRecalcColID = TDCC_NONE;
+	CSet<TDC_COLUMN> aColIDs;
 	
 	switch (nAttrib)
 	{
@@ -4300,20 +4315,19 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 		break;
 		
 	case TDCA_DONEDATE:
-		AccumulateRecalcColumn(TDCC_DONEDATE, nRecalcColID);
-		AccumulateRecalcColumn(TDCC_DUEDATE, nRecalcColID);
-		AccumulateRecalcColumn(TDCC_DONE, nRecalcColID);
+		AccumulateRecalcColumn(TDCC_DONEDATE, aColIDs);
+		AccumulateRecalcColumn(TDCC_DUEDATE, aColIDs);
+		AccumulateRecalcColumn(TDCC_DONE, aColIDs);
 		
 		if (HasStyle(TDCS_USEPERCENTDONEINTIMEEST))
-			AccumulateRecalcColumn(TDCC_TIMEEST, nRecalcColID);
+			AccumulateRecalcColumn(TDCC_TIMEEST, aColIDs);
 		
 		if (!m_sCompletionStatus.IsEmpty())
-			AccumulateRecalcColumn(TDCC_STATUS, nRecalcColID);
-		
+			AccumulateRecalcColumn(TDCC_STATUS, aColIDs);
 		break;
 		
 	case TDCA_DUEDATE:
-		if (!AccumulateRecalcColumn(TDCC_DUEDATE, nRecalcColID))
+		if (!AccumulateRecalcColumn(TDCC_DUEDATE, aColIDs))
 			bRedrawCols = IsColumnShowing(TDCC_PRIORITY);
 		break;
 		
@@ -4338,16 +4352,16 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 	case TDCA_EXTERNALID:
 	case TDCA_RECURRENCE:
 	case TDCA_FILEREF:
-		AccumulateRecalcColumn(nColID, nRecalcColID);
+		AccumulateRecalcColumn(nColID, aColIDs);
 		break;
 		
 	case TDCA_TIMEEST:
-		if (!AccumulateRecalcColumn(TDCC_TIMEEST, nRecalcColID))
+		if (!AccumulateRecalcColumn(TDCC_TIMEEST, aColIDs))
 			bRedrawCols = HasStyle(TDCS_AUTOCALCPERCENTDONE);
 		break;
 		
 	case TDCA_TIMESPENT:
-		if (!AccumulateRecalcColumn(TDCC_TIMESPENT, nRecalcColID))
+		if (!AccumulateRecalcColumn(TDCC_TIMESPENT, aColIDs))
 			bRedrawCols = HasStyle(TDCS_AUTOCALCPERCENTDONE);
 		break;
 		
@@ -4390,7 +4404,7 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 	case TDCA_NEWTASK:
 	case TDCA_CUSTOMATTRIB:
 	case TDCA_CUSTOMATTRIBDEFS:
-		nRecalcColID = TDCC_ALL;
+		aColIDs.Add(TDCC_ALL);
 		break;
 		
 	case TDCA_TASKNAMEORCOMMENTS:
@@ -4399,22 +4413,20 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 		break;
 
 	default:
-		if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib))
-		{
-			nRecalcColID = TDCC_ALL;
-			break;
-		}
-		ASSERT(0);
+		if (CTDCCustomAttributeHelper::IsCustomColumn(nColID))
+			aColIDs.Add(nColID);
+		else
+			ASSERT(0);
 		break;
 	}
 		
-	RecalcColumnWidth(nRecalcColID);
+	RecalcColumnWidths(aColIDs);
 	
 	if (bRedrawTasks)
 	{
 		InvalidateAll();
 	}
-	else if (bRedrawCols || (nRecalcColID != TDCC_NONE))
+	else if (bRedrawCols || !aColIDs.IsEmpty())
 	{
 		m_lcColumns.Invalidate();
 	}
@@ -4457,20 +4469,15 @@ BOOL CTDLTaskCtrlBase::ModCausesTaskTextColorChange(TDC_ATTRIBUTE nModType) cons
 	return FALSE;
 }
 
-BOOL CTDLTaskCtrlBase::AccumulateRecalcColumn(TDC_COLUMN nColID, TDC_COLUMN& nRecalcColID) const
+BOOL CTDLTaskCtrlBase::AccumulateRecalcColumn(TDC_COLUMN nColID, CSet<TDC_COLUMN>& aColIDs) const
 {
-	// optimisation
-	if (nRecalcColID == TDCC_ALL)
+	if (aColIDs.Has(nColID))
 	{
 		return TRUE;
 	}
 	else if (IsColumnShowing(nColID))
 	{
-		if (nRecalcColID == TDCC_NONE)
-			nRecalcColID = nColID;
-		else
-			nRecalcColID = TDCC_ALL;
-		
+		aColIDs.Add(nColID);
 		return TRUE;
 	}
 	

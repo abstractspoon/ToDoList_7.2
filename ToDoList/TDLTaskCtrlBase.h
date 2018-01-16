@@ -87,6 +87,7 @@ public:
 	void RedrawColumns(BOOL bErase = TRUE) const;
 	void RedrawColumn(TDC_COLUMN nColID) const;
 	void RecalcColumnWidth(TDC_COLUMN nColID);
+	void RecalcColumnWidths(const CSet<TDC_COLUMN>& aColIDs);
 	void RecalcColumnWidths();
 	void RecalcAllColumnWidths();
 	
@@ -473,7 +474,7 @@ protected:
 	void ShowFileLink(LPCTSTR szFilePath) const;
 	BOOL HandleListLBtnDown(CListCtrl& lc, CPoint pt);
 	BOOL ItemColumnSupportsClickHandling(int nItem, TDC_COLUMN nColID, const CPoint* pCursor = NULL) const;
-	BOOL AccumulateRecalcColumn(TDC_COLUMN nColID, TDC_COLUMN& nRecalcColID) const;
+	BOOL AccumulateRecalcColumn(TDC_COLUMN nColID, CSet<TDC_COLUMN>& aColIDs) const;
 	CString FormatTimeValue(double dTime, TDC_UNITS nUnits, BOOL bAllowNegative) const;
 
 	void DrawColumnsRowText(CDC* pDC, int nItem, DWORD dwTaskID, const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, 
