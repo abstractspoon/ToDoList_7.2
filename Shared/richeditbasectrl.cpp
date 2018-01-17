@@ -651,7 +651,7 @@ void CRichEditBaseCtrl::DoEditFindReplace(BOOL bFindOnly, UINT nIDTitle)
 void CRichEditBaseCtrl::OnFindNext(const CString& sFind, BOOL bNext, BOOL bCase, BOOL bWord)
 {
 	// Update state information for next time
-	m_findState.UpdateState(sFind, bCase, bWord, bNext);
+	m_findState.UpdateState(sFind, bNext, bCase, bWord);
 
 	if (!FindText())
 		TextNotFound(m_findState.strFind);
@@ -663,7 +663,7 @@ void CRichEditBaseCtrl::OnReplaceSel(const CString& sFind, const CString& sRepla
 									BOOL bNext, BOOL bCase, BOOL bWord)
 {
 	// Update state information for next time
-	m_findState.UpdateState(sFind, sReplace, bCase, bWord, bNext);
+	m_findState.UpdateState(sFind, sReplace, bNext, bCase, bWord);
 
 	if (!SameAsSelected(m_findState.strFind, m_findState.bCaseSensitive, m_findState.bWholeWord))
 	{
@@ -688,7 +688,7 @@ void CRichEditBaseCtrl::OnReplaceSel(const CString& sFind, const CString& sRepla
 void CRichEditBaseCtrl::OnReplaceAll(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord)
 {
 	// Update state information for next time
-	m_findState.UpdateState(sFind, sReplace, bCase, bWord, TRUE);
+	m_findState.UpdateState(sFind, sReplace, TRUE, bCase, bWord);
 
 	// start searching at the beginning of the text so that we know to stop at the end
 	SetSel(0, 0);
