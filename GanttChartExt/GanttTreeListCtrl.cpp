@@ -2539,54 +2539,60 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 	case WM_MOUSEWHEEL:
 		{
 			int zDelta = GET_WHEEL_DELTA_WPARAM(wp);
-			WORD wKeys = LOWORD(wp);
-			
-			if ((wKeys == MK_CONTROL) && (zDelta != 0))
+
+			if (zDelta != 0)
 			{
-				// cache prev value
-				GTLC_MONTH_DISPLAY nPrevDisplay = m_nMonthDisplay;
-
-				// work out where we are going to scroll to after the zoom
-				DWORD dwScrollID = 0;
-				COleDateTime dtScroll;
-
-				// centre on the mouse if over the list
-				if (hRealWnd == m_list)
-				{
-					CPoint pt(::GetMessagePos());
-					m_list.ScreenToClient(&pt);
-
-					GetDateFromScrollPos((pt.x + m_list.GetScrollPos(SB_HORZ)), dtScroll);
-				}
-				else // centre on the task beneath the mouse
-				{
-					dwScrollID = HitTestTask(::GetMessagePos());
-				}
-
-				// For reasons I don't understand, the resource context is
-				// wrong when handling the mousewheel
-				AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
-				// do the zoom
-				ZoomIn(zDelta > 0);
-
-				// scroll to area of interest
-				if (dwScrollID)
-				{
-					ScrollToTask(dwScrollID);
-				}
-				else if (CDateHelper::IsDateSet(dtScroll))
-				{
-					ScrollTo(dtScroll);
-				}
+				WORD wKeys = LOWORD(wp);
 				
-				// notify parent
-				GetCWnd()->SendMessage(WM_GTLC_NOTIFYZOOM, nPrevDisplay, m_nMonthDisplay);
+				if (wKeys == MK_CONTROL)
+				{
+					// cache prev value
+					GTLC_MONTH_DISPLAY nPrevDisplay = m_nMonthDisplay;
+
+					// work out where we are going to scroll to after the zoom
+					DWORD dwScrollID = 0;
+					COleDateTime dtScroll;
+
+					// centre on the mouse if over the list
+					if (hRealWnd == m_list)
+					{
+						CPoint pt(::GetMessagePos());
+						m_list.ScreenToClient(&pt);
+
+						GetDateFromScrollPos((pt.x + m_list.GetScrollPos(SB_HORZ)), dtScroll);
+					}
+					else // centre on the task beneath the mouse
+					{
+						dwScrollID = HitTestTask(::GetMessagePos());
+					}
+
+					// For reasons I don't understand, the resource context is
+					// wrong when handling the mousewheel
+					AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+					// do the zoom
+					ZoomIn(zDelta > 0);
+
+					// scroll to area of interest
+					if (dwScrollID)
+					{
+						ScrollToTask(dwScrollID);
+					}
+					else if (CDateHelper::IsDateSet(dtScroll))
+					{
+						ScrollTo(dtScroll);
+					}
+					
+					// notify parent
+					GetCWnd()->SendMessage(WM_GTLC_NOTIFYZOOM, nPrevDisplay, m_nMonthDisplay);
+				}
+				else
+				{
+					CHoldHScroll hhs(m_tree);
+					
+					return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
+				}
 			}
-
-			CHoldHScroll hhs(m_tree);
-
-			return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
 		}
 		break;
 
