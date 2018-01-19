@@ -76,7 +76,7 @@ public:
 	CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, const TDCCOLEDITFILTERVISIBILITY& visDefault);
 	virtual ~CToDoCtrl();
 
-	BOOL Create(const RECT& rect, CWnd* pParentWnd, UINT nID, BOOL bVisible = TRUE, BOOL bEnabled = TRUE);
+	BOOL Create(const CRect& rect, CWnd* pParentWnd, UINT nID, BOOL bVisible = TRUE, BOOL bEnabled = TRUE);
 
 	TDC_FILE Save(const CString& sFilePath = _T(""));
 	TDC_FILE Save(CTaskFile& tasks/*out*/, const CString& sFilePath = _T(""));
