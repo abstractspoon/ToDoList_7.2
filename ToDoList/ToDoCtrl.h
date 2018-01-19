@@ -520,8 +520,8 @@ protected:
 	int m_nPercentDone;
 
 	double m_dTrackedTimeElapsedHours;
-	double m_dTimeTrackReminderIntervalHours;
-	double m_dTimeTrackReminderElapsedHours;
+	DWORD m_dwTimeTrackReminderIntervalTicks;
+	DWORD m_dwTimeTrackReminderElapsedTicks;
 
 	TDC_UNITS m_nTimeEstUnits, m_nTimeSpentUnits;
 	CONTENTFORMAT m_cfComments, m_cfDefault;

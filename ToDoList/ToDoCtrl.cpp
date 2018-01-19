@@ -227,8 +227,8 @@ CToDoCtrl::CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, con
 	m_nTimeEstUnits(TDCU_HOURS),
 	m_nTimeSpentUnits(TDCU_HOURS),
 	m_sXmlHeader(DEFAULT_UNICODE_HEADER),
-	m_dTimeTrackReminderIntervalHours(0.0),
-	m_dTimeTrackReminderElapsedHours(0.0),
+	m_dwTimeTrackReminderIntervalTicks(0),
+	m_dwTimeTrackReminderElapsedTicks(0),
 	m_taskTree(m_ilTaskIcons, m_data, m_aStyles, m_visColEdit.GetVisibleColumns(), m_aCustomAttribDefs)
 {
 	SetBordersDLU(0);
@@ -8735,8 +8735,10 @@ void CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 			return;
 		}
 		
-		m_dwTimeTrackTaskID = dwTaskID;
 		ResetTimeTrackingTicks();
+
+		m_dwTimeTrackTaskID = dwTaskID;
+		m_dwTimeTrackReminderElapsedTicks = 0;
 			
 		// if the task's start date has not been set then set it now
 		if (!pTDI->HasStart())
@@ -8767,7 +8769,7 @@ void CToDoCtrl::ResetTimeTrackingTicks()
 
 void CToDoCtrl::SetTimeTrackingReminderInterval(int nMinutes)
 {
-	m_dTimeTrackReminderIntervalHours = (nMinutes / 60.0);
+	m_dwTimeTrackReminderIntervalTicks = (nMinutes * 60 * 1000);
 }
 
 // External
@@ -11927,13 +11929,13 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 		}
 
 		// Is a reminder due?
-		if (m_dTimeTrackReminderIntervalHours > 0.0)
+		if (m_dwTimeTrackReminderIntervalTicks)
 		{
-			m_dTimeTrackReminderElapsedHours += dInc;
+			m_dwTimeTrackReminderElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
 
-			if (m_dTimeTrackReminderElapsedHours > m_dTimeTrackReminderIntervalHours)
+			if (m_dwTimeTrackReminderElapsedTicks > m_dwTimeTrackReminderIntervalTicks)
 			{
-				m_dTimeTrackReminderElapsedHours = 0.0;
+				m_dwTimeTrackReminderElapsedTicks = 0;
 				GetParent()->SendMessage(WM_TDCN_TIMETRACKREMINDER, m_dwTimeTrackTaskID, (LPARAM)this);
 			}
 		}
