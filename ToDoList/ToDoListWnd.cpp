@@ -72,6 +72,7 @@
 #include "..\shared\clipboard.h"
 #include "..\shared\rtlstylemgr.h"
 #include "..\shared\xslfile.h"
+#include "..\shared\soundedit.h"
 
 #include "..\3rdparty\gui.h"
 #include "..\3rdparty\sendfileto.h"
@@ -662,12 +663,14 @@ void CToDoListWnd::SetupUIStrings()
 	CTimeEdit::SetUnits(THU_WEEKS,		CEnString(IDS_TE_WEEKS),	CEnString(IDS_WEEKS_ABBREV));
 	CTimeEdit::SetUnits(THU_MONTHS,		CEnString(IDS_TE_MONTHS),	CEnString(IDS_MONTHS_ABBREV));
 	CTimeEdit::SetUnits(THU_YEARS,		CEnString(IDS_TE_YEARS),	CEnString(IDS_YEARS_ABBREV));
-
 	CTimeEdit::SetDefaultButtonTip(CEnString(IDS_TIMEUNITS));
 
 	CFileEdit::SetDefaultButtonTips(CEnString(IDS_BROWSE), CEnString(IDS_VIEW));
 	CFileEdit::SetDefaultBrowseTitles(CEnString(IDS_BROWSEFILE_TITLE), CEnString(IDS_BROWSEFOLDER_TITLE));
 
+	CSoundEdit::SetDefaultFilter(CEnString(IDS_SOUNDFILEFILTER));
+	CSoundEdit::SetDefaultPlayButtonTip(CEnString(IDS_PLAYSOUNDBTNTIP));
+	
 	CTDLRecurringTaskEdit::SetDefaultButtonTip(CEnString(IDS_OPTIONS));
 	CXmlFileEx::SetUIStrings(CEnString(IDS_ENCRYPTEDFILE), CEnString(IDS_DECRYPTFAILED));
 	CSpellCheckDlg::SetItemText(DLG_SCD_BROWSETITLE, IDS_SCD_BROWSETITLE);

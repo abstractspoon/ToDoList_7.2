@@ -10,9 +10,6 @@
 #include "..\shared\DateHelper.h"
 #include "..\shared\EnString.h"
 
-#pragma warning(disable: 4201)
-#include <Mmsystem.h> 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -21,12 +18,6 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-// for PlaySound
-#pragma comment(lib, "winmm.lib")
-
-/////////////////////////////////////////////////////////////////////////////
-
-#define ID_PLAYSOUNDBTN 0xfff0
 #define NO_SOUND _T("None")
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,10 +32,6 @@ CPreferencesTaskPage::CPreferencesTaskPage() :
 	//}}AFX_DATA_INIT
 
 	m_sTrackReminderSoundFile = FileMisc::GetWindowsFolder() + _T("\\media\\chimes.wav"); // default
-	
-	m_ePlaySound.SetFilter(CEnString(IDS_SOUNDFILEFILTER));
-	m_ePlaySound.AddButton(ID_PLAYSOUNDBTN, 0x38, CEnString(IDS_PLAYSOUNDBTNTIP), CALC_BTNWIDTH, _T("Marlett"));
-	m_ePlaySound.SetButtonTip(FEBTN_BROWSE, CEnString(IDS_BROWSE));
 }
 
 CPreferencesTaskPage::~CPreferencesTaskPage()
@@ -92,7 +79,6 @@ BEGIN_MESSAGE_MAP(CPreferencesTaskPage, CPreferencesPageBase)
 	ON_BN_CLICKED(IDC_NOTIFYTIMETRACKING, OnNotifyTimeTracking)
 	//}}AFX_MSG_MAP
 	ON_CONTROL(CLBN_CHKCHANGE, IDC_WEEKENDS, OnChangeWeekends)
-	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnPlaySound)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -222,19 +208,3 @@ void CPreferencesTaskPage::OnNotifyTimeTracking()
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
 	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
 }
-
-LRESULT CPreferencesTaskPage::OnPlaySound(WPARAM wParam, LPARAM lParam)
-{
-	if ((wParam == IDC_PLAYSOUND) && (lParam == ID_PLAYSOUNDBTN))
-	{
-		UpdateData();
-
-		if (!m_sTrackReminderSoundFile.IsEmpty())
-			PlaySound(m_sTrackReminderSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
-
-		return TRUE;
-	}
-
-	return 0;
-}
-

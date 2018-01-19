@@ -10,7 +10,7 @@
 #include "..\shared\groupline.h"
 #include "..\shared\preferencesbase.h"
 #include "..\shared\DayOfWeekchecklistbox.h"
-#include "..\shared\FileEdit.h"
+#include "..\shared\SoundEdit.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPreferencesTaskPage dialog
@@ -65,7 +65,7 @@ protected:
 	DWORD	m_dwWeekends;
 	CDayOfWeekCheckListBox m_lbWeekends;
 
-	CFileEdit m_ePlaySound;
+	CSoundEdit m_ePlaySound;
 	CString	m_sTrackReminderSoundFile;
 
 // Overrides
@@ -84,7 +84,6 @@ protected:
 	afx_msg void OnChangeWeekends();
 	afx_msg void OnNotifyTimeTracking();
 	//}}AFX_MSG
-	afx_msg LRESULT OnPlaySound(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 protected:
