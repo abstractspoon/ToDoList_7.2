@@ -7602,8 +7602,8 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 													m_tdiDefault.sCommentsTypeID, 
 													vis);
 	
-	// create somewhere out in space
-	CRect rCtrl(-32010, -32010, -32000, -32000);
+	// create somewhere out in space but with a meaningful size
+	CRect rCtrl(-33000, -33000, -32000, -32000);
 	
 	if (pTDC && pTDC->Create(rCtrl, this, IDC_TODOLIST, bVisible, bEnabled))
 	{
