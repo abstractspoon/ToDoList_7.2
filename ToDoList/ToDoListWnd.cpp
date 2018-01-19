@@ -6618,10 +6618,12 @@ LPARAM CToDoListWnd::OnToDoCtrlNotifyTimeTrackReminder(WPARAM wParam, LPARAM lPa
 		return 0L;
 	}
 
-	CString sTrackedTask;
-	sTrackedTask.Format(_T("%s : %s"), pTDC->GetFriendlyProjectName(), pTDC->GetTaskTitle(dwTaskID));
+	CEnString sMessage;
+	sMessage.Format(IDS_TIMETRACKREMINDER, 
+					Prefs().GetTrackReminderFrequency(),
+					pTDC->GetFriendlyProjectName(),
+					pTDC->GetTaskTitle(dwTaskID));
 
-	CEnString sMessage(IDS_TIMETRACKREMINDER, sTrackedTask);
 	m_trayIcon.ShowBalloon(sMessage, CEnString(IDS_TIMETRACKREMINDER_BALLOONTITLE), NIIF_INFO);
 
 	// And play sound
