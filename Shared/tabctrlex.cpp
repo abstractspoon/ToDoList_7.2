@@ -58,6 +58,7 @@ BEGIN_MESSAGE_MAP(CTabCtrlEx, CXPTabCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
+	ON_WM_SIZE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 	ON_WM_ERASEBKGND()
 	ON_NOTIFY_REFLECT_EX(TCN_SELCHANGING, OnTabSelChange)
@@ -1078,10 +1079,7 @@ void CTabCtrlEx::InvalidateTabs(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			GetItemRect(iTab, rTab);
 
 			if (CRect().IntersectRect(rSpin, rTab))
-			{
-				//rTab.DeflateRect(2, 2);
 				InvalidateRect(rTab, FALSE);
-			}
 		}
 	}
 }
@@ -1089,6 +1087,11 @@ void CTabCtrlEx::InvalidateTabs(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 CSpinButtonCtrl* CTabCtrlEx::GetSpinButtonCtrl() const
 {
 	return (CSpinButtonCtrl*)GetDlgItem(1);
+}
+
+BOOL CTabCtrlEx::HasSpinButtonCtrl() const
+{
+	return (GetSpinButtonCtrl() != NULL);
 }
 
 int CTabCtrlEx::GetScrollPos() const
@@ -1104,16 +1107,65 @@ int CTabCtrlEx::GetScrollPos() const
 
 BOOL CTabCtrlEx::SetScrollPos(int nPos)
 {
-	if (nPos < 0 || nPos >= GetItemCount())
+	if ((nPos < 0) || (nPos >= GetItemCount()))
+	{
+		ASSERT(0);
 		return FALSE;
+	}
 
+	SendMessage(WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, nPos), 0L);
+	return TRUE;
+}
+
+void CTabCtrlEx::EnsureSelVisible()
+{
 	CSpinButtonCtrl* pSpin = GetSpinButtonCtrl();
 
 	if (pSpin == NULL)
-		return FALSE;
+		return;
 
-	// else
-	pSpin->SetPos(nPos);
-	return TRUE;
+	CRect rSpin;
+	pSpin->GetWindowRect(rSpin);
+	ScreenToClient(rSpin);
+
+	CRect rActiveTab;
+	GetItemRect(GetCurSel(), rActiveTab);
+
+	if ((rActiveTab.left >= 0) && (rActiveTab.right <= rSpin.left))
+		return;
+
+	int nScrollPos = GetScrollPos();
+
+	if (rActiveTab.left < 0)
+	{
+		// Scroll left
+		while (nScrollPos--)
+		{
+			SetScrollPos(nScrollPos);
+			GetItemRect(GetCurSel(), rActiveTab);
+
+			if (rActiveTab.left >= 0)
+				break;
+		}
+	}
+	else
+	{
+		// Scroll right
+		for (int nPos = (nScrollPos + 1); nPos < GetItemCount(); nPos++)
+		{
+			SetScrollPos(nPos);
+			GetItemRect(GetCurSel(), rActiveTab);
+
+			if (rActiveTab.right <= rSpin.left)
+				break;
+		}
+	}
+}
+
+void CTabCtrlEx::OnSize(UINT nType, int cx, int cy)
+{
+	CXPTabCtrl::OnSize(nType, cx, cy);
+
+	EnsureSelVisible();
 }
 
