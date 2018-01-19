@@ -76,6 +76,9 @@ public:
 	int HitTest(const CPoint& point) const;
 	int HitTest(TCHITTESTINFO* pHitTestInfo) const;
 	
+	int GetScrollPos() const;
+	BOOL SetScrollPos(int nPos);
+
 	BOOL ModifyFlags(DWORD dwRemove, DWORD dwAdd);
 	
 	static BOOL IsSupportedFlag(DWORD dwFlag);
@@ -149,6 +152,7 @@ protected:
 	CString GetRequiredTabText(int nTab);
 	BOOL GetTabRect(int nTab, BOOL bSelected, CRect& rTab);
 	COLORREF GetItemBkColor(int nTab);
+	CSpinButtonCtrl* GetSpinButtonCtrl() const;
 
 	// pseudo message handler
 	void InvalidateTabs(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

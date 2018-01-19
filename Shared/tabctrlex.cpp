@@ -1062,7 +1062,7 @@ void CTabCtrlEx::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CTabCtrlEx::InvalidateTabs(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// Prevent render artifacts on the tab that was beneath the spin control
-	const CWnd* pSpin = GetDlgItem(1);
+	const CWnd* pSpin = GetSpinButtonCtrl();
 
 	if (pSpin && (pScrollBar == pSpin))
 	{
@@ -1085,3 +1085,35 @@ void CTabCtrlEx::InvalidateTabs(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
 	}
 }
+
+CSpinButtonCtrl* CTabCtrlEx::GetSpinButtonCtrl() const
+{
+	return (CSpinButtonCtrl*)GetDlgItem(1);
+}
+
+int CTabCtrlEx::GetScrollPos() const
+{
+	const CSpinButtonCtrl* pSpin = GetSpinButtonCtrl();
+
+	if (pSpin == NULL)
+		return 0;
+
+	// else
+	return (int)LOWORD(pSpin->GetPos());
+}
+
+BOOL CTabCtrlEx::SetScrollPos(int nPos)
+{
+	if (nPos < 0 || nPos >= GetItemCount())
+		return FALSE;
+
+	CSpinButtonCtrl* pSpin = GetSpinButtonCtrl();
+
+	if (pSpin == NULL)
+		return FALSE;
+
+	// else
+	pSpin->SetPos(nPos);
+	return TRUE;
+}
+
