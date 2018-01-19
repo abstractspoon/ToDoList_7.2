@@ -136,7 +136,6 @@ enum
 	TIMER_DUEITEMS,
 	TIMER_TIMETRACKING,
 	TIMER_AUTOMINIMIZE,
-	TIMER_TIMETRACKREMINDER,
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -457,6 +456,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_REGISTERED_MESSAGE(WM_TDCN_RECREATERECURRINGTASK, OnToDoCtrlNotifyRecreateRecurringTask)
 	ON_REGISTERED_MESSAGE(WM_TDCN_TIMETRACK, OnToDoCtrlNotifyTimeTrack)
 	ON_REGISTERED_MESSAGE(WM_TDCN_VIEWPOSTCHANGE, OnToDoCtrlNotifyViewChange)
+	ON_REGISTERED_MESSAGE(WM_TDCN_TIMETRACKREMINDER, OnToDoCtrlNotifyTimeTrackReminder)
 	ON_REGISTERED_MESSAGE(WM_TDL_ISCLOSING , OnToDoListIsClosing)
 	ON_REGISTERED_MESSAGE(WM_TDL_REFRESHPREFS , OnToDoListRefreshPrefs)
 	ON_REGISTERED_MESSAGE(WM_TDL_RESTORE , OnToDoListRestore)
@@ -6445,7 +6445,6 @@ void CToDoListWnd::KillTimers()
 	SetTimer(TIMER_AUTOSAVE, FALSE);
 	SetTimer(TIMER_TIMETRACKING, FALSE);
 	SetTimer(TIMER_AUTOMINIMIZE, FALSE);
-	SetTimer(TIMER_TIMETRACKREMINDER, FALSE);
 }
 
 void CToDoListWnd::RestoreTimers()
@@ -6458,7 +6457,6 @@ void CToDoListWnd::RestoreTimers()
 	SetTimer(TIMER_CHECKOUTSTATUS, (prefs.GetKeepTryingToCheckout() || prefs.GetAutoCheckinFrequency()));
 	SetTimer(TIMER_TIMETRACKING, TRUE);
 	SetTimer(TIMER_AUTOMINIMIZE, prefs.GetAutoMinimizeFrequency());
-	SetTimer(TIMER_TIMETRACKREMINDER, prefs.GetTrackReminderFrequency());
 }
 
 void CToDoListWnd::SetTimer(UINT nTimerID, BOOL bOn)
@@ -6491,10 +6489,6 @@ void CToDoListWnd::SetTimer(UINT nTimerID, BOOL bOn)
 			
 		case TIMER_TIMETRACKING:
 			nPeriod = INTERVAL_TIMETRACKING;
-			break;
-			
-		case TIMER_TIMETRACKREMINDER:
-			nPeriod = (Prefs().GetTrackReminderFrequency() * ONE_MINUTE);
 			break;
 			
 		case TIMER_AUTOMINIMIZE:
@@ -6559,10 +6553,6 @@ void CToDoListWnd::OnTimer(UINT nIDEvent)
 		OnTimerTimeTracking();
 		break;
 		
-	case TIMER_TIMETRACKREMINDER:
-		OnTimerTimeTrackReminder();
-		break;
-		
 	case TIMER_AUTOMINIMIZE:
 		OnTimerAutoMinimize();
 		break;
@@ -6614,50 +6604,30 @@ void CToDoListWnd::UpdateWindowIcons()
 	m_dlgTimeTracker.SetWindowIcons(m_icons.GetBigIcon(), m_icons.GetSmallIcon());
 }
 
-void CToDoListWnd::OnTimerTimeTrackReminder()
+LPARAM CToDoListWnd::OnToDoCtrlNotifyTimeTrackReminder(WPARAM wParam, LPARAM lParam)
 {
-	AF_NOREENTRANT // macro helper
-		
-	// process files
-	CString sTasksTracking;
-	int nNumTDC = GetTDCCount();
-	
-	for (int nCtrl = 0; nCtrl < nNumTDC; nCtrl++)
+	DWORD dwTaskID = wParam;
+	const CFilteredToDoCtrl* pTDC = (const CFilteredToDoCtrl*)lParam;
+
+	if (!dwTaskID || !pTDC)
 	{
-		const CFilteredToDoCtrl& tdc = GetToDoCtrl(nCtrl);
-
-		DWORD dwTaskID = tdc.GetTimeTrackTaskID(FALSE);
-		DWORD dwActiveID = tdc.GetTimeTrackTaskID(TRUE);
-
-		if (!dwTaskID && !dwActiveID)
-			continue;
-
-		if (nNumTDC > 1)
-		{
-			sTasksTracking += m_mgrToDoCtrls.GetFriendlyProjectName(nCtrl);
-			sTasksTracking += _T(": ");
-		}
-		
-		sTasksTracking += tdc.GetTaskTitle(dwTaskID);
-
-		if (dwActiveID == 0) // paused
-			sTasksTracking += CEnString(IDS_TRACKREMINDERPAUSED);
-
-		sTasksTracking += ENDL;
+		ASSERT(0);
+		return 0L;
 	}
-	
-	// do we need to notify the user?
-	if (!sTasksTracking.IsEmpty())
-	{
-		CEnString sMessage(IDS_TIMETRACKREMINDER, sTasksTracking);
-		m_trayIcon.ShowBalloon(sMessage, CEnString(IDS_TIMETRACKREMINDER_BALLOONTITLE), NIIF_INFO);
 
-		// And play sound
-		CString sSoundFile = Prefs().GetTrackReminderSoundFile();
+	CString sTrackedTask;
+	sTrackedTask.Format(_T("%s : %s"), pTDC->GetFriendlyProjectName(), pTDC->GetTaskTitle(dwTaskID));
 
-		if (!sSoundFile.IsEmpty())
-			PlaySound(sSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
-	}
+	CEnString sMessage(IDS_TIMETRACKREMINDER, sTrackedTask);
+	m_trayIcon.ShowBalloon(sMessage, CEnString(IDS_TIMETRACKREMINDER_BALLOONTITLE), NIIF_INFO);
+
+	// And play sound
+	CString sSoundFile = Prefs().GetTrackReminderSoundFile();
+
+	if (!sSoundFile.IsEmpty())
+		PlaySound(sSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
+
+	return TRUE;
 }
 
 void CToDoListWnd::OnTimerDueItems(int nCtrl)

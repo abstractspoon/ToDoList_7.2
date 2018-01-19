@@ -399,6 +399,7 @@ protected:
 	afx_msg LRESULT OnToDoCtrlNotifyRecreateRecurringTask(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnToDoCtrlNotifyTimeTrack(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnToDoCtrlNotifyViewChange(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnToDoCtrlNotifyTimeTrackReminder(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnToDoCtrlGetTaskReminder(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnToDoCtrlIsTaskDone(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnToDoListIsClosing(WPARAM /*wp*/, LPARAM /*lp*/) { return m_bClosing; }

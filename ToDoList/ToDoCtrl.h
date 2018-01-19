@@ -329,6 +329,7 @@ public:
 	void EndTimeTracking(BOOL bAllowConfirm);
 	void BeginTimeTracking(DWORD dwTaskID);
 	BOOL DoAddTimeToLogFile();
+	void SetTimeTrackingReminderInterval(int nMinutes);
 
 	static void SetInheritedParentAttributes(const CTDCAttributeMap& mapAttribs, BOOL bUpdateAttrib);
 	void SetDefaultTaskAttributes(const TODOITEM& tdi);
@@ -514,10 +515,14 @@ protected:
 	CBinaryData m_customComments;
 	double m_dTimeEstimate, m_dTimeSpent;
 	double m_dCost;
-	double m_dLogTime; // in hours
 	int m_nPriority;
 	int m_nRisk;
 	int m_nPercentDone;
+
+	double m_dTrackedTimeElapsedHours;
+	double m_dTimeTrackReminderIntervalHours;
+	double m_dTimeTrackReminderElapsedHours;
+
 	TDC_UNITS m_nTimeEstUnits, m_nTimeSpentUnits;
 	CONTENTFORMAT m_cfComments, m_cfDefault;
 	TDCRECURRENCE m_tRecurrence;
@@ -532,7 +537,7 @@ protected:
 	DWORD m_nFileVersion;
 	DWORD m_nFileFormat;
 	DWORD m_dwTimeTrackTaskID;
-	DWORD m_dwTickLast; // time tracking
+	DWORD m_dwTimeTrackTickLast;
 	DWORD m_dwLastAddedID;
 	DWORD m_dwEditTitleTaskID;
 
@@ -749,7 +754,7 @@ protected:
 	
 	// -------------------------------------------------------------------------------
 	
-	void ResetTimeTracking() { m_dwTickLast = GetTickCount(); }
+	void ResetTimeTrackingTicks();
 	void UpdateTask(TDC_ATTRIBUTE nAttrib, DWORD dwFlags = 0);
 	void UpdateControls(BOOL bIncComments = TRUE, HTREEITEM hti = NULL);
 	void UpdateDateTimeControls(BOOL bHasSelection);

@@ -199,7 +199,7 @@ CToDoCtrl::CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, con
 	m_cbVersion(ACBS_ALLOWDELETE),
 	m_cfDefault(cfDefault),
 	m_dCost(0),
-	m_dLogTime(0),
+	m_dTrackedTimeElapsedHours(0),
 	m_dTimeEstimate(0),
 	m_dTimeSpent(0),
 	m_data(m_aStyles),
@@ -227,6 +227,8 @@ CToDoCtrl::CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, con
 	m_nTimeEstUnits(TDCU_HOURS),
 	m_nTimeSpentUnits(TDCU_HOURS),
 	m_sXmlHeader(DEFAULT_UNICODE_HEADER),
+	m_dTimeTrackReminderIntervalHours(0.0),
+	m_dTimeTrackReminderElapsedHours(0.0),
 	m_taskTree(m_ilTaskIcons, m_data, m_aStyles, m_visColEdit.GetVisibleColumns(), m_aCustomAttribDefs)
 {
 	SetBordersDLU(0);
@@ -4744,7 +4746,7 @@ void CToDoCtrl::PauseTimeTracking(BOOL bPause)
 	else
 	{
 		m_bTimeTrackingPaused = FALSE;
-		ResetTimeTracking();
+		ResetTimeTrackingTicks();
 
 		// Start the timer
 		SetTimer(TIMER_TRACK, TIMETRACKPERIOD, NULL);
@@ -8734,7 +8736,7 @@ void CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 		}
 		
 		m_dwTimeTrackTaskID = dwTaskID;
-		ResetTimeTracking();
+		ResetTimeTrackingTicks();
 			
 		// if the task's start date has not been set then set it now
 		if (!pTDI->HasStart())
@@ -8758,6 +8760,16 @@ void CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 	}
 }
 
+void CToDoCtrl::ResetTimeTrackingTicks() 
+{ 
+	m_dwTimeTrackTickLast = GetTickCount(); 
+}
+
+void CToDoCtrl::SetTimeTrackingReminderInterval(int nMinutes)
+{
+	m_dTimeTrackReminderIntervalHours = (nMinutes / 60.0);
+}
+
 // External
 void CToDoCtrl::EndTimeTracking(BOOL bAllowConfirm)
 {
@@ -8777,11 +8789,11 @@ void CToDoCtrl::EndTimeTracking(BOOL bAllowConfirm, BOOL bNotify)
 
 		// reset taskID and time to prevent re-entrancy
 		DWORD dwTaskID = m_dwTimeTrackTaskID;
-		double dTime = m_dLogTime;
+		double dTime = m_dTrackedTimeElapsedHours;
 
-		m_dwTickLast = 0;
+		m_dwTimeTrackTickLast = 0;
 		m_dwTimeTrackTaskID = 0;
-		m_dLogTime = 0;
+		m_dTrackedTimeElapsedHours = 0.0;
 
 		// log it
 		if (HasStyle(TDCS_LOGTIMETRACKING))
@@ -11890,11 +11902,11 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 		TDC_UNITS nUnits = TDCU_NULL;
 		double dTime = m_data.GetTaskTimeSpent(m_dwTimeTrackTaskID, nUnits);
 		
-		ASSERT (m_dwTickLast);
-		double dInc = ((dwTick - m_dwTickLast) * TICKS2HOURS); // hours
+		ASSERT (m_dwTimeTrackTickLast);
+		double dInc = ((dwTick - m_dwTimeTrackTickLast) * TICKS2HOURS); // hours
 		
 		// logged time is always in hours
-		m_dLogTime += dInc;
+		m_dTrackedTimeElapsedHours += dInc;
 
 		// task time is in whatever units the user specified
 		TH_UNITS nTHUnits = TDC::MapUnitsToTHUnits(nUnits);
@@ -11913,9 +11925,21 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 			m_data.SetTaskTimeSpent(m_dwTimeTrackTaskID, dTime, nUnits);
 			SetModified(TRUE, TDCA_TIMESPENT, m_dwTimeTrackTaskID);
 		}
+
+		// Is a reminder due?
+		if (m_dTimeTrackReminderIntervalHours > 0.0)
+		{
+			m_dTimeTrackReminderElapsedHours += dInc;
+
+			if (m_dTimeTrackReminderElapsedHours > m_dTimeTrackReminderIntervalHours)
+			{
+				m_dTimeTrackReminderElapsedHours = 0.0;
+				GetParent()->SendMessage(WM_TDCN_TIMETRACKREMINDER, m_dwTimeTrackTaskID, (LPARAM)this);
+			}
+		}
 	}
 	
-	m_dwTickLast = dwTick;
+	m_dwTimeTrackTickLast = dwTick;
 }
 
 LRESULT CToDoCtrl::OnCustomUrl(WPARAM wParam, LPARAM lParam)
