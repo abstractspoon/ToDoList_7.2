@@ -163,6 +163,7 @@ public:
 	BOOL IsTaskLocallyDependentOn(DWORD dwTaskID, DWORD dwOtherID, BOOL bImmediateOnly) const;
 	BOOL IsTaskDependent(DWORD dwTaskID) const;
 
+	BOOL CalcIsTaskRecentlyModified(DWORD dwTaskID) const;
 	BOOL CalcIsTaskRecurring(DWORD dwTaskID) const;
 	BOOL CalcIsTaskFlagged(DWORD dwTaskID) const;
 	BOOL CalcIsTaskLocked(DWORD dwTaskID) const;
@@ -172,6 +173,7 @@ public:
 	BOOL CalcIsTaskOverDue(DWORD dwTaskID) const;
 	double CalcTaskDueDate(DWORD dwTaskID) const;
 	double CalcTaskStartDate(DWORD dwTaskID) const;
+	double CalcTaskLastModifiedDate(DWORD dwTaskID) const;
 	int CalcTaskHighestPriority(DWORD dwTaskID, BOOL bIncludeDue = TRUE) const;
 	int CalcTaskHighestRisk(DWORD dwTaskID) const;
 	int CalcTaskPercentDone(DWORD dwTaskID) const;
@@ -193,6 +195,7 @@ public:
 	BOOL TaskHasSubtasks(DWORD dwTaskID) const;
 	BOOL TaskHasFileRef(DWORD dwTaskID) const;
 
+	BOOL CalcIsTaskRecentlyModified(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	BOOL CalcIsTaskFlagged(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	BOOL CalcIsTaskLocked(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	BOOL CalcIsTaskStarted(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bToday = FALSE) const;
@@ -201,6 +204,7 @@ public:
 	BOOL CalcIsTaskOverDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double CalcTaskDueDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double CalcTaskStartDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
+	double CalcTaskLastModifiedDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	int CalcTaskHighestPriority(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bIncludeDue = TRUE) const;
 	int CalcTaskHighestRisk(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double CalcTaskCost(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;

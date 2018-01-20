@@ -430,7 +430,7 @@ BOOL TODOITEM::GetNextOccurence(COleDateTime& dtNext, BOOL& bDue)
 	return FALSE;
 }
 
-BOOL TODOITEM::IsRecentlyEdited() const
+BOOL TODOITEM::IsRecentlyModified() const
 {
 	if (!HasLastMod())
 		return FALSE; // never

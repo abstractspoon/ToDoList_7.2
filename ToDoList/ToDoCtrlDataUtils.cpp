@@ -294,7 +294,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 
 		case TDCA_RECENTMODIFIED:
-			bMatch = pTDI->IsRecentlyEdited();
+			bMatch = pTDI->IsRecentlyModified();
 
 			if (bMatch)
 				resTask.aMatched.Add(FormatResultDate(pTDI->dateLastMod));
@@ -1447,8 +1447,8 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 
 		case TDCC_RECENTEDIT:
 			{
-				BOOL bRecent1 = pTDI1->IsRecentlyEdited();
-				BOOL bRecent2 = pTDI2->IsRecentlyEdited();
+				BOOL bRecent1 = pTDI1->IsRecentlyModified();
+				BOOL bRecent2 = pTDI2->IsRecentlyModified();
 
 				nCompare = Compare(bRecent1, bRecent2);
 			}

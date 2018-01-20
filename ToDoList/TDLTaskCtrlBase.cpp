@@ -302,7 +302,7 @@ int CTDLTaskCtrlBase::GetTaskColumnTooltip(const CPoint& ptScreen, CString& sToo
 		break;
 
 	case TDCC_RECENTEDIT:
-		if (pTDI->IsRecentlyEdited())
+		if (pTDI->IsRecentlyModified())
 		{
 			sTooltip = CDateHelper::FormatDate(pTDI->dateLastMod, (DHFD_DOW | DHFD_TIME | DHFD_NOSEC));
 			return GetUniqueToolTipID(dwTaskID, nColID);
@@ -2642,7 +2642,7 @@ void CTDLTaskCtrlBase::DrawColumnsRowText(CDC* pDC, int nItem, DWORD dwTaskID, c
 			break;
 			
 		case TDCC_LASTMODDATE:
-			DrawColumnDate(pDC, pTDI->dateLastMod, TDCD_LASTMOD, rSubItem, crText);
+			DrawColumnDate(pDC, m_data.CalcTaskLastModifiedDate(pTDI, pTDS), TDCD_LASTMOD, rSubItem, crText);
 			break;
 			
 		case TDCC_ICON:
@@ -3379,7 +3379,7 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 		break;
 
 	case TDCC_RECENTEDIT:
-		if (pTDI->IsRecentlyEdited())
+		if (m_data.CalcIsTaskRecentlyModified(pTDI, pTDS))
 			sTaskColText = _T("*");
 		break;
 

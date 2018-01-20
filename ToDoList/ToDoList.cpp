@@ -772,6 +772,7 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 	BOOL bUseIni = FALSE;
 	BOOL bSetMultiInstance = FALSE;
 	BOOL bRegKeyExists = CRegKey2::KeyExists(HKEY_CURRENT_USER, APPREGKEY);
+	BOOL bUpgraded = cmdInfo.HasOption(SWITCH_UPGRADED);
 
 #ifdef _DEBUG
 	BOOL bQuiet = cmdInfo.HasOption(SWITCH_QUIET);

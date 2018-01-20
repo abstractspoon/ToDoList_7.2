@@ -68,7 +68,7 @@ public:
 	BOOL CanRecur() const;
 	BOOL RecurrenceMatches(const TODOITEM& tdi, BOOL bIncludeRemainingOccurrences) const;
 	
-	BOOL IsRecentlyEdited() const; // 1 hour default
+	BOOL IsRecentlyModified() const; // 1 hour default
 	COleDateTimeSpan GetRemainingDueTime() const; // in days
 	COleDateTime GetDate(TDC_DATE nDate) const;
 	

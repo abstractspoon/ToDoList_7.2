@@ -1017,6 +1017,46 @@ BOOL CToDoCtrlData::CalcTaskCustomAttributeData(const TODOITEM* pTDI, const TODO
 	return TRUE;
 }
 
+BOOL CToDoCtrlData::CalcIsTaskRecentlyModified(DWORD dwTaskID) const
+{
+	const TODOITEM* pTDI = NULL;
+	const TODOSTRUCTURE* pTDS = NULL;
+
+	GET_TDI_TDS(dwTaskID, pTDI, pTDS, FALSE);
+
+	return CalcIsTaskRecentlyModified(pTDI, pTDS);
+}
+
+BOOL CToDoCtrlData::CalcIsTaskRecentlyModified(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
+{
+	// sanity check
+	if (!pTDI || !pTDS)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	BOOL bRecentMod = pTDI->IsRecentlyModified();
+
+	if (bRecentMod || !HasStyle(TDCS_USELATESTLASTMODIFIED))
+		return bRecentMod;
+
+	// Children
+	for (int nSubTask = 0; nSubTask < pTDS->GetSubTaskCount(); nSubTask++)
+	{
+		const TODOSTRUCTURE* pTDSChild = pTDS->GetSubTask(nSubTask);
+		const TODOITEM* pTDIChild = GetTrueTask(pTDSChild);
+
+		ASSERT (pTDSChild && pTDIChild);
+
+		if (CalcIsTaskRecentlyModified(pTDIChild, pTDSChild))
+			return TRUE;
+	}
+
+	// else
+	return FALSE;
+}
+
 BOOL CToDoCtrlData::IsTaskFlagged(DWORD dwTaskID) const
 {
 	const TODOITEM* pTDI = NULL;
@@ -1040,6 +1080,7 @@ BOOL CToDoCtrlData::CalcIsTaskFlagged(DWORD dwTaskID) const
 
 BOOL CToDoCtrlData::CalcIsTaskFlagged(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
 {
+	// sanity check
 	if (!pTDI || !pTDS)
 	{
 		ASSERT(0);
@@ -1085,6 +1126,7 @@ BOOL CToDoCtrlData::CalcIsTaskLocked(DWORD dwTaskID) const
 
 BOOL CToDoCtrlData::CalcIsTaskLocked(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
 {
+	// sanity check
 	if (!pTDI || !pTDS)
 	{
 		ASSERT(0);
@@ -3963,6 +4005,15 @@ double CToDoCtrlData::CalcTaskStartDate(DWORD dwTaskID) const
 	return CalcTaskStartDate(pTDI, pTDS);
 }
 
+double CToDoCtrlData::CalcTaskLastModifiedDate(DWORD dwTaskID) const
+{
+	const TODOITEM* pTDI = NULL;
+	const TODOSTRUCTURE* pTDS = NULL;
+	GET_TDI_TDS(dwTaskID, pTDI, pTDS, 0);
+
+	return CalcTaskLastModifiedDate(pTDI, pTDS);
+}
+
 CString CToDoCtrlData::FormatTaskAllocTo(DWORD dwTaskID) const
 {
 	return FormatTaskAllocTo(GetTrueTask(dwTaskID));
@@ -4174,6 +4225,33 @@ double CToDoCtrlData::CalcStartDueDate(const TODOITEM* pTDI, const TODOSTRUCTURE
 	}
 	
 	return dBest;
+}
+
+double CToDoCtrlData::CalcTaskLastModifiedDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
+{
+	// sanity check
+	ASSERT (pTDS && pTDI);
+	
+	if (!pTDS || !pTDI)
+		return 0.0;
+	
+	double dLatest = pTDI->dateLastMod;
+	
+	if (HasStyle(TDCS_USELATESTLASTMODIFIED))
+	{
+		for (int nSubTask = 0; nSubTask < pTDS->GetSubTaskCount(); nSubTask++)
+		{
+			const TODOSTRUCTURE* pTDSChild = pTDS->GetSubTask(nSubTask);
+			const TODOITEM* pTDIChild = GetTrueTask(pTDSChild);
+
+			ASSERT (pTDSChild && pTDIChild);
+
+			double dChildDate = CalcTaskLastModifiedDate(pTDIChild, pTDSChild);
+			dLatest = GetBestDate(dLatest, dChildDate, FALSE);
+		}
+	}
+
+	return dLatest;
 }
 
 double CToDoCtrlData::GetBestDate(double dBest, double dDate, BOOL bEarliest)

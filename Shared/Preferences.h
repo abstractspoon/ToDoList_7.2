@@ -145,7 +145,7 @@ protected:
 protected:
 	// internal helpers that require pre-locking
 	static BOOL SaveInternal();
-	static void DeleteIni();
+	static void Release();
 
 	static CString GetIniString(LPCTSTR lpszSection, LPCTSTR lpszEntry, LPCTSTR lpszDefault);
 	static BOOL WriteIniString(LPCTSTR lpszSection, LPCTSTR lpszEntry, LPCTSTR lpszValue, BOOL bQuoted);

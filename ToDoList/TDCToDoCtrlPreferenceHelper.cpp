@@ -139,6 +139,7 @@ void CTDCToDoCtrlPreferenceHelper::UpdateToDoCtrlPrefs(CFilteredToDoCtrl& tdc, c
 	styles[TDCS_USES3RDPARTYSOURCECONTROL] = prefs.GetUsing3rdPartySourceControl();
 	styles[TDCS_WARNADDDELETEARCHIVE] = prefs.GetWarnAddDeleteArchive();
 	styles[TDCS_WEIGHTPERCENTCALCBYNUMSUB] = prefs.GetWeightPercentCompletionByNumSubtasks();
+	styles[TDCS_USELATESTLASTMODIFIED] = prefs.GetUseLatestLastModifiedDate();
 	
 	tdc.SetStyles(styles);
 
