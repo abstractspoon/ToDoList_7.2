@@ -304,9 +304,12 @@ int CTDLTaskCtrlBase::GetTaskColumnTooltip(const CPoint& ptScreen, CString& sToo
 		break;
 
 	case TDCC_RECENTEDIT:
-		if (pTDI->IsRecentlyModified())
 		{
-			sTooltip = CDateHelper::FormatDate(pTDI->dateLastMod, (DHFD_DOW | DHFD_TIME | DHFD_NOSEC));
+			COleDateTime dtLastMod = m_calculator.GetTaskLastModifiedDate(dwTaskID);
+
+			if (TODOITEM::IsRecentlyModified(dtLastMod))
+				sTooltip = CDateHelper::FormatDate(dtLastMod, (DHFD_DOW | DHFD_TIME | DHFD_NOSEC));
+
 			return GetUniqueToolTipID(dwTaskID, nColID);
 		}
 		break;

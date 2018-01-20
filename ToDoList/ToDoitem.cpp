@@ -432,14 +432,19 @@ BOOL TODOITEM::GetNextOccurence(COleDateTime& dtNext, BOOL& bDue)
 
 BOOL TODOITEM::IsRecentlyModified() const
 {
-	if (!HasLastMod())
+	return IsRecentlyModified(dateLastMod);
+}
+
+BOOL TODOITEM::IsRecentlyModified(const COleDateTime& date)
+{
+	if (!CDateHelper::IsDateSet(date))
 		return FALSE; // never
 
 	if (s_dtsRecentModPeriod.m_span == 0.0)
 		return TRUE; // always
 	
 	// else
-	return ((COleDateTime::GetCurrentTime() - dateLastMod) < s_dtsRecentModPeriod);
+	return ((COleDateTime::GetCurrentTime() - date) < s_dtsRecentModPeriod);
 }
 
 COleDateTimeSpan TODOITEM::GetRemainingDueTime() const

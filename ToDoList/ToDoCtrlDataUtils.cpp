@@ -331,7 +331,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 
 		case TDCA_RECENTMODIFIED:
-			bMatch = pTDI->IsRecentlyModified();
+			bMatch = m_calculator.IsTaskRecentlyModified(pTDI, pTDS);
 
 			if (bMatch)
 				resTask.aMatched.Add(FormatResultDate(pTDI->dateLastMod));
@@ -403,11 +403,11 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_LASTMODDATE:
-			bMatch = ValueMatches(pTDI->dateLastMod, rule, resTask, TRUE, TDCD_LASTMOD);
+			bMatch = ValueMatches(m_calculator.GetTaskLastModifiedDate(pTDI, pTDS), rule, resTask, TRUE, TDCD_LASTMOD);
 			break;
 			
 		case TDCA_LASTMODBY:
-			bMatch = ValueMatches(pTDI->sLastModifiedBy, rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ValueMatches(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive, bWholeWord);
 			break;
 			
 		case TDCA_PRIORITY:
@@ -521,7 +521,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 						ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive, FALSE) || 
 						ValueMatchesAsArray(pTDI->sVersion, rule, resTask, bCaseSensitive, FALSE) || 
 						ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive, FALSE) ||
-						ValueMatchesAsArray(pTDI->sLastModifiedBy, rule, resTask, bCaseSensitive, FALSE) ||
+						ValueMatchesAsArray(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive, FALSE) ||
 						ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive, FALSE));
 
 			if (!bMatch)
@@ -1238,7 +1238,8 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 			break;
 
 		case TDCC_LASTMODDATE:
-			nCompare = Compare(pTDI1->dateLastMod, pTDI2->dateLastMod, TRUE, TDCD_LASTMOD);
+			nCompare = Compare(m_calculator.GetTaskLastModifiedDate(pTDI1, pTDS1), 
+								m_calculator.GetTaskLastModifiedDate(pTDI2, pTDS2), TRUE, TDCD_LASTMOD);
 			break;
 
 		case TDCC_DONEDATE:
@@ -1398,8 +1399,8 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 			break;
 
 		case TDCC_ALLOCTO:
-			nCompare = Compare(Misc::FormatArray(pTDI1->aAllocTo), 
-								Misc::FormatArray(pTDI2->aAllocTo), TRUE);
+			nCompare = Compare(m_formatter.GetTaskAllocTo(pTDI1), 
+								m_formatter.GetTaskAllocTo(pTDI2), TRUE);
 			break;
 
 		case TDCC_ALLOCBY:
@@ -1415,7 +1416,8 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 			break;
 
 		case TDCC_LASTMODBY:
-			nCompare = Compare(pTDI1->sLastModifiedBy, pTDI2->sLastModifiedBy, TRUE);
+			nCompare = Compare(m_calculator.GetTaskLastModifiedBy(pTDI1, pTDS1),
+								m_calculator.GetTaskLastModifiedBy(pTDI2, pTDS2), TRUE);
 			break;
 
 		case TDCC_EXTERNALID:
@@ -1423,13 +1425,13 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 			break;
 
 		case TDCC_CATEGORY:
-			nCompare = Compare(Misc::FormatArray(pTDI1->aCategories), 
-								Misc::FormatArray(pTDI2->aCategories), TRUE);
+			nCompare = Compare(m_formatter.GetTaskCategories(pTDI1), 
+								m_formatter.GetTaskCategories(pTDI2), TRUE);
 			break;
 
 		case TDCC_TAGS:
-			nCompare = Compare(Misc::FormatArray(pTDI1->aTags), 
-								Misc::FormatArray(pTDI2->aTags), TRUE);
+			nCompare = Compare(m_formatter.GetTaskTags(pTDI1), 
+								m_formatter.GetTaskTags(pTDI2), TRUE);
 			break;
 
 		case TDCC_FILEREF:
@@ -2524,6 +2526,15 @@ double CTDCTaskCalculator::GetTaskLastModifiedDate(DWORD dwTaskID) const
 	return GetTaskLastModifiedDate(pTDI, pTDS);
 }
 
+CString CTDCTaskCalculator::GetTaskLastModifiedBy(DWORD dwTaskID) const
+{
+	const TODOITEM* pTDI = NULL;
+	const TODOSTRUCTURE* pTDS = NULL;
+	GET_TDI_TDS(dwTaskID, pTDI, pTDS, EMPTY_STR);
+
+	return GetTaskLastModifiedBy(pTDI, pTDS);
+}
+
 double CTDCTaskCalculator::GetTaskCost(DWORD dwTaskID) const
 {
 	const TODOITEM* pTDI = NULL;
@@ -2707,12 +2718,33 @@ double CTDCTaskCalculator::GetStartDueDate(const TODOITEM* pTDI, const TODOSTRUC
 
 double CTDCTaskCalculator::GetTaskLastModifiedDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
 {
+	const TODOITEM* pLatest = GetLastModifiedTask(pTDI, pTDS);
+
+	if (!pLatest)
+		return 0.0;
+
+	return pLatest->dateLastMod;
+}
+
+CString CTDCTaskCalculator::GetTaskLastModifiedBy(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
+{
+	const TODOITEM* pLatest = GetLastModifiedTask(pTDI, pTDS);
+
+	if (!pLatest)
+		return EMPTY_STR;
+
+	return pLatest->sLastModifiedBy;
+}
+
+const TODOITEM* CTDCTaskCalculator::GetLastModifiedTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const
+{
 	// sanity check
 	ASSERT (pTDS && pTDI);
 
 	if (!pTDS || !pTDI)
-		return 0.0;
+		return NULL;
 
+	const TODOITEM* pLatest = pTDI;
 	double dLatest = pTDI->dateLastMod;
 
 	if (m_data.HasStyle(TDCS_USELATESTLASTMODIFIED))
@@ -2724,12 +2756,18 @@ double CTDCTaskCalculator::GetTaskLastModifiedDate(const TODOITEM* pTDI, const T
 
 			ASSERT (pTDSChild && pTDIChild);
 
-			double dChildDate = GetTaskLastModifiedDate(pTDIChild, pTDSChild);
-			dLatest = GetBestDate(dLatest, dChildDate, FALSE);
+			const TODOITEM* pLatestChild = GetLastModifiedTask(pTDIChild, pTDSChild); // RECURSIVE CALL
+			double dLatestChildDate = pLatestChild->dateLastMod;
+
+			if (GetBestDate(dLatest, dLatestChildDate, FALSE) == dLatestChildDate)
+			{
+				pLatest = pLatestChild;
+				dLatest = dLatestChildDate;
+			}
 		}
 	}
 
-	return dLatest;
+	return pLatest;
 }
 
 double CTDCTaskCalculator::GetBestDate(double dBest, double dDate, BOOL bEarliest)

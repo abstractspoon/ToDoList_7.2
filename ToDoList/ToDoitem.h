@@ -93,6 +93,7 @@ public:
 	static CString FormatTaskDependency(DWORD dwTaskID, const CString& sFile = _T(""));
 	static void SetRecentlyModifiedPeriod(double dDays);
 	static void SetModifierName(const CString sModifier);
+	static BOOL IsRecentlyModified(const COleDateTime& date);
 	
 	// Attributes
 	CString sTitle;

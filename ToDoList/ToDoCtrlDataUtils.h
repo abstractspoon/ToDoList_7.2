@@ -44,6 +44,7 @@ public:
 	double GetTaskDueDate(DWORD dwTaskID) const;
 	double GetTaskStartDate(DWORD dwTaskID) const;
 	double GetTaskLastModifiedDate(DWORD dwTaskID) const;
+	CString GetTaskLastModifiedBy(DWORD dwTaskID) const;
 	int GetTaskHighestPriority(DWORD dwTaskID, BOOL bIncludeDue = TRUE) const;
 	int GetTaskHighestRisk(DWORD dwTaskID) const;
 	int GetTaskPercentDone(DWORD dwTaskID) const;
@@ -67,6 +68,7 @@ public:
 	double GetTaskDueDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double GetTaskStartDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double GetTaskLastModifiedDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
+	CString GetTaskLastModifiedBy(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	int GetTaskHighestPriority(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bIncludeDue = TRUE) const;
 	int GetTaskHighestRisk(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	double GetTaskCost(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
@@ -94,6 +96,9 @@ protected:
 	BOOL HasDueTodayTasks(const TODOSTRUCTURE* pTDS) const;
 	BOOL HasLockedTasks(const TODOSTRUCTURE* pTDS) const;
 	BOOL IsParentTaskDone(const TODOSTRUCTURE* pTDS) const;
+	
+	const TODOITEM* GetLastModifiedTask(DWORD dwTaskID) const;
+	const TODOITEM* GetLastModifiedTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 
 	static double GetBestDate(double dBest, double dDate, BOOL bEarliest);
 	static double GetCalculationValue(const TDCCADATA& data, TDC_UNITS nUnits);
