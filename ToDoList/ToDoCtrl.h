@@ -197,7 +197,7 @@ public:
 	BOOL RestoreTreeSelection(const TDCSELECTIONCACHE& cache);
 
 	BOOL IsTaskDone(DWORD dwTaskID) const { return m_data.IsTaskDone(dwTaskID); }
-	BOOL IsTaskGoodAsDone(DWORD dwTaskID) const { return m_data.CalcIsTaskDone(dwTaskID); }
+	BOOL IsTaskGoodAsDone(DWORD dwTaskID) const { return m_calculator.IsTaskDone(dwTaskID); }
 	BOOL IsTaskRecurring(DWORD dwTaskID) const { return m_data.IsTaskRecurring(dwTaskID); }
 	BOOL CanTaskRecur(DWORD dwTaskID) const { return m_data.CanTaskRecur(dwTaskID); }
 
@@ -226,7 +226,7 @@ public:
 	BOOL OffsetSelectedTaskDate(TDC_DATE nDate, int nAmount, TDC_OFFSET nUnits, BOOL bAndSubtasks);
 	BOOL CanOffsetSelectedTaskStartAndDueDates() const;
 	BOOL OffsetSelectedTaskStartAndDueDates(int nAmount, TDC_OFFSET nUnits, BOOL bAndSubtasks);
-	COleDateTime GetEarliestDueDate() const { return m_data.GetEarliestDueDate(); } // entire tasklist
+	COleDateTime GetEarliestDueDate() const { return m_calculator.GetEarliestDueDate(); } // entire tasklist
 
 	COLORREF GetSelectedTaskColor() const { return m_taskTree.GetSelectedTaskColor(); }
 	CString GetSelectedTaskIcon() const { return m_taskTree.GetSelectedTaskIcon(); }
@@ -262,7 +262,7 @@ public:
 	BOOL IsSelectedTaskReference() const { return m_taskTree.IsSelectedTaskReference(); }
 	DWORD GetSelectedTaskParentID() const { return m_taskTree.GetSelectedTaskParentID(); }
 
-	CString GetTaskPath(DWORD dwTaskID, int nMaxLen = -1) const { return m_data.FormatTaskPath(dwTaskID, nMaxLen); }
+	CString GetTaskPath(DWORD dwTaskID, int nMaxLen = -1) const { return m_formatter.GetTaskPath(dwTaskID, nMaxLen); }
 	CString GetTaskTitle(DWORD dwTaskID) const { return m_data.GetTaskTitle(dwTaskID); }
 	CString GetTaskComments(DWORD dwTaskID) const { return m_data.GetTaskComments(dwTaskID); }
 	COleDateTime GetTaskDate(DWORD dwID, TDC_DATE nDate) const;
@@ -503,6 +503,8 @@ protected:
 
 	CToDoCtrlData m_data;
 	CTDCTaskMatcher m_matcher;
+	CTDCTaskCalculator m_calculator;
+	CTDCTaskFormatter m_formatter;
 
 	CStringArray m_aFileRefs;
 	CString m_sTextComments;

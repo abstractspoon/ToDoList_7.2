@@ -273,7 +273,10 @@ protected:
 	int m_nMaxInfotipCommentsLength;
 	TDC_UNITS m_nDefTimeEstUnits, m_nDefTimeSpentUnits;
 	CString m_sTasklistFolder;
+
 	CTDCTaskComparer m_comparer;
+	CTDCTaskCalculator m_calculator;
+	CTDCTaskFormatter m_formatter;
 
 	// font/color related
 	COLORREF m_crAltLine, m_crGridLine, m_crDone;

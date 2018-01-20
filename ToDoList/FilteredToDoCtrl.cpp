@@ -845,7 +845,7 @@ BOOL CFilteredToDoCtrl::WantAddTask(const TODOITEM* pTDI, const TODOSTRUCTURE* p
 		if (pFilter->HasAttribute(TDCA_SELECTION))
 		{
 			// check completion
-			if (pFilter->bIgnoreDone && m_data.CalcIsTaskDone(pTDI, pTDS))
+			if (pFilter->bIgnoreDone && m_calculator.IsTaskDone(pTDI, pTDS))
 			{
 				bWantTask = FALSE;
 			}

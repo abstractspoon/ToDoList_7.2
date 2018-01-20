@@ -12,6 +12,7 @@
 #include "tdltaskicondlg.h"
 #include "tdcuiextensionhelper.h"
 #include "TDLTaskViewListBox.h"
+#include "ToDoCtrlDataDefines.h"
 
 #include "..\shared\holdredraw.h"
 #include "..\shared\datehelper.h"
@@ -1641,7 +1642,7 @@ BOOL CTabbedToDoCtrl::ExtensionMoveTaskStartAndDueDates(DWORD dwTaskID, const CO
 
 	Flush();
 
-	IMPLEMENT_UNDO_EDIT(m_data);
+	IMPLEMENT_DATA_UNDO_EDIT(m_data);
 
 	POSITION pos = TSH().GetFirstItemPos();
 	DWORD dwModTaskID = 0;
@@ -1679,7 +1680,7 @@ LRESULT CTabbedToDoCtrl::OnUIExtModifySelectedTask(WPARAM wParam, LPARAM lParam)
 	HandleUnsavedComments();
 
 	// Aggregate all mods as a single edit
-	IMPLEMENT_UNDO_EDIT(m_data);
+	IMPLEMENT_DATA_UNDO_EDIT(m_data);
 
 	BOOL bDependChange = FALSE, bMoveTask = FALSE, bSuccess = TRUE;
 	
@@ -1756,7 +1757,7 @@ LRESULT CTabbedToDoCtrl::OnUIExtMoveSelectedTask(WPARAM /*wParam*/, LPARAM lPara
 
 	HandleUnsavedComments();
 
-	IMPLEMENT_UNDO(m_data, TDCUAT_MOVE);
+	IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
 	BOOL bSuccess = TRUE;
 
 	try
