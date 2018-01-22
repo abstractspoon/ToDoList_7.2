@@ -4954,7 +4954,7 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 	case TDC_INSERTATBOTTOM:
 		return TRUE;
 
-	// parent cannot be reference or NULL
+	// Selected item cannot be NULL and parent cannot be reference
 	case TDC_INSERTATTOPOFSELTASKPARENT:
 	case TDC_INSERTATBOTTOMOFSELTASKPARENT:
 	case TDC_INSERTAFTERSELTASK:
@@ -4962,8 +4962,8 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 	case TDC_INSERTATTOPOFSELTASK: 
 	case TDC_INSERTATBOTTOMOFSELTASK:
 		{
-			if (htiParent == NULL)
-				return FALSE;
+ 			if (GetSelectedItem() == NULL)
+ 				return FALSE;
 		
 			// else
 			return (!m_data.IsTaskReference(GetTaskID(htiParent)));
