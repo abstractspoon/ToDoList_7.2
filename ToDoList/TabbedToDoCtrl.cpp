@@ -4348,14 +4348,44 @@ BOOL CTabbedToDoCtrl::ExtensionCanSortBy(FTC_VIEW nView, IUI_ATTRIBUTE nBy) cons
 	return (pExt && pExt->WantSortUpdate(nBy));
 }
 
-BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection) 
-{ 
-	return !InTreeView() ? FALSE : CToDoCtrl::MoveSelectedTask(nDirection); 
-}
-
 BOOL CTabbedToDoCtrl::CanMoveSelectedTask(TDC_MOVETASK nDirection) const 
 { 
-	return !InTreeView() ? FALSE : CToDoCtrl::CanMoveSelectedTask(nDirection); 
+	FTC_VIEW nView = GetTaskView();
+
+	switch (nView)
+	{
+	case FTCV_TASKTREE:
+	case FTCV_UNSET:
+		return CToDoCtrl::CanMoveSelectedTask(nDirection);
+
+	case FTCV_TASKLIST:
+		return FALSE;
+
+	case FTCV_UIEXTENSION1:
+	case FTCV_UIEXTENSION2:
+	case FTCV_UIEXTENSION3:
+	case FTCV_UIEXTENSION4:
+	case FTCV_UIEXTENSION5:
+	case FTCV_UIEXTENSION6:
+	case FTCV_UIEXTENSION7:
+	case FTCV_UIEXTENSION8:
+	case FTCV_UIEXTENSION9:
+	case FTCV_UIEXTENSION10:
+	case FTCV_UIEXTENSION11:
+	case FTCV_UIEXTENSION12:
+	case FTCV_UIEXTENSION13:
+	case FTCV_UIEXTENSION14:
+	case FTCV_UIEXTENSION15:
+	case FTCV_UIEXTENSION16:
+		if (!ExtensionCanDoAppCommand(nView, IUI_MOVETASKPOSITION, 0))
+			return FALSE;
+		// else
+		return CToDoCtrl::CanMoveSelectedTask(nDirection);
+	}
+	
+	// else
+	ASSERT(0);
+	return FALSE;
 }
 
 BOOL CTabbedToDoCtrl::GotoNextTask(TDC_GOTO nDirection)

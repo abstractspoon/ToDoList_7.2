@@ -105,9 +105,7 @@ public:
 	BOOL SetStyle(TDC_STYLE nStyle, BOOL bOn = TRUE) { return CToDoCtrl::SetStyle(nStyle, bOn); }
 	void SetMaximizeState(TDC_MAXSTATE nState);
 
-	BOOL MoveSelectedTask(TDC_MOVETASK nDirection);
 	BOOL CanMoveSelectedTask(TDC_MOVETASK nDirection) const;
-
 	BOOL GotoNextTask(TDC_GOTO nDirection); 
 	BOOL CanGotoNextTask(TDC_GOTO nDirection) const;
 	BOOL GotoNextTopLevelTask(TDC_GOTO nDirection); 

@@ -651,6 +651,7 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_COLLAPSEALL:
 	case IUI_RESIZEATTRIBCOLUMNS:
 	case IUI_SELECTTASK:
+	case IUI_MOVETASKPOSITION:
 		return true;
 
 	case IUI_SAVETOIMAGE:
