@@ -1121,7 +1121,7 @@ void CTabCtrlEx::EnsureSelVisible()
 {
 	CSpinButtonCtrl* pSpin = GetSpinButtonCtrl();
 
-	if (pSpin == NULL)
+	if ((pSpin == NULL) || !pSpin->IsWindowVisible())
 		return;
 
 	CRect rSpin;
