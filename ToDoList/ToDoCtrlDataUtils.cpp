@@ -1278,20 +1278,16 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 
 		case TDCC_REMAINING:
 			{
-				COleDateTime date1 = m_calculator.GetTaskDueDate(pTDI1, pTDS1);
-				COleDateTime date2 = m_calculator.GetTaskDueDate(pTDI2, pTDS2);
+				TDC_UNITS nUnits1, nUnits2;
+				double dRemain1 = m_calculator.GetTaskRemainingTime(pTDI1, pTDS1, nUnits1);
+				double dRemain2 = m_calculator.GetTaskRemainingTime(pTDI2, pTDS2, nUnits2);
 
-				if (!CDateHelper::IsDateSet(date1) || 
-					!CDateHelper::IsDateSet(date2))
+				if ((nUnits1 != nUnits2) && (dRemain1 != 0.0) && (dRemain2 != 0.0))
 				{
-					return nCompare = Compare(date1, date2, TRUE, TDCD_DUE);
+					dRemain2 = CTimeHelper().GetTime(dRemain2, 
+													TDC::MapUnitsToTHUnits(nUnits2), 
+													TDC::MapUnitsToTHUnits(nUnits1));
 				}
-
-				// Both dates set => calc remaining time
-				COleDateTime dtCur = COleDateTime::GetCurrentTime();
-
-				double dRemain1 = date1 - dtCur;
-				double dRemain2 = date2 - dtCur;
 
 				nCompare = Compare(dRemain1, dRemain2);
 			}
