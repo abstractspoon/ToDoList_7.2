@@ -9,7 +9,7 @@
 
 #include "tdcstruct.h"
 
-#include "..\shared\encheckcombobox.h"
+#include "..\shared\checkcombobox.h"
 
 #include <afxtempl.h>
 

@@ -2751,7 +2751,7 @@ BOOL CGanttTreeListCtrl::OnTreeLButtonDblClk(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		ExpandItem(hti, !TCH().IsItemExpanded(hti));
+		ExpandItem(hti, !TCH().IsItemExpanded(hti), TRUE);
 		return TRUE;
 	}
 
