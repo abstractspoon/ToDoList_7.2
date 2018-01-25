@@ -704,7 +704,6 @@ BOOL CGanttTreeListCtrl::WantSortUpdate(IUI_ATTRIBUTE nAttrib)
 	case IUI_ALLOCTO:
 	case IUI_DUEDATE:
 	case IUI_ID:
-	case IUI_NONE:
 	case IUI_PERCENT:
 	case IUI_STARTDATE:
 	case IUI_TASKNAME:
@@ -712,6 +711,9 @@ BOOL CGanttTreeListCtrl::WantSortUpdate(IUI_ATTRIBUTE nAttrib)
 	case IUI_DONEDATE:
 	case IUI_DEPENDENCY:
 		return (MapAttributeToColumn(nAttrib) != GTLCC_NONE);
+
+	case IUI_NONE:
+		return TRUE;
 	}
 	
 	// all else 
@@ -1102,12 +1104,13 @@ void CGanttTreeListCtrl::BuildTreeItem(const ITASKLISTBASE* pTasks, HTASKITEM hT
 	GANTTITEM* pGI = new GANTTITEM;
 	m_data[dwTaskID] = pGI;
 	
-	// Only save data for non-references
+	pGI->dwTaskID = dwTaskID;
 	pGI->dwRefID = pTasks->GetTaskReferenceID(hTask);
 
 	// Except for position
 	pGI->nPosition = pTasks->GetTaskPosition(hTask);
 
+	// Only save data for non-references
 	if (pGI->dwRefID == 0)
 	{
 		pGI->sTitle = pTasks->GetTaskTitle(hTask);
@@ -7298,4 +7301,39 @@ void CGanttTreeListCtrl::FilterToolTipMessage(MSG* pMsg)
 	m_tree.FilterToolTipMessage(pMsg);
 	m_treeHeader.FilterToolTipMessage(pMsg);
 	m_listHeader.FilterToolTipMessage(pMsg);
+}
+
+BOOL CGanttTreeListCtrl::CanMoveSelectedItem(const IUITASKMOVE& move) const
+{
+	return (GetSelectedTaskID() && 
+			((move.dwParentID == 0) || m_data.HasItem(move.dwParentID)) &&
+			((move.dwAfterSiblingID == 0) || m_data.HasItem(move.dwAfterSiblingID)));
+}
+
+BOOL CGanttTreeListCtrl::MoveSelectedItem(const IUITASKMOVE& move)
+{
+	if (!CanMoveSelectedItem(move))
+		return FALSE;
+
+
+	HTREEITEM htiSel = GetSelectedItem(), htiNew = NULL;
+	HTREEITEM htiDestParent = TCH().FindItem(move.dwParentID);
+	HTREEITEM htiDestAfterSibling = TCH().FindItem(move.dwAfterSiblingID);
+
+	{
+		//CTLSHoldResync hr(*this);
+		CHoldRedraw hr2(m_tree, NCR_UPDATE);
+		//CHoldRedraw hr3(m_list);
+
+		htiNew = TCH().MoveTree(htiSel, htiDestParent, htiDestAfterSibling, TRUE, TRUE);
+		ASSERT(htiNew);
+	}
+
+	if (htiNew)
+	{
+		SelectItem(htiNew);
+		return TRUE;
+	}
+
+	return FALSE;
 }

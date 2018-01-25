@@ -1794,28 +1794,6 @@ BOOL CTDLTaskTreeCtrl::RemoveOrphanTreeItemReferences(HTREEITEM hti)
 
 HTREEITEM CTDLTaskTreeCtrl::MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling)
 {
-	TCH_WHERE nWhere = TCHW_BELOW; // most likely
-	HTREEITEM htiTarget = htiDestPrevSibling;
-	
-	// validate htiTarget
-	if (htiTarget == TVI_FIRST)
-	{
-		htiTarget = m_tcTasks.GetChildItem(htiDestParent);
-		nWhere = TCHW_ABOVE;
-	}
-	else if (htiTarget == TVI_LAST)
-	{
-		htiTarget = TCH().GetLastChildItem(htiDestParent);
-	}
-	
-	// if htiTarget is NULL then the target parent has no children at present
-	// so we just move directly on to it
-	if (htiTarget == NULL)
-	{
-		htiTarget = htiDestParent;
-		nWhere = TCHW_ON;
-	}
-
 	// prevent list updating until we have finished
 	CWaitCursor wait;
 	{
@@ -1827,7 +1805,7 @@ HTREEITEM CTDLTaskTreeCtrl::MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTR
 			m_tcTasks.SetItemState(htiDestParent, TVIS_EXPANDED, TVIS_EXPANDED);
 		
 		// do the move and return the new tree item
-		hti = TCH().MoveTree(htiTarget, hti, nWhere, TRUE, TRUE);
+		hti = TCH().MoveTree(hti, htiDestParent, htiDestPrevSibling, TRUE, TRUE);
 	}
 
 	return hti;

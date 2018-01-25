@@ -57,6 +57,9 @@ public:
 	BOOL GetSelectedTaskDates(COleDateTime& dtStart, COleDateTime& dtDue) const;
 	DWORD GetNextTask(DWORD dwTaskID, IUI_APPCOMMAND nCmd) const;
 
+	BOOL CanMoveSelectedItem(const IUITASKMOVE& move) const;
+	BOOL MoveSelectedItem(const IUITASKMOVE& move);
+
 	BOOL GetSelectedTaskDependencies(CDWordArray& aDepends) const;
 	BOOL SetSelectedTaskDependencies(const CDWordArray& aDepends);
 

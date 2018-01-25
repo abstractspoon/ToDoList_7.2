@@ -636,6 +636,17 @@ bool CGanttChartWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 			return (m_ctrlGantt.SelectTask(nCmd, *pSelect) != FALSE);
 		}
 		break;
+
+		return true;
+
+	case IUI_MOVETASK:
+		if (dwExtra)
+		{
+			const IUITASKMOVE* pMove = (const IUITASKMOVE*)dwExtra;
+			return m_ctrlGantt.MoveSelectedItem(*pMove);
+		}
+		break;
+
 	}
 
 	return false;
@@ -651,7 +662,6 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_COLLAPSEALL:
 	case IUI_RESIZEATTRIBCOLUMNS:
 	case IUI_SELECTTASK:
-	case IUI_MOVETASKPOSITION:
 		return true;
 
 	case IUI_SAVETOIMAGE:
@@ -700,6 +710,14 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 	case IUI_SELECTPREVTASK:
 	case IUI_SELECTLASTTASK:
 		return true;
+
+	case IUI_MOVETASK:
+		if (dwExtra)
+		{
+			const IUITASKMOVE* pMove = (const IUITASKMOVE*)dwExtra;
+			return m_ctrlGantt.CanMoveSelectedItem(*pMove);
+		}
+		break;
 	}
 
 	// all else

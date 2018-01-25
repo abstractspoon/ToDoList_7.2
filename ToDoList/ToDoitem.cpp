@@ -727,6 +727,24 @@ DWORD TODOSTRUCTURE::GetSubTaskID(int nPos) const
 	return pTDS ? pTDS->GetTaskID() : 0;
 }
 
+BOOL TODOSTRUCTURE::HasSubTask(DWORD dwSubtaskID, BOOL bImmediate) const
+{
+	int nPos = GetSubTaskPosition(dwSubtaskID);
+
+	if ((nPos != -1) || bImmediate)
+		return (nPos != -1);
+
+	// check subtasks
+	for (int nSubTask = 0; nSubTask < GetSubTaskCount(); nSubTask++)
+	{
+		if (GetSubTask(nPos)->HasSubTask(dwSubtaskID, FALSE))
+			return TRUE;
+	}
+
+	// else
+	return FALSE;
+}
+
 int TODOSTRUCTURE::GetSubTaskPosition(DWORD dwID) const
 {
 	ASSERT(dwID);

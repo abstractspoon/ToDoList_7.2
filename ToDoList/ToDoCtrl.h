@@ -879,8 +879,6 @@ protected:
 	void ShowTaskHasIncompleteDependenciesError(const CString& sIncomplete);
 	void ShowTaskHasCircularDependenciesError(const CDWordArray& aTaskIDs) const;
 
-	BOOL MoveSelection(TDC_MOVETASK nDirection);
-	
 	typedef CMap<DWORD, DWORD, DWORD, DWORD&> CMapID2ID;
 	void PrepareTasksForPaste(CTaskFile& tasks, TDC_RESETIDS nResetID, BOOL bResetCreation) const;
 	void BuildTaskIDMapForPaste(CTaskFile& tasks, HTASKITEM hTask, DWORD& dwNextID, 

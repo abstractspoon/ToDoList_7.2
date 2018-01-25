@@ -105,6 +105,7 @@ public:
 	BOOL SetStyle(TDC_STYLE nStyle, BOOL bOn = TRUE) { return CToDoCtrl::SetStyle(nStyle, bOn); }
 	void SetMaximizeState(TDC_MAXSTATE nState);
 
+	BOOL MoveSelectedTask(TDC_MOVETASK nDirection);
 	BOOL CanMoveSelectedTask(TDC_MOVETASK nDirection) const;
 	BOOL GotoNextTask(TDC_GOTO nDirection); 
 	BOOL CanGotoNextTask(TDC_GOTO nDirection) const;
@@ -290,7 +291,7 @@ protected:
 	BOOL ViewSupportsTaskSelection(FTC_VIEW nView) const;
 
 	void UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID = 0);
-	void ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra = 0);
+	BOOL ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra = 0);
 	BOOL ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra = 0) const;
 	IUIExtensionWindow* GetCreateExtensionWnd(FTC_VIEW nView);
 	IUIExtensionWindow* GetExtensionWnd(FTC_VIEW nView) const;
@@ -317,6 +318,7 @@ protected:
 	void RefreshExtensionViewSort(FTC_VIEW nView);
 	BOOL ExtensionCanSortBy(FTC_VIEW nView, TDC_COLUMN nBy) const;
 	BOOL ExtensionCanSortBy(FTC_VIEW nView, IUI_ATTRIBUTE nBy) const;
+	BOOL GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nDirection, DWORD& dwDestParentID, DWORD& dwDestPrevSiblingID) const;
 
 	virtual BOOL GetAllTasksForExtensionViewUpdate(CTaskFile& tasks, const CTDCAttributeMap& mapAttrib) const;
 	BOOL GetSelectedTasksForExtensionViewUpdate(CTaskFile& tasks, const CTDCAttributeMap& mapAttrib, DWORD dwFlags) const;

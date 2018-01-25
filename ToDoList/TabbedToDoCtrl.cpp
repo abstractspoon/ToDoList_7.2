@@ -4266,6 +4266,9 @@ void CTabbedToDoCtrl::Sort(TDC_COLUMN nBy, BOOL bAllowToggle)
 			
 			if ((nCol != IUI_NONE) || (nBy == TDCC_NONE))
 			{
+				if (nBy == TDCC_NONE)
+					bAllowToggle = FALSE;
+
 				ExtensionDoAppCommand(nView, (bAllowToggle ? IUI_TOGGLABLESORT : IUI_SORT), nCol);
 
 				VIEWDATA* pVData = GetViewData(nView);
@@ -4377,16 +4380,136 @@ BOOL CTabbedToDoCtrl::CanMoveSelectedTask(TDC_MOVETASK nDirection) const
 	case FTCV_UIEXTENSION14:
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
-		if (!ExtensionCanDoAppCommand(nView, IUI_MOVETASKPOSITION, 0))
-			return FALSE;
-		// else
-		return CToDoCtrl::CanMoveSelectedTask(nDirection);
+		{
+			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
+			VERIFY(GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID));
+
+			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
+
+			IUITASKMOVE move = { dwSelTaskID, dwDestParentID, dwDestPrevSiblingID, false };
+
+			return ExtensionCanDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move);
+		}
+		break;
 	}
 	
 	// else
 	ASSERT(0);
 	return FALSE;
 }
+
+BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection) 
+{ 
+	FTC_VIEW nView = GetTaskView();
+
+	switch (nView)
+	{
+	case FTCV_TASKTREE:
+	case FTCV_UNSET:
+		return CToDoCtrl::MoveSelectedTask(nDirection);
+
+	case FTCV_TASKLIST:
+		return FALSE;
+
+	case FTCV_UIEXTENSION1:
+	case FTCV_UIEXTENSION2:
+	case FTCV_UIEXTENSION3:
+	case FTCV_UIEXTENSION4:
+	case FTCV_UIEXTENSION5:
+	case FTCV_UIEXTENSION6:
+	case FTCV_UIEXTENSION7:
+	case FTCV_UIEXTENSION8:
+	case FTCV_UIEXTENSION9:
+	case FTCV_UIEXTENSION10:
+	case FTCV_UIEXTENSION11:
+	case FTCV_UIEXTENSION12:
+	case FTCV_UIEXTENSION13:
+	case FTCV_UIEXTENSION14:
+	case FTCV_UIEXTENSION15:
+	case FTCV_UIEXTENSION16:
+		{
+			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
+			VERIFY(GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID));
+
+			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
+
+			IUITASKMOVE move = { dwSelTaskID, dwDestParentID, dwDestPrevSiblingID, false };
+
+			if (ExtensionDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move))
+			{
+				// Update the task tree and data store quietly
+				CDWordArray aSelTaskIDs;
+				m_taskTree.GetSelectedTaskIDs(aSelTaskIDs);
+
+				if (m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
+				{
+					HTREEITEM htiDestParent = TCH().FindItem(dwDestParentID);
+					HTREEITEM htiDestPrevSibling = TCH().FindItem(dwDestPrevSiblingID);
+
+					m_taskTree.MoveSelection(htiDestParent, htiDestPrevSibling);
+					return TRUE;
+				}
+			}
+		}
+		break;
+	}
+	
+	// else
+	ASSERT(0);
+	return FALSE;
+}
+
+BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nDirection, DWORD& dwDestParentID, DWORD& dwDestPrevSiblingID) const
+{
+	if (!IsExtensionView(nView))
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+	
+	DWORD dwSelTaskID = GetSelectedTaskID();
+
+	switch (nDirection)
+	{
+	case TDCM_DOWN:
+		{
+			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_NEXT, TRUE);
+
+			if (dwDestPrevSiblingID == 0)
+				return FALSE;
+
+			// Validate it really is a sibling
+			if (!m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
+				return FALSE;
+		}
+		break;
+
+	case TDCM_UP:
+		{
+			// We have to look two tasks above
+			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_PREV, TRUE);
+
+			if (dwDestPrevSiblingID == 0)
+				return FALSE;
+
+			dwDestPrevSiblingID = GetNextTaskID(dwDestPrevSiblingID, TTCNT_PREV, TRUE);
+
+			// The final sibling ID can be zero indicating the task should
+			// be inserted at the top. Else Validate it really is a sibling
+			if ((dwDestPrevSiblingID != 0) && !m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
+				return FALSE;
+		}
+		break;
+
+	case TDCM_LEFT:
+	case TDCM_RIGHT:
+		// same as tree
+		return m_taskTree.GetInsertLocation(nDirection, dwDestParentID, dwDestPrevSiblingID);
+	}
+
+	return TRUE;
+}
+
 
 BOOL CTabbedToDoCtrl::GotoNextTask(TDC_GOTO nDirection)
 {
@@ -4425,16 +4548,7 @@ BOOL CTabbedToDoCtrl::GotoNextTask(TDC_GOTO nDirection)
 			DWORD dwNextID = GetNextTaskID(dwTaskID, MapGotoToGetNext(nDirection, FALSE), FALSE);
 
 			if (dwNextID != dwTaskID)
-			{
-				DWORD dwTick = GetTickCount();
-			
-				TRACE(_T("CTabbedTooDoCtrl::GotoNextTask(before SelectTask()\n"));
-				BOOL bRes = SelectTask(dwNextID);
-
-				TRACE(_T("CTabbedTooDoCtrl::GotoNextTask(after SelectTask(): %d ms\n"), GetTickCount() - dwTick);
-
-				return bRes;
-			}
+				return SelectTask(dwNextID);
 		}
 		break;
 
@@ -4718,13 +4832,16 @@ BOOL CTabbedToDoCtrl::CanExpandTasks(TDC_EXPANDCOLLAPSE nWhat, BOOL bExpand) con
 	return FALSE; // not supported
 }
 
-void CTabbedToDoCtrl::ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra)
+BOOL CTabbedToDoCtrl::ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra)
 {
 	IUIExtensionWindow* pExt = GetExtensionWnd(nView);
 	ASSERT(pExt);
 
 	if (pExt)
-		pExt->DoAppCommand(nCmd, dwExtra);
+		return (pExt->DoAppCommand(nCmd, dwExtra) ? TRUE : FALSE);
+
+	// else
+	return FALSE;
 }
 
 BOOL CTabbedToDoCtrl::ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra) const
@@ -4733,7 +4850,7 @@ BOOL CTabbedToDoCtrl::ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nC
 	ASSERT(pExt);
 
 	if (pExt)
-		return pExt->CanDoAppCommand(nCmd, dwExtra);
+		return (pExt->CanDoAppCommand(nCmd, dwExtra) ? TRUE : FALSE);
 
 	return FALSE;
 }

@@ -237,6 +237,44 @@ BOOL CToDoCtrlData::HasTask(DWORD dwTaskID) const
 	return m_items.HasTask(dwTaskID);
 }
 
+BOOL CToDoCtrlData::TaskHasSubtask(DWORD dwTaskID, DWORD dwSubtaskID, BOOL bImmediate) const
+{
+	if (dwTaskID == 0)
+		return m_struct.HasSubTask(dwSubtaskID, bImmediate);
+
+	const TODOSTRUCTURE* pTDS = NULL;
+	GET_TDS(dwTaskID, pTDS, FALSE);
+
+	return pTDS->HasSubTask(dwSubtaskID, bImmediate);
+}
+
+BOOL CToDoCtrlData::TaskHasSibling(DWORD dwTaskID, DWORD dwSiblingID, BOOL bImmediate) const
+{
+	if (dwTaskID == 0)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	// Check they have the same parent
+	const TODOSTRUCTURE* pTDS = NULL;
+	GET_TDS(dwTaskID, pTDS, FALSE);
+
+	const TODOSTRUCTURE* pTDSParent = pTDS->GetParentTask();
+	BOOL bSameParent = (pTDSParent->HasSubTask(dwSiblingID, TRUE));
+
+	if (!bSameParent || bImmediate)
+	{
+		return bSameParent;
+	}
+
+	// Check they have adjacent positions
+	int nPos = pTDSParent->GetSubTaskPosition(dwTaskID);
+	int nSiblingPos = pTDSParent->GetSubTaskPosition(dwSiblingID);
+
+	return (abs(nPos - nSiblingPos) == 1);
+}
+
 POSITION CToDoCtrlData::GetFirstTaskPosition() const
 {
 	return m_items.GetStartPosition();

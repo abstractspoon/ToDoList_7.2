@@ -5955,6 +5955,7 @@ const CTDCAttributeMap& CToDoCtrl::GetVisibleEditFields() const
 int CToDoCtrl::GetSortableColumns(CTDCColumnIDMap& mapColIDs) const
 {
 	mapColIDs.Copy(m_visColEdit.GetVisibleColumns());
+	mapColIDs.Add(TDCC_CLIENT); // always
 
 	for (int nAttrib = 0; nAttrib < m_aCustomAttribDefs.GetSize(); nAttrib++)
 	{
@@ -7767,39 +7768,27 @@ BOOL CToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	SetFocusToTasks(); // else datetime controls get their focus screwed
 
 	// do the move
-	VERIFY(MoveSelection(nDirection));
+	// move the tasks
+	IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
+
+	DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
+	VERIFY(m_taskTree.GetInsertLocation(nDirection, dwDestParentID, dwDestPrevSiblingID));
+
+	CDWordArray aSelTaskIDs;
+	m_taskTree.GetSelectedTaskIDs(aSelTaskIDs);
+
+	if (!m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
+		return FALSE;
+
+	m_taskTree.MoveSelection(nDirection);
+
+	// refresh parent states if moving to the right (adding subtasks)
+	if (nDirection == TDCM_RIGHT)
+		FixupParentCompletion(dwDestParentID);
 
 	SetModified(TRUE, TDCA_POSITION, 0);
 
 	return TRUE;
-}
-
-BOOL CToDoCtrl::MoveSelection(TDC_MOVETASK nDirection)
-{
-	if (CanMoveSelectedTask(nDirection))
-	{
-		// move the tasks
-		IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
-
-		DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
-		VERIFY(m_taskTree.GetInsertLocation(nDirection, dwDestParentID, dwDestPrevSiblingID));
-				
-		CDWordArray aSelTaskIDs;
-		m_taskTree.GetSelectedTaskIDs(aSelTaskIDs);
-		
-		if (m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
-		{
-			m_taskTree.MoveSelection(nDirection);
-				
-			// refresh parent states if moving to the right (adding subtasks)
-			if (nDirection == TDCM_RIGHT)
-				FixupParentCompletion(dwDestParentID);
-
-			return TRUE;
-		}
-	}
-
-	return FALSE;
 }
 
 BOOL CToDoCtrl::GotoNextTopLevelTask(TDC_GOTO nDirection)

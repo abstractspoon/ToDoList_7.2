@@ -64,7 +64,10 @@ public:
 
 	const TODOSTRUCTURE* LocateTask(DWORD dwTaskID) const;
 	const TODOSTRUCTURE* GetStructure() const { return &m_struct; }
+	
 	BOOL HasTask(DWORD dwTaskID) const;
+	BOOL TaskHasSubtask(DWORD dwTaskID, DWORD dwSubtaskID, BOOL bImmediate = TRUE) const;
+	BOOL TaskHasSibling(DWORD dwTaskID, DWORD dwSiblingID, BOOL bImmediate = TRUE) const;
 
 	const TODOITEM* GetTask(DWORD dwTaskID) const;
 	const TODOITEM* GetTrueTask(DWORD& dwTaskID) const;
