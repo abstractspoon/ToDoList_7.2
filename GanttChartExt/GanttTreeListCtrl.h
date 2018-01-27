@@ -59,6 +59,7 @@ public:
 
 	BOOL CanMoveSelectedItem(const IUITASKMOVE& move) const;
 	BOOL MoveSelectedItem(const IUITASKMOVE& move);
+	BOOL IsMovingTask() const { return m_bMovingTask; }
 
 	BOOL GetSelectedTaskDependencies(CDWordArray& aDepends) const;
 	BOOL SetSelectedTaskDependencies(const CDWordArray& aDepends);
@@ -136,6 +137,7 @@ public:
 
 protected:
 	BOOL m_bReadOnly;
+	BOOL m_bMovingTask;
 
 	GANTTDATERANGE m_dateRange;
 	GANTTITEM m_giPreDrag;

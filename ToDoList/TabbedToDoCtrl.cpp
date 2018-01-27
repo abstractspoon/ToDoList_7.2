@@ -4382,10 +4382,11 @@ BOOL CTabbedToDoCtrl::CanMoveSelectedTask(TDC_MOVETASK nDirection) const
 	case FTCV_UIEXTENSION16:
 		{
 			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
-			VERIFY(GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID));
+
+			if (!GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID))
+				return FALSE;
 
 			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
-
 			IUITASKMOVE move = { dwSelTaskID, dwDestParentID, dwDestPrevSiblingID, false };
 
 			return ExtensionCanDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move);
@@ -4437,16 +4438,26 @@ BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 
 			if (ExtensionDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move))
 			{
-				// Update the task tree and data store quietly
+				IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
+
+				// Update the underlying data
 				CDWordArray aSelTaskIDs;
 				m_taskTree.GetSelectedTaskIDs(aSelTaskIDs);
 
 				if (m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
 				{
+					// Update the tree
 					HTREEITEM htiDestParent = TCH().FindItem(dwDestParentID);
 					HTREEITEM htiDestPrevSibling = TCH().FindItem(dwDestPrevSiblingID);
 
 					m_taskTree.MoveSelection(htiDestParent, htiDestPrevSibling);
+
+					// Enable the move to be saved
+					CToDoCtrl::SetModified(TRUE, TDCA_POSITION, dwSelTaskID);
+
+					// Mark _other_ extensions as requiring full update
+					SetExtensionsNeedTaskUpdate(TRUE, nView);
+
 					return TRUE;
 				}
 			}
@@ -4473,6 +4484,7 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 	{
 	case TDCM_DOWN:
 		{
+			dwDestParentID = GetSelectedTaskParentID();
 			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_NEXT, TRUE);
 
 			if (dwDestPrevSiblingID == 0)
@@ -4486,18 +4498,27 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 
 	case TDCM_UP:
 		{
-			// We have to look two tasks above
+			dwDestParentID = GetSelectedTaskParentID();
 			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_PREV, TRUE);
 
 			if (dwDestPrevSiblingID == 0)
 				return FALSE;
 
+			// We have to look two tasks above
 			dwDestPrevSiblingID = GetNextTaskID(dwDestPrevSiblingID, TTCNT_PREV, TRUE);
 
-			// The final sibling ID can be zero indicating the task should
-			// be inserted at the top. Else Validate it really is a sibling
-			if ((dwDestPrevSiblingID != 0) && !m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
-				return FALSE;
+			// If this is the parent task we set the sibling to zero
+			// so that the task is added to the top
+			if (dwDestPrevSiblingID == dwDestParentID)
+			{
+				dwDestPrevSiblingID = 0;
+			}
+			else if (dwDestPrevSiblingID != 0)
+			{
+				// Validate it really is a sibling
+				if (m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
+					return FALSE;
+			}
 		}
 		break;
 

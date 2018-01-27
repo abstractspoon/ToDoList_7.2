@@ -643,7 +643,9 @@ bool CGanttChartWnd::DoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra)
 		if (dwExtra)
 		{
 			const IUITASKMOVE* pMove = (const IUITASKMOVE*)dwExtra;
-			return m_ctrlGantt.MoveSelectedItem(*pMove);
+			ASSERT(pMove->dwSelectedTaskID == m_ctrlGantt.GetSelectedTaskID());
+
+			return (m_ctrlGantt.MoveSelectedItem(*pMove) != FALSE);
 		}
 		break;
 
@@ -715,7 +717,7 @@ bool CGanttChartWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, DWORD dwExtra) const
 		if (dwExtra)
 		{
 			const IUITASKMOVE* pMove = (const IUITASKMOVE*)dwExtra;
-			return m_ctrlGantt.CanMoveSelectedItem(*pMove);
+			return (m_ctrlGantt.CanMoveSelectedItem(*pMove) != FALSE);
 		}
 		break;
 	}
@@ -940,6 +942,11 @@ LRESULT CGanttChartWnd::OnGanttNotifySortChange(WPARAM /*wp*/, LPARAM lp)
 
 void CGanttChartWnd::OnSelchangedGanttTree(NMHDR* pNMHDR, LRESULT* pResult) 
 {
+	// Ignore selection changes during a move because we
+	// _Know_ that the logical selection does not change
+	if (m_ctrlGantt.IsMovingTask())
+		return;
+
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	*pResult = 0;
 	

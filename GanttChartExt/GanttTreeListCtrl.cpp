@@ -153,6 +153,7 @@ CGanttTreeListCtrl::CGanttTreeListCtrl(CGanttTreeCtrl& tree, CListCtrl& list)
 	m_pDependEdit(NULL),
 	m_dwMaxTaskID(0),
 	m_bReadOnly(FALSE),
+	m_bMovingTask(FALSE),
 	m_nPrevDropHilitedItem(-1)
 {
 
@@ -2132,8 +2133,11 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 					break;
 
 				case TVN_SELCHANGED:
-					if (HasOption(GTLCF_AUTOSCROLLTOTASK))
-						ScrollToSelectedTask();
+					if (!m_bMovingTask)
+					{
+						if (HasOption(GTLCF_AUTOSCROLLTOTASK))
+							ScrollToSelectedTask();
+					}
 					break;
 
 				case TVN_GETDISPINFO:
@@ -7315,15 +7319,15 @@ BOOL CGanttTreeListCtrl::MoveSelectedItem(const IUITASKMOVE& move)
 	if (!CanMoveSelectedItem(move))
 		return FALSE;
 
-
+	CAutoFlag af(m_bMovingTask, TRUE);
+	
 	HTREEITEM htiSel = GetSelectedItem(), htiNew = NULL;
 	HTREEITEM htiDestParent = TCH().FindItem(move.dwParentID);
 	HTREEITEM htiDestAfterSibling = TCH().FindItem(move.dwAfterSiblingID);
 
 	{
-		//CTLSHoldResync hr(*this);
 		CHoldRedraw hr2(m_tree, NCR_UPDATE);
-		//CHoldRedraw hr3(m_list);
+		CHoldRedraw hr3(m_list);
 
 		htiNew = TCH().MoveTree(htiSel, htiDestParent, htiDestAfterSibling, TRUE, TRUE);
 		ASSERT(htiNew);

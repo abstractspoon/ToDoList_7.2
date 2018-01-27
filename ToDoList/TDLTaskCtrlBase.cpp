@@ -5474,7 +5474,9 @@ int CTDLTaskCtrlBase::GetSelectedTaskPriority() const
 
 DWORD CTDLTaskCtrlBase::GetSelectedTaskParentID() const
 {
-	DWORD dwParentID = 0;
+	// If multiple tasks are selected they must all
+	// have the same parent else we return 0
+	DWORD dwParentID = (DWORD)-1;
 	POSITION pos = GetFirstSelectedTaskPos();
 	
 	while (pos)
@@ -5482,11 +5484,14 @@ DWORD CTDLTaskCtrlBase::GetSelectedTaskParentID() const
 		DWORD dwTaskID = GetNextSelectedTaskID(pos);
 		DWORD dwTaskParentID = m_data.GetTaskParentID(dwTaskID);
 		
-		if (dwParentID == -1)
+		if (dwParentID == (DWORD)-1)
+		{
 			dwParentID = dwTaskParentID;
-		
+		}
 		else if (dwParentID != dwTaskParentID)
+		{
 			return 0;
+		}
 	}
 	
 	return dwParentID;
