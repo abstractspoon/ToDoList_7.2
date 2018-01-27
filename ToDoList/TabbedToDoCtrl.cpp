@@ -4501,7 +4501,7 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 			dwDestParentID = GetSelectedTaskParentID();
 			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_PREV, TRUE);
 
-			if (dwDestPrevSiblingID == 0)
+			if ((dwDestPrevSiblingID == 0) || (dwDestPrevSiblingID == dwDestParentID))
 				return FALSE;
 
 			// We have to look two tasks above
@@ -4516,7 +4516,7 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 			else if (dwDestPrevSiblingID != 0)
 			{
 				// Validate it really is a sibling
-				if (m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
+				if (!m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
 					return FALSE;
 			}
 		}
