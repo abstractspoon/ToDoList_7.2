@@ -2644,7 +2644,12 @@ BOOL CKanbanCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 	if (m_data.IsLocked(dwTaskID))
 	{
-		SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked")));
+		HCURSOR hCursor = GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors"));
+
+		if (hCursor == NULL)
+			hCursor = GraphicsMisc::OleDragDropCursor(GMOC_NO);
+
+		SetCursor(hCursor);
 		return TRUE;
 	}
 

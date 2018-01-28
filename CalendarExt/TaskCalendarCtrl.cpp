@@ -2052,34 +2052,49 @@ BOOL CTaskCalendarCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		TCC_HITTEST nHit = TCCHT_NOWHERE;
 		DWORD dwHitID = HitTest(ptCursor, nHit);
 
-		if (dwHitID != 0)
-		{
-			if (IsTaskCalItemLocked(dwHitID))
-			{
-				SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked")));
-				return TRUE;
-			}
-			else if (!CanDragTask(dwHitID, nHit))
-			{
-				SetCursor(GraphicsMisc::LoadAppCursor(_T("NoDrag")));
-				return TRUE;
-			}
-		
-			// else
-			switch (nHit)
-			{
-				case TCCHT_BEGIN:
-				case TCCHT_END:
-					SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
-					return TRUE;
-			}
-
-		}
-
+		if (SetTaskCursor(dwHitID, nHit))
+			return TRUE;
 	}
 	
 	// else
 	return CCalendarCtrl::OnSetCursor(pWnd, nHitTest, message);
+}
+
+BOOL CTaskCalendarCtrl::SetTaskCursor(DWORD dwTaskID, TCC_HITTEST nHit) const
+{
+	if ((dwTaskID != 0) && (nHit != TCCHT_NOWHERE))
+	{
+		HCURSOR hCursor = NULL;
+
+		if (!CanDragTask(dwTaskID, nHit))
+		{
+			if (IsTaskCalItemLocked(dwTaskID))
+				hCursor = GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors"));
+			else
+				hCursor = GraphicsMisc::LoadAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
+
+			if (hCursor == NULL)
+				hCursor = GraphicsMisc::OleDragDropCursor(GMOC_NO);
+		}
+		else
+		{
+			switch (nHit)
+			{
+			case TCCHT_BEGIN:
+			case TCCHT_END:
+				hCursor = AfxGetApp()->LoadStandardCursor(IDC_SIZEWE);
+				return TRUE;
+			}
+		}
+
+		if (hCursor)
+		{
+			SetCursor(hCursor);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 BOOL CTaskCalendarCtrl::IsDragging() const

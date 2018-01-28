@@ -328,6 +328,7 @@ protected:
 	COleDateTime CalcMinDragDate(const GANTTITEM& gi) const;
 	double CalcMinDragDuration() const;
 	BOOL CanDragTask(DWORD dwTaskID, GTLC_DRAG nDrag = GTLCD_ANY) const;
+	BOOL SetTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const;
 
 	BOOL NotifyParentDateChange(GTLC_DRAG nDrag);
 	void NotifyParentDragChange();

@@ -2295,6 +2295,49 @@ BOOL CGanttTreeListCtrl::DrawDependencyPickLine(const CPoint& ptClient)
 	return FALSE;
 }
 
+BOOL CGanttTreeListCtrl::SetTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const
+{
+	if (nHit != GTLCHT_NOWHERE)
+	{
+		GTLC_DRAG nDrag = MapHitTestToDrag(nHit);
+		ASSERT(IsDragging(nDrag));
+
+		if (dwTaskID != 0)
+		{
+			HCURSOR hCursor = NULL;
+
+			if (!CanDragTask(dwTaskID, nDrag))
+			{
+				if (m_data.ItemIsLocked(dwTaskID))
+					hCursor = GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors"));
+				else
+					hCursor = GraphicsMisc::LoadAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
+
+				if (hCursor == NULL)
+					hCursor = GraphicsMisc::OleDragDropCursor(GMOC_NO);
+			}
+			else
+			{
+				switch (nDrag)
+				{
+				case GTLCD_START:
+				case GTLCD_END:
+					hCursor = AfxGetApp()->LoadStandardCursor(IDC_SIZEWE);
+					return TRUE;
+				}
+			}
+
+			if (hCursor)
+			{
+				SetCursor(hCursor);
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
 LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	if (!IsResyncEnabled())
@@ -2383,35 +2426,8 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				DWORD dwHitID = ListHitTestTask(ptCursor, TRUE, nHit, TRUE);
 				ASSERT((nHit == GTLCHT_NOWHERE) || (dwHitID != 0));
 
-				if (nHit != GTLCHT_NOWHERE)
-				{
-					GTLC_DRAG nDrag = MapHitTestToDrag(nHit);
-					ASSERT(IsDragging(nDrag));
-
-					if (dwHitID != 0)
-					{
-						if (m_data.ItemIsLocked(dwHitID))
-						{
-							SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked")));
-							return TRUE;
-						}
-						else if (!CanDragTask(dwHitID, nDrag))
-						{
-							SetCursor(GraphicsMisc::LoadAppCursor(_T("NoDrag")));
-							return TRUE;
-						}
-						else
-						{
-							switch (nHit)
-							{
-							case GTLCHT_BEGIN:
-							case GTLCHT_END:
-								SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
-								return TRUE;
-							}
-						}
-					}
-				}
+				if (SetTaskCursor(dwHitID, nHit))
+					return TRUE;
 			}
 			break;
 

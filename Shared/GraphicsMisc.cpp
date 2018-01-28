@@ -537,8 +537,6 @@ HCURSOR GraphicsMisc::LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
 											32, 
 											32, 
 											LR_LOADFROMFILE | LR_MONOCHROME | LR_SHARED);
-	ASSERT(hCursor);
-
 	return hCursor;
 }
 
