@@ -2052,20 +2052,30 @@ BOOL CTaskCalendarCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		TCC_HITTEST nHit = TCCHT_NOWHERE;
 		DWORD dwHitID = HitTest(ptCursor, nHit);
 
-		if (!CanDragTask(dwHitID, nHit))
+		if (dwHitID != 0)
 		{
-			SetCursor(GraphicsMisc::OleDragDropCursor(GMOC_NO));
-			return TRUE;
-		}
-		
-		// else
-		switch (nHit)
-		{
-			case TCCHT_BEGIN:
-			case TCCHT_END:
-				SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
+			if (IsTaskCalItemLocked(dwHitID))
+			{
+				SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked")));
 				return TRUE;
+			}
+			else if (!CanDragTask(dwHitID, nHit))
+			{
+				SetCursor(GraphicsMisc::LoadAppCursor(_T("NoDrag")));
+				return TRUE;
+			}
+		
+			// else
+			switch (nHit)
+			{
+				case TCCHT_BEGIN:
+				case TCCHT_END:
+					SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
+					return TRUE;
+			}
+
 		}
+
 	}
 	
 	// else

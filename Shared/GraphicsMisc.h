@@ -108,6 +108,7 @@ namespace GraphicsMisc
 	CSize GetBitmapSize(HBITMAP hBmp);
 	HCURSOR OleDragDropCursor(GM_OLECURSOR nCursor);
 	HICON GetAppWindowIcon(BOOL bLarge);
+	HCURSOR LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder = NULL);
 
 	int PointToPixel(int nPoints);
 	int PixelToPoint(int nPixels);

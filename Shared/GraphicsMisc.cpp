@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GraphicsMisc.h"
 #include "Misc.h"
+#include "FileMisc.h"
 #include "themed.h"
 #include "osversion.h"
 
@@ -476,8 +477,12 @@ BOOL GraphicsMisc::SameFontNameSize(HFONT hFont1, HFONT hFont2)
 
 HICON GraphicsMisc::LoadIcon(UINT nIDIcon, int nSize)
 {
-	HICON hIcon = (HICON)::LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(nIDIcon), 
-									IMAGE_ICON, nSize, nSize, LR_LOADMAP3DCOLORS);
+	HICON hIcon = (HICON)::LoadImage(AfxGetResourceHandle(), 
+									MAKEINTRESOURCE(nIDIcon), 
+									IMAGE_ICON, 
+									nSize, 
+									nSize, 
+									LR_LOADMAP3DCOLORS);
 
 	return hIcon;
 }
@@ -518,6 +523,23 @@ HCURSOR GraphicsMisc::OleDragDropCursor(GM_OLECURSOR nCursor)
 	}
 
 	return cursors[nCursor];
+}
+
+HCURSOR GraphicsMisc::LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
+{
+	CString sCursorPath = FileMisc::TerminatePath(FileMisc::GetAppFolder(szSubFolder));
+	sCursorPath += szName;
+	FileMisc::ReplaceExtension(sCursorPath, _T("cur"));
+
+	HCURSOR hCursor = (HCURSOR)::LoadImage(NULL, 
+											sCursorPath, 
+											IMAGE_CURSOR, 
+											32, 
+											32, 
+											LR_LOADFROMFILE | LR_MONOCHROME | LR_SHARED);
+	ASSERT(hCursor);
+
+	return hCursor;
 }
 
 CFont& GraphicsMisc::WingDings()

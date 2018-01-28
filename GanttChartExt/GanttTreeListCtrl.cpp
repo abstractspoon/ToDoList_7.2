@@ -2380,31 +2380,35 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				CPoint ptCursor(GetMessagePos());
 				GTLC_HITTEST nHit = GTLCHT_NOWHERE;
 
-				DWORD dwTaskID = ListHitTestTask(ptCursor, TRUE, nHit, TRUE);
-				ASSERT((nHit == GTLCHT_NOWHERE) || (dwTaskID != 0));
+				DWORD dwHitID = ListHitTestTask(ptCursor, TRUE, nHit, TRUE);
+				ASSERT((nHit == GTLCHT_NOWHERE) || (dwHitID != 0));
 
 				if (nHit != GTLCHT_NOWHERE)
 				{
 					GTLC_DRAG nDrag = MapHitTestToDrag(nHit);
 					ASSERT(IsDragging(nDrag));
 
-					if (!CanDragTask(dwTaskID, nDrag))
+					if (dwHitID != 0)
 					{
-						SetCursor(GraphicsMisc::OleDragDropCursor(GMOC_NO));
-						return TRUE;
-					}
-					else
-					{
-						switch (nHit)
+						if (m_data.ItemIsLocked(dwHitID))
 						{
-						case GTLCHT_BEGIN:
-						case GTLCHT_END:
-							SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
+							SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked")));
 							return TRUE;
-							
-						case GTLCHT_MIDDLE:
-							//SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL));
-							break;
+						}
+						else if (!CanDragTask(dwHitID, nDrag))
+						{
+							SetCursor(GraphicsMisc::LoadAppCursor(_T("NoDrag")));
+							return TRUE;
+						}
+						else
+						{
+							switch (nHit)
+							{
+							case GTLCHT_BEGIN:
+							case GTLCHT_END:
+								SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEWE));
+								return TRUE;
+							}
 						}
 					}
 				}
