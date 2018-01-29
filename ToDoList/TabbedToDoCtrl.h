@@ -312,6 +312,7 @@ protected:
 	int GetAllExtensionViewsWantedAttributes(CTDCAttributeMap& mapAttrib) const;
 	CString GetExtensionPrefsSubKey(const IUIExtensionWindow* pExtWnd);
 	void UpdateExtensionViewsSelection(TDC_ATTRIBUTE nAttrib);
+	void UpdateExtensionViewsTasks(TDC_ATTRIBUTE nAttrib);
 	BOOL IsExtensionView(HWND hWnd) const;
 	BOOL SelectExtensionTasks(IUIExtensionWindow* pExtWnd, const CDWordArray& aTasks, DWORD dwFocusedTask);
 	BOOL ExtensionMoveTaskStartAndDueDates(DWORD dwTaskID, const COleDateTime& dtNewStart);

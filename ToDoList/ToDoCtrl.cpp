@@ -7786,7 +7786,7 @@ BOOL CToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	if (nDirection == TDCM_RIGHT)
 		FixupParentCompletion(dwDestParentID);
 
-	SetModified(TRUE, TDCA_POSITION, 0);
+	SetModified(TRUE, TDCA_POSITION);
 
 	return TRUE;
 }

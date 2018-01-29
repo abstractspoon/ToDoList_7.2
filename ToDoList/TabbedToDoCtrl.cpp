@@ -1758,7 +1758,9 @@ LRESULT CTabbedToDoCtrl::OnUIExtMoveSelectedTask(WPARAM /*wParam*/, LPARAM lPara
 	HandleUnsavedComments();
 
 	IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
-	BOOL bSuccess = TRUE;
+	
+	BOOL bSuccess = FALSE;
+	m_nExtModifyingAttrib = IUI_POSITION;
 
 	try
 	{
@@ -1771,8 +1773,18 @@ LRESULT CTabbedToDoCtrl::OnUIExtMoveSelectedTask(WPARAM /*wParam*/, LPARAM lPara
 		HTREEITEM htiDropAfter = TCH().FindItem(pMove->dwAfterSiblingID);
 
 		TDC_DROPOPERATION nDrop = (pMove->bCopy ? TDC_DROPCOPY : TDC_DROPMOVE);
+		bSuccess = DropSelectedTasks(nDrop, htiDropTarget, htiDropAfter);
 
-		VERIFY(DropSelectedTasks(nDrop, htiDropTarget, htiDropAfter));
+		if (bSuccess)
+		{
+			// If the extension is wanting to copy a task we must
+			// update all of it's tasks because it can't know about
+			// the new task IDs otherwise
+			if (pMove->bCopy)
+				UpdateExtensionViewsTasks(TDCA_POSITION);
+			else
+				SetExtensionsNeedTaskUpdate(TRUE, GetTaskView());
+		}
 	}
 	catch (...)
 	{
@@ -1780,19 +1792,8 @@ LRESULT CTabbedToDoCtrl::OnUIExtMoveSelectedTask(WPARAM /*wParam*/, LPARAM lPara
 		bSuccess = FALSE;
 	}
 
-	// update all tasks
-	VIEWDATA* pVData = NULL;
-	IUIExtensionWindow* pExtWnd = NULL;
+	m_nExtModifyingAttrib = IUI_NONE;
 
-	if (!GetExtensionWnd(GetTaskView(), pExtWnd, pVData))
-		return FALSE;
-
-	CWaitCursor cursor;
-	CTaskFile tasks;
-
-	if (GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib))
-		UpdateExtensionView(pExtWnd, tasks, IUI_ALL, pVData->mapWantedAttrib);
-	
 	return bSuccess;
 }
 
@@ -3062,6 +3063,12 @@ void CTabbedToDoCtrl::UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID
 		if (dwTaskID)
 		{
 			UpdateExtensionViewsSelection(nAttrib);
+
+			IUIExtensionWindow* pExtWnd = GetExtensionWnd(nCurView);
+
+			if (pExtWnd)
+				pExtWnd->SelectTask(dwTaskID);
+			
 			break;
 		}
 		// else fall thru to update all tasks
@@ -3070,54 +3077,17 @@ void CTabbedToDoCtrl::UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID
 	// (if it's an extension) and mark the others as needing updates
 	case TDCA_DELETE:
 	case TDCA_UNDO:
-	case TDCA_POSITION: // == move
 	case TDCA_PASTE:
 	case TDCA_MERGE:
 	case TDCA_ARCHIVE:
-		{
-			int nExt = m_aExtViews.GetSize();
-			
-			while (nExt--)
-			{
-				FTC_VIEW nView = (FTC_VIEW)(FTCV_FIRSTUIEXTENSION + nExt);
-				VIEWDATA* pVData = GetViewData(nView);
-
-				if (pVData)
-				{
-					IUIExtensionWindow* pExtWnd = GetExtensionWnd(nView);
-
-					if (pExtWnd && (nView == nCurView))
-					{
-						IUI_UPDATETYPE nUpdate = TDC::MapAttributeToIUIUpdateType(nAttrib);
-
-						CTaskFile tasks;
-						int nNumTasks = GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib);
-
-						ASSERT(nNumTasks || (nUpdate == IUI_DELETE));
-
-						CWaitCursor cursor;
-						BeginExtensionProgress(pVData);
-
-						// update all tasks
-						UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
-						pVData->bNeedFullTaskUpdate = FALSE;
-
-						if ((nAttrib == TDCA_NEWTASK) && dwTaskID)
-							pExtWnd->SelectTask(dwTaskID);
-						else
-							ResyncExtensionSelection(nView);
-
-						EndExtensionProgress();
-					}
-					else
-					{
-						pVData->bNeedFullTaskUpdate = TRUE;
-					}
-				}
-			}
-		}
+		UpdateExtensionViewsTasks(nAttrib);
 		break;	
-		
+
+	case TDCA_POSITION: // == move
+		if (m_nExtModifyingAttrib != IUI_POSITION)
+			UpdateExtensionViewsTasks(nAttrib);
+		break;	
+
 	case TDCA_PROJECTNAME:
 	case TDCA_ENCRYPT:
 		// do nothing
@@ -3130,6 +3100,56 @@ void CTabbedToDoCtrl::UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID
 			ASSERT(0);
 		break;
 	}
+}
+
+void CTabbedToDoCtrl::UpdateExtensionViewsTasks(TDC_ATTRIBUTE nAttrib)
+{
+	// Sanity check
+	switch (nAttrib)
+	{
+	case TDCA_NEWTASK: 
+	case TDCA_DELETE:
+	case TDCA_UNDO:
+	case TDCA_PASTE:
+	case TDCA_MERGE:
+	case TDCA_ARCHIVE:
+	case TDCA_POSITION: // == move
+		break;
+
+	default:
+		ASSERT(0);
+		return;
+	}
+
+	FTC_VIEW nView = GetTaskView();
+
+	if (IsExtensionView(nView))
+	{
+		VIEWDATA* pVData = GetViewData(nView);
+		IUIExtensionWindow* pExtWnd = GetExtensionWnd(nView);
+
+		if (pVData && pExtWnd)
+		{
+			IUI_UPDATETYPE nUpdate = TDC::MapAttributeToIUIUpdateType(nAttrib);
+
+			CTaskFile tasks;
+			int nNumTasks = GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib);
+
+			ASSERT(nNumTasks || (nUpdate == IUI_DELETE));
+
+			CWaitCursor cursor;
+			BeginExtensionProgress(pVData);
+
+			// update all tasks
+			UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
+			pVData->bNeedFullTaskUpdate = FALSE;
+
+			ResyncExtensionSelection(nView);
+			EndExtensionProgress();
+		}
+	}
+
+	SetExtensionsNeedTaskUpdate(TRUE, nView);
 }
 
 void CTabbedToDoCtrl::UpdateExtensionViewsSelection(TDC_ATTRIBUTE nAttrib)
