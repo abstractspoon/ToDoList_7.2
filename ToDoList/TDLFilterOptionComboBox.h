@@ -52,6 +52,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	void OnCheckChange(int nIndex);
+	void DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT nItemState,
+		DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText);	
 
 };
 
