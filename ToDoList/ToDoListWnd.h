@@ -636,7 +636,7 @@ protected:
 	BOOL InitFindDialog(BOOL bShow = FALSE);
 
 	BOOL CreateNewTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit = TRUE, DWORD dwDependency = 0);
-	BOOL CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const;
+	BOOL CanCreateNewTask(TDC_INSERTWHERE nInsertWhere, BOOL bDependent = FALSE) const;
 	BOOL CreateNewDependentTaskBelowSelectedTask(const CString& sTitle, BOOL bEdit = TRUE);
 	BOOL CanPasteTasks(TDC_PASTE nWhere, BOOL bAsRef) const;
 	BOOL CanImportPasteFromClipboard() const;

@@ -3074,7 +3074,14 @@ void CToDoListWnd::OnNewtaskAtbottom()
 BOOL CToDoListWnd::CreateNewTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit, DWORD dwDependency)
 {
 	CFilteredToDoCtrl& tdc = GetToDoCtrl();
-	
+
+	// Special case
+	if (!tdc.CanCreateNewTask(nInsertWhere) && (tdc.GetTaskCount() == 0))
+	{
+		// This location always works
+		nInsertWhere = TDC::MapInsertIDToInsertWhere(ID_NEWTASK_ATTOP);
+	}
+
 	if (!tdc.CreateNewTask(sTitle, nInsertWhere, bEdit, dwDependency))
 		return FALSE;
 
@@ -5870,9 +5877,23 @@ void CToDoListWnd::OnUpdateEditCopy(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetToDoCtrl().GetSelectedCount() > 0);
 }
 
-BOOL CToDoListWnd::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
+BOOL CToDoListWnd::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere, BOOL bDependent) const
 {
-	return GetToDoCtrl().CanCreateNewTask(nInsertWhere);
+	const CFilteredToDoCtrl& tdc = GetToDoCtrl();
+
+	if (tdc.CanCreateNewTask(nInsertWhere))
+		return TRUE;
+
+	// Special case
+	if ((tdc.GetTaskCount() == 0) && !bDependent)
+	{
+		UINT nNewTaskID = GetNewTaskCmdID();
+		
+		if (TDC::MapInsertIDToInsertWhere(nNewTaskID) == nInsertWhere)
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 void CToDoListWnd::OnUpdateNewtaskAttopSelected(CCmdUI* pCmdUI) 
@@ -5892,7 +5913,7 @@ void CToDoListWnd::OnUpdateNewtaskAfterselectedtask(CCmdUI* pCmdUI)
 
 void CToDoListWnd::OnUpdateNewDependenttaskAfterselectedtask(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK));
+	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK, TRUE));
 }
 
 void CToDoListWnd::OnUpdateNewtaskBeforeselectedtask(CCmdUI* pCmdUI) 
