@@ -738,11 +738,7 @@ protected:
 	void UpdateActiveToDoCtrlPreferences();
 	const CPreferencesDlg& Prefs() const;
 	void ResetPrefs();
-
-	UINT MapNewTaskPos(int nPos, BOOL bSubtask);
-	UINT GetNewTaskCmdID();
-	UINT GetNewSubtaskCmdID();
-
+	
 	// helpers
 	int GetTasks(CFilteredToDoCtrl& tdc, BOOL bHtmlComments, BOOL bTransform, 
 					const CTaskSelectionDlg& taskSel, CTaskFile& tasks, LPCTSTR szHtmlImageDir) const;
@@ -769,7 +765,10 @@ protected:
 	BOOL Export2Html(const CTaskFile& tasks, const CString& sFilePath, 
 					const CString& sStylesheet) const;
 	BOOL CreateTempPrintFile(const CTDLPrintDialog& dlg, const CString& sFilePath);
+	UINT GetNewTaskCmdID() const;
+	UINT GetNewSubtaskCmdID() const;
 
+	static UINT MapNewTaskPos(int nPos, BOOL bSubtask);
 	static void HandleImportTasklistError(IIMPORTEXPORT_RESULT nErr, const CString& sImportPath, BOOL bFromClipboard, BOOL bAnyTasksSucceeded);
 	static void HandleExportTasklistError(IIMPORTEXPORT_RESULT nErr);
 	static void HandleLoadTasklistError(TDC_FILE& nErr, LPCTSTR szTasklist);

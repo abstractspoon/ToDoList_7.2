@@ -9374,12 +9374,12 @@ UINT CToDoListWnd::MapNewTaskPos(int nPos, BOOL bSubtask)
 	}
 }
 
-UINT CToDoListWnd::GetNewTaskCmdID()
+UINT CToDoListWnd::GetNewTaskCmdID() const
 {
 	return MapNewTaskPos(Prefs().GetNewTaskPos(), FALSE);
 }
 
-UINT CToDoListWnd::GetNewSubtaskCmdID()
+UINT CToDoListWnd::GetNewSubtaskCmdID() const
 {
 	return MapNewTaskPos(Prefs().GetNewSubtaskPos(), TRUE);
 }
