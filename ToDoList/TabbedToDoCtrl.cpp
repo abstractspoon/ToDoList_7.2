@@ -880,12 +880,13 @@ int CTabbedToDoCtrl::GetTasks(CTaskFile& tasks, FTC_VIEW nView, const TDCGETTASK
 	return 0;
 }
 
-int CTabbedToDoCtrl::GetAllTasksForExtensionViewUpdate(CTaskFile& tasks, const CTDCAttributeMap& mapAttrib) const
+BOOL CTabbedToDoCtrl::GetAllTasksForExtensionViewUpdate(CTaskFile& tasks, const CTDCAttributeMap& mapAttrib) const
 {
 	TDCGETTASKS filter;
 	filter.mapAttribs.Copy(mapAttrib);
 
-	return GetTasks(tasks, FTCV_TASKTREE, filter);
+	GetTasks(tasks, FTCV_TASKTREE, filter);
+	return TRUE;
 }
 
 BOOL CTabbedToDoCtrl::AddTreeChildrenToTaskFile(HTREEITEM hti, CTaskFile& tasks, HTASKITEM hTask, const TDCGETTASKS& filter) const
@@ -2316,9 +2317,10 @@ void CTabbedToDoCtrl::NotifyEndPreferencesUpdate()
 						mapAttribs.Add(TDCA_COLOR);
 						
 						CTaskFile tasks;
-						GetAllTasksForExtensionViewUpdate(tasks, mapAttribs);
-						
-						UpdateExtensionView(pExtWnd, tasks, IUI_EDIT, mapAttribs);
+
+						if (GetAllTasksForExtensionViewUpdate(tasks, mapAttribs))
+							UpdateExtensionView(pExtWnd, tasks, IUI_EDIT, mapAttribs);
+
 						pVData->bNeedFullTaskUpdate = FALSE;
 					}
 					else // mark for update
@@ -3133,19 +3135,19 @@ void CTabbedToDoCtrl::UpdateExtensionViewsTasks(TDC_ATTRIBUTE nAttrib)
 			IUI_UPDATETYPE nUpdate = TDC::MapAttributeToIUIUpdateType(nAttrib);
 
 			CTaskFile tasks;
-			int nNumTasks = GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib);
 
-			ASSERT(nNumTasks || (nUpdate == IUI_DELETE));
+			if (GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib))
+			{
+				CWaitCursor cursor;
+				BeginExtensionProgress(pVData);
 
-			CWaitCursor cursor;
-			BeginExtensionProgress(pVData);
+				// update all tasks
+				UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
+				pVData->bNeedFullTaskUpdate = FALSE;
 
-			// update all tasks
-			UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
-			pVData->bNeedFullTaskUpdate = FALSE;
-
-			ResyncExtensionSelection(nView);
-			EndExtensionProgress();
+				ResyncExtensionSelection(nView);
+				EndExtensionProgress();
+			}
 		}
 	}
 
