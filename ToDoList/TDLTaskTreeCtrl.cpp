@@ -745,6 +745,9 @@ void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks()
 
 void CTDLTaskTreeCtrl::NotifyParentSelChange(SELCHANGE_ACTION nAction)
 {
+	if (m_bMovingItem)
+		return;
+
 	NMTREEVIEW nmtv = { 0 };
 
 	nmtv.hdr.code = TVN_SELCHANGED;
@@ -1816,6 +1819,8 @@ BOOL CTDLTaskTreeCtrl::MoveSelection(TDC_MOVETASK nDirection)
 	if (!CanMoveSelection(nDirection))
 		return FALSE;
 
+	CAutoFlag af(m_bMovingItem, TRUE);
+
 	HTREEITEM htiDestParent = NULL, htiDestAfter = NULL;
 	VERIFY(GetInsertLocation(nDirection, htiDestParent, htiDestAfter));
 	
@@ -1842,6 +1847,8 @@ void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestP
 	ExpandList(htiDestParent);
 
 	{
+		CAutoFlag af(m_bMovingItem, TRUE);
+
 		CLockUpdates lu(m_tcTasks);
 		CHoldRedraw hr1(m_tcTasks), hr2(m_lcColumns);
 		
