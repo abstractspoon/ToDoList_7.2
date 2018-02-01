@@ -749,7 +749,7 @@ void CToDoListApp::DoHelp(UINT nHelpID)
 	{
 		// Load the Help.ini file to find the URL for this topic
 		CIni ini(GetResourcePath(_T("Misc"), _T("Help.ini")));
-		sHelpPage = ini.GetString(_T("Help Urls"), sHelpID);
+		sHelpPage = ini.GetString(_T("Help IDs"), sHelpID);
 	}
 	else
 	{
