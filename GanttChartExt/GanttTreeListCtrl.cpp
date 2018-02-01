@@ -2742,11 +2742,11 @@ BOOL CGanttTreeListCtrl::OnTreeLButtonUp(UINT nFlags, CPoint point)
 {
 	HTREEITEM hti = m_tree.HitTest(point, &nFlags);
 
-	if (!(nFlags & TVHT_ONITEMBUTTON))
-	{
-		if (hti && (hti != GetTreeSelItem(m_tree)))
-			SelectTreeItem(m_tree, hti);
-	}
+// 	if (!(nFlags & TVHT_ONITEMBUTTON))
+// 	{
+// 		if (hti && (hti != GetTreeSelItem(m_tree)))
+// 			SelectTreeItem(m_tree, hti);
+// 	}
 
 	if (!m_bReadOnly && (nFlags & TVHT_ONITEMSTATEICON))
 	{
