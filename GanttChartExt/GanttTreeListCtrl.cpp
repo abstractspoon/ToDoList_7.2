@@ -1646,7 +1646,7 @@ void CGanttTreeListCtrl::ExpandItem(HTREEITEM hti, BOOL bExpand, BOOL bAndChildr
 		CollapseList(hti);
 	}
 	
-	m_tree.EnsureVisible(m_tree.GetChildItem(NULL));
+	m_tree.EnsureVisible(hti);
 
 	EnableResync(TRUE, m_tree);
 	RecalcTreeColumns(TRUE);
