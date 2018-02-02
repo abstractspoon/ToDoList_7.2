@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,1,999,3
+ FILEVERSION 7,1,999,4
  PRODUCTVERSION 1,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "AbstractSpoon Software\0"
             VALUE "FileDescription", "ToDoList\0"
-            VALUE "FileVersion", "7, 1, 999, 3\0"
+            VALUE "FileVersion", "7, 1, 999, 4\0"
             VALUE "InternalName", "ToDoList\0"
             VALUE "LegalCopyright", "Copyright (c) AbstractSpoon 2003-17\0"
             VALUE "LegalTrademarks", "\0"
@@ -1362,8 +1362,8 @@ STYLE WS_POPUP
 FONT 8, "Tahoma"
 BEGIN
     CONTROL         "Display a task's 'Last Modified' date as the latest of its and all its subtasks' last modified dates",
-                    IDC_USELATESTLASTMODIFIED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,10,
-                    392,10
+                    IDC_USELATESTLASTMODIFIED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,10,392,10
     CONTROL         "Display a task as 'Flagged' if any of its subtasks are flagged",
                     IDC_TASKINHERITSSUBTASKFLAGS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,25,383,10
