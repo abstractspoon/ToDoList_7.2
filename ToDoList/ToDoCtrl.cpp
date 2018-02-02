@@ -12406,9 +12406,9 @@ BOOL CToDoCtrl::UndoLastAction(BOOL bUndo)
 
 	if (m_data.CanUndoLastAction(bUndo))
 	{
-		CWaitCursor cursor;
-		HOLD_REDRAW(*this, m_taskTree);
-		
+ 		CWaitCursor cursor;
+ 		CHoldRedraw hr(m_taskTree);
+ 		
 		TDCSELECTIONCACHE cache;
 		CacheTreeSelection(cache);
 
