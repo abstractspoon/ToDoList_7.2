@@ -1065,13 +1065,13 @@ COLORREF GraphicsMisc::GetExplorerItemTextColor(COLORREF crBase, GM_ITEMSTATE nS
 			case GMIS_SELECTED:
 			case GMIS_SELECTEDNOTFOCUSED:
 			case GMIS_DROPHILITED:
-				// darken the base color to have a luminance <= 20%
+				// darken the base color to have a luminance <= 30%
 				{
 					HLSX hlsText(crBase);
 
-					if (hlsText.fLuminosity > 0.2f)
+					if (hlsText.fLuminosity > 0.3f)
 					{
-						hlsText.fLuminosity = 0.2f;
+						hlsText.fLuminosity = 0.3f;
 						return hlsText;
 					}
 					
