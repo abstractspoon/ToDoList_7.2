@@ -139,7 +139,7 @@ CGanttTreeListCtrl::CGanttTreeListCtrl(CGanttTreeCtrl& tree, CListCtrl& list)
 	m_pTCH(NULL),
 	m_nMonthWidth(DEF_MONTH_WIDTH),
 	m_nMonthDisplay(GTLC_DISPLAY_MONTHS_LONG),
-	m_dwOptions(GTLCF_AUTOSCROLLTOTASK),
+	m_dwOptions(GTLCF_AUTOSCROLLTOTASK | GTLCF_SHOWSPLITTERBAR),
 	m_crAltLine(CLR_NONE),
 	m_crGridLine(CLR_NONE),
 	m_crDefault(CLR_NONE),
