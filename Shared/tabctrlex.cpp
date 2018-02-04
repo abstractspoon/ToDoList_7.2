@@ -1121,7 +1121,7 @@ void CTabCtrlEx::EnsureSelVisible()
 {
 	CSpinButtonCtrl* pSpin = GetSpinButtonCtrl();
 
-	if ((pSpin == NULL) || !pSpin->IsWindowVisible())
+	if (pSpin == NULL)
 		return;
 
 	CRect rSpin;
@@ -1129,7 +1129,8 @@ void CTabCtrlEx::EnsureSelVisible()
 	ScreenToClient(rSpin);
 
 	CRect rActiveTab;
-	GetItemRect(GetCurSel(), rActiveTab);
+	int nSelTab = GetCurSel();
+	GetItemRect(nSelTab, rActiveTab);
 
 	if ((rActiveTab.left >= 0) && (rActiveTab.right <= rSpin.left))
 		return;
@@ -1142,7 +1143,7 @@ void CTabCtrlEx::EnsureSelVisible()
 		while (nScrollPos--)
 		{
 			SetScrollPos(nScrollPos);
-			GetItemRect(GetCurSel(), rActiveTab);
+			GetItemRect(nSelTab, rActiveTab);
 
 			if (rActiveTab.left >= 0)
 				break;
@@ -1154,7 +1155,7 @@ void CTabCtrlEx::EnsureSelVisible()
 		for (int nPos = (nScrollPos + 1); nPos < GetItemCount(); nPos++)
 		{
 			SetScrollPos(nPos);
-			GetItemRect(GetCurSel(), rActiveTab);
+			GetItemRect(nSelTab, rActiveTab);
 
 			if (rActiveTab.right <= rSpin.left)
 				break;
