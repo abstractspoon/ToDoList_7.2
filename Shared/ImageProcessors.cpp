@@ -259,7 +259,7 @@ BOOL CImageGrayer::ProcessPixels(RGBX* pSrcPixels, CSize sizeSrc, RGBX* pDestPix
 
 ///////
 
-CImageLightener::CImageLightener(double dAmount) : m_dAmount(dAmount)
+CImageLightener::CImageLightener(double dAmount, BOOL bRGB) : m_dAmount(dAmount), m_bRGB(bRGB)
 {
 }
 
@@ -287,7 +287,7 @@ BOOL CImageLightener::ProcessPixels(RGBX* pSrcPixels, CSize sizeSrc, RGBX* pDest
 				*pRGBDest = *pRGBSrc;
 
 				if (crMask == -1 || !(crMask == *pRGBSrc))
-					pRGBDest->AdjustLighting(m_dAmount, pRGBDest->IsGray());
+					pRGBDest->AdjustLighting(m_dAmount, (m_bRGB != FALSE));
 			}
 		}
 	}
