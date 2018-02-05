@@ -443,20 +443,15 @@ void CTaskCalendarCtrl::BuildData(const ITASKLISTBASE* pTasks, HTASKITEM hTask, 
 	if (pTasks->IsTaskReference(hTask))
 		return;
 
-	// We are only interested in leaf (non-parent) tasks
-	if (!pTasks->IsTaskParent(hTask))
-	{
-		// sanity check
-		DWORD dwTaskID = pTasks->GetTaskID(hTask);
-		ASSERT(!HasTask(dwTaskID));
+	// sanity check
+	DWORD dwTaskID = pTasks->GetTaskID(hTask);
+	ASSERT(!HasTask(dwTaskID));
 
-		TASKCALITEM* pTCI = new TASKCALITEM(pTasks, hTask, attrib, m_dwOptions);
-		m_mapData[dwTaskID] = pTCI;
-	}
-	else // process children
-	{
-		BuildData(pTasks, pTasks->GetFirstTask(hTask), attrib, TRUE);
-	}
+	TASKCALITEM* pTCI = new TASKCALITEM(pTasks, hTask, attrib, m_dwOptions);
+	m_mapData[dwTaskID] = pTCI;
+
+	// process children
+	BuildData(pTasks, pTasks->GetFirstTask(hTask), attrib, TRUE);
 
 	// handle siblings WITHOUT RECURSION
 	if (bAndSiblings)
@@ -748,7 +743,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 		}
 		
 		// draw icon if there is enough space
-		if (pTCI->bHasIcon && (nTaskHeight >= DEF_TASK_HEIGHT))
+		if ((nTaskHeight >= DEF_TASK_HEIGHT) && pTCI->HasIcon(HasOption(TCCO_SHOWPARENTTASKSASFOLDER)))
 		{
 			// draw at the start only
 			if (GetTaskTextOffset(pTCI->GetTaskID()) == 0)
@@ -1070,6 +1065,9 @@ int CTaskCalendarCtrl::GetCellTasks(const COleDateTime& dtCell, CTaskCalItemArra
 
 		// ignore tasks with both start and end dates calculated
 		if (!pTCI->IsValid())
+			continue;
+
+		if (pTCI->IsParent() && (HasOption(TCCO_HIDEPARENTTASKS)))
 			continue;
 
 		// ignore completed tasks as required
