@@ -7811,7 +7811,9 @@ void CToDoListWnd::OnTabCtrlSelchange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	
 	if (nCurSel != -1)
 	{
-		// make sure it's loaded
+		// make sure it's loaded and notify due tasks
+		// only if the user has not configured due task
+		// notifications on switching
 		if (!VerifyTaskListOpen(nCurSel, (nDueBy == -1)))
 		{
 			// restore the previous tab
@@ -7857,6 +7859,8 @@ void CToDoListWnd::OnTabCtrlSelchange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	
 	if (nCurSel != -1)
 	{
+		UpdateWindow();
+
 		CFilteredToDoCtrl& tdcShow = GetToDoCtrl(nCurSel);
 		tdcShow.UpdateWindow();
 
@@ -12222,7 +12226,7 @@ void CToDoListWnd::DoSendTasks(BOOL bSelected)
 		int nFormat = dialog.GetExportFormat();
 		CString sFilePath = FileMisc::GetTempFilePath(_T("tdl.email"), m_mgrImportExport.GetExporterFileExtension(nFormat, TRUE));
 
-		if (!m_mgrImportExport.ExportTaskList(&tasks, sFilePath, nFormat, FALSE))
+		if (m_mgrImportExport.ExportTaskList(&tasks, sFilePath, nFormat, FALSE) != IIER_SUCCESS)
 		{
 			// Display error message
 			// TODO
