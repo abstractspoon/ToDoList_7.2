@@ -4894,8 +4894,12 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 		}
 			
 		// visible filter controls
+		BOOL bRefreshFilter = FALSE;
+
 		if (m_bShowFilterBar)
 			bResizeDlg = TRUE;
+
+		m_filterBar.ShowDefaultFilters(newPrefs.GetShowDefaultFilters());
 
 		BOOL bEnableMultiSel = newPrefs.GetMultiSelFilters();
 		BOOL bPrevMultiSel = oldPrefs.GetMultiSelFilters();
@@ -4903,14 +4907,19 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 		if (bPrevMultiSel != bEnableMultiSel)
 		{
 			m_filterBar.EnableMultiSelection(bEnableMultiSel);
-
-			OnViewRefreshfilter();
+			bRefreshFilter = TRUE;
 		}
 
-		m_filterBar.ShowDefaultFilters(newPrefs.GetShowDefaultFilters());
-
-		// title filter option
 		if (m_filterBar.SetTitleFilterOption(newPrefs.GetTitleFilterOption()))
+			bRefreshFilter = TRUE;
+
+		if (newPrefs.GetRecentlyModifiedPeriod() != oldPrefs.GetRecentlyModifiedPeriod())
+		{
+			CFilteredToDoCtrl::SetRecentlyModifiedPeriod(newPrefs.GetRecentlyModifiedPeriod());
+			bRefreshFilter = (m_filterBar.GetFilter() == FS_RECENTMOD);
+		}
+		
+		if (bRefreshFilter)
 			OnViewRefreshfilter();
 
 		// inherited parent task attributes for new tasks
@@ -4957,9 +4966,6 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 		// Content controls
 		m_mgrContent.LoadPreferences(CPreferences(), _T("ContentControls"), TRUE);
 
-		// Recently modified period
-		CFilteredToDoCtrl::SetRecentlyModifiedPeriod(newPrefs.GetRecentlyModifiedPeriod());
-
 		// don't ask me for the full details on this but it seems as
 		// though the CSysImageList class is waiting to process a 
 		// message before we can switch image sizes so we put it
@@ -4970,7 +4976,6 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 	
 	// finally set or terminate the various status check timers
 	RestoreTimers();
-
 }
 
 BOOL CToDoListWnd::UpdateLanguageTranslationAndCheckForRestart(const CPreferencesDlg& oldPrefs)
