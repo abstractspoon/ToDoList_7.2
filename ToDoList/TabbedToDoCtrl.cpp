@@ -2760,8 +2760,8 @@ void CTabbedToDoCtrl::RebuildList(const void* pContext)
 	// don't update controls if only one item is selected and it did not
 	// change as a result of the filter
 	if (!(GetSelectedCount() == 1 && 
-		cache.aSelTaskIDs.GetSize() == 1 &&
-		GetTaskID(GetSelectedItem()) == cache.aSelTaskIDs[0]))
+		(cache.aSelTaskIDs.GetSize() == 1) &&
+		(GetTaskID(GetSelectedItem()) == cache.aSelTaskIDs[0])))
 	{
 		UpdateControls();
 	}
@@ -3698,7 +3698,10 @@ int CTabbedToDoCtrl::CacheListSelection(TDCSELECTIONCACHE& cache, BOOL bIncBread
 
 void CTabbedToDoCtrl::RestoreListSelection(const TDCSELECTIONCACHE& cache)
 {
-	m_taskList.RestoreSelection(cache);
+	if (!cache.IsEmpty())
+		m_taskList.RestoreSelection(cache);
+	else
+		ResyncListSelection();
 }
 
 BOOL CTabbedToDoCtrl::SetTreeFont(HFONT hFont)

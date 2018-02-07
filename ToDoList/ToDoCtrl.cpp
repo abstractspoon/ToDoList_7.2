@@ -6564,7 +6564,7 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 		}
 		
 		// restore last selected state
-		if (cache.aSelTaskIDs.GetSize())
+		if (!cache.IsEmpty())
 		{
 			RestoreTreeSelection(cache);
 		}

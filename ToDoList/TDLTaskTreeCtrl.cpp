@@ -2082,7 +2082,7 @@ int CTDLTaskTreeCtrl::CacheSelection(TDCSELECTIONCACHE& cache, BOOL bIncBreadcru
 
 BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 {
-	if (cache.aSelTaskIDs.GetSize())
+	if (!cache.IsEmpty())
 	{
 		CHTIMap mapHTI;
 		TCH().BuildHTIMap(mapHTI, TRUE);
