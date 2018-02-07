@@ -2151,6 +2151,11 @@ BOOL CTDLTaskCtrlBase::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 				::SetCursor(GraphicsMisc::HandCursor());
 				return TRUE;
 			}
+			else if (ColumnItemIsLocked(nHit))
+			{
+				::SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors")));
+				return TRUE;
+			}
 		}
 	}
 	
@@ -4191,6 +4196,17 @@ void CTDLTaskCtrlBase::OnHeaderClick(TDC_COLUMN nColID)
 		// notify parent
 		CWnd::GetParent()->SendMessage(WM_TDCN_SORT, CWnd::GetDlgCtrlID(), MAKELPARAM((WORD)nPrev, (WORD)nSortBy));
 	}
+}
+
+BOOL CTDLTaskCtrlBase::ColumnItemIsLocked(int nItem) const
+{
+	if (nItem == -1)
+		return FALSE;
+
+	DWORD dwTaskID = GetColumnItemTaskID(nItem);
+	ASSERT(dwTaskID);
+
+	return m_calculator.IsTaskLocked(dwTaskID);
 }
 
 BOOL CTDLTaskCtrlBase::ItemColumnSupportsClickHandling(int nItem, TDC_COLUMN nColID, const CPoint* pCursor) const

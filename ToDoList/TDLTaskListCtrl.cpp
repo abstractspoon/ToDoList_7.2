@@ -990,11 +990,16 @@ BOOL CTDLTaskListCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		UINT nHitFlags = 0;
 		CPoint ptClient(::GetMessagePos());
 		m_lcTasks.ScreenToClient(&ptClient);
+
+		int nHit = m_lcTasks.HitTest(ptClient, &nHitFlags);
 	
-		if ((m_lcTasks.HitTest(ptClient, &nHitFlags) != -1) && HasHitTestFlag(nHitFlags, LVHT_ONITEMICON))
+		if (nHit != -1)
 		{
-			::SetCursor(GraphicsMisc::HandCursor());
-			return TRUE;
+			if (HasHitTestFlag(nHitFlags, LVHT_ONITEMICON))
+			{
+				::SetCursor(GraphicsMisc::HandCursor());
+				return TRUE;
+			}
 		}
 	}
 	

@@ -476,6 +476,7 @@ protected:
 	void HandleFileLinkColumnClick(int nItem, DWORD dwTaskID, CPoint pt);
 	void ShowFileLink(LPCTSTR szFilePath) const;
 	BOOL HandleListLBtnDown(CListCtrl& lc, CPoint pt);
+	BOOL ColumnItemIsLocked(int nItem) const;
 	BOOL ItemColumnSupportsClickHandling(int nItem, TDC_COLUMN nColID, const CPoint* pCursor = NULL) const;
 	BOOL AccumulateRecalcColumn(TDC_COLUMN nColID, CSet<TDC_COLUMN>& aColIDs) const;
 	CString FormatTimeValue(double dTime, TDC_UNITS nUnits, BOOL bAllowNegative) const;
