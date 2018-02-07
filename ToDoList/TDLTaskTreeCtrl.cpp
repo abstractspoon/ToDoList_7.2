@@ -929,7 +929,14 @@ BOOL CTDLTaskTreeCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		CPoint ptClient(::GetMessagePos());
 		m_tcTasks.ScreenToClient(&ptClient);
 
-		if (m_tcTasks.HitTest(ptClient, &nHitFlags) && (nHitFlags & TVHT_ONITEMICON))
+		HTREEITEM htiHit = m_tcTasks.HitTest(ptClient, &nHitFlags);
+		
+		if (m_calculator.IsTaskLocked(GetTaskID(htiHit)))
+		{
+			::SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors")));
+			return TRUE;
+		}
+		else if (nHitFlags & TVHT_ONITEMICON)
 		{
 			::SetCursor(GraphicsMisc::HandCursor());
 			return TRUE;
