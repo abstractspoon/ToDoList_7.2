@@ -1646,7 +1646,7 @@ BOOL CTaskCalendarCtrl::GetValidDragDate(const CPoint& ptCursor, COleDateTime& d
 
 	if (!ValidateDragPoint(ptDrag) || !GetDateFromPoint(ptDrag, dtDrag))
 	{
-		SetCursor(GraphicsMisc::OleDragDropCursor(GMOC_NO));
+		GraphicsMisc::SetDragDropCursor(GMOC_NO);
 		return FALSE;
 	}
 
@@ -2062,17 +2062,13 @@ BOOL CTaskCalendarCtrl::SetTaskCursor(DWORD dwTaskID, TCC_HITTEST nHit) const
 {
 	if ((dwTaskID != 0) && (nHit != TCCHT_NOWHERE))
 	{
-		HCURSOR hCursor = NULL;
-
 		if (!CanDragTask(dwTaskID, nHit))
 		{
 			if (IsTaskCalItemLocked(dwTaskID))
-				hCursor = GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors"));
-			else
-				hCursor = GraphicsMisc::LoadAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
+				return GraphicsMisc::SetAppCursor(_T("Locked"), _T("Resources\\Cursors"));
 
-			if (hCursor == NULL)
-				hCursor = GraphicsMisc::OleDragDropCursor(GMOC_NO);
+			// else
+			return GraphicsMisc::SetAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
 		}
 		else
 		{
@@ -2080,15 +2076,8 @@ BOOL CTaskCalendarCtrl::SetTaskCursor(DWORD dwTaskID, TCC_HITTEST nHit) const
 			{
 			case TCCHT_BEGIN:
 			case TCCHT_END:
-				hCursor = AfxGetApp()->LoadStandardCursor(IDC_SIZEWE);
-				return TRUE;
+				return GraphicsMisc::SetStandardCursor(IDC_SIZEWE);
 			}
-		}
-
-		if (hCursor)
-		{
-			SetCursor(hCursor);
-			return TRUE;
 		}
 	}
 

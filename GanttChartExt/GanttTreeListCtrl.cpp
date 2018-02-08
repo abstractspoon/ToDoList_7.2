@@ -2295,7 +2295,7 @@ BOOL CGanttTreeListCtrl::DrawDependencyPickLine(const CPoint& ptClient)
 	return FALSE;
 }
 
-BOOL CGanttTreeListCtrl::SetTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const
+BOOL CGanttTreeListCtrl::SetListTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const
 {
 	if (nHit != GTLCHT_NOWHERE)
 	{
@@ -2304,17 +2304,13 @@ BOOL CGanttTreeListCtrl::SetTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const
 
 		if (dwTaskID != 0)
 		{
-			HCURSOR hCursor = NULL;
-
 			if (!CanDragTask(dwTaskID, nDrag))
 			{
 				if (m_data.ItemIsLocked(dwTaskID))
-					hCursor = GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors"));
-				else
-					hCursor = GraphicsMisc::LoadAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
+					return GraphicsMisc::SetAppCursor(_T("Locked"), _T("Resources\\Cursors"));
 
-				if (hCursor == NULL)
-					hCursor = GraphicsMisc::OleDragDropCursor(GMOC_NO);
+				// else
+				return GraphicsMisc::SetAppCursor(_T("NoDrag"), _T("Resources\\Cursors"));
 			}
 			else
 			{
@@ -2322,15 +2318,8 @@ BOOL CGanttTreeListCtrl::SetTaskCursor(DWORD dwTaskID, GTLC_HITTEST nHit) const
 				{
 				case GTLCD_START:
 				case GTLCD_END:
-					hCursor = AfxGetApp()->LoadStandardCursor(IDC_SIZEWE);
-					return TRUE;
+					return GraphicsMisc::SetStandardCursor(IDC_SIZEWE);
 				}
-			}
-
-			if (hCursor)
-			{
-				SetCursor(hCursor);
-				return TRUE;
 			}
 		}
 	}
@@ -2426,7 +2415,7 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				DWORD dwHitID = ListHitTestTask(ptCursor, TRUE, nHit, TRUE);
 				ASSERT((nHit == GTLCHT_NOWHERE) || (dwHitID != 0));
 
-				if (SetTaskCursor(dwHitID, nHit))
+				if (SetListTaskCursor(dwHitID, nHit))
 					return TRUE;
 			}
 			break;
@@ -2555,6 +2544,17 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				CHoldRedraw hr(hRealWnd, NCR_PAINT | NCR_UPDATE);
 
 				return CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
+			}
+			break;
+
+		case WM_SETCURSOR:
+			if (!m_bReadOnly)
+			{
+				CPoint ptCursor(GetMessagePos());
+				DWORD dwTaskID = TreeHitTestTask(ptCursor, TRUE);
+
+				if (dwTaskID && m_data.ItemIsLocked(dwTaskID))
+					return GraphicsMisc::SetAppCursor(_T("Locked"), _T("Resources\\Cursors"));
 			}
 			break;
 		}
@@ -6695,9 +6695,9 @@ BOOL CGanttTreeListCtrl::UpdateDragging(const CPoint& ptCursor)
 			ASSERT(szCursor);
 
 			if (bNoDrag)
-				::SetCursor(GraphicsMisc::OleDragDropCursor(GMOC_NO));
+				GraphicsMisc::SetDragDropCursor(GMOC_NO);
 			else
-				::SetCursor(AfxGetApp()->LoadStandardCursor(szCursor));
+				GraphicsMisc::SetStandardCursor(szCursor);
 
 			RecalcParentDates();
 			RedrawList();
@@ -6709,7 +6709,7 @@ BOOL CGanttTreeListCtrl::UpdateDragging(const CPoint& ptCursor)
 		else
 		{
 			// We've dragged outside the client rect
-			::SetCursor(GraphicsMisc::OleDragDropCursor(GMOC_NO));
+			GraphicsMisc::SetDragDropCursor(GMOC_NO);
 		}
 
 		return TRUE; // always

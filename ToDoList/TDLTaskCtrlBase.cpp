@@ -2148,13 +2148,11 @@ BOOL CTDLTaskCtrlBase::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 			
 			if (ItemColumnSupportsClickHandling(nHit, nColID, &ptCursor))
 			{
-				::SetCursor(GraphicsMisc::HandCursor());
-				return TRUE;
+				return GraphicsMisc::SetHandCursor();
 			}
 			else if (ColumnItemIsLocked(nHit))
 			{
-				::SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors")));
-				return TRUE;
+				return GraphicsMisc::SetAppCursor(_T("Locked"), _T("Resources\\Cursors"));
 			}
 		}
 	}

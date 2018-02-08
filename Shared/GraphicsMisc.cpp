@@ -487,14 +487,39 @@ HICON GraphicsMisc::LoadIcon(UINT nIDIcon, int nSize)
 	return hIcon;
 }
 
-HCURSOR GraphicsMisc::HandCursor()
+HCURSOR GraphicsMisc::LoadStandardCursor(LPCTSTR szCursorID)
+{
+	return ::LoadCursor(NULL, szCursorID); 
+}
+
+BOOL GraphicsMisc::SetStandardCursor(LPCTSTR szCursorID)
+{
+	HCURSOR hCursor = LoadStandardCursor(szCursorID);
+
+	if (hCursor)
+		::SetCursor(hCursor);
+
+	return (hCursor != NULL);
+}
+
+HCURSOR GraphicsMisc::LoadHandCursor()
 {
 	static HCURSOR cursor = ::LoadCursor(NULL, IDC_HAND);
 
 	return cursor;
 }
 
-HCURSOR GraphicsMisc::OleDragDropCursor(GM_OLECURSOR nCursor)
+BOOL GraphicsMisc::SetHandCursor()
+{
+	HCURSOR hCursor = LoadHandCursor();
+
+	if (hCursor)
+		::SetCursor(hCursor);
+
+	return (hCursor != NULL);
+}
+
+HCURSOR GraphicsMisc::LoadDragDropCursor(GM_OLECURSOR nCursor)
 {
 	static HCURSOR cursors[GMOC_COUNT] = { 0 };
 
@@ -525,6 +550,16 @@ HCURSOR GraphicsMisc::OleDragDropCursor(GM_OLECURSOR nCursor)
 	return cursors[nCursor];
 }
 
+BOOL GraphicsMisc::SetDragDropCursor(GM_OLECURSOR nCursor)
+{
+	HCURSOR hCursor = LoadDragDropCursor(nCursor);
+
+	if (hCursor)
+		::SetCursor(hCursor);
+
+	return (hCursor != NULL);
+}
+
 HCURSOR GraphicsMisc::LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
 {
 	CString sCursorPath = FileMisc::TerminatePath(FileMisc::GetAppFolder(szSubFolder));
@@ -538,6 +573,16 @@ HCURSOR GraphicsMisc::LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
 											32, 
 											LR_LOADFROMFILE | LR_MONOCHROME | LR_SHARED);
 	return hCursor;
+}
+
+BOOL GraphicsMisc::SetAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
+{
+	HCURSOR hCursor = LoadAppCursor(szName, szSubFolder);
+
+	if (hCursor)
+		::SetCursor(hCursor);
+
+	return (hCursor != NULL);
 }
 
 CFont& GraphicsMisc::WingDings()

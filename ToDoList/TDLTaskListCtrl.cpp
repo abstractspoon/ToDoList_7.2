@@ -997,13 +997,11 @@ BOOL CTDLTaskListCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		{
 			if (m_calculator.IsTaskLocked(GetTaskID(nHit)))
 			{
-				::SetCursor(GraphicsMisc::LoadAppCursor(_T("Locked"), _T("Resources\\Cursors")));
-				return TRUE;
+				return GraphicsMisc::SetAppCursor(_T("Locked"), _T("Resources\\Cursors"));
 			}
 			else if (HasHitTestFlag(nHitFlags, LVHT_ONITEMICON))
 			{
-				::SetCursor(GraphicsMisc::HandCursor());
-				return TRUE;
+				return GraphicsMisc::SetHandCursor();
 			}
 		}
 	}
