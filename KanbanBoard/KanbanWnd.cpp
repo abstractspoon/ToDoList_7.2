@@ -37,17 +37,12 @@ static char THIS_FILE[] = __FILE__;
 const COLORREF DEF_DONECOLOR	= RGB(128, 128, 128);
 
 /////////////////////////////////////////////////////////////////////////////
-
-const UINT WM_BUILDOPTIONSCOMBO	= (WM_APP + 1);
-
-/////////////////////////////////////////////////////////////////////////////
 // CKanbanWnd
 
 CKanbanWnd::CKanbanWnd(CWnd* pParent /*=NULL*/)
 	: 
 	CDialog(IDD_KANBANTREE_DIALOG, pParent), 
 	m_bReadOnly(FALSE),
-//	m_bInSelectTask(FALSE),
 	m_nTrackedAttrib(IUI_NONE),
 	m_ctrlKanban(),
 #pragma warning(disable:4355)
@@ -99,7 +94,6 @@ BEGIN_MESSAGE_MAP(CKanbanWnd, CDialog)
 	ON_WM_HELPINFO()
 	ON_WM_ERASEBKGND()
 	ON_MESSAGE(WM_GETFONT, OnGetFont)
-	ON_MESSAGE(WM_BUILDOPTIONSCOMBO, OnBuildOptionsCombo)
 	ON_REGISTERED_MESSAGE(WM_KBC_VALUECHANGE, OnKanbanNotifyValueChange)
 	ON_REGISTERED_MESSAGE(WM_KBC_COMPLETIONCHANGE, OnKanbanNotifyCompletionChange)
 	ON_REGISTERED_MESSAGE(WM_KBC_NOTIFYSORT, OnKanbanNotifySortChange)
@@ -124,13 +118,6 @@ void CKanbanWnd::OnNcDestroy()
 LRESULT CKanbanWnd::OnGetFont(WPARAM /*wp*/, LPARAM /*lp*/)
 {
 	return m_ctrlKanban.SendMessage(WM_GETFONT);
-}
-
-LRESULT CKanbanWnd::OnBuildOptionsCombo(WPARAM /*wp*/, LPARAM lp)
-{
-	BuildOptionsCombo(lp);
-
-	return 0L;
 }
 
 void CKanbanWnd::OnHelp()
@@ -331,28 +318,16 @@ void CKanbanWnd::LoadPreferences(const IPreferences* pPrefs, LPCTSTR szKey, bool
 		CString sKey(szKey);
 		
 		// Options
-		if (m_cbOptions.GetCount())
-		{
-			BOOL bChecked = pPrefs->GetProfileInt(sKey, _T("ShowParents"), TRUE);
-			m_cbOptions.SetCheckByData(KBCF_SHOWPARENTTASKS, (bChecked ? CCBC_CHECKED : CCBC_UNCHECKED));
-			
-			bChecked = pPrefs->GetProfileInt(sKey, _T("ShowEmptyColumns"),TRUE);
-			m_cbOptions.SetCheckByData(KBCF_SHOWEMPTYCOLUMNS, (bChecked ? CCBC_CHECKED : CCBC_UNCHECKED));
+		DWORD dwComboOptions = 0;
 
-			OnSelchangeOptions();
-		}
-		else
-		{
-			DWORD dwComboOptions = 0;
-			
-			if (pPrefs->GetProfileInt(sKey, _T("ShowParents"), TRUE))
-				dwComboOptions |= KBCF_SHOWPARENTTASKS;
-			
-			if (pPrefs->GetProfileInt(sKey, _T("ShowEmptyColumns"),TRUE))
-				dwComboOptions |= KBCF_SHOWEMPTYCOLUMNS;
-			
-			PostMessage(WM_BUILDOPTIONSCOMBO, 0, dwComboOptions);
-		}
+		if (pPrefs->GetProfileInt(sKey, _T("ShowParents"), TRUE))
+			dwComboOptions |= KBCF_SHOWPARENTTASKS;
+
+		if (pPrefs->GetProfileInt(sKey, _T("ShowEmptyColumns"),TRUE))
+			dwComboOptions |= KBCF_SHOWEMPTYCOLUMNS;
+
+		m_cbOptions.SetSelectedOptions(dwComboOptions);
+		OnSelchangeOptions();
 		
 		// Last tracked attribute
 		m_dlgPrefs.LoadPreferences(pPrefs, sKey);
@@ -470,8 +445,6 @@ bool CKanbanWnd::SelectTask(DWORD dwTaskID)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	
-//	CAutoFlag af(m_bInSelectTask, TRUE);
-
 	return (m_ctrlKanban.SelectTask(dwTaskID) != FALSE);
 }
 
@@ -479,7 +452,6 @@ bool CKanbanWnd::SelectTasks(const DWORD* pdwTaskIDs, int nTaskCount)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-//	CAutoFlag af(m_bInSelectTask, TRUE);
 	CDWordArray aTaskIDs;
 
 	if (nTaskCount)
@@ -749,9 +721,6 @@ BOOL CKanbanWnd::OnEraseBkgnd(CDC* pDC)
 
 void CKanbanWnd::SendParentSelectionUpdate()
 {
-// 	if (m_bInSelectTask)
-// 		return;
-
 	CDWordArray aSelIDs;
 	m_ctrlKanban.GetSelectedTaskIDs(aSelIDs);
 
@@ -1002,26 +971,6 @@ void CKanbanWnd::ProcessTrackedAttributeChange()
 
 	// Track the new attribute
 	m_ctrlKanban.TrackAttribute(nTrackAttrib, sCustomAttrib, aColDefs);
-}
-
-void CKanbanWnd::BuildOptionsCombo(DWORD dwOptions)
-{
-	ASSERT(m_cbOptions.GetCount() == 0);
-
-	AddString(m_cbOptions, IDS_OPTIONS_SHOWPARENTS, KBCF_SHOWPARENTTASKS);
-	AddString(m_cbOptions, IDS_OPTIONS_SHOWEMPTYCOLS, KBCF_SHOWEMPTYCOLUMNS);
-
-	if (dwOptions & KBCF_SHOWPARENTTASKS)
-	{
-		m_cbOptions.SetCheckByData(KBCF_SHOWPARENTTASKS, CCBC_CHECKED);
-		m_ctrlKanban.SetOption(KBCF_SHOWPARENTTASKS);
-	}
-				
-	if (dwOptions & KBCF_SHOWEMPTYCOLUMNS)
-	{
-		m_cbOptions.SetCheckByData(KBCF_SHOWEMPTYCOLUMNS, CCBC_CHECKED);
-		m_ctrlKanban.SetOption(KBCF_SHOWEMPTYCOLUMNS);
-	}
 }
 
 void CKanbanWnd::OnSelchangeOptions() 

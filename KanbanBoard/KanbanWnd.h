@@ -9,6 +9,7 @@
 
 #include "KanbanCtrl.h"
 #include "KanbanPreferencesDlg.h"
+#include "KanbanOptionComboBox.h"
 
 #include "..\Shared\tabbedcombobox.h"
 #include "..\Shared\entoolbar.h"
@@ -66,15 +67,15 @@ protected:
 	//}}AFX_DATA
 	CKanbanCtrl m_ctrlKanban;
 	CKanbanPreferencesDlg m_dlgPrefs;
+	CKanbanAttributeComboBox m_cbAttributes;
+	CKanbanOptionComboBox m_cbOptions;
+
 	CEnToolBar m_toolbar;
 	CToolbarHelper m_tbHelper;
-	CKanbanAttributeComboBox m_cbAttributes;
 	CComboBox	m_cbCustomAttributes;
-	CCheckComboBox	m_cbOptions;
 	CToolTipCtrl m_tooltips;
 
 	BOOL m_bReadOnly;
-//	BOOL m_bInSelectTask;
 	CIcon m_icon;
 	CBrush m_brBack;
 	UITHEME m_theme;
@@ -109,7 +110,6 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg BOOL OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult );	
 	afx_msg LRESULT OnGetFont(WPARAM wp, LPARAM lp);
-	afx_msg LRESULT OnBuildOptionsCombo(WPARAM wp, LPARAM lp);
 	afx_msg void OnNcDestroy();
 
 	afx_msg LRESULT OnKanbanNotifySelectionChange(WPARAM wp, LPARAM lp);
@@ -126,7 +126,6 @@ protected:
 	void UpdateKanbanCtrlPreferences(BOOL bFixedColumnsToggled);
 	void SendParentSelectionUpdate();
 	void EnableDisableCtrls();
-	void BuildOptionsCombo(DWORD dwOptions);
 	void UpdatePriorityColors(const IPreferences* pPrefs);
 	void ProcessTrackedAttributeChange(); 
 };
