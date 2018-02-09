@@ -4512,11 +4512,7 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 			dwDestParentID = GetSelectedTaskParentID();
 			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_NEXT, TRUE);
 
-			if (dwDestPrevSiblingID == 0)
-				return FALSE;
-
-			// Validate it really is a sibling
-			if (!m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
+			if (!ValidatePreviousSiblingTaskID(dwSelTaskID, dwDestPrevSiblingID))
 				return FALSE;
 		}
 		break;
@@ -4526,10 +4522,13 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 			dwDestParentID = GetSelectedTaskParentID();
 			dwDestPrevSiblingID = GetNextTaskID(dwSelTaskID, TTCNT_PREV, TRUE);
 
-			if ((dwDestPrevSiblingID == 0) || (dwDestPrevSiblingID == dwDestParentID))
+			// Can't be parent because we need to look two tasks above
+			if (dwDestPrevSiblingID == dwDestParentID)
 				return FALSE;
 
-			// We have to look two tasks above
+			if (!ValidatePreviousSiblingTaskID(dwSelTaskID, dwDestPrevSiblingID))
+				return FALSE;
+
 			dwDestPrevSiblingID = GetNextTaskID(dwDestPrevSiblingID, TTCNT_PREV, TRUE);
 
 			// If this is the parent task we set the sibling to zero
@@ -4538,11 +4537,9 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 			{
 				dwDestPrevSiblingID = 0;
 			}
-			else if (dwDestPrevSiblingID != 0)
+			else if (!ValidatePreviousSiblingTaskID(dwSelTaskID, dwDestPrevSiblingID))
 			{
-				// Validate it really is a sibling
-				if (!m_data.TaskHasSibling(dwSelTaskID, dwDestPrevSiblingID))
-					return FALSE;
+				return FALSE;
 			}
 		}
 		break;
@@ -4556,6 +4553,24 @@ BOOL CTabbedToDoCtrl::GetExtensionInsertLocation(FTC_VIEW nView, TDC_MOVETASK nD
 	return TRUE;
 }
 
+BOOL CTabbedToDoCtrl::ValidatePreviousSiblingTaskID(DWORD dwTaskID, DWORD& dwPrevSiblingID) const
+{
+	DWORD dwOtherTaskID = dwPrevSiblingID;
+
+	while (dwOtherTaskID != 0)
+	{
+		if (m_data.TaskHasSibling(dwTaskID, dwOtherTaskID))
+		{
+			dwPrevSiblingID = dwOtherTaskID;
+			return TRUE;
+		}
+
+		// If it's not sibling, see if it's parent is a sibling
+		dwOtherTaskID = m_data.GetTaskParentID(dwOtherTaskID);
+	}
+
+	return FALSE;
+}
 
 BOOL CTabbedToDoCtrl::GotoNextTask(TDC_GOTO nDirection)
 {
