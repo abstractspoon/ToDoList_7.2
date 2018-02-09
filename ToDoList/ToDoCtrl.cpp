@@ -4749,7 +4749,7 @@ void CToDoCtrl::PauseTimeTracking(BOOL bPause)
 	else
 	{
 		m_bTimeTrackingPaused = FALSE;
-		ResetTimeTrackingTicks();
+		m_dwTimeTrackTickLast = GetTickCount(); 
 
 		// Start the timer
 		SetTimer(TIMER_TRACK, TIMETRACKPERIOD, NULL);
@@ -8727,11 +8727,6 @@ void CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 			return;
 		}
 		
-		ResetTimeTrackingTicks();
-
-		m_dwTimeTrackTaskID = dwTaskID;
-		m_dwTimeTrackReminderElapsedTicks = 0;
-			
 		// if the task's start date has not been set then set it now
 		if (!pTDI->HasStart())
 			m_data.SetTaskDate(dwTaskID, TDCD_STARTDATE, COleDateTime::GetCurrentTime());
@@ -8744,19 +8739,18 @@ void CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 		m_eTimeSpent.EnableButton(ID_ADD_TIME, FALSE);
 
 		SetCtrlState(m_eTimeSpent, RTCS_READONLY);
+
+		// Start the timer
+		m_dwTimeTrackTaskID = dwTaskID;
+		m_dwTimeTrackReminderElapsedTicks = 0;
+		m_dwTimeTrackTickLast = GetTickCount(); 
+			
+		SetTimer(TIMER_TRACK, TIMETRACKPERIOD, NULL);
 			
 		// notify parent
 		if (bNotify)
 			GetParent()->SendMessage(WM_TDCN_TIMETRACK, (WPARAM)GetSafeHwnd(), TRUE);
-
-		// Start the timer
-		SetTimer(TIMER_TRACK, TIMETRACKPERIOD, NULL);
 	}
-}
-
-void CToDoCtrl::ResetTimeTrackingTicks() 
-{ 
-	m_dwTimeTrackTickLast = GetTickCount(); 
 }
 
 void CToDoCtrl::SetTimeTrackingReminderInterval(int nMinutes)
@@ -11925,8 +11919,11 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 		{
 			m_dwTimeTrackReminderElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
 
-			if (m_dwTimeTrackReminderElapsedTicks > m_dwTimeTrackReminderIntervalTicks)
+			if (m_dwTimeTrackReminderElapsedTicks >= m_dwTimeTrackReminderIntervalTicks)
 			{
+				TRACE(_T("Sending time track reminder notification as %.2f seconds\n"), 
+						(m_dTrackedTimeElapsedHours / TICKS2HOURS) / 1000);
+
 				m_dwTimeTrackReminderElapsedTicks = 0;
 				GetParent()->SendMessage(WM_TDCN_TIMETRACKREMINDER, m_dwTimeTrackTaskID, (LPARAM)this);
 			}

@@ -756,7 +756,6 @@ protected:
 	
 	// -------------------------------------------------------------------------------
 	
-	void ResetTimeTrackingTicks();
 	void UpdateTask(TDC_ATTRIBUTE nAttrib, DWORD dwFlags = 0);
 	void UpdateControls(BOOL bIncComments = TRUE, HTREEITEM hti = NULL);
 	void UpdateDateTimeControls(BOOL bHasSelection);
