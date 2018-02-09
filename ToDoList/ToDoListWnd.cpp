@@ -6652,11 +6652,21 @@ LPARAM CToDoListWnd::OnToDoCtrlNotifyTimeTrackReminder(WPARAM wParam, LPARAM lPa
 
 	m_trayIcon.ShowBalloon(sMessage, CEnString(IDS_TIMETRACKREMINDER_BALLOONTITLE), NIIF_INFO);
 
-	// And play sound
-	CString sSoundFile = Prefs().GetTrackReminderSoundFile();
+	// Option extras
+	const CPreferencesDlg& prefs = Prefs();
+	CString sSoundFile = prefs.GetTrackReminderSoundFile();
 
 	if (!sSoundFile.IsEmpty())
 		PlaySound(sSoundFile, NULL, (SND_FILENAME | SND_ASYNC));
+
+	// And optionally end tracking
+	if (prefs.GetEndTrackingOnReminder())
+	{
+		int nTDC = m_mgrToDoCtrls.FindToDoCtrl(pTDC);
+		ASSERT(nTDC != -1);
+
+		StopTimeTrackingTask(nTDC, FROM_APP);
+	}
 
 	return TRUE;
 }

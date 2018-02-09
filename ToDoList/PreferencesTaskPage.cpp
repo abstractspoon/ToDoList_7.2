@@ -58,6 +58,7 @@ void CPreferencesTaskPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_SHOWTIMETRACKER, m_bShowTimeTracker);
 	//}}AFX_DATA_MAP
 	DDX_Text(pDX, IDC_PLAYSOUND, m_sTrackReminderSoundFile);
+	//DDX_Check(pDX, IDC_ENDTRACKINGONREMINDER, m_bEndTrackingOnReminder);
 	DDX_Control(pDX, IDC_PLAYSOUND, m_ePlaySound);
 
 	if (pDX->m_bSaveAndValidate)
@@ -94,6 +95,7 @@ BOOL CPreferencesTaskPage::OnInitDialog()
 	GetDlgItem(IDC_LOGTASKSEPARATELY)->EnableWindow(m_bLogTime);
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
 	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
+//	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
 
 	CDialogHelper::RefreshMaxColumnWidth(m_lbWeekends);
 
@@ -152,6 +154,7 @@ void CPreferencesTaskPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR s
 	m_bTrackReminder = pPrefs->GetProfileInt(szKey, _T("TrackReminder"), FALSE);
 	m_nTrackReminderFrequency = pPrefs->GetProfileInt(szKey, _T("TrackReminderFrequency"), 5);
 	m_bShowTimeTracker = pPrefs->GetProfileInt(szKey, _T("ShowTimeTracker"), TRUE);
+	m_bEndTrackingOnReminder = pPrefs->GetProfileInt(szKey, _T("EndTrackingOnReminder"), FALSE);
 
 	m_sTrackReminderSoundFile = pPrefs->GetProfileString(_T("Reminders"), _T("SoundFile"), m_sTrackReminderSoundFile);
 
@@ -187,6 +190,7 @@ void CPreferencesTaskPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey) 
 	pPrefs->WriteProfileInt(szKey, _T("TrackReminder"), m_bTrackReminder);
 	pPrefs->WriteProfileInt(szKey, _T("TrackReminderFrequency"), m_nTrackReminderFrequency);
 	pPrefs->WriteProfileInt(szKey, _T("ShowTimeTracker"), m_bShowTimeTracker);
+	pPrefs->WriteProfileInt(szKey, _T("EndTrackingOnReminder"), m_bEndTrackingOnReminder);
 
 	pPrefs->WriteProfileString(_T("Reminders"), _T("SoundFile"), m_sTrackReminderSoundFile.IsEmpty() ? NO_SOUND : m_sTrackReminderSoundFile);
 
@@ -207,4 +211,5 @@ void CPreferencesTaskPage::OnNotifyTimeTracking()
 
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
 	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
+//	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
 }

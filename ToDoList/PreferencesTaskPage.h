@@ -38,6 +38,7 @@ public:
 	DWORD GetWeekendDays() const { return m_dwWeekends; }
 	BOOL GetDisplayLogConfirm() const { return m_bDisplayLogConfirm; }
 	int GetTrackReminderFrequency() const { return m_bTrackReminder ? m_nTrackReminderFrequency : 0; }
+	BOOL GetEndTrackingOnReminder() const { return m_bTrackReminder ? m_bEndTrackingOnReminder : FALSE; }
 	CString GetTrackReminderSoundFile() const { return m_bTrackReminder ? m_sTrackReminderSoundFile : _T(""); }
 
 //	BOOL Get() const { return m_b; }
@@ -61,6 +62,8 @@ protected:
 	BOOL	m_bTrackOnScreenSaver;
 	BOOL	m_bTrackNonActiveTasklists;
 	BOOL	m_bTrackHibernated;
+	BOOL	m_bEndTrackingOnReminder;
+
 	CGroupLineManager m_mgrGroupLines;
 	DWORD	m_dwWeekends;
 	CDayOfWeekCheckListBox m_lbWeekends;

@@ -168,6 +168,7 @@ public:
 	int GetTrackReminderFrequency() const { return m_pageTask.GetTrackReminderFrequency(); }
 	int GetShowTimeTracker() const { return m_pageTask.GetShowTimeTracker(); }
 	CString GetTrackReminderSoundFile() const { return m_pageTask.GetTrackReminderSoundFile(); }
+	BOOL GetEndTrackingOnReminder() const { return m_pageTask.GetEndTrackingOnReminder(); }
 
 	// CPreferencesTaskCalcPage
 	BOOL GetAveragePercentSubCompletion() const { return m_pageTaskCalc.GetAveragePercentSubCompletion(); }
