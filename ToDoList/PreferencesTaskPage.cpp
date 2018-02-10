@@ -58,7 +58,7 @@ void CPreferencesTaskPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_SHOWTIMETRACKER, m_bShowTimeTracker);
 	//}}AFX_DATA_MAP
 	DDX_Text(pDX, IDC_PLAYSOUND, m_sTrackReminderSoundFile);
-	//DDX_Check(pDX, IDC_ENDTRACKINGONREMINDER, m_bEndTrackingOnReminder);
+	DDX_Check(pDX, IDC_ENDTRACKINGONREMINDER, m_bEndTrackingOnReminder);
 	DDX_Control(pDX, IDC_PLAYSOUND, m_ePlaySound);
 
 	if (pDX->m_bSaveAndValidate)
@@ -95,7 +95,7 @@ BOOL CPreferencesTaskPage::OnInitDialog()
 	GetDlgItem(IDC_LOGTASKSEPARATELY)->EnableWindow(m_bLogTime);
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
 	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
-//	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
+	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
 
 	CDialogHelper::RefreshMaxColumnWidth(m_lbWeekends);
 
@@ -211,5 +211,5 @@ void CPreferencesTaskPage::OnNotifyTimeTracking()
 
 	GetDlgItem(IDC_NOTIFYTIMETRACKINGFREQUENCY)->EnableWindow(m_bTrackReminder);
 	GetDlgItem(IDC_PLAYSOUND)->EnableWindow(m_bTrackReminder);
-//	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
+	GetDlgItem(IDC_ENDTRACKINGONREMINDER)->EnableWindow(m_bTrackReminder);
 }

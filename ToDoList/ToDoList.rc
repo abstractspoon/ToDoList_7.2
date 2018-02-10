@@ -342,7 +342,7 @@ BEGIN
     PUSHBUTTON      "Copy &All",IDC_COPYALL,295,202,50,14
 END
 
-IDD_PREFTASK_PAGE DIALOG DISCARDABLE  0, 0, 400, 364
+IDD_PREFTASK_PAGE DIALOG DISCARDABLE  0, 0, 400, 379
 STYLE WS_POPUP
 FONT 8, "Tahoma"
 BEGIN
@@ -386,18 +386,20 @@ BEGIN
     LTEXT           "minutes",IDC_STATIC,53,204,90,8
     LTEXT           "&Play this sound",IDC_STATIC,17,219,221,8
     EDITTEXT        IDC_PLAYSOUND,17,231,215,14,ES_AUTOHSCROLL
-    LTEXT           "Time Periods",IDC_TIMEGROUP,7,254,386,8
-    LTEXT           "One &day equals:",IDC_STATIC,7,269,85,8
-    COMBOBOX        IDC_HOURSINONEDAY,97,267,39,115,CBS_DROPDOWN | 
+    CONTROL         "And then stop the timer",IDC_ENDTRACKINGONREMINDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,249,378,10
+    LTEXT           "Time Periods",IDC_TIMEGROUP,7,269,386,8
+    LTEXT           "One &day equals:",IDC_STATIC,7,284,85,8
+    COMBOBOX        IDC_HOURSINONEDAY,97,282,39,115,CBS_DROPDOWN | 
                     WS_TABSTOP
-    LTEXT           "hours",IDC_STATIC,143,269,59,8
-    LTEXT           "One &week equals:",IDC_STATIC,7,284,85,8
-    EDITTEXT        IDC_DAYSINONEWEEK,97,283,39,12,ES_AUTOHSCROLL | 
+    LTEXT           "hours",IDC_STATIC,143,284,59,8
+    LTEXT           "One &week equals:",IDC_STATIC,7,299,85,8
+    EDITTEXT        IDC_DAYSINONEWEEK,97,298,39,12,ES_AUTOHSCROLL | 
                     ES_READONLY | WS_DISABLED
-    LTEXT           "days",IDC_STATIC,143,284,60,8
+    LTEXT           "days",IDC_STATIC,143,299,60,8
     LTEXT           "Th&e following days represent the weekend:",IDC_STATIC,
-                    7,301,387,8
-    LISTBOX         IDC_WEEKENDS,7,313,225,43,LBS_OWNERDRAWFIXED | 
+                    7,316,387,8
+    LISTBOX         IDC_WEEKENDS,7,328,225,43,LBS_OWNERDRAWFIXED | 
                     LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_MULTICOLUMN | 
                     LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
 END
@@ -3828,7 +3830,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 396
         TOPMARGIN, 10
-        BOTTOMMARGIN, 359
+        BOTTOMMARGIN, 374
     END
 
     IDD_PREFTASKDEF_PAGE, DIALOG
