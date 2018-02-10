@@ -1802,7 +1802,7 @@ BOOL CTDLTaskTreeCtrl::RemoveOrphanTreeItemReferences(HTREEITEM hti)
 
 HTREEITEM CTDLTaskTreeCtrl::MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling)
 {
-	ASSERT(hti && htiDestParent && htiDestPrevSibling);
+	ASSERT(hti);
 
 	// prevent list updating until we have finished
 	CWaitCursor wait;
@@ -1847,8 +1847,6 @@ BOOL CTDLTaskTreeCtrl::MoveSelection(TDC_MOVETASK nDirection)
 
 void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling)
 {
-	ASSERT(htiDestParent);
-
 	HTREEITEM htiFirst = NULL;
 
 	// expand the destination ahead of the move
