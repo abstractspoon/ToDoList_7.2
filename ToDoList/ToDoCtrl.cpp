@@ -9041,7 +9041,7 @@ void CToDoCtrl::SelectAll()
 		UpdateControls();
 	}
 	
-	// re-enable dragdrop
+	// disable dragdrop
 	m_treeDragDrop.EnableDragDrop(FALSE);
 }
 
