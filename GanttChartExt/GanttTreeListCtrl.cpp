@@ -154,7 +154,9 @@ CGanttTreeListCtrl::CGanttTreeListCtrl(CGanttTreeCtrl& tree, CListCtrl& list)
 	m_dwMaxTaskID(0),
 	m_bReadOnly(FALSE),
 	m_bMovingTask(FALSE),
-	m_nPrevDropHilitedItem(-1)
+	m_nPrevDropHilitedItem(-1),
+	m_TSH(tree),
+	m_treeDragDrop(m_TSH, tree)
 {
 
 }
@@ -190,6 +192,9 @@ BOOL CGanttTreeListCtrl::Initialize(UINT nIDTreeHeader)
 
 	// prevent translation of the list header
 	CLocalizer::EnableTranslation(m_listHeader, FALSE);
+
+	// Initialise tree drag and drop
+	m_treeDragDrop.Initialize(m_tree.GetParent(), TRUE, FALSE);
 
 	// misc
 	m_tree.ModifyStyle(TVS_SHOWSELALWAYS, 0, 0);
@@ -2184,6 +2189,28 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 			}
 			break;
 		}
+
+		// Drag and drop
+		if (msg == WM_DD_DRAGENTER)
+		{
+			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+		}
+		else if (msg == WM_DD_PREDRAGMOVE)
+		{
+			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+		}
+		else if (msg == WM_DD_DRAGOVER)
+		{
+			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+		}
+		else if (msg == WM_DD_DRAGDROP)
+		{
+			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+		}
+		else if (msg == WM_DD_DRAGABORT)
+		{
+			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+		}
 	}
 	
 	return CTreeListSyncer::WindowProc(hRealWnd, msg, wp, lp);
@@ -2492,14 +2519,22 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 		switch (msg)
 		{
 		case WM_LBUTTONDOWN:
-			if (OnTreeLButtonDown(wp, lp))
+			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
+			{
+				return FALSE; // eat
+			}
+			else if (OnTreeLButtonDown(wp, lp))
 			{
 				return FALSE; // eat
 			}
 			break;
 
 		case WM_LBUTTONUP:
-			if (OnTreeLButtonUp(wp, lp))
+			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
+			{
+				return FALSE; // eat
+			}
+			else if (OnTreeLButtonUp(wp, lp))
 			{
 				return FALSE; // eat
 			}
@@ -2513,7 +2548,11 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 			break;
 
 		case WM_MOUSEMOVE:
-			if (OnTreeMouseMove(wp, lp))
+			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
+			{
+				return FALSE; // eat
+			}
+			else if (OnTreeMouseMove(wp, lp))
 			{
 				return FALSE; // eat
 			}
@@ -6875,10 +6914,22 @@ BOOL CGanttTreeListCtrl::GetDateFromPoint(const CPoint& ptCursor, COleDateTime& 
 	return FALSE;
 }
 
+void CGanttTreeListCtrl::SetReadOnly(bool bReadOnly) 
+{ 
+	m_bReadOnly = bReadOnly;
+
+	m_treeDragDrop.EnableDragDrop(!bReadOnly);
+}
+
 // external version
 BOOL CGanttTreeListCtrl::CancelOperation()
 {
-	if (IsDragging())
+	if (m_treeDragDrop.IsDragging())
+	{
+		m_treeDragDrop.CancelDrag();
+		return TRUE;
+	}
+	else if (IsDragging())
 	{
 		CancelDrag(TRUE);
 		return TRUE;

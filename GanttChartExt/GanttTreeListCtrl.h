@@ -18,6 +18,8 @@
 #include "..\shared\treectrlhelper.h"
 #include "..\shared\fontcache.h"
 #include "..\shared\mapex.h"
+#include "..\shared\TreeDragDropHelper.h"
+#include "..\shared\TreeSelectionHelper.h"
 
 #include "..\Interfaces\itasklist.h"
 #include "..\Interfaces\iuiextension.h"
@@ -111,7 +113,7 @@ public:
 	void SetSplitBarColor(COLORREF crSplitBar);
 
 	BOOL CancelOperation();
-	void SetReadOnly(bool bReadOnly) { m_bReadOnly = bReadOnly; }
+	void SetReadOnly(bool bReadOnly);
 	BOOL GetLabelEditRect(LPRECT pEdit) const;
 	CString GetItemTip(CPoint ptScreen) const;
 	HTREEITEM GetItem(CPoint ptScreen) const;
@@ -159,6 +161,8 @@ protected:
 	CString m_sMilestoneTag;
 	GTLC_DRAG m_nDragging;
 	int m_nPrevDropHilitedItem;
+	CTreeDragDropHelper m_treeDragDrop;
+	CTreeSelectionHelper m_TSH;
 
 	CGanttTreeCtrl& m_tree;
 	CListCtrl& m_list;

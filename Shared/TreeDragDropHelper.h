@@ -36,7 +36,7 @@ public:
 	void CancelDrag() { m_ddMgr.CancelDrag(); }
 
 protected:
-	CTreeSelectionHelper& m_selection;
+	const CTreeSelectionHelper& m_selection;
 	CTreeCtrl& m_tree;
 	CDragDropMgr m_ddMgr;
 	BOOL m_bEnabled;
