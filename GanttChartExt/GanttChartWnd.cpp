@@ -412,6 +412,10 @@ bool CGanttChartWnd::ProcessMessage(MSG* pMsg)
 		break;
 	}
 
+	// Drag and drop messages
+	if (m_ctrlGantt.ProcessMessage(pMsg))
+		return true;
+
 	// toolbar messages
 	return (m_tbHelper.ProcessMessage(pMsg) != FALSE);
 }

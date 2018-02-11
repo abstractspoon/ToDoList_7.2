@@ -155,8 +155,8 @@ CGanttTreeListCtrl::CGanttTreeListCtrl(CGanttTreeCtrl& tree, CListCtrl& list)
 	m_bReadOnly(FALSE),
 	m_bMovingTask(FALSE),
 	m_nPrevDropHilitedItem(-1),
-	m_TSH(tree),
-	m_treeDragDrop(m_TSH, tree)
+	m_tshDragDrop(tree),
+	m_treeDragDrop(m_tshDragDrop, tree)
 {
 
 }
@@ -2193,6 +2193,11 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		// Drag and drop
 		if (msg == WM_DD_DRAGENTER)
 		{
+			// Make sure the selection helper is synchronised
+			// with the tree's current selection
+			m_tshDragDrop.RemoveAll(TRUE, FALSE);
+			m_tshDragDrop.AddItem(m_tree.GetSelectedItem(), FALSE);
+
 			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
 		}
 		else if (msg == WM_DD_PREDRAGMOVE)
@@ -2519,22 +2524,14 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 		switch (msg)
 		{
 		case WM_LBUTTONDOWN:
-			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
-			{
-				return FALSE; // eat
-			}
-			else if (OnTreeLButtonDown(wp, lp))
+			if (OnTreeLButtonDown(wp, lp))
 			{
 				return FALSE; // eat
 			}
 			break;
 
 		case WM_LBUTTONUP:
-			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
-			{
-				return FALSE; // eat
-			}
-			else if (OnTreeLButtonUp(wp, lp))
+			if (OnTreeLButtonUp(wp, lp))
 			{
 				return FALSE; // eat
 			}
@@ -2548,11 +2545,7 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 			break;
 
 		case WM_MOUSEMOVE:
-			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
-			{
-				return FALSE; // eat
-			}
-			else if (OnTreeMouseMove(wp, lp))
+			if (OnTreeMouseMove(wp, lp))
 			{
 				return FALSE; // eat
 			}
@@ -7376,6 +7369,11 @@ void CGanttTreeListCtrl::FilterToolTipMessage(MSG* pMsg)
 	m_tree.FilterToolTipMessage(pMsg);
 	m_treeHeader.FilterToolTipMessage(pMsg);
 	m_listHeader.FilterToolTipMessage(pMsg);
+}
+
+bool CGanttTreeListCtrl::ProcessMessage(MSG* pMsg) 
+{
+	return (m_treeDragDrop.ProcessMessage(pMsg) != FALSE);
 }
 
 BOOL CGanttTreeListCtrl::CanMoveSelectedItem(const IUITASKMOVE& move) const

@@ -47,6 +47,8 @@ public:
 
 	BOOL SaveToImage(CBitmap& bmImage);
 	BOOL SetFont(HFONT hFont, BOOL bRedraw = TRUE);
+
+	bool ProcessMessage(MSG* pMsg);
 	void FilterToolTipMessage(MSG* pMsg);
 
 	void UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, const CSet<IUI_ATTRIBUTE>& attrib);
@@ -162,7 +164,7 @@ protected:
 	GTLC_DRAG m_nDragging;
 	int m_nPrevDropHilitedItem;
 	CTreeDragDropHelper m_treeDragDrop;
-	CTreeSelectionHelper m_TSH;
+	CTreeSelectionHelper m_tshDragDrop;
 
 	CGanttTreeCtrl& m_tree;
 	CListCtrl& m_list;

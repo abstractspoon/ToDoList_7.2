@@ -543,6 +543,19 @@ void CTreeDragDropHelper::OnTimer(UINT nIDEvent)
 			HighlightDropTarget();
 
 			SetTimer(TIMER_EXPAND, 0); // kill the timer
+
+			// Notify parent
+			NMTREEVIEW nmtv = { 0 };
+
+			nmtv.hdr.code = TVN_ITEMEXPANDED;
+			nmtv.hdr.hwndFrom = m_tree;
+			nmtv.hdr.idFrom = m_tree.GetDlgCtrlID();
+
+			nmtv.ptDrag = point;
+			nmtv.action = TVE_EXPAND;
+			nmtv.itemNew.hItem = hItem;
+
+			m_tree.GetParent()->SendMessage(WM_NOTIFY, m_tree.GetDlgCtrlID(), (LPARAM)&nmtv);
 			return;
 		}
 	}
