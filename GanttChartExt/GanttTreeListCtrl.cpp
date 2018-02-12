@@ -2195,6 +2195,7 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		{
 			// Make sure the selection helper is synchronised
 			// with the tree's current selection
+			m_tshDragDrop.ClearHistory();
 			m_tshDragDrop.RemoveAll(TRUE, FALSE);
 			m_tshDragDrop.AddItem(m_tree.GetSelectedItem(), FALSE);
 
@@ -2206,11 +2207,40 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		}
 		else if (msg == WM_DD_DRAGOVER)
 		{
-			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+			// We currently ONLY support moving
+			UINT nCursor = m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+
+			if (nCursor != DD_DROPEFFECT_MOVE)
+				nCursor = DD_DROPEFFECT_NONE;
+
+			return nCursor;
 		}
 		else if (msg == WM_DD_DRAGDROP)
 		{
-			return m_treeDragDrop.ProcessMessage(GetCurrentMessage());
+			if (m_treeDragDrop.ProcessMessage(GetCurrentMessage()))
+			{
+				HTREEITEM htiDropTarget = NULL, htiAfterSibling = NULL;
+
+				if (m_treeDragDrop.GetDropTarget(htiDropTarget, htiAfterSibling))
+				{
+					// Notify parent of move
+					HTREEITEM htiSel = GetSelectedItem();
+					ASSERT(htiSel);
+
+					IUITASKMOVE move = { 0 };
+
+					move.dwSelectedTaskID = GetTaskID(htiSel);
+					move.dwParentID = GetTaskID(htiDropTarget);
+					move.dwAfterSiblingID = GetTaskID(htiAfterSibling);
+					move.bCopy = false;
+
+					if (SendMessage(WM_GTLC_MOVETASK, 0, (LPARAM)&move))
+					{
+						htiSel = CTreeCtrlHelper(m_tree).MoveTree(htiSel, htiDropTarget, htiAfterSibling, TRUE, TRUE);
+						SelectItem(htiSel);
+					}
+				}
+			}
 		}
 		else if (msg == WM_DD_DRAGABORT)
 		{
@@ -6366,6 +6396,9 @@ DWORD CGanttTreeListCtrl::ListHitTestTask(const CPoint& point, BOOL bScreen, GTL
 
 DWORD CGanttTreeListCtrl::GetTaskID(HTREEITEM hti) const
 {
+	if ((hti == NULL) || (hti == TVI_FIRST) || (hti == TVI_ROOT))
+		return 0;
+
 	return GetTreeItemData(m_tree, hti);
 }
 
