@@ -2207,10 +2207,10 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		}
 		else if (msg == WM_DD_DRAGOVER)
 		{
-			// We currently ONLY support moving
+			// We currently DON'T support 'linking'
 			UINT nCursor = m_treeDragDrop.ProcessMessage(GetCurrentMessage());
 
-			if (nCursor != DD_DROPEFFECT_MOVE)
+			if (nCursor == DD_DROPEFFECT_LINK)
 				nCursor = DD_DROPEFFECT_NONE;
 
 			return nCursor;
@@ -2232,9 +2232,11 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 					move.dwSelectedTaskID = GetTaskID(htiSel);
 					move.dwParentID = GetTaskID(htiDropTarget);
 					move.dwAfterSiblingID = GetTaskID(htiAfterSibling);
-					move.bCopy = false;
+					move.bCopy = (Misc::ModKeysArePressed(MKS_CTRL) != FALSE);
 
-					if (SendMessage(WM_GTLC_MOVETASK, 0, (LPARAM)&move))
+					// If copying a task, app will send us a full update 
+					// so we do not need to perform the move ourselves
+					if (SendMessage(WM_GTLC_MOVETASK, 0, (LPARAM)&move) && !move.bCopy)
 					{
 						htiSel = CTreeCtrlHelper(m_tree).MoveTree(htiSel, htiDropTarget, htiAfterSibling, TRUE, TRUE);
 						SelectItem(htiSel);
