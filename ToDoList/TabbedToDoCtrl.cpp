@@ -4363,22 +4363,19 @@ BOOL CTabbedToDoCtrl::CanSortBy(TDC_COLUMN nBy) const
 	case FTCV_UIEXTENSION14:
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
-		return ExtensionCanSortBy(nView, nBy);
+		{
+			IUI_ATTRIBUTE nColID = TDC::MapColumnToIUIEdit(nBy);
+
+			if ((nColID == IUI_NONE) && (nBy != TDCC_NONE))
+				return FALSE;
+
+			return ExtensionCanSortBy(nView, nColID);
+		}
 	}
 	
 	// else
 	ASSERT(0);
 	return FALSE;
-}
-
-BOOL CTabbedToDoCtrl::ExtensionCanSortBy(FTC_VIEW nView, TDC_COLUMN nBy) const
-{
-	IUI_ATTRIBUTE nColID = TDC::MapColumnToIUIEdit(nBy);
-
-	if ((nColID == IUI_NONE) && (nBy != TDCC_NONE))
-		return FALSE;
-
-	return ExtensionCanSortBy(nView, nColID);
 }
 
 BOOL CTabbedToDoCtrl::ExtensionCanSortBy(FTC_VIEW nView, IUI_ATTRIBUTE nBy) const
