@@ -57,6 +57,7 @@
 #include "..\3rdparty\msoutl.h"
 #include "..\3rdparty\shellicons.h"
 #include "..\3rdparty\colordef.h"
+#include "..\3rdparty\dibdata.h"
 
 #include <Windowsx.h>
 #include <float.h>
@@ -13135,5 +13136,20 @@ BOOL CToDoCtrl::CanCopyAttributeData(const TDCCUSTOMATTRIBUTEDEFINITION& attribD
 		break;
 	}
 
+	return FALSE;
+}
+
+BOOL CToDoCtrl::SaveTaskViewToImage(CString& sFilePath) 
+{ 
+	CBitmap bmImage;
+
+	if (m_taskTree.SaveToImage(bmImage))
+	{
+		CDibData dib;
+
+		return (dib.CreateDIB(bmImage) && dib.SaveDIB(sFilePath));
+	}
+
+	// else
 	return FALSE;
 }

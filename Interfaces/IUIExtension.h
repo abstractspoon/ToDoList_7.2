@@ -297,7 +297,7 @@ struct IUIAPPCOMMANDDATA
 {
 	union
 	{
-		IUI_ATTRIBUTE nSortID;
+		IUI_ATTRIBUTE nSortBy;
 		DWORD dwTaskID;
 		WCHAR szFilePath[MAX_PATH + 1];
 		HFONT hFont;			
@@ -344,8 +344,7 @@ public:
 	virtual bool SelectTasks(const DWORD* pdwTaskIDs, int nTaskCount) = 0;
 
 	virtual void UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, const IUI_ATTRIBUTE* pAttributes, int nNumAttributes) = 0;
-	virtual bool WantEditUpdate(IUI_ATTRIBUTE nAttribute) const = 0;
-	virtual bool WantSortUpdate(IUI_ATTRIBUTE nAttribute) const = 0;
+	virtual bool WantTaskUpdate(IUI_ATTRIBUTE nAttribute) const = 0;
 	virtual bool PrepareNewTask(ITaskList* pTask) const = 0;
 	
 	virtual bool ProcessMessage(MSG* pMsg) = 0;

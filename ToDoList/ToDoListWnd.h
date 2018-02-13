@@ -784,7 +784,6 @@ protected:
 	static CString GetIntermediateTaskListPath(LPCTSTR szRefPath);
 	static void ProcessProtocolRegistrationFailure(BOOL bStartup, BOOL bExistingReg, UINT nMsgID, LPCTSTR szCheckPrefKey);
 	static BOOL GetStylesheetPath(const CFilteredToDoCtrl& tdc, CString& sDlgStylesheet);
-	static BOOL SaveViewToImage(CFilteredToDoCtrl& tdc, const CString& sFilePath);
 
 	BOOL UpdateLanguageTranslationAndCheckForRestart(const CPreferencesDlg& oldPrefs);
 	

@@ -76,7 +76,6 @@
 
 #include "..\3rdparty\gui.h"
 #include "..\3rdparty\sendfileto.h"
-#include "..\3rdparty\dibdata.h"
 
 #include <shlwapi.h>
 #include <windowsx.h>
@@ -6363,7 +6362,7 @@ BOOL CToDoListWnd::CreateTempPrintFile(const CTDLPrintDialog& dlg, const CString
 	{
 		CString sTempImg = FileMisc::GetTempFilePath(_T("tdl.view"), _T("bmp"));
 
-		if (SaveViewToImage(GetToDoCtrl(), sTempImg))
+		if (GetToDoCtrl().SaveTaskViewToImage(sTempImg))
 		{
 			CString sHtmlOutput(_T("<!DOCTYPE html>\n"));
 			
@@ -12842,7 +12841,7 @@ void CToDoListWnd::OnViewSaveToImage()
 	// else
 	sFilePath = dialog.GetPathName();
 
-	if (SaveViewToImage(tdc, sFilePath))
+	if (tdc.SaveTaskViewToImage(sFilePath))
 	{
 		FileMisc::Run(*this, sFilePath);
 	}
@@ -12853,6 +12852,7 @@ void CToDoListWnd::OnViewSaveToImage()
 	}
 }
 
+/*
 BOOL CToDoListWnd::SaveViewToImage(CFilteredToDoCtrl& tdc, const CString& sFilePath) 
 {
 	CWaitCursor cursor;
@@ -12871,6 +12871,7 @@ BOOL CToDoListWnd::SaveViewToImage(CFilteredToDoCtrl& tdc, const CString& sFileP
 	// else
 	return FALSE;
 }
+*/
 
 void CToDoListWnd::OnUpdateViewSaveToImage(CCmdUI* pCmdUI) 
 {
