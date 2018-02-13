@@ -574,7 +574,10 @@ IUIExtensionWindow* CTabbedToDoCtrl::GetCreateExtensionWnd(FTC_VIEW nView)
 	m_aExtViews[nExtension] = pExtWnd;
 
 	// Set font before loading preferences
-	pExtWnd->DoAppCommand(IUI_SETTASKFONT, (DWORD)m_taskTree.GetFont());
+	IUIAPPCOMMANDDATA data;
+	data.hFont = m_taskTree.GetFont();
+
+	pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
 	pVData->bNeedFontUpdate = FALSE;
 		
 	// restore state
@@ -758,7 +761,11 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 			if (pVData->bNeedFontUpdate)
 			{
 				pVData->bNeedFontUpdate = FALSE;
-				pExtWnd->DoAppCommand(IUI_SETTASKFONT, (DWORD)m_taskTree.GetFont());
+
+				IUIAPPCOMMANDDATA data;
+				data.hFont = m_taskTree.GetFont();
+
+				pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
 			}
 		}
 		break;
@@ -2560,16 +2567,18 @@ DWORD CTabbedToDoCtrl::GetNextTaskID(DWORD dwTaskID, TTC_NEXTTASK nNext, BOOL bE
 			if (pExtWnd)
 			{
 				IUI_APPCOMMAND nCmd = MapGetNextToCommand(nNext);
-				DWORD dwNextID(dwTaskID);
+
+				IUIAPPCOMMANDDATA data;
+				data.dwTaskID = dwTaskID;
 				
-				while (pExtWnd->DoAppCommand(nCmd, (DWORD)&dwNextID))
+				while (pExtWnd->DoAppCommand(nCmd, &data))
 				{
-					if (!dwNextID | (dwNextID == dwTaskID))
+					if (!data.dwTaskID || (data.dwTaskID == dwTaskID))
 						break;
 					
 					if (bExcludeSelected)
 					{
-						HTREEITEM htiNext = TCF().GetItem(dwNextID);
+						HTREEITEM htiNext = TCF().GetItem(data.dwTaskID);
 						ASSERT(htiNext);
 						
 						if (TSH().IsItemSelected(htiNext, TRUE))
@@ -2577,7 +2586,7 @@ DWORD CTabbedToDoCtrl::GetNextTaskID(DWORD dwTaskID, TTC_NEXTTASK nNext, BOOL bE
 					}
 					
 					// else
-					return dwNextID;
+					return data.dwTaskID;
 				}
 			}
 		}
@@ -2987,7 +2996,10 @@ int CTabbedToDoCtrl::GetExtensionViewAttributes(IUIExtensionWindow* pExtWnd, CTD
 		mapAttrib.Add(TDCA_LOCK);
 
 		// Include 'position' if extension supports 'unsorted'
-		if (pExtWnd->CanDoAppCommand(IUI_SORT, IUI_NONE))
+		IUIAPPCOMMANDDATA data;
+		data.nSortID = IUI_NONE;
+
+		if (pExtWnd->CanDoAppCommand(IUI_SORT, &data))
 			mapAttrib.Add(TDCA_POSITION);
 	}
 
@@ -3753,7 +3765,11 @@ BOOL CTabbedToDoCtrl::SetTreeFont(HFONT hFont)
 					return FALSE;
 
 				pVData->bNeedFontUpdate = FALSE;
-				pExtWnd->DoAppCommand(IUI_SETTASKFONT, (DWORD)hFont);
+
+				IUIAPPCOMMANDDATA data;
+				data.hFont = hFont;
+
+				pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
 
 				// mark rest of extensions needing update
 				SetExtensionsNeedFontUpdate(TRUE, nView);
@@ -4190,33 +4206,35 @@ void CTabbedToDoCtrl::RefreshExtensionViewSort(FTC_VIEW nView)
 		return;
 	}
 
+	IUIAPPCOMMANDDATA data;
+
 	if (pVData->sort.IsSorting())
 	{
 		if (pVData->sort.bMulti)
 		{
 			const TDSORTCOLUMN* pCols = pVData->sort.multi.Cols();
-			IUIMULTISORT ms;
 
-			ms.nAttrib1 = TDC::MapColumnToIUIAttribute(pCols[0].nBy);
-			ms.bAscending1 = (pCols[0].bAscending != FALSE);
+			data.sort.nAttrib1 = TDC::MapColumnToIUIAttribute(pCols[0].nBy);
+			data.sort.bAscending1 = (pCols[0].bAscending != FALSE);
 
-			ms.nAttrib2 = TDC::MapColumnToIUIAttribute(pCols[1].nBy);
-			ms.bAscending2 = (pCols[1].bAscending != FALSE);
+			data.sort.nAttrib2 = TDC::MapColumnToIUIAttribute(pCols[1].nBy);
+			data.sort.bAscending2 = (pCols[1].bAscending != FALSE);
 
-			ms.nAttrib3 = TDC::MapColumnToIUIAttribute(pCols[2].nBy);
-			ms.bAscending3 = (pCols[2].bAscending != FALSE);
+			data.sort.nAttrib3 = TDC::MapColumnToIUIAttribute(pCols[2].nBy);
+			data.sort.bAscending3 = (pCols[2].bAscending != FALSE);
 
-			ExtensionDoAppCommand(nView, IUI_MULTISORT, (DWORD)&ms);
+			ExtensionDoAppCommand(nView, IUI_MULTISORT, &data);
 		}
 		else
 		{
-			IUI_ATTRIBUTE nSort = TDC::MapColumnToIUIAttribute(pVData->sort.single.nBy);
-			ExtensionDoAppCommand(nView, IUI_SORT, nSort);
+			data.nSortID = TDC::MapColumnToIUIAttribute(pVData->sort.single.nBy);
+			ExtensionDoAppCommand(nView, IUI_SORT, &data);
 		}
 	}
 	else
 	{
-		ExtensionDoAppCommand(nView, IUI_SORT, IUI_NONE);
+		data.nSortID = IUI_NONE;
+		ExtensionDoAppCommand(nView, IUI_SORT, &data);
 	}
 }
 
@@ -4294,13 +4312,17 @@ void CTabbedToDoCtrl::Sort(TDC_COLUMN nBy, BOOL bAllowToggle)
 				if (nBy == TDCC_NONE)
 					bAllowToggle = FALSE;
 
-				ExtensionDoAppCommand(nView, (bAllowToggle ? IUI_TOGGLABLESORT : IUI_SORT), nCol);
+				IUIAPPCOMMANDDATA data;
+				data.nSortID = nCol;
 
-				VIEWDATA* pVData = GetViewData(nView);
-				ASSERT(pVData);
+				if (ExtensionDoAppCommand(nView, (bAllowToggle ? IUI_TOGGLABLESORT : IUI_SORT), &data))
+				{
+					VIEWDATA* pVData = GetViewData(nView);
+					ASSERT(pVData);
 			
-				if (pVData)
-					pVData->sort.single.nBy = nBy;
+					if (pVData)
+						pVData->sort.single.nBy = nBy;
+				}
 			}
 		}
 		break;
@@ -4411,10 +4433,14 @@ BOOL CTabbedToDoCtrl::CanMoveSelectedTask(TDC_MOVETASK nDirection) const
 			if (!GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID))
 				return FALSE;
 
-			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
-			IUITASKMOVE move = { dwSelTaskID, dwDestParentID, dwDestPrevSiblingID, false };
+			IUIAPPCOMMANDDATA data;
+			
+			data.move.dwSelectedTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
+			data.move.dwParentID = dwDestParentID;
+			data.move.dwAfterSiblingID = dwDestPrevSiblingID;
+			data.move.bCopy = false;
 
-			return ExtensionCanDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move);
+			return ExtensionCanDoAppCommand(nView, IUI_MOVETASK, &data);
 		}
 		break;
 	}
@@ -4454,14 +4480,19 @@ BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
 		{
+			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
+
 			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
 			VERIFY(GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID));
 
-			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
+			IUIAPPCOMMANDDATA data;
 
-			IUITASKMOVE move = { dwSelTaskID, dwDestParentID, dwDestPrevSiblingID, false };
+			data.move.dwSelectedTaskID = dwSelTaskID;
+			data.move.dwParentID = dwDestParentID;
+			data.move.dwAfterSiblingID = dwDestPrevSiblingID;
+			data.move.bCopy = false;
 
-			if (ExtensionDoAppCommand(nView, IUI_MOVETASK, (DWORD)&move))
+			if (ExtensionDoAppCommand(nView, IUI_MOVETASK, &data))
 			{
 				IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
 
@@ -4893,25 +4924,25 @@ BOOL CTabbedToDoCtrl::CanExpandTasks(TDC_EXPANDCOLLAPSE nWhat, BOOL bExpand) con
 	return FALSE; // not supported
 }
 
-BOOL CTabbedToDoCtrl::ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra)
+BOOL CTabbedToDoCtrl::ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, IUIAPPCOMMANDDATA* pData)
 {
 	IUIExtensionWindow* pExt = GetExtensionWnd(nView);
 	ASSERT(pExt);
 
 	if (pExt)
-		return (pExt->DoAppCommand(nCmd, dwExtra) ? TRUE : FALSE);
+		return (pExt->DoAppCommand(nCmd, pData) ? TRUE : FALSE);
 
 	// else
 	return FALSE;
 }
 
-BOOL CTabbedToDoCtrl::ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra) const
+BOOL CTabbedToDoCtrl::ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, const IUIAPPCOMMANDDATA* pData) const
 {
 	const IUIExtensionWindow* pExt = GetExtensionWnd(nView);
 	ASSERT(pExt);
 
 	if (pExt)
-		return (pExt->CanDoAppCommand(nCmd, dwExtra) ? TRUE : FALSE);
+		return (pExt->CanDoAppCommand(nCmd, pData) ? TRUE : FALSE);
 
 	return FALSE;
 }
@@ -5219,15 +5250,15 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 
 			if (pExtWnd && pExtWnd->CanDoAppCommand(nCmdID))
 			{
-				IUISELECTTASK select;
+				IUIAPPCOMMANDDATA data;
 
-				select.bFindReplace = (bFindReplace != FALSE);
-				select.nAttrib = IUI_TASKNAME;//TDC::MapAttributeToIUIAttribute(nAttrib);
-				select.szWords = sPart;
-				select.bCaseSensitive = (bCaseSensitive != FALSE);
-				select.bWholeWord = (bWholeWord != FALSE);
+				data.select.bFindReplace = (bFindReplace != FALSE);
+				data.select.nAttrib = IUI_TASKNAME;//TDC::MapAttributeToIUIAttribute(nAttrib);
+				data.select.szWords = sPart;
+				data.select.bCaseSensitive = (bCaseSensitive != FALSE);
+				data.select.bWholeWord = (bWholeWord != FALSE);
 
-				return (pExtWnd->DoAppCommand(nCmdID, (DWORD)&select) ? TRUE : FALSE);
+				return (pExtWnd->DoAppCommand(nCmdID, &data) ? TRUE : FALSE);
 			}
 		}
 		break;

@@ -291,8 +291,8 @@ protected:
 	BOOL ViewSupportsTaskSelection(FTC_VIEW nView) const;
 
 	void UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID = 0);
-	BOOL ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra = 0);
-	BOOL ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, DWORD dwExtra = 0) const;
+	BOOL ExtensionDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, IUIAPPCOMMANDDATA* pData = NULL);
+	BOOL ExtensionCanDoAppCommand(FTC_VIEW nView, IUI_APPCOMMAND nCmd, const IUIAPPCOMMANDDATA* pData = NULL) const;
 	IUIExtensionWindow* GetCreateExtensionWnd(FTC_VIEW nView);
 	IUIExtensionWindow* GetExtensionWnd(FTC_VIEW nView) const;
 	BOOL GetExtensionWnd(FTC_VIEW nView, IUIExtensionWindow*& pExtWnd, VIEWDATA*& pData) const;
