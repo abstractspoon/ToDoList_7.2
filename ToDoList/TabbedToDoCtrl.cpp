@@ -576,8 +576,7 @@ IUIExtensionWindow* CTabbedToDoCtrl::GetCreateExtensionWnd(FTC_VIEW nView)
 	m_aExtViews[nExtension] = pExtWnd;
 
 	// Set font before loading preferences
-	IUIAPPCOMMANDDATA data;
-	data.hFont = m_taskTree.GetFont();
+	CTDCUIExtensionAppCmdData data(m_taskTree.GetFont());
 
 	pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
 	pVData->bNeedFontUpdate = FALSE;
@@ -762,12 +761,10 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 
 			if (pVData->bNeedFontUpdate)
 			{
-				pVData->bNeedFontUpdate = FALSE;
-
-				IUIAPPCOMMANDDATA data;
-				data.hFont = m_taskTree.GetFont();
+				CTDCUIExtensionAppCmdData data(m_taskTree.GetFont());
 
 				pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
+				pVData->bNeedFontUpdate = FALSE;
 			}
 		}
 		break;
@@ -2570,8 +2567,7 @@ DWORD CTabbedToDoCtrl::GetNextTaskID(DWORD dwTaskID, TTC_NEXTTASK nNext, BOOL bE
 			{
 				IUI_APPCOMMAND nCmd = MapGetNextToCommand(nNext);
 
-				IUIAPPCOMMANDDATA data;
-				data.dwTaskID = dwTaskID;
+				CTDCUIExtensionAppCmdData data(dwTaskID);
 				
 				while (pExtWnd->DoAppCommand(nCmd, &data))
 				{
@@ -2998,8 +2994,7 @@ int CTabbedToDoCtrl::GetExtensionViewAttributes(IUIExtensionWindow* pExtWnd, CTD
 		mapAttrib.Add(TDCA_LOCK);
 
 		// Include 'position' if extension supports 'unsorted'
-		IUIAPPCOMMANDDATA data;
-		data.nSortBy = IUI_NONE;
+		CTDCUIExtensionAppCmdData data(IUI_NONE);
 
 		if (pExtWnd->CanDoAppCommand(IUI_SORT, &data))
 			mapAttrib.Add(TDCA_POSITION);
@@ -3760,18 +3755,10 @@ BOOL CTabbedToDoCtrl::SetTreeFont(HFONT hFont)
 		case FTCV_UIEXTENSION15:
 		case FTCV_UIEXTENSION16:
 			{
-				VIEWDATA* pVData = NULL;
-				IUIExtensionWindow* pExtWnd = NULL;
+				CTDCUIExtensionAppCmdData data(hFont);
 
-				if (!GetExtensionWnd(nView, pExtWnd, pVData))
-					return FALSE;
-
-				pVData->bNeedFontUpdate = FALSE;
-
-				IUIAPPCOMMANDDATA data;
-				data.hFont = hFont;
-
-				pExtWnd->DoAppCommand(IUI_SETTASKFONT, &data);
+				if (ExtensionDoAppCommand(nView, IUI_SETTASKFONT, data))
+					GetViewData(nView)->bNeedFontUpdate = FALSE;
 
 				// mark rest of extensions needing update
 				SetExtensionsNeedFontUpdate(TRUE, nView);
@@ -4208,34 +4195,24 @@ void CTabbedToDoCtrl::RefreshExtensionViewSort(FTC_VIEW nView)
 		return;
 	}
 
-	IUIAPPCOMMANDDATA data;
-
 	if (pVData->sort.IsSorting())
 	{
 		if (pVData->sort.bMulti)
 		{
-			const TDSORTCOLUMN* pCols = pVData->sort.multi.Cols();
-
-			data.sort.nAttrib1 = TDC::MapColumnToIUIAttribute(pCols[0].nBy);
-			data.sort.bAscending1 = (pCols[0].bAscending != FALSE);
-
-			data.sort.nAttrib2 = TDC::MapColumnToIUIAttribute(pCols[1].nBy);
-			data.sort.bAscending2 = (pCols[1].bAscending != FALSE);
-
-			data.sort.nAttrib3 = TDC::MapColumnToIUIAttribute(pCols[2].nBy);
-			data.sort.bAscending3 = (pCols[2].bAscending != FALSE);
-
+			CTDCUIExtensionAppCmdData data(pVData->sort.multi.Cols());
 			ExtensionDoAppCommand(nView, IUI_MULTISORT, data);
 		}
 		else
 		{
-			data.nSortBy = TDC::MapColumnToIUIAttribute(pVData->sort.single.nBy);
+			IUI_ATTRIBUTE nCol = TDC::MapColumnToIUIAttribute(pVData->sort.single.nBy);
+			CTDCUIExtensionAppCmdData data(nCol);
+
 			ExtensionDoAppCommand(nView, IUI_SORT, data);
 		}
 	}
 	else
 	{
-		data.nSortBy = IUI_NONE;
+		CTDCUIExtensionAppCmdData data(IUI_NONE);
 		ExtensionDoAppCommand(nView, IUI_SORT, data);
 	}
 }
@@ -4314,8 +4291,7 @@ void CTabbedToDoCtrl::Sort(TDC_COLUMN nBy, BOOL bAllowToggle)
 				if (nBy == TDCC_NONE)
 					bAllowToggle = FALSE;
 
-				IUIAPPCOMMANDDATA data;
-				data.nSortBy = nCol;
+				CTDCUIExtensionAppCmdData data(nCol);
 
 				if (ExtensionDoAppCommand(nView, (bAllowToggle ? IUI_TOGGLABLESORT : IUI_SORT), data))
 				{
@@ -4391,8 +4367,7 @@ BOOL CTabbedToDoCtrl::ExtensionCanSortBy(FTC_VIEW nView, IUI_ATTRIBUTE nBy) cons
 		return FALSE;
 
 	// all else
-	IUIAPPCOMMANDDATA data;
-	data.nSortBy = nBy;
+	CTDCUIExtensionAppCmdData data(nBy);
 
 	return ExtensionCanDoAppCommand(nView, IUI_SORT, data);
 }
@@ -4427,17 +4402,13 @@ BOOL CTabbedToDoCtrl::CanMoveSelectedTask(TDC_MOVETASK nDirection) const
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
 		{
+			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
 			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
 
 			if (!GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID))
 				return FALSE;
 
-			IUIAPPCOMMANDDATA data;
-			
-			data.move.dwSelectedTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
-			data.move.dwParentID = dwDestParentID;
-			data.move.dwAfterSiblingID = dwDestPrevSiblingID;
-			data.move.bCopy = false;
+			CTDCUIExtensionAppCmdData data(dwSelTaskID, dwDestParentID, dwDestPrevSiblingID);
 
 			return ExtensionCanDoAppCommand(nView, IUI_MOVETASK, data);
 		}
@@ -4480,16 +4451,12 @@ BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	case FTCV_UIEXTENSION16:
 		{
 			DWORD dwSelTaskID = ((m_taskTree.GetSelectedCount() == 1) ? GetSelectedTaskID() : 0);
-
 			DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
-			VERIFY(GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID));
 
-			IUIAPPCOMMANDDATA data;
+			if (!GetExtensionInsertLocation(nView, nDirection, dwDestParentID, dwDestPrevSiblingID))
+				return FALSE;
 
-			data.move.dwSelectedTaskID = dwSelTaskID;
-			data.move.dwParentID = dwDestParentID;
-			data.move.dwAfterSiblingID = dwDestPrevSiblingID;
-			data.move.bCopy = false;
+			CTDCUIExtensionAppCmdData data(dwSelTaskID, dwDestParentID, dwDestPrevSiblingID);
 
 			if (ExtensionDoAppCommand(nView, IUI_MOVETASK, data))
 			{
@@ -5264,24 +5231,12 @@ BOOL CTabbedToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, T
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
 		{
-			IUIExtensionWindow* pExtWnd = GetExtensionWnd(nView);
-			ASSERT(pExtWnd);
-
 			IUI_APPCOMMAND nCmdID = TDC::MapSelectTaskToIUICommand(nSelect);
 			ASSERT(nCmdID != IUI_NOCOMMAND);
 
-			if (pExtWnd && pExtWnd->CanDoAppCommand(nCmdID))
-			{
-				IUIAPPCOMMANDDATA data;
+			CTDCUIExtensionAppCmdData data(IUI_TASKNAME, bFindReplace, sPart, bCaseSensitive, bWholeWord);
 
-				data.select.bFindReplace = (bFindReplace != FALSE);
-				data.select.nAttrib = IUI_TASKNAME;//TDC::MapAttributeToIUIAttribute(nAttrib);
-				data.select.szWords = sPart;
-				data.select.bCaseSensitive = (bCaseSensitive != FALSE);
-				data.select.bWholeWord = (bWholeWord != FALSE);
-
-				return (pExtWnd->DoAppCommand(nCmdID, &data) ? TRUE : FALSE);
-			}
+			return ExtensionDoAppCommand(nView, nCmdID, data);
 		}
 		break;
 
@@ -6135,8 +6090,7 @@ BOOL CTabbedToDoCtrl::SaveTaskViewToImage(CString& sFilePath)
 	case FTCV_UIEXTENSION15:
 	case FTCV_UIEXTENSION16:
 		{
-			IUIAPPCOMMANDDATA data;
-			lstrcpyn(data.szFilePath, sFilePath, MAX_PATH);
+			CTDCUIExtensionAppCmdData data(sFilePath);
 
 			if (ExtensionDoAppCommand(nView, IUI_SAVETOIMAGE, data))
 			{
