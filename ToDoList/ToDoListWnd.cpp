@@ -12841,6 +12841,8 @@ void CToDoListWnd::OnViewSaveToImage()
 	// else
 	sFilePath = dialog.GetPathName();
 
+	DOPROGRESS(IDS_SAVETOIMAGEPROGRESS);
+	
 	if (tdc.SaveTaskViewToImage(sFilePath))
 	{
 		FileMisc::Run(*this, sFilePath);
