@@ -839,7 +839,7 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 		if (!SetPreferences(bUseIni, sIniPath, TRUE))
 		{
 			// Notify user and quit app to avoid overwriting the ini file
-			AfxMessageBox(_T("ToDoList cannot start because your preferences file is locked by another application."), MB_OK);
+			AfxMessageBox(CEnString(IDS_INIFILELOCKED), MB_OK);
 			return FALSE; 
 		}
 

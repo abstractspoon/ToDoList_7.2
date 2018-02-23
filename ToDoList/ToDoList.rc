@@ -5291,6 +5291,7 @@ BEGIN
     IDS_REPLACEINTASKTITLES "Replace in Task Titles"
     IDS_FINDINTASKTITLES    "Find in Task Titles"
     IDS_SAVETOIMAGEPROGRESS "Saving task view image..."
+    IDS_INIFILELOCKED       "ToDoList cannot start because your preferences file is locked by another application."
 END
 
 #endif    // English (Australia) resources
