@@ -74,7 +74,7 @@ INISECTION::INISECTION(LPCTSTR szName) : sSection(szName)
 
 INISECTION::INISECTION(const INISECTION& other) : sSection(other.sSection)
 {
-	Misc::CopyStrT(other.aEntries, aEntries);
+	Misc::CopyStrT<INIENTRY>(other.aEntries, aEntries);
 }
 
 //////////////////////////////////////////////////////////////////////
