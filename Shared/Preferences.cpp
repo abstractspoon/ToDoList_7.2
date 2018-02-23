@@ -145,8 +145,9 @@ CPreferences::CPreferences()
 				return;
 			}
 
-			ReleaseInternal();
+			Release(s_aIni);
 			Copy(aItems, s_aIni);
+			Release(aItems);
 
 			s_bDirty = FALSE;
 		}
@@ -180,21 +181,20 @@ void CPreferences::Release()
 	LOCKPREFS();
 			
 	if (s_bIni)
-		ReleaseInternal();
+		Release(s_aIni);
 }
 
-void CPreferences::ReleaseInternal()
+void CPreferences::Release(CIniSectionArray& aSections)
 {
 	ASSERT(s_nRef == 0);
 	ASSERT(s_bLocked);
-	ASSERT(s_bIni);
-	
-	int nSection = s_aIni.GetSize();
+
+	int nSection = aSections.GetSize();
 
 	while (nSection--)
-		delete s_aIni[nSection];
+		delete aSections[nSection];
 
-	s_aIni.RemoveAll();
+	aSections.RemoveAll();
 }
 
 BOOL CPreferences::Initialise(LPCTSTR szPrefsPath, BOOL bIni)
@@ -217,7 +217,7 @@ BOOL CPreferences::Initialise(LPCTSTR szPrefsPath, BOOL bIni)
 		}
 
 		if (!bIni)
-			ReleaseInternal();
+			Release(s_aIni);
 	}
 
 	// Must be able to load the 'new' prefs
@@ -234,6 +234,7 @@ BOOL CPreferences::Initialise(LPCTSTR szPrefsPath, BOOL bIni)
 		{
 			// Take a copy in case next time we can't load the file
 			Copy(aItems, s_aIni);
+			Release(aItems);
 		}
 	}
 
@@ -890,8 +891,9 @@ CString CPreferences::KeyFromFile(LPCTSTR szFilePath, BOOL bFileNameOnly)
 
 void CPreferences::Copy(const CIniSectionArray& aSrc, CIniSectionArray& aDest)
 {
+	ASSERT(aDest.GetSize() == 0);
+
 	int nSection = aSrc.GetSize();
-	aDest.RemoveAll();
 
 	while (nSection--)
 		aDest.Add(new INISECTION(*aSrc[nSection]));
