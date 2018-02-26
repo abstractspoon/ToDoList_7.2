@@ -1629,7 +1629,10 @@ CString FileMisc::GetWindowModuleFilePath(HWND hWnd)
 	if (hProcess == NULL)
 		return _T("");
 
-	return GetProcessFilePath(hProcess);
+	CString sFilePath = GetProcessFilePath(hProcess);
+	CloseHandle(hProcess);
+
+	return sFilePath;
 }
 
 BOOL FileMisc::CanonicalizePath(CString& sFilePath)
