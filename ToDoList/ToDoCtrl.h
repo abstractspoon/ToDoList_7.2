@@ -331,6 +331,7 @@ public:
 	void BeginTimeTracking(DWORD dwTaskID);
 	BOOL DoAddTimeToLogFile();
 	void SetTimeTrackingReminderInterval(int nMinutes);
+	double GetTimeTrackingElapsedMinutes() const;
 
 	static void SetInheritedParentAttributes(const CTDCAttributeMap& mapAttribs, BOOL bUpdateAttrib);
 	void SetDefaultTaskAttributes(const TODOITEM& tdi);

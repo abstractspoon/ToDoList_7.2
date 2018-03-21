@@ -32,19 +32,23 @@ public:
 	BOOL CanTrackTask(DWORD dwTaskID) const;
 	BOOL IsTrackingTask(DWORD dwTaskID, BOOL bActive = TRUE) const;
 	BOOL IsTracking(BOOL bActive = TRUE) const;
-	DWORD GetTrackedTaskID(BOOL bActive = TRUE) const;
 	BOOL EndTracking();
 	BOOL BeginTracking(DWORD dwTaskID);
-	void SetTrackingReminderInterval(int nMinutes);
-	double IncrementTrackedTime();
 	BOOL IsReminderDue() const;
+
+	DWORD GetTrackedTaskID(BOOL bActive = TRUE) const;
+
+	void SetTrackingReminderInterval(int nMinutes);
 	void ResetReminderIsDue();
+
+	double IncrementTrackedTime();
+	double GetElapsedMinutes() const;
 
 protected:
 	const CToDoCtrlData& m_data;
 
 	DWORD m_dwTimeTrackReminderIntervalTicks;
-	DWORD m_dwTimeTrackReminderElapsedTicks;
+	DWORD m_dwTimeTrackElapsedTicks;
 	DWORD m_dwTimeTrackTaskID;
 	DWORD m_dwLastTimeTrackTaskID;
 	DWORD m_dwTimeTrackTickLast;

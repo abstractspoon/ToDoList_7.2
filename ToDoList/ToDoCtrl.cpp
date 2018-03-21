@@ -4738,6 +4738,11 @@ void CToDoCtrl::PauseTimeTracking(BOOL bPause)
 	}
 }
 
+double CToDoCtrl::GetTimeTrackingElapsedMinutes() const
+{
+	return m_timeTracking.GetElapsedMinutes();
+}
+
 BOOL CToDoCtrl::TimeTrackSelectedTask()
 {
 	if (!CanTimeTrackSelectedTask())
