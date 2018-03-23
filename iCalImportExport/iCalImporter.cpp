@@ -40,12 +40,15 @@ static LINETYPE LINETYPES[] =
 	{ ICILT_BEGIN_VTODO,	_T("BEGIN:VTODO") },
 	{ ICILT_BEGIN_VALARM,	_T("BEGIN:VALARM") },
 
-	{ ICILT_DTSTART,		_T("DTSTART;VALUE=DATE-TIME:") },
-	{ ICILT_DTDUE,			_T("DUE;VALUE=DATE-TIME:") },
-	{ ICILT_DTEND,			_T("DTEND;VALUE=DATE-TIME:") },
+	{ ICILT_DTSTART,		_T("DTSTART:") },
+	{ ICILT_DTDUE,			_T("DUE:") },
+	{ ICILT_DTEND,			_T("DTEND:") },
 	{ ICILT_DTSTART,		_T("DTSTART;VALUE=DATE:") },
 	{ ICILT_DTDUE,			_T("DUE;VALUE=DATE:") },
 	{ ICILT_DTEND,			_T("DTEND;VALUE=DATE:") },
+	{ ICILT_DTSTART,		_T("DTSTART;VALUE=DATE-TIME:") },
+	{ ICILT_DTDUE,			_T("DUE;VALUE=DATE-TIME:") },
+	{ ICILT_DTEND,			_T("DTEND;VALUE=DATE-TIME:") },
 	{ ICILT_SUMMARY,		_T("SUMMARY") },
 	{ ICILT_STATUS,			_T("STATUS") },
 	{ ICILT_CATEGORIES,		_T("CATEGORIES") },
@@ -414,11 +417,30 @@ BOOL CiCalImporter::ExtractDate(const CString& sValue, COleDateTime& date, BOOL 
 	Misc::Split(sDate, sTime, 'T');
 
 	// sanity checks
-	ASSERT(sDate.GetLength() == 8); // YYYYMMDD
-	ASSERT(sTime.IsEmpty() || (sTime.GetLength() == 6)); // HHMMSS
-	
-	if ((sDate.GetLength() != 8) || !(sTime.IsEmpty() || (sTime.GetLength() == 6)))
+	if (sDate.GetLength() != 8) // YYYYMMDD
+	{
+		ASSERT(0);
 		return FALSE;
+	}
+
+	switch (sTime.GetLength())
+	{
+	case 0:
+	case 6: // HHMMSS
+		break;
+
+	case 7: // HHMMSSZ
+		if (sTime[6] != 'Z')
+		{
+			ASSERT(0);
+			return FALSE;
+		}
+		break;
+
+	default:
+		ASSERT(0);
+		return FALSE;
+	}
 
 	int nYear, nMonth, nDay, nHour = 0, nMin = 0, nSec = 0;
 
