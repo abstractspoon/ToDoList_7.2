@@ -3217,7 +3217,10 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 							((gi.bParent && HasOption(GTLCF_CALCPARENTDATES)) || 
 							(!gi.HasStart() && HasOption(GTLCF_CALCMISSINGSTARTDATES))));
 				
-				nFlags |= DT_RIGHT;
+				// Only right-align if the column width can show the entire date
+				// else keep left align to ensure day and month remain visible
+				if (rItem.Width() >= pDC->GetTextExtent(sItem).cx)
+					nFlags |= DT_RIGHT;
 			}
 			break;
 			
@@ -3228,7 +3231,11 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 							((gi.bParent && HasOption(GTLCF_CALCPARENTDATES)) || 
 							(!gi.HasDue() && HasOption(GTLCF_CALCMISSINGDUEDATES))));
 				
-				nFlags |= DT_RIGHT;
+				
+				// Only right-align if the column width can show the entire date
+				// else keep left align to ensure day and month remain visible
+				if (rItem.Width() >= pDC->GetTextExtent(sItem).cx)
+					nFlags |= DT_RIGHT;
 			}
 			break;
 			
