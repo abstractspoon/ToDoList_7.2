@@ -423,6 +423,8 @@ BOOL CiCalImporter::ExtractDate(const CString& sValue, COleDateTime& date, BOOL 
 		return FALSE;
 	}
 
+	BOOL bUTCTime = FALSE;
+
 	switch (sTime.GetLength())
 	{
 	case 0:
@@ -430,10 +432,14 @@ BOOL CiCalImporter::ExtractDate(const CString& sValue, COleDateTime& date, BOOL 
 		break;
 
 	case 7: // HHMMSSZ
-		if (sTime[6] != 'Z')
+		if (Misc::Last(sTime) != 'Z')
 		{
 			ASSERT(0);
 			return FALSE;
+		}
+		else
+		{
+			bUTCTime = TRUE;
 		}
 		break;
 
@@ -472,7 +478,21 @@ BOOL CiCalImporter::ExtractDate(const CString& sValue, COleDateTime& date, BOOL 
 	// if there was no time component and this is an 'end' date
 	// then we subtract a day, because that's how ics represents 'end-of-day'
 	if (bEndDate && CDateHelper::IsDateSet(date) && (nHour == 0) && (nMin == 0) && (nSec == 0))
+	{
 		date.m_dt--;
+	}
+	else if (bUTCTime)
+	{
+		SYSTEMTIME st = { 0 }; 
+		date.GetAsSystemTime(st);
+
+		tm t = { st.wSecond, st.wMinute, st.wHour, st.wDay, st.wMonth - 1, st.wYear - 1900, 0 };
+		date = mktime(&t);
+
+#ifdef _DEBUG
+		CString sTime = CDateHelper::FormatDate(date, DHFD_TIME);
+#endif
+	}
 
 	return CDateHelper::IsDateSet(date);
 }
