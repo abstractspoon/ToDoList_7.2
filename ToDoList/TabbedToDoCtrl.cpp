@@ -3075,11 +3075,13 @@ void CTabbedToDoCtrl::UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID
 		{
 			UpdateExtensionViewsSelection(nAttrib);
 
-			IUIExtensionWindow* pExtWnd = GetExtensionWnd(nCurView);
-
-			if (pExtWnd)
-				pExtWnd->SelectTask(dwTaskID);
-			
+			if (IsExtensionView(nCurView))
+			{
+				IUIExtensionWindow* pExtWnd = GetExtensionWnd(nCurView);
+				
+				if (pExtWnd)
+					pExtWnd->SelectTask(dwTaskID);
+			}
 			break;
 		}
 		// else fall thru to update all tasks
