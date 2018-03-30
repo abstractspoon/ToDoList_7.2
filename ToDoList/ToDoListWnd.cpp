@@ -618,9 +618,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_WM_ENABLE()
 	ON_WM_ENDSESSION()
 	ON_WM_ERASEBKGND()
-	ON_WM_ERASEBKGND()
 	ON_WM_HELPINFO()
-	ON_WM_INITMENUPOPUP()
 	ON_WM_INITMENUPOPUP()
 	ON_WM_MEASUREITEM()
 	ON_WM_MOVE()
@@ -8416,45 +8414,40 @@ void CToDoListWnd::OnUpdateCloseall(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetTDCCount());
 }
 
-BOOL CToDoListWnd::DoQueryEndSession(BOOL bQuery, BOOL bEnding)
-{
-	HWND hWnd = GetSafeHwnd();
-
-	// what we do here depends on whether we're on Vista or not
-	// we test for this by trying to load the new API functions
-	if (bQuery)
-	{
-		CEnString sReason(IDS_SHUTDOWNBLOCKREASON);
-
-		// if Vista and handling WM_QUERYENDSESSION
-		// we register our reason and return TRUE to
-		// get more time to clean up in WM_ENDSESSION
-		if (Misc::ShutdownBlockReasonCreate(hWnd, sReason))
-			return TRUE;
-
-		// else we're XP so we return TRUE to let shutdown continue
-		return TRUE;
-	}
-
-	// else do a proper shutdown
-	m_bEndingSession = TRUE;
-
-	return DoExit(FALSE, bEnding);
-}
-
 BOOL CToDoListWnd::OnQueryEndSession() 
 {
 	if (!CFrameWnd::OnQueryEndSession())
 		return FALSE;
+		
+	// if Vista we register our reason and return TRUE to
+	// get more time to clean up in WM_ENDSESSION
+	HWND hWndThis = GetSafeHwnd();
+	CEnString sReason(IDS_SHUTDOWNBLOCKREASON);
 	
-	return DoQueryEndSession(TRUE, FALSE);
+	if (Misc::ShutdownBlockReasonCreate(hWndThis, sReason))
+		return TRUE;
+	
+	// else we're XP so we return TRUE to let shutdown continue
+	return TRUE;
 }
 
 void CToDoListWnd::OnEndSession(BOOL bEnding) 
 {
-	CFrameWnd::OnEndSession(bEnding);
+	if (bEnding)
+	{
+		///////////////////////////////////////////////////////////////////////
+		// PERMANENT LOGGING
+		DWORD dwTick = GetTickCount();
+		///////////////////////////////////////////////////////////////////////
+		
+		m_bEndingSession = TRUE;
+		DoExit(FALSE, TRUE);
 
-	DoQueryEndSession(FALSE, bEnding);
+		///////////////////////////////////////////////////////////////////
+		// PERMANENT LOGGING
+		FileMisc::LogTimeElapsed(dwTick, _T("CToDoListWnd::OnEndSession()"));
+		///////////////////////////////////////////////////////////////////
+	}
 }
 
 void CToDoListWnd::OnExit()
@@ -8541,18 +8534,28 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 		CMouseWheelMgr::Release();
 		CEditShortcutMgr::Release();
 
-		m_dlgTimeTracker.DestroyWindow();
-		m_reminders.DestroyWindow();
-
-		// cleanup our shutdown reason
-		Misc::ShutdownBlockReasonDestroy(*this);
-
-		DestroyWindow();
-		
-		// By the time we get here 'this' has been destroyed
-		// so we must NOT attempt to call any non-static functions
-		if (bRestart)
+		// Only need to destroy windows if NOT closing Windows
+		if (!bClosingWindows)
 		{
+			m_dlgTimeTracker.DestroyWindow();
+			m_reminders.DestroyWindow();
+			
+			DestroyWindow();
+		}
+
+		hold.Save();
+
+		// cleanup the shutdown reason created in OnQueryEndSession.
+		// This allows Windows to forcibly close the app hence no need
+		// to call DestroyWindow
+		if (bClosingWindows)
+		{
+			Misc::ShutdownBlockReasonDestroy(GetSafeHwnd());
+		}
+		else if (bRestart)
+		{
+			// By the time we get here 'this' has been destroyed
+			// so we must NOT attempt to call any non-static functions
 			CString sParams = AfxGetApp()->m_lpCmdLine;
 			sParams += CEnCommandLineInfo::FormatSwitch(SWITCH_RESTART, Misc::Format(::GetCurrentProcessId()));
 			
@@ -8585,7 +8588,7 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 	}
 	
 	// cleanup our shutdown reason
-	Misc::ShutdownBlockReasonDestroy(*this);
+	Misc::ShutdownBlockReasonDestroy(GetSafeHwnd());
 
 	return FALSE;
 }
