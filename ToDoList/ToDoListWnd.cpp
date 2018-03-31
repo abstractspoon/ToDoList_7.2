@@ -8523,6 +8523,8 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 			Sleep(50);
 		}
 
+		// Force components to save their state before we
+		// signal Windows that it's alright to shutdown
 		m_mgrImportExport.Release();
 		m_tbHelper.Release();
 		m_mgrShortcuts.Release();
@@ -8534,14 +8536,18 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 		CMouseWheelMgr::Release();
 		CEditShortcutMgr::Release();
 
-		// Only need to destroy windows if NOT closing Windows
-		if (!bClosingWindows)
-		{
-			m_dlgTimeTracker.DestroyWindow();
-			m_reminders.DestroyWindow();
+		m_dlgTimeTracker.DestroyWindow();
+		m_reminders.DestroyWindow();
+		m_filterBar.DestroyWindow();
+		m_findDlg.DestroyWindow();
 			
+		// Only need to destroy windows if NOT closing Windows
+#ifdef _DEBUG
+		DestroyWindow();
+#else
+		if (!bClosingWindows)
 			DestroyWindow();
-		}
+#endif
 
 		hold.Save();
 
