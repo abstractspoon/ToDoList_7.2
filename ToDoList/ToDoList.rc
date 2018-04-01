@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,1,999,6
+ FILEVERSION 7,1,999,7
  PRODUCTVERSION 1,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -47,9 +47,9 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "AbstractSpoon Software\0"
             VALUE "FileDescription", "ToDoList\0"
-            VALUE "FileVersion", "7, 1, 999, 6\0"
+            VALUE "FileVersion", "7, 1, 999, 7\0"
             VALUE "InternalName", "ToDoList\0"
-            VALUE "LegalCopyright", "Copyright (c) AbstractSpoon 2003-17\0"
+            VALUE "LegalCopyright", "Copyright (c) AbstractSpoon 2003-18\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "ToDoList.exe\0"
             VALUE "PrivateBuild", "\0"
@@ -1840,8 +1840,8 @@ BEGIN
                     LVS_SINGLESEL | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | 
                     WS_BORDER | WS_TABSTOP,7,45,318,110
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,206,318,1
-    ICON            IDR_MAINFRAME_STD,IDC_STATIC,7,8,21,20
-    ICON            IDI_ABSTRACTSPOON,IDC_STATIC,304,7,21,20
+    ICON            IDR_MAINFRAME_STD,IDC_STATIC,7,8,20,20
+    ICON            IDI_ABSTRACTSPOON,IDC_STATIC,304,7,20,20
     LTEXT           "Static",IDC_LICENSE,71,161,254,8
     LTEXT           "A simple and effective way to keep on top of your daily tasks",
                     IDC_STATIC,34,20,267,8
@@ -1855,7 +1855,7 @@ BEGIN
     LTEXT           "License:",IDC_STATIC,7,161,27,8
     EDITTEXT        IDC_TITLE,34,7,173,12,ES_AUTOHSCROLL | ES_READONLY | NOT 
                     WS_BORDER
-    LTEXT           "(c) Abstractspoon 2003-17",IDC_STATIC,213,7,87,8
+    LTEXT           "(c) Abstractspoon 2003-18",IDC_STATIC,213,7,87,8
 END
 
 IDD_SHOWREMINDER_DIALOG DIALOG DISCARDABLE  0, 0, 337, 231
@@ -1887,7 +1887,7 @@ IDD_TIMETRACK_DIALOG DIALOGEX 0, 0, 134, 111
 STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_STATICEDGE
 CAPTION "Time Tracker"
-FONT 8, "Tahoma"
+FONT 8, "Tahoma", 0, 0, 0x1
 BEGIN
     COMBOBOX        IDC_TASKLISTS,4,28,126,128,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
