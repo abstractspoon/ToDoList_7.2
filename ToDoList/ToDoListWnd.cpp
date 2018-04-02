@@ -6312,7 +6312,8 @@ void CToDoListWnd::DoPrint(BOOL bPreview)
 	CTDLPrintDialog dialog(sTitle, bPreview, 
 							tdc.GetTaskView(), 
 							tdc.GetStylesheetPath(),
-							tdc.GetCustomAttributeDefs());
+							tdc.GetCustomAttributeDefs(),
+							tdc.CanSaveTaskViewToImage());
 	
 	if (dialog.DoModal() != IDOK)
 		return;
