@@ -12868,27 +12868,6 @@ void CToDoListWnd::OnViewSaveToImage()
 	}
 }
 
-/*
-BOOL CToDoListWnd::SaveViewToImage(CFilteredToDoCtrl& tdc, const CString& sFilePath) 
-{
-	CWaitCursor cursor;
-	CBitmap bmImage;
-	
-	if (tdc.SaveTaskViewToImage(bmImage))
-	{
-		CDibData dib;
-
-		if (dib.CreateDIB(bmImage) && dib.SaveDIB(sFilePath))
-		{
-			return TRUE;
-		}
-	}
-
-	// else
-	return FALSE;
-}
-*/
-
 void CToDoListWnd::OnUpdateViewSaveToImage(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(GetToDoCtrl().CanSaveTaskViewToImage());
