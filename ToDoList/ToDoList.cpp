@@ -850,6 +850,10 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 		}
 
 		CPreferences prefs;
+
+		// Save language choice 
+		FileMisc::MakeRelativePath(m_sLanguageFile, FileMisc::GetAppFolder(), FALSE);
+		prefs.WriteProfileString(_T("Preferences"), _T("LanguageFile"), m_sLanguageFile);
 		
 		if (bSetMultiInstance)
 			prefs.WriteProfileInt(_T("Preferences"), _T("MultiInstance"), TRUE);
