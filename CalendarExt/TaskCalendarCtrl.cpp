@@ -364,30 +364,31 @@ BOOL CTaskCalendarCtrl::UpdateTask(const ITASKLISTBASE* pTasks, HTASKITEM hTask,
 
 	ASSERT(nUpdate == IUI_EDIT);
 
-	// Not interested in references
-	if (pTasks->IsTaskReference(hTask))
-		return FALSE;
-
-	DWORD dwTaskID = pTasks->GetTaskID(hTask);
 	BOOL bChange = FALSE;
 
-	if (HasTask(dwTaskID)) 
+	// Not interested in references
+	if (!pTasks->IsTaskReference(hTask))
 	{
-		TASKCALITEM* pTCI = GetTaskCalItem(dwTaskID);
-		bChange = pTCI->UpdateTask(pTasks, hTask, attrib, m_dwOptions);
-	}
-	else // must be a parent or a new task
-	{
-		if (!pTasks->IsTaskParent(hTask))
+		DWORD dwTaskID = pTasks->GetTaskID(hTask);
+
+		if (HasTask(dwTaskID)) 
 		{
-			BuildData(pTasks, hTask, attrib, FALSE);
+			TASKCALITEM* pTCI = GetTaskCalItem(dwTaskID);
+			bChange = pTCI->UpdateTask(pTasks, hTask, attrib, m_dwOptions);
 		}
-		else
+		else // must be a parent or a new task
 		{
-			HTASKITEM hSubtask = pTasks->GetFirstTask(hTask);
-			ASSERT(hSubtask);
+			if (!pTasks->IsTaskParent(hTask))
+			{
+				BuildData(pTasks, hTask, attrib, FALSE);
+			}
+			else
+			{
+				HTASKITEM hSubtask = pTasks->GetFirstTask(hTask);
+				ASSERT(hSubtask);
 			
-			bChange = UpdateTask(pTasks, hSubtask, nUpdate, attrib, TRUE);
+				bChange = UpdateTask(pTasks, hSubtask, nUpdate, attrib, TRUE);
+			}
 		}
 	}
 	
