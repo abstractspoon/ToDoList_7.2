@@ -396,7 +396,6 @@ void CTabCtrlEx::DrawTabItem(CDC* pDC, int nTab, const CRect& rcItem, UINT uiFla
 			}
 			GraphicsMisc::DrawRect(pDC, rTab, crBack, CLR_NONE, 2);
 			
-			//pDC->FillSolidRect(rTab, crBack);
 			pDC->SetTextColor(GraphicsMisc::GetBestTextColor(crBack));
 		}
 	}
