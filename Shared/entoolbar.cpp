@@ -130,18 +130,18 @@ BOOL CEnToolBar::SetImage(CEnBitmapEx* pBitmap, COLORREF crMask)
 	
     pBitmap->RemapSysColors();
 	
-	// button size
-	BITMAP BM;
-	pBitmap->GetBitmap(&BM);
-	
 	int nCount = GetButtonCount(TRUE);
 	ASSERT (nCount);
 	
 	if (!nCount)
 		return FALSE;
 	
-	CSize sizeBmp((BM.bmWidth / nCount), BM.bmHeight);
-	CSize sizeBtn(sizeBmp.cx + 7, sizeBmp.cy + 7);
+	CSize sizeBM = pBitmap->GetSize();
+	CSize sizeBmp((sizeBM.cx / nCount), sizeBM.cy), sizeBtn(sizeBmp);
+
+	GraphicsMisc::ScaleByDPIFactor(&sizeBtn);
+	sizeBtn.cx += 7;
+	sizeBtn.cy += 7;
 	
 	SetSizes(sizeBtn, sizeBmp);
 

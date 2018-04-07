@@ -1734,10 +1734,14 @@ LRESULT CGanttTreeListCtrl::OnTreeCustomDraw(NMTVCUSTOMDRAW* pTVCD)
 
 					if (hilTask && (iImageIndex != -1))
 					{
-						CRect rIcon;
-						m_tree.GetItemRect(hti, rIcon, TRUE);
+						CRect rItem;
+						m_tree.GetItemRect(hti, rItem, TRUE);
 
+						CRect rIcon(rItem);
 						rIcon.left -= 18;
+						rIcon.bottom = (rIcon.top + 16);
+						GraphicsMisc::CentreRect(rIcon, rItem, FALSE, TRUE);
+
 						ImageList_Draw(hilTask, iImageIndex, *pDC, rIcon.left, rIcon.top, ILD_TRANSPARENT);
 					}
 				}

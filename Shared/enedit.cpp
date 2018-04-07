@@ -167,8 +167,12 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 	
 	eb.nID = nID;
 	eb.sTip = szTip;
-	eb.nWidth = ((nWidth != DEF_BTNWIDTH) ? nWidth : 20); // 2 px padding
 	eb.iImage = m_ilBtns.Add(hIcon);
+
+	if (nWidth != DEF_BTNWIDTH)
+		eb.nWidth = GraphicsMisc::ScaleByDPIFactor(nWidth);
+	else
+		eb.nWidth = GraphicsMisc::ScaleByDPIFactor(16) + 4; // 2 px padding
 
 	HICON hDisabled = CEnBitmapEx::CreateDisabledIcon(hIcon);
 	VERIFY(m_ilDisabledBtns.Add(hDisabled) == eb.iImage);

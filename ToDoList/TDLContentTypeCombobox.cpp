@@ -6,6 +6,7 @@
 #include "resource.h"
 
 #include "..\shared\ContentMgr.h"
+#include "..\shared\GraphicsMisc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -143,7 +144,13 @@ void CTDLContentTypeComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem
 		m_mapImages.Lookup((int)dwItemData, nImage);
 	
 		if (nImage != -1)
-			m_ilContent.Draw(&dc, nImage, rect.TopLeft(), ILD_TRANSPARENT);
+		{
+			CRect rImage(rect);
+			rImage.bottom = rImage.top + IMAGESIZE;
+
+			GraphicsMisc::CentreRect(rImage, rect, FALSE, TRUE);
+			m_ilContent.Draw(&dc, nImage, rImage.TopLeft(), ILD_TRANSPARENT);
+		}
 	}
 
 	CRect rText(rect);

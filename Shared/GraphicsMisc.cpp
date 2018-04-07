@@ -49,6 +49,8 @@ typedef DWORD ARGB;
 
 static int PointsPerInch() { return 72; }
 
+const static int DEFAULT_DPI = 96;
+
 //////////////////////////////////////////////////////////////////////
 
 // private helpers
@@ -1096,6 +1098,32 @@ BOOL GraphicsMisc::FillItemRect(CDC* pDC, LPCRECT prcItem, COLORREF color, HWND 
 	return FillItemRect(pDC, rItem, color, NULL);
 }
 
+CPoint GraphicsMisc::CentrePoint(LPCRECT prcRect)
+{
+	return CPoint(((prcRect->left + prcRect->right) / 2), ((prcRect->top + prcRect->bottom) / 2));
+}
+
+BOOL GraphicsMisc::CentreRect(LPRECT pRect, LPCRECT prcOther, BOOL bCentreHorz, BOOL bCentreVert)
+{
+	if (!bCentreHorz && !bCentreVert)
+		return FALSE;
+
+	if (bCentreHorz)
+	{
+		int nOffset = (CentrePoint(prcOther).x - CentrePoint(pRect).x);
+		::OffsetRect(pRect, nOffset, 0);
+	}
+
+	
+	if (bCentreVert)
+	{
+		int nOffset = (CentrePoint(prcOther).y - CentrePoint(pRect).y);
+		::OffsetRect(pRect, 0, nOffset);
+	}
+
+	return TRUE;
+}
+
 COLORREF GraphicsMisc::GetExplorerItemTextColor(COLORREF crBase, GM_ITEMSTATE nState, DWORD dwFlags)
 {
 	if (nState != GMIS_NONE)
@@ -1680,3 +1708,76 @@ BOOL GraphicsMisc::InitCheckboxImageList(HWND hWnd, CImageList& ilCheckboxes, UI
 	return (NULL != ilCheckboxes.GetSafeHandle());
 }
 
+int GraphicsMisc::GetSystemDPI()
+{
+	static int nDPI = 0;
+	
+	if (nDPI == 0)
+	{
+		HDC	hdc = ::GetDC(NULL);
+		
+		nDPI = GetDeviceCaps(hdc, LOGPIXELSX);
+		
+		::ReleaseDC(NULL, hdc);
+	}
+	
+	return nDPI;
+}
+
+double GraphicsMisc::GetDPIScaleFactor()
+{
+	static double dScale = ((double)GetSystemDPI() / DEFAULT_DPI);
+	
+	return dScale;
+}
+
+BOOL GraphicsMisc::WantDPIScaling()
+{
+	return (GetDPIScaleFactor() > 1.0);
+}
+
+BOOL GraphicsMisc::ScaleByDPIFactor(LPRECT pRect)
+{
+	int nDPI = GetSystemDPI();
+
+	if (nDPI == DEFAULT_DPI)
+		return FALSE;
+
+	pRect->left = ::MulDiv(pRect->left, nDPI, DEFAULT_DPI);
+	pRect->top = ::MulDiv(pRect->top, nDPI, DEFAULT_DPI);
+	pRect->right = ::MulDiv(pRect->right, nDPI, DEFAULT_DPI);
+	pRect->bottom = ::MulDiv(pRect->bottom, nDPI, DEFAULT_DPI);
+
+	return TRUE;
+}
+
+BOOL GraphicsMisc::ScaleByDPIFactor(LPSIZE pSize)
+{
+	int nDPI = GetSystemDPI();
+	
+	if (nDPI == DEFAULT_DPI)
+		return FALSE;
+	
+	pSize->cx = ::MulDiv(pSize->cx, nDPI, DEFAULT_DPI);
+	pSize->cy = ::MulDiv(pSize->cy, nDPI, DEFAULT_DPI);
+	
+	return TRUE;
+}
+
+BOOL GraphicsMisc::ScaleByDPIFactor(LPPOINT pPoint)
+{
+	int nDPI = GetSystemDPI();
+	
+	if (nDPI == DEFAULT_DPI)
+		return FALSE;
+	
+	pPoint->x = ::MulDiv(pPoint->x, nDPI, DEFAULT_DPI);
+	pPoint->y = ::MulDiv(pPoint->y, nDPI, DEFAULT_DPI);
+	
+	return TRUE;
+}
+
+int GraphicsMisc::ScaleByDPIFactor(int nValue)
+{
+	return ::MulDiv(nValue, GetSystemDPI(), DEFAULT_DPI);
+}

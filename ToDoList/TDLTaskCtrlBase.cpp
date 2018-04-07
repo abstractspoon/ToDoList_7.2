@@ -926,6 +926,27 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (m_hdrColumns.GetItemCount())
 		return FALSE;
 
+/*	DPI awareness
+	CEnBitmap bmp;
+	
+	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS))
+		return FALSE;
+	
+	CSize sizeBM = bmp.GetSize();
+	
+	if (GraphicsMisc::ScaleByDPIFactor(&sizeBM))
+		bmp.Resize(sizeBM.cx, sizeBM.cy);
+	
+	// Create imagelist for columns using symbols
+	ASSERT(m_ilColSymbols.GetSafeHandle() == NULL);
+
+	if (!m_ilColSymbols.Create(sizeBM.cy, sizeBM.cy, ILC_COLOR32 | ILC_MASK, 1, 1))
+		return FALSE;
+
+	if (!m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1)
+		return FALSE;
+*/
+
 	// Create imagelist for columns using symbols
 	ASSERT(m_ilColSymbols.GetSafeHandle() == NULL);
 
@@ -937,6 +958,8 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS) || (m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1))
 		return FALSE;
 	
+
+
 	// primary header
 	const TDCCOLUMN* pClient = GetColumn(TDCC_CLIENT);
 	ASSERT(pClient);

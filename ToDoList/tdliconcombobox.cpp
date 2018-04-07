@@ -6,6 +6,8 @@
 #include "tdcimagelist.h"
 #include "tdcstruct.h"
 
+#include "..\Shared\GraphicsMisc.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -40,6 +42,9 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 									DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText)
 {
 	CRect rImage(rect);
+	rImage.bottom = (rImage.top + 16);
+	GraphicsMisc::CentreRect(rImage, rect, FALSE, TRUE);
+
 	const int nImgSpace = 18;
 
 	CStringArray aImages;
@@ -82,7 +87,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 			if (m_ilImages.GetSafeHandle() && !sImage.IsEmpty())
 			{
 				CPoint pt = rImage.TopLeft();
-				pt.y--;
+				//pt.y--;
 
 				m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
 				rImage.left += nImgSpace;
