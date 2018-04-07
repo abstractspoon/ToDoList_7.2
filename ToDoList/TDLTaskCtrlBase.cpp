@@ -1037,6 +1037,8 @@ void CTDLTaskCtrlBase::RecalcAllColumnWidths()
 
 void CTDLTaskCtrlBase::RecalcColumnWidths()
 {
+	VERIFY(m_ilFileRef.Initialize());
+	
 	RecalcColumnWidths(FALSE); // standard
 	RecalcColumnWidths(TRUE); // custom
 }
@@ -1369,7 +1371,7 @@ int CTDLTaskCtrlBase::HitTestFileLinkColumn(const CPoint& ptScreen) const
 		{
 			CRect rIcon;
 			
-			if (!CalcColumnIconRect(rSubItem, rIcon, nFile, nNumFiles))
+			if (!CalcFileIconRect(rSubItem, rIcon, nFile, nNumFiles))
 				break;
 
 			if (rIcon.PtInRect(ptList))
@@ -2765,7 +2767,7 @@ void CTDLTaskCtrlBase::DrawColumnFileLinks(CDC* pDC, const CStringArray& aFileLi
 			{
 				CRect rIcon;
 				
-				if (!CalcColumnIconRect(rect, rIcon, nFile, nNumFiles))
+				if (!CalcFileIconRect(rect, rIcon, nFile, nNumFiles))
 					break; // out of bounds
 				
 				// first check for a tdl://
@@ -2834,28 +2836,28 @@ void CTDLTaskCtrlBase::DrawColumnCheckBox(CDC* pDC, const CRect& rSubItem, TTCB_
 	m_ilCheckboxes.Draw(pDC, nImage, pt, ILD_TRANSPARENT);
 }
 
-CPoint CTDLTaskCtrlBase::CalcColumnIconTopLeft(const CRect& rSubItem, int nImage, int nCount)
+CPoint CTDLTaskCtrlBase::CalcColumnIconTopLeft(const CRect& rSubItem, int nImage, int nCount, int nImageSize) const
 {
 	CPoint pt(rSubItem.CenterPoint());
 	
 	// Assume 16 px icons
-	int nRequiredWidth = ((nCount * (COL_ICON_WIDTH + 1)));
+	int nRequiredWidth = ((nCount * (nImageSize + 1)));
 
 	if (nRequiredWidth > rSubItem.Width())
 		pt.x = rSubItem.left;
 	else
 		pt.x -= (nRequiredWidth / 2);
 
-	pt.x += (nImage * (COL_ICON_WIDTH + 1));
-	pt.y -= 8;
+	pt.x += (nImage * (nImageSize + 1));
+	pt.y -= (nImageSize / 2);
 
 	return pt;
 }
 
-BOOL CTDLTaskCtrlBase::CalcColumnIconRect(const CRect& rSubItem, CRect& rIcon, int nImage, int nCount)
+BOOL CTDLTaskCtrlBase::CalcFileIconRect(const CRect& rSubItem, CRect& rIcon, int nImage, int nCount) const
 {
-	rIcon = CRect(CalcColumnIconTopLeft(rSubItem, nImage, nCount), 
-					CSize((COL_ICON_WIDTH + 1), (COL_ICON_WIDTH + 1)));
+	rIcon = CRect(CalcColumnIconTopLeft(rSubItem, nImage, nCount, m_ilFileRef.GetImageSize()), 
+					CSize((m_ilFileRef.GetImageSize() + 1), (m_ilFileRef.GetImageSize() + 1)));
 
 	// we always draw the first icon
 	if ((nImage == 0) || (rIcon.right <= rSubItem.right))
@@ -3273,9 +3275,10 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					// handle symbol images
 					if (pTDCC->iImage != -1)
 					{
-						CPoint ptDraw(CalcColumnIconTopLeft(pNMCD->rc));
+						CRect rImage(0, 0, 16, 16);
+						GraphicsMisc::CentreRect(rImage, rItem, TRUE, TRUE);
 
- 						m_ilColSymbols.Draw(pDC, pTDCC->iImage, ptDraw, ILD_TRANSPARENT);
+ 						m_ilColSymbols.Draw(pDC, pTDCC->iImage, rImage.TopLeft(), ILD_TRANSPARENT);
 						return CDRF_SKIPDEFAULT;
 					}
 				}
@@ -4032,7 +4035,7 @@ void CTDLTaskCtrlBase::HandleFileLinkColumnClick(int nItem, DWORD dwTaskID, CPoi
 			{
 				CRect rIcon;
 				
-				if (!CalcColumnIconRect(rSubItem, rIcon, nFile, nNumFiles))
+				if (!CalcFileIconRect(rSubItem, rIcon, nFile, nNumFiles))
 					break; // outside the subitem
 				
 				if (rIcon.PtInRect(pt))
@@ -4933,9 +4936,9 @@ int CTDLTaskCtrlBase::RecalcColumnWidth(int nCol, CDC* pDC, BOOL bVisibleOnly) c
 		{
 			int nMaxCount = m_find.GetLargestFileLinkCount(bVisibleOnly);
 
-			if (nMaxCount > 1)
+			if (nMaxCount >= 1)
 			{
-				nColWidth = (nMaxCount * MIN_RESIZE_WIDTH);
+				nColWidth = (nMaxCount * (m_ilFileRef.GetImageSize() + 2)/*MIN_RESIZE_WIDTH*/);
 
 				// compensate for extra padding we don't want 
 				nColWidth -= (2 * LV_COLPADDING);

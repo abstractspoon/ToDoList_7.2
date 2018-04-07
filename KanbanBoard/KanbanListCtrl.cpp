@@ -1451,7 +1451,11 @@ BOOL CKanbanListCtrl::GetItemCheckboxRect(CRect& rItem) const
 	if (m_bShowCompletionCheckboxes)
 	{
 		rItem.bottom = (rItem.top + CalcRequiredItemHeight(1));
-		rItem.DeflateRect(0, ((rItem.Height() - 16) / 2));
+
+		int cx, cy;
+		ImageList_GetIconSize(m_ilCheckboxes, &cx, &cy);
+		
+		rItem.DeflateRect(0, ((rItem.Height() - cy) / 2));
 		rItem.right = (rItem.left + rItem.Height());
 
 		return TRUE;

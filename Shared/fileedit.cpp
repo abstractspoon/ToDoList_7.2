@@ -78,7 +78,6 @@ CFileEdit::CFileEdit(int nStyle, LPCTSTR szFilter) :
 					m_nStyle(nStyle), 
 					m_bTipNeeded(FALSE),
 					m_sFilter(szFilter),
-					ICON_WIDTH(20),
 					m_sCurFolder(FileMisc::GetCwd()),
 					m_bParentIsCombo(-1)
 {
@@ -542,7 +541,7 @@ void CFileEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp
 	CEnEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
 
 	if (bCalcValidRects)
-		lpncsp->rgrc[0].left += ICON_WIDTH;
+		lpncsp->rgrc[0].left += (m_ilSys.GetImageSize() + 4);
 }
 
 void CFileEdit::OnKillFocus(CWnd* pNewWnd) 
@@ -558,7 +557,7 @@ CRect CFileEdit::GetIconRect() const
 	GetClientRect(rButton);
 
 	rButton.right = rButton.left;
-	rButton.left -= ICON_WIDTH;
+	rButton.left -= (m_ilSys.GetImageSize() + 2);
 	rButton.top -= m_nTopBorder;
 	rButton.bottom += m_nBottomBorder;
 
@@ -590,6 +589,8 @@ void CFileEdit::PreSubclassWindow()
 {
 	CEnEdit::PreSubclassWindow();
 	
+	m_ilSys.Initialize();
+
 	EnableButton(FEBTN_GO, GetWindowTextLength());
 	m_bFirstShow = TRUE;
 }

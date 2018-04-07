@@ -379,6 +379,8 @@ protected:
 	void ResizeSplitterToFitColumns();
 	const CEnHeaderCtrl& GetColumnHeaderCtrl(TDC_COLUMN nColID) const;
 	BOOL IsVisible() const;
+	CPoint CalcColumnIconTopLeft(const CRect& rSubItem, int nImage = 0, int nCount = 1, int nImageSize = 16) const;
+	BOOL CalcFileIconRect(const CRect& rSubItem, CRect& rIcon, int nImage = 0, int nCount = 1) const;
 
 	BOOL SetColumnOrder(const CDWordArray& aColumns);
 	BOOL GetColumnOrder(CDWordArray& aColumns) const;
@@ -510,8 +512,6 @@ protected:
 
 	static BOOL InvalidateSelection(CListCtrl& lc, BOOL bUpdate = FALSE);
 	static BOOL InvalidateItem(CListCtrl& lc, int nItem, BOOL bUpdate = FALSE);
-	static CPoint CalcColumnIconTopLeft(const CRect& rSubItem, int nImage = 0, int nCount = 1);
-	static BOOL CalcColumnIconRect(const CRect& rSubItem, CRect& rIcon, int nImage = 0, int nCount = 1);
 	static BOOL PtInClientRect(POINT point, HWND hWnd, BOOL bScreenCoords);
 	static int GetUniqueToolTipID(DWORD dwTaskID, TDC_COLUMN nColID, int nIndex = 0);
 

@@ -123,7 +123,7 @@ BOOL CCheckComboBox::DrawCheckBox(CDC& dc, const CRect& rect, int nItem, UINT /*
 	}
 
 	CRect rCheck(rect);
-	rCheck.left = 0;
+	rCheck.left = 1;
 	rCheck.right = (rCheck.left + CalcCheckBoxWidth(dc));
 	
 	CThemed::DrawFrameControl(CWnd::FromHandle(GetListbox()), &dc, rCheck, DFC_BUTTON, nCheckState);
