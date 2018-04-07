@@ -1131,10 +1131,16 @@ BOOL CTabCtrlEx::SetScrollPos(int nPos)
 
 void CTabCtrlEx::EnsureSelVisible()
 {
+	if (GetItemCount() == 0)
+		return;
+
 	CRect rSpin;
 	
 	if (!GetSpinButtonCtrlRect(rSpin))
+	{
+		SetScrollPos(0);
 		return;
+	}
 
 	CRect rActiveTab;
 	int nSelTab = GetCurSel();
