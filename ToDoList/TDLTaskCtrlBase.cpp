@@ -2826,7 +2826,10 @@ void CTDLTaskCtrlBase::DrawColumnImage(CDC* pDC, TDC_COLUMN nColID, const CRect&
 
 void CTDLTaskCtrlBase::DrawColumnCheckBox(CDC* pDC, const CRect& rSubItem, TTCB_CHECK nCheck)
 {
-	CPoint pt(CalcColumnIconTopLeft(rSubItem));
+	int nImageSize = 0;
+	ImageList_GetIconSize(m_ilCheckboxes, &nImageSize, &nImageSize);
+
+	CPoint pt(CalcColumnIconTopLeft(rSubItem, 0, 1, nImageSize));
 				
 	// if the line height is odd, move one pixel down
 	// to avoid collision with selection rect
@@ -2856,8 +2859,9 @@ CPoint CTDLTaskCtrlBase::CalcColumnIconTopLeft(const CRect& rSubItem, int nImage
 
 BOOL CTDLTaskCtrlBase::CalcFileIconRect(const CRect& rSubItem, CRect& rIcon, int nImage, int nCount) const
 {
-	rIcon = CRect(CalcColumnIconTopLeft(rSubItem, nImage, nCount, m_ilFileRef.GetImageSize()), 
-					CSize((m_ilFileRef.GetImageSize() + 1), (m_ilFileRef.GetImageSize() + 1)));
+	int nImageSize = m_ilFileRef.GetImageSize();
+
+	rIcon = CRect(CalcColumnIconTopLeft(rSubItem, nImage, nCount, nImageSize), CSize(nImageSize, nImageSize));
 
 	// we always draw the first icon
 	if ((nImage == 0) || (rIcon.right <= rSubItem.right))
