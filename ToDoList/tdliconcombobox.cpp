@@ -43,9 +43,10 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 {
 	CRect rImage(rect);
 	rImage.bottom = (rImage.top + 16);
+
 	GraphicsMisc::CentreRect(rImage, rect, FALSE, TRUE);
 
-	const int nImgSpace = 18;
+	const int nImageSize = GetItemHeight(-1);
 
 	CStringArray aImages;
 	int nNumImage = 0;
@@ -58,7 +59,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 			DrawCheckBox(dc, rect, nItem, nItemState, dwItemData, FALSE);
 
 			// update image rect
-			rImage.left += nImgSpace;
+			rImage.left += nImageSize;
 		}
 
 		aImages.Add(sItem);
@@ -87,10 +88,9 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 			if (m_ilImages.GetSafeHandle() && !sImage.IsEmpty())
 			{
 				CPoint pt = rImage.TopLeft();
-				//pt.y--;
 
 				m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
-				rImage.left += nImgSpace;
+				rImage.left += nImageSize;
 			}
 
 			// draw optional text
