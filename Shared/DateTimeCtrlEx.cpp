@@ -410,28 +410,35 @@ void CDateTimeCtrlEx::OnPaint()
 	{
 		CPaintDC dc(this);
 		
-		// default drawing
-		CDateTimeCtrl::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, 0);
-		
 		DATETIMEPICKERINFO dtpi = { 0 };
 		VERIFY (GetPickerInfo(dtpi));
 
-		if (bWantDPIScaling)
-		{
-			// Windows scales the checkbox which looks dreadful
-			// on high DPI screens so we draw it properly here
-			UINT nState = (DFCS_BUTTONCHECK | (IsDateSet() ? DFCS_CHECKED : 0));
-			CThemed::DrawFrameControl(this, &dc, &dtpi.rcCheck, DFC_BUTTON, nState);
-		}
-
+		// Fill the checkbox background depending on state
 		if (bCheckboxFocused)
 		{
-			CRect rClip(dtpi.rcCheck);
-			rClip.DeflateRect(2, 2);
-			dc.ExcludeClipRect(rClip);
-		
 			dc.FillSolidRect(&dtpi.rcCheck, GetSysColor(COLOR_HIGHLIGHT));
 		}
+		else if (bWantDPIScaling)
+		{
+			dc.FillSolidRect(&dtpi.rcCheck, GetSysColor(COLOR_WINDOW));
+		}
+
+		// Always draw the checkbox
+		UINT nState = DFCS_BUTTONCHECK;
+		
+		if (IsDateSet())
+			nState |= DFCS_CHECKED;
+
+		if (!IsWindowEnabled())
+			nState |= DFCS_INACTIVE;
+		
+		CThemed::DrawFrameControl(this, &dc, &dtpi.rcCheck, DFC_BUTTON, nState);
+
+		// Clip out our drawing
+		dc.ExcludeClipRect(&dtpi.rcCheck);
+		
+		// default drawing
+		CDateTimeCtrl::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, 0);
 	}
 	else
 	{
