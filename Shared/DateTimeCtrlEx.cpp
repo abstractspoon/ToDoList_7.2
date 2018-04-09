@@ -6,6 +6,8 @@
 #include "OSVersion.h"
 #include "autoflag.h"
 #include "misc.h"
+#include "Graphicsmisc.h"
+#include "themed.h"
 
 #include <math.h>
 
@@ -401,22 +403,35 @@ CRect CDateTimeCtrlEx::GetCheckboxRect() const
 
 void CDateTimeCtrlEx::OnPaint()
 {
-	if (IsCheckboxFocused())
+	BOOL bCheckboxFocused = IsCheckboxFocused();
+	BOOL bWantDPIScaling = GraphicsMisc::WantDPIScaling();
+
+	if (bCheckboxFocused || bWantDPIScaling)
 	{
 		CPaintDC dc(this);
 		
 		// default drawing
 		CDateTimeCtrl::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, 0);
 		
-		// selection rect
 		DATETIMEPICKERINFO dtpi = { 0 };
 		VERIFY (GetPickerInfo(dtpi));
+
+		if (bWantDPIScaling)
+		{
+			// Windows scales the checkbox which looks dreadful
+			// on high DPI screens so we draw it properly here
+			UINT nState = (DFCS_BUTTONCHECK | (IsDateSet() ? DFCS_CHECKED : 0));
+			CThemed::DrawFrameControl(this, &dc, &dtpi.rcCheck, DFC_BUTTON, nState);
+		}
+
+		if (bCheckboxFocused)
+		{
+			CRect rClip(dtpi.rcCheck);
+			rClip.DeflateRect(2, 2);
+			dc.ExcludeClipRect(rClip);
 		
-		CRect rClip(dtpi.rcCheck);
-		rClip.DeflateRect(2, 2);
-		dc.ExcludeClipRect(rClip);
-		
-		dc.FillSolidRect(&dtpi.rcCheck, GetSysColor(COLOR_HIGHLIGHT));
+			dc.FillSolidRect(&dtpi.rcCheck, GetSysColor(COLOR_HIGHLIGHT));
+		}
 	}
 	else
 	{

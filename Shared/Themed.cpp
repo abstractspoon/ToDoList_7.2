@@ -238,7 +238,8 @@ BOOL CThemed::DrawFrameControl(const CWnd* pWnd, CDC* pDC, LPRECT pRect, UINT nT
 			CSize size;
 			th.GetSize(nThPart, 1, size);
 
-			rImage.OffsetRect(0, (rImage.Height() - size.cy) / 2);
+			rImage.OffsetRect((rImage.Width() - size.cx) / 2, 
+								(rImage.Height() - size.cy) / 2);
 
 			rImage.right = (rImage.left + size.cx);
 			rImage.bottom = (rImage.top + size.cy);
