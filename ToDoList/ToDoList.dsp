@@ -1415,6 +1415,10 @@ SOURCE=.\res\timetrack_toolbar_std.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RES\todolist.exe.manifest
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\todolist.exe.xp.manifest
 # End Source File
 # Begin Source File
@@ -1554,10 +1558,6 @@ SOURCE=..\Interfaces\IUIExtension.h
 SOURCE=..\Interfaces\UITHEME.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\RES\todolist.exe.manifest
-# End Source File
 # Begin Source File
 
 SOURCE=.\ToDoList.vcxproj
