@@ -154,12 +154,19 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 		return FALSE;
 	
 	// Create imagelists first time
-	if (!m_ilBtns.GetSafeHandle() && !m_ilBtns.Create(16, 16, ILC_COLOR32 | ILC_MASK, 0, 1))
-		return FALSE;
+	int nImageSize = GraphicsMisc::ScaleByDPIFactor(16);
 
-	if (!m_ilDisabledBtns.GetSafeHandle() && !m_ilDisabledBtns.Create(16, 16, ILC_COLOR32 | ILC_MASK, 0, 1))
-		return FALSE;
-	
+	if (!m_ilBtns.GetSafeHandle())
+	{
+		ASSERT(!m_ilDisabledBtns.GetSafeHandle());
+
+		if (!m_ilBtns.Create(nImageSize, nImageSize, ILC_COLOR32 | ILC_MASK, 0, 1) ||
+			!m_ilDisabledBtns.Create(nImageSize, nImageSize, ILC_COLOR32 | ILC_MASK, 0, 1))
+		{
+			return FALSE;
+		}
+	}
+
 	nPos = max(nPos, 0);
 	nPos = min(nPos, GetButtonCount());
 	
@@ -172,7 +179,7 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 	if (nWidth != DEF_BTNWIDTH)
 		eb.nWidth = GraphicsMisc::ScaleByDPIFactor(nWidth);
 	else
-		eb.nWidth = GraphicsMisc::ScaleByDPIFactor(16) + 4; // 2 px padding
+		eb.nWidth = (nImageSize + 4); // 2 px padding
 
 	HICON hDisabled = CEnBitmapEx::CreateDisabledIcon(hIcon);
 	VERIFY(m_ilDisabledBtns.Add(hDisabled) == eb.iImage);
