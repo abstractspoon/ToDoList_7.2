@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const  int IMAGESIZE = 16;
+const int IMAGESIZE = GraphicsMisc::ScaleByDPIFactor(16);
 
 /////////////////////////////////////////////////////////////////////////////
 // CContentTypeComboBox
@@ -72,11 +72,13 @@ void CTDLContentTypeComboBox::FillCombo()
 
 			SetItemData(nItem, nContent);
 
-			int nImage = AddItemImage(m_pContentMgr->GetContentIcon(nContent), FALSE);
-			m_mapImages[nContent] = nImage;
-		}
+			HICON hIcon = m_pContentMgr->GetContentIcon(nContent);
 
-		GraphicsMisc::ScaleByDPIFactor(m_ilContent);
+			if (hIcon == NULL)
+				hIcon = AfxGetApp()->LoadIcon(IDI_NULL);
+
+			VERIFY(m_ilContent.Add(hIcon) == nContent);
+		}
 	}
 
 	if (m_nInitSel < GetCount())
@@ -142,8 +144,7 @@ void CTDLContentTypeComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem
 	// Draw image
 	if (nItem != CB_ERR)
 	{
-		int nImage = -1;
-		m_mapImages.Lookup((int)dwItemData, nImage);
+		int nImage = (int)dwItemData;
 	
 		if (nImage != -1)
 		{
@@ -161,22 +162,4 @@ void CTDLContentTypeComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem
 	COwnerdrawComboBoxBase::DrawItemText(dc, rText, nItem, nItemState, dwItemData, sItem, bList, crText);
 }
 
-int CTDLContentTypeComboBox::AddItemImage(HICON hIcon, BOOL bDeleteIcon)
-{
-	ASSERT(m_ilContent.GetSafeHandle());
-	ASSERT(m_ilContent.GetImageCount() < m_pContentMgr->GetNumContent());
-	
-	if (hIcon == NULL)
-	{
-		hIcon = AfxGetApp()->LoadIcon(IDI_NULL);
-		bDeleteIcon = TRUE;
-	}
-	
-	int nImage = m_ilContent.Add(hIcon);
-	
-	if (bDeleteIcon)
-		::DestroyIcon(hIcon);
-	
-	return nImage;
-}
 
