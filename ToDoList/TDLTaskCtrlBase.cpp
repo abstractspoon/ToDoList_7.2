@@ -45,8 +45,9 @@ static char THIS_FILE[]=__FILE__;
 
 const int LV_COLPADDING			= 3;
 const int HD_COLPADDING			= 6;
-const int MIN_RESIZE_WIDTH		= 19; 
-const int COL_ICON_WIDTH		= 16; 
+const int ICON_SIZE				= GraphicsMisc::ScaleByDPIFactor(16); 
+const int MIN_RESIZE_WIDTH		= (ICON_SIZE + 3); 
+const int COL_ICON_WIDTH		= ICON_SIZE; 
 const int MIN_COL_WIDTH			= 6;
 const int MIN_TASKS_WIDTH		= 200;
 
@@ -926,27 +927,6 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (m_hdrColumns.GetItemCount())
 		return FALSE;
 
-/*	DPI awareness
-	CEnBitmap bmp;
-	
-	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS))
-		return FALSE;
-	
-	CSize sizeBM = bmp.GetSize();
-	
-	if (GraphicsMisc::ScaleByDPIFactor(&sizeBM))
-		bmp.Resize(sizeBM.cx, sizeBM.cy);
-	
-	// Create imagelist for columns using symbols
-	ASSERT(m_ilColSymbols.GetSafeHandle() == NULL);
-
-	if (!m_ilColSymbols.Create(sizeBM.cy, sizeBM.cy, ILC_COLOR32 | ILC_MASK, 1, 1))
-		return FALSE;
-
-	if (!m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1)
-		return FALSE;
-*/
-
 	// Create imagelist for columns using symbols
 	ASSERT(m_ilColSymbols.GetSafeHandle() == NULL);
 
@@ -958,7 +938,7 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS) || (m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1))
 		return FALSE;
 	
-
+	GraphicsMisc::ScaleByDPIFactor(m_ilColSymbols);
 
 	// primary header
 	const TDCCOLUMN* pClient = GetColumn(TDCC_CLIENT);
@@ -2818,7 +2798,10 @@ void CTDLTaskCtrlBase::DrawColumnImage(CDC* pDC, TDC_COLUMN nColID, const CRect&
 	
 		if (iImage != TDCC_NONE)
 		{
-			CPoint ptDraw(CalcColumnIconTopLeft(rect));
+			int nImageSize = 0;
+			ImageList_GetIconSize(m_ilColSymbols, &nImageSize, &nImageSize);
+
+			CPoint ptDraw(CalcColumnIconTopLeft(rect, iImage, 1, nImageSize));
 			m_ilColSymbols.Draw(pDC, iImage, ptDraw, ILD_TRANSPARENT);
 		}
 	}
@@ -2841,20 +2824,13 @@ void CTDLTaskCtrlBase::DrawColumnCheckBox(CDC* pDC, const CRect& rSubItem, TTCB_
 
 CPoint CTDLTaskCtrlBase::CalcColumnIconTopLeft(const CRect& rSubItem, int nImage, int nCount, int nImageSize) const
 {
-	CPoint pt(rSubItem.CenterPoint());
+	CRect rImage(rSubItem.TopLeft(), CSize(nImageSize, nImageSize));
+	GraphicsMisc::CentreRect(rImage, rSubItem, (nCount == 1), TRUE);
 	
-	// Assume 16 px icons
-	int nRequiredWidth = ((nCount * (nImageSize + 1)));
+	if (nCount > 1)
+		rImage.OffsetRect((nImage * (nImageSize + 1)), 0);
 
-	if (nRequiredWidth > rSubItem.Width())
-		pt.x = rSubItem.left;
-	else
-		pt.x -= (nRequiredWidth / 2);
-
-	pt.x += (nImage * (nImageSize + 1));
-	pt.y -= (nImageSize / 2);
-
-	return pt;
+	return rImage.TopLeft();
 }
 
 BOOL CTDLTaskCtrlBase::CalcFileIconRect(const CRect& rSubItem, CRect& rIcon, int nImage, int nCount) const
@@ -2927,22 +2903,22 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 		break;
 
 	case TDCCA_ICON:
-		if (!data.IsEmpty() && (rCol.Width() > 16)) // min width for one icon
+		if (!data.IsEmpty() && (rCol.Width() > MIN_COL_WIDTH)) // min width for one icon
 		{
 			CStringArray aImages;
 			int nNumImage = data.AsArray(aImages);
 
-			int nReqWidth = (nNumImage * 18) - 2;
+			int nReqWidth = (nNumImage * (MIN_COL_WIDTH + 2)) - 2;
 			int nAvailWidth = rCol.Width();
 
 			if (nAvailWidth < nReqWidth)
 			{
-				nNumImage = min(nNumImage, ((nAvailWidth - 2) / 18));
-				nReqWidth = (nNumImage * 18) - 2;
+				nNumImage = min(nNumImage, ((nAvailWidth - 2) / (MIN_COL_WIDTH + 2)));
+				nReqWidth = (nNumImage * (MIN_COL_WIDTH + 2)) - 2;
 			}
 
 			// centre icon vertically
-			CPoint pt(rCol.left, (rCol.CenterPoint().y - 8));
+			CPoint pt(rCol.left, (rCol.CenterPoint().y - (MIN_COL_WIDTH / 2)));
 			int nTextAlign = attribDef.nTextAlignment;
 			
 			CString sName;
@@ -2973,7 +2949,7 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 				
 			case DT_LEFT:
 			default:
-				rCol.left += 16;
+				rCol.left += MIN_COL_WIDTH;
 				pt.x += LV_COLPADDING;
 				break;
 			}
@@ -2989,9 +2965,9 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 				if (TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aImages[nImg], sImage, sDummy))
 				{
 					m_ilTaskIcons.Draw(pDC, sImage, pt, ILD_TRANSPARENT);
-					pt.x += 18;
+					pt.x += MIN_COL_WIDTH + 2;
 
-					bOverrun = ((pt.x + 16) > rCol.right);
+					bOverrun = ((pt.x + MIN_COL_WIDTH) > rCol.right);
 				}
 			}
 			
@@ -3279,7 +3255,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					// handle symbol images
 					if (pTDCC->iImage != -1)
 					{
-						CRect rImage(0, 0, 16, 16);
+						CRect rImage(0, 0, MIN_COL_WIDTH, MIN_COL_WIDTH);
 						GraphicsMisc::CentreRect(rImage, rItem, TRUE, TRUE);
 
  						m_ilColSymbols.Draw(pDC, pTDCC->iImage, rImage.TopLeft(), ILD_TRANSPARENT);
