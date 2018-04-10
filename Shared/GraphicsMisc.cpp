@@ -8,6 +8,7 @@
 #include "FileMisc.h"
 #include "themed.h"
 #include "osversion.h"
+#include "icon.h"
 
 #include "..\3rdparty\colordef.h"
 
@@ -1780,4 +1781,33 @@ BOOL GraphicsMisc::ScaleByDPIFactor(LPPOINT pPoint)
 int GraphicsMisc::ScaleByDPIFactor(int nValue)
 {
 	return ::MulDiv(nValue, GetSystemDPI(), DEFAULT_DPI);
+}
+
+BOOL GraphicsMisc::ScaleByDPIFactor(CImageList& il)
+{
+	int nOldSize = 0;
+	ImageList_GetIconSize(il, &nOldSize, &nOldSize);
+
+	int nNewSize = ScaleByDPIFactor(nOldSize);
+	
+	if (nOldSize == nNewSize)
+		return TRUE;
+	
+	int nCount = il.GetImageCount();
+	
+	CImageList ilTemp;
+	
+	if (!ilTemp.Create(nNewSize, nNewSize, ILC_COLOR24 | ILC_MASK, nCount, 1)) 
+		return FALSE;
+	
+	for (int nImage = 0; nImage < nCount; nImage++)
+	{
+		CIcon icon = il.ExtractIcon(nImage);
+		ilTemp.Add(icon);
+	}
+	
+	il.DeleteImageList();
+	il.Attach(ilTemp.Detach());
+	
+	return TRUE;
 }

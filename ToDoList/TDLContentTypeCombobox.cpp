@@ -75,6 +75,8 @@ void CTDLContentTypeComboBox::FillCombo()
 			int nImage = AddItemImage(m_pContentMgr->GetContentIcon(nContent), FALSE);
 			m_mapImages[nContent] = nImage;
 		}
+
+		GraphicsMisc::ScaleByDPIFactor(m_ilContent);
 	}
 
 	if (m_nInitSel < GetCount())

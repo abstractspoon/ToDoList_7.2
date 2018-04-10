@@ -8,6 +8,7 @@
 #include "osversion.h"
 #include "graphicsmisc.h"
 #include "themed.h"
+#include "icon.h"
 
 #include <afxpriv.h>
 
@@ -147,9 +148,11 @@ BOOL CEnToolBar::SetImage(CEnBitmapEx* pBitmap, COLORREF crMask)
 
 	m_ilNormal.DeleteImageList();
 	
-	if (m_ilNormal.Create(sizeBmp.cx, sizeBmp.cy, ILC_COLOR32 | ILC_MASK, 0, 1)) 
+	if (m_ilNormal.Create(sizeBmp.cx, sizeBmp.cy, ILC_COLOR24 | ILC_MASK, 0, 1)) 
 	{
 		m_ilNormal.Add(pBitmap, crMask);
+
+		GraphicsMisc::ScaleByDPIFactor(m_ilNormal);
 				
 		CImageList* pILPrev = GetToolBarCtrl().SetImageList(&m_ilNormal);
 
@@ -231,11 +234,11 @@ void CEnToolBar::RefreshDisabledImageList(CEnBitmapEx* pBitmap, COLORREF crMask)
 			pBitmap->RemapSysColors();
 		
 		// button size
-		int nCx = m_sizeImage.cx, nCy = m_sizeImage.cy;
-		
 		m_ilDisabled.DeleteImageList();
-		m_ilDisabled.Create(nCx, nCy, ILC_COLOR24 | ILC_MASK, 0, 1);
+		m_ilDisabled.Create(m_sizeImage.cx, m_sizeImage.cy, ILC_COLOR24 | ILC_MASK, 0, 1);
 		m_ilDisabled.Add(pBitmap, crMask);
+
+		GraphicsMisc::ScaleByDPIFactor(m_ilDisabled);
 		
 		CImageList* pILPrev = GetToolBarCtrl().SetDisabledImageList(&m_ilDisabled);
 		
@@ -607,5 +610,5 @@ void CEnToolBar::OnDestroy()
 
 	m_ilNormal.DeleteImageList();
 	m_ilDisabled.DeleteImageList();
-
 }
+

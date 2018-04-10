@@ -126,6 +126,7 @@ namespace GraphicsMisc
 	BOOL ScaleByDPIFactor(LPRECT pRect);
 	BOOL ScaleByDPIFactor(LPSIZE pSize);
 	BOOL ScaleByDPIFactor(LPPOINT pPoint);
+	BOOL ScaleByDPIFactor(CImageList& il);
 	int ScaleByDPIFactor(int nValue);
 	
 	DWORD GetFontFlags(HFONT hFont);
