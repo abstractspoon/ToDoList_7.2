@@ -9518,7 +9518,10 @@ void CToDoListWnd::OnToolsCheckout()
 		
 		if ((nFileRes == TDCF_OTHER) && !sCheckedOutTo.IsEmpty())
 		{
-			sMessage.Format(IDS_CHECKEDOUTBYOTHER, sFilePath, sCheckedOutTo);
+			SYSTEMTIME stLastMod;
+			FileMisc::GetFileLastModified(sFilePath, stLastMod);
+
+			sMessage.Format(IDS_CHECKEDOUTBYOTHER, sFilePath, sCheckedOutTo, COleDateTime(stLastMod).Format(VAR_DATEVALUEONLY));
 			MessageBox(sMessage, IDS_CHECKOUT_TITLE, MB_OK | MB_ICONEXCLAMATION);
 		}
 		else
