@@ -47,7 +47,8 @@ const int LV_COLPADDING			= 3;
 const int HD_COLPADDING			= 6;
 const int ICON_SIZE				= GraphicsMisc::ScaleByDPIFactor(16); 
 const int MIN_RESIZE_WIDTH		= (ICON_SIZE + 3); 
-const int COL_ICON_WIDTH		= ICON_SIZE; 
+const int COL_ICON_SIZE			= ICON_SIZE; 
+const int COL_ICON_SPACING		= 2; 
 const int MIN_COL_WIDTH			= 6;
 const int MIN_TASKS_WIDTH		= 200;
 
@@ -2903,60 +2904,57 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 		break;
 
 	case TDCCA_ICON:
-		if (!data.IsEmpty() && (rCol.Width() > MIN_COL_WIDTH)) // min width for one icon
+		if (!data.IsEmpty() && (rCol.Width() > CalcRequiredIconColumnWidth(1)))
 		{
 			CStringArray aImages;
 			int nNumImage = data.AsArray(aImages);
 
-			int nReqWidth = (nNumImage * (MIN_COL_WIDTH + 2)) - 2;
+			int nReqWidth = CalcRequiredIconColumnWidth(nNumImage);
 			int nAvailWidth = rCol.Width();
 
 			if (nAvailWidth < nReqWidth)
 			{
-				nNumImage = min(nNumImage, ((nAvailWidth - 2) / (MIN_COL_WIDTH + 2)));
-				nReqWidth = (nNumImage * (MIN_COL_WIDTH + 2)) - 2;
+				nNumImage = min(nNumImage, ((nAvailWidth + COL_ICON_SPACING - (LV_COLPADDING * 2)) / (COL_ICON_SIZE + COL_ICON_SPACING)));
+				nReqWidth = CalcRequiredIconColumnWidth(nNumImage);
 			}
 
-			// centre icon vertically
-			CPoint pt(rCol.left, (rCol.CenterPoint().y - (MIN_COL_WIDTH / 2)));
-			int nTextAlign = attribDef.nTextAlignment;
-			
 			CString sName;
 			
 			if (nNumImage == 1)
 				sName = attribDef.GetImageName(data.AsString());
+
+			rCol.bottom = (rCol.top + COL_ICON_SIZE);
+			GraphicsMisc::CentreRect(rCol, rSubItem, FALSE, TRUE); // centre vertically
+
+			int nTextAlign = attribDef.nTextAlignment;
 			
 			switch (nTextAlign)
 			{
 			case DT_RIGHT:
 				// We still draw from the left just like text
-				rCol.right -= LV_COLPADDING;
-				pt.x = (rCol.right - nReqWidth);
+				rCol.left = (rCol.right - nReqWidth);
 				break;
 				
 			case DT_CENTER:
 				// if there is associated text then we align left
 				if (sName.IsEmpty())
 				{
-					pt.x = (rCol.left + ((rCol.Width() - nReqWidth) / 2));
-					break;
+					rCol.right = (rCol.left + nReqWidth);
+					GraphicsMisc::CentreRect(rCol, rSubItem, TRUE, FALSE);
 				}
 				else 
 				{
 					nTextAlign = DT_LEFT;
-					// fall thru
 				}
+				break;
 				
 			case DT_LEFT:
 			default:
-				rCol.left += MIN_COL_WIDTH;
-				pt.x += LV_COLPADDING;
 				break;
 			}
 
-			// calculate icon and text position
-			rCol.left += LV_COLPADDING;
 			BOOL bOverrun = FALSE;
+			rCol.left += LV_COLPADDING;
 
 			for (int nImg = 0; ((nImg < nNumImage) && !bOverrun); nImg++)
 			{
@@ -2964,10 +2962,10 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 
 				if (TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aImages[nImg], sImage, sDummy))
 				{
-					m_ilTaskIcons.Draw(pDC, sImage, pt, ILD_TRANSPARENT);
-					pt.x += MIN_COL_WIDTH + 2;
+					m_ilTaskIcons.Draw(pDC, sImage, rCol.TopLeft(), ILD_TRANSPARENT);
+					rCol.left += (COL_ICON_SIZE + COL_ICON_SPACING);
 
-					bOverrun = ((pt.x + MIN_COL_WIDTH) > rCol.right);
+					bOverrun = ((rCol.left + COL_ICON_SIZE) > rCol.right);
 				}
 			}
 			
@@ -3004,6 +3002,11 @@ BOOL CTDLTaskCtrlBase::DrawItemCustomColumn(const TODOITEM* pTDI, const TODOSTRU
 	}
 
 	return TRUE; // we handled it
+}
+
+int CTDLTaskCtrlBase::CalcRequiredIconColumnWidth(int nNumImage)
+{
+	return ((nNumImage * (COL_ICON_SIZE + COL_ICON_SPACING)) - COL_ICON_SPACING + (LV_COLPADDING * 2));
 }
 
 BOOL CTDLTaskCtrlBase::FormatDate(const COleDateTime& date, TDC_DATE nDate, CString& sDate, CString& sTime, CString& sDow, BOOL bCustomWantsTime) const
@@ -3255,7 +3258,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					// handle symbol images
 					if (pTDCC->iImage != -1)
 					{
-						CRect rImage(0, 0, COL_ICON_WIDTH, COL_ICON_WIDTH);
+						CRect rImage(0, 0, COL_ICON_SIZE, COL_ICON_SIZE);
 						GraphicsMisc::CentreRect(rImage, rItem, TRUE, TRUE);
 
  						m_ilColSymbols.Draw(pDC, pTDCC->iImage, rImage.TopLeft(), ILD_TRANSPARENT);
@@ -4918,7 +4921,7 @@ int CTDLTaskCtrlBase::RecalcColumnWidth(int nCol, CDC* pDC, BOOL bVisibleOnly) c
 
 			if (nMaxCount >= 1)
 			{
-				nColWidth = (nMaxCount * (m_ilFileRef.GetImageSize() + 2)/*MIN_RESIZE_WIDTH*/);
+				nColWidth = ((nMaxCount * (m_ilFileRef.GetImageSize() + COL_ICON_SPACING)) - COL_ICON_SPACING);
 
 				// compensate for extra padding we don't want 
 				nColWidth -= (2 * LV_COLPADDING);
@@ -4992,7 +4995,7 @@ int CTDLTaskCtrlBase::RecalcColumnWidth(int nCol, CDC* pDC, BOOL bVisibleOnly) c
 								break;
 
 							case TDCCA_FIXEDMULTILIST:
-								nColWidth = (attribDef.aDefaultListData.GetSize() * 18);
+								nColWidth = ((attribDef.aDefaultListData.GetSize() * (COL_ICON_SIZE + COL_ICON_SPACING)) - COL_ICON_SPACING);
 								break;
 							}
 						}

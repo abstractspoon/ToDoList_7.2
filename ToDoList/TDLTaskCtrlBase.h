@@ -514,6 +514,7 @@ protected:
 	static BOOL InvalidateItem(CListCtrl& lc, int nItem, BOOL bUpdate = FALSE);
 	static BOOL PtInClientRect(POINT point, HWND hWnd, BOOL bScreenCoords);
 	static int GetUniqueToolTipID(DWORD dwTaskID, TDC_COLUMN nColID, int nIndex = 0);
+	static int CalcRequiredIconColumnWidth(int nNumImage);
 
 	static int CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); 
 	static int CALLBACK SortFuncMulti(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); 
