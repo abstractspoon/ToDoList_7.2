@@ -3255,7 +3255,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					// handle symbol images
 					if (pTDCC->iImage != -1)
 					{
-						CRect rImage(0, 0, MIN_COL_WIDTH, MIN_COL_WIDTH);
+						CRect rImage(0, 0, COL_ICON_WIDTH, COL_ICON_WIDTH);
 						GraphicsMisc::CentreRect(rImage, rItem, TRUE, TRUE);
 
  						m_ilColSymbols.Draw(pDC, pTDCC->iImage, rImage.TopLeft(), ILD_TRANSPARENT);
