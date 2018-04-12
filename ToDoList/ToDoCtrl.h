@@ -108,7 +108,7 @@ public:
 
 	TDC_FILE CheckIn();
 	TDC_FILE CheckOut();
-	TDC_FILE CheckOut(CString& sCheckedOutTo);
+	TDC_FILE CheckOut(CString& sCheckedOutTo, BOOL bForce);
 	BOOL IsCheckedOut() const;
 	BOOL IsSourceControlled() const;
 	BOOL AddToSourceControl(BOOL bAdd = TRUE);

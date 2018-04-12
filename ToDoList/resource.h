@@ -2121,6 +2121,7 @@
 #define IDS_FINDINTASKTITLES            58470
 #define IDS_SAVETOIMAGEPROGRESS         58471
 #define IDS_INIFILELOCKED               58472
+#define IDS_QUERYFORCEDCHECKOUT         58473
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects

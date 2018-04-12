@@ -4290,7 +4290,7 @@ BEGIN
     IDS_TASKLISTSAUTOCHECKEDOUT 
                             "The following tasklists have been checked out:\n\n%s"
     IDS_SETFILEREF_TITLE    "Select File to which Task Refers"
-    IDS_CHECKEDOUTBYOTHER   "'%s' could not be checked out \nbecause it is currently checked out to '%s'.\n\nThe file was last saved on %s."
+    IDS_CHECKEDOUTBYOTHER   "'%s' could not be checked out \nbecause it is currently checked out to '%s' (Last saved: %s)."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -5297,6 +5297,7 @@ BEGIN
     IDS_FINDINTASKTITLES    "Find in Task Titles"
     IDS_SAVETOIMAGEPROGRESS "Saving task view image..."
     IDS_INIFILELOCKED       "ToDoList cannot start because your preferences file is locked by another application."
+    IDS_QUERYFORCEDCHECKOUT "\n\nDo you want to forcibly checkout the tasklist?\n\nNote: Any unsaved data from '%s' will be lost!"
 END
 
 #endif    // English (Australia) resources

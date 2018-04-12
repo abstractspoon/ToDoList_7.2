@@ -186,7 +186,8 @@ CToDoListWnd::CToDoListWnd()
 	m_nContextColumnID(TDCC_NONE),
 	m_bSettingAttribDefs(FALSE),
 	m_bReshowTimeTrackerOnEnable(FALSE),
-	m_bPromptLanguageChangeRestartOnActivate(FALSE)
+	m_bPromptLanguageChangeRestartOnActivate(FALSE),
+	m_bAllowForcedCheckOut(FALSE)
 {
 	// must do this before initializing any controls
 	SetupUIStrings();
@@ -756,6 +757,7 @@ BOOL CToDoListWnd::Create(const CTDCStartupOptions& startup)
 
 	m_bVisible = startup.HasFlag(TLD_FORCEVISIBLE) ? 1 : -1;
 	m_bSaveUIVisInTaskList = startup.HasFlag(TLD_SAVEUIVISINTASKLIST);
+	m_bAllowForcedCheckOut = startup.HasFlag(TLD_ALLOWFORCEDCHECKOUT);
 
 #ifdef _DEBUG
 	m_bPasswordPrompting = FALSE;
@@ -6981,7 +6983,8 @@ void CToDoListWnd::OnTimerCheckoutStatus(int nCtrl, BOOL bForceCheckRemote)
 		if (!bCheckedOut && userPrefs.GetKeepTryingToCheckout())
 		{
 			// we only try to check if the previous checkout failed
-			if (!m_mgrToDoCtrls.GetLastCheckoutSucceeded(nCtrl) && m_mgrToDoCtrls.CheckOut(nCtrl))
+			if (!m_mgrToDoCtrls.GetLastCheckoutSucceeded(nCtrl) && 
+				(m_mgrToDoCtrls.CheckOut(nCtrl) == TDCF_SUCCESS))
 			{
 				// notify the user
 				sCheckedOutFiles += m_mgrToDoCtrls.GetFriendlyProjectName(nCtrl);
@@ -6994,7 +6997,8 @@ void CToDoListWnd::OnTimerCheckoutStatus(int nCtrl, BOOL bForceCheckRemote)
 		{
 			int nMin = m_mgrToDoCtrls.GetElapsedMinutesSinceLastMod(nCtrl);
 			
-			if ((nMin >= userPrefs.GetAutoCheckinFrequency()) && m_mgrToDoCtrls.CheckIn(nCtrl))
+			if ((nMin >= userPrefs.GetAutoCheckinFrequency()) && 
+				(m_mgrToDoCtrls.CheckIn(nCtrl) == TDCF_SUCCESS))
 			{
 				// notify the user
 				sCheckedInFiles += m_mgrToDoCtrls.GetFriendlyProjectName(nCtrl);
@@ -9502,33 +9506,52 @@ void CToDoListWnd::OnToolsCheckout()
 		return;
 	
 	CAutoFlag af(m_bSaving, TRUE);
-	CString sCheckedOutTo;
-	
-	TDC_FILE nFileRes = m_mgrToDoCtrls.CheckOut(nSel, sCheckedOutTo);
-	
-	if (nFileRes == TDCF_SUCCESS)
-	{
-		// update UI
-		UpdateCaption();
-		UpdateMenuIconMgrSourceControlStatus();
-	}
-	else // failed -> notify user
-	{
-		CEnString sMessage, sFilePath(m_mgrToDoCtrls.GetFilePath(nSel));
-		
-		if ((nFileRes == TDCF_OTHER) && !sCheckedOutTo.IsEmpty())
-		{
-			SYSTEMTIME stLastMod;
-			FileMisc::GetFileLastModified(sFilePath, stLastMod);
+	TDC_FILE nFileRes = TDCF_UNSET;
+	BOOL bAllowForcedCheckout = FALSE; // always FALSE first try
 
-			sMessage.Format(IDS_CHECKEDOUTBYOTHER, sFilePath, sCheckedOutTo, COleDateTime(stLastMod).Format(VAR_DATEVALUEONLY));
-			MessageBox(sMessage, IDS_CHECKOUT_TITLE, MB_OK | MB_ICONEXCLAMATION);
+	do 
+	{
+		CString sCheckedOutTo;
+		nFileRes = m_mgrToDoCtrls.CheckOut(nSel, sCheckedOutTo, bAllowForcedCheckout);
+
+		if (nFileRes == TDCF_SUCCESS)
+		{
+			UpdateCaption();
+			UpdateMenuIconMgrSourceControlStatus();
+			break;
 		}
-		else
+
+		// else handle error
+		CString sFilePath(m_mgrToDoCtrls.GetFilePath(nSel));
+
+		if ((nFileRes != TDCF_OTHER) || sCheckedOutTo.IsEmpty())
 		{
 			HandleSaveTasklistError(nFileRes, sFilePath);
+			break;
 		}
-	}
+		
+		SYSTEMTIME stLastMod;
+		FileMisc::GetFileLastModified(sFilePath, stLastMod);
+
+		CEnString sMessage;
+		sMessage.Format(IDS_CHECKEDOUTBYOTHER, sFilePath, sCheckedOutTo, 
+						COleDateTime(stLastMod).Format(VAR_DATEVALUEONLY));
+
+		UINT nFlags = (MB_OK | MB_ICONEXCLAMATION);
+		
+		if (m_bAllowForcedCheckOut)
+		{
+			sMessage += CEnString(IDS_QUERYFORCEDCHECKOUT, sCheckedOutTo);
+			nFlags |= MB_YESNO;
+		}
+
+		if (MessageBox(sMessage, IDS_CHECKOUT_TITLE, nFlags) != IDYES)
+			break;
+
+		// else try again with a forced checkout
+		bAllowForcedCheckout = TRUE;
+	} 
+	while (nFileRes != TDCF_SUCCESS);
 }
 
 void CToDoListWnd::OnUpdateToolsCheckout(CCmdUI* pCmdUI) 

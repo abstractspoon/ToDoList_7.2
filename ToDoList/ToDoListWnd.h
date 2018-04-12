@@ -155,6 +155,7 @@ protected:
 	BOOL m_bReshowTimeTrackerOnEnable;
 	BOOL m_bSettingAttribDefs;
 	BOOL m_bPromptLanguageChangeRestartOnActivate;
+	BOOL m_bAllowForcedCheckOut;
 	
 	// Generated message map functions
 	//{{AFX_MSG(CToDoListWnd)

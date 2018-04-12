@@ -10837,7 +10837,7 @@ TDC_FILE CToDoCtrl::CheckIn()
 TDC_FILE CToDoCtrl::CheckOut()
 {
 	CString sTemp;
-	return CheckOut(sTemp);
+	return CheckOut(sTemp, FALSE);
 }
 
 BOOL CToDoCtrl::IsCheckedOut() const 
@@ -10898,7 +10898,7 @@ BOOL CToDoCtrl::AddToSourceControl(BOOL bAdd)
 	return FALSE;
 }
 
-TDC_FILE CToDoCtrl::CheckOut(CString& sCheckedOutTo)
+TDC_FILE CToDoCtrl::CheckOut(CString& sCheckedOutTo, BOOL bForce)
 {
 	ASSERT(m_bSourceControlled);
 	
@@ -10933,7 +10933,7 @@ TDC_FILE CToDoCtrl::CheckOut(CString& sCheckedOutTo)
 			
 			sCheckedOutTo = file.GetCheckOutTo();
 			
-			if (sCheckedOutTo.IsEmpty())
+			if (sCheckedOutTo.IsEmpty() || bForce)
 			{
 				// load tasks
 				file.Decrypt();
