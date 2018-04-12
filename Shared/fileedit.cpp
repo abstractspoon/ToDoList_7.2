@@ -301,6 +301,7 @@ void CFileEdit::DrawFileIcon(CDC* pDC, const CString& sFilePath, const CRect& rI
 	if (!sFilePath.IsEmpty())
 	{
 		int nImage = -1;
+		int nImageSize = m_ilSys.GetImageSize();
 		
 		if (HasStyle(FES_FOLDERS))
 		{
@@ -316,7 +317,7 @@ void CFileEdit::DrawFileIcon(CDC* pDC, const CString& sFilePath, const CRect& rI
 			{
 				ClearImageIcon();
 
-				VERIFY(::DrawIconEx(pDC->GetSafeHdc(), rIcon.left, rIcon.top, hIcon, 16, 16, 0, NULL, DI_NORMAL));
+				VERIFY(::DrawIconEx(pDC->GetSafeHdc(), rIcon.left, rIcon.top, hIcon, nImageSize, nImageSize, 0, NULL, DI_NORMAL));
 				return;
 			}
 
@@ -333,7 +334,7 @@ void CFileEdit::DrawFileIcon(CDC* pDC, const CString& sFilePath, const CRect& rI
 
 				if (m_ilImageIcon.GetImageCount() == 0)
 				{
-					CIcon icon(CEnBitmap::LoadImageFileAsIcon(sFullPath, GetSysColor(COLOR_WINDOW), 16, 16));
+					CIcon icon(CEnBitmap::LoadImageFileAsIcon(sFullPath, GetSysColor(COLOR_WINDOW), nImageSize, nImageSize));
 
 					if (icon.IsValid())
 						m_ilImageIcon.Add(icon);

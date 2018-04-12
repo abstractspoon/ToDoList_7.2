@@ -79,7 +79,7 @@ void CTDLImportExportComboBox::DrawItemText(CDC& dc, const CRect& rect, int nIte
 	
 	if (hIcon)
 	{
-		::DrawIconEx(dc, ptDraw.x, ptDraw.y, hIcon, 16, 16, 0, NULL, DI_NORMAL);
+		::DrawIconEx(dc, ptDraw.x, ptDraw.y, hIcon, m_ilImages.GetImageSize(), m_ilImages.GetImageSize(), 0, NULL, DI_NORMAL);
 	}
 	else // fallback on file handler icon
 	{
@@ -102,7 +102,7 @@ void CTDLImportExportComboBox::DrawItemText(CDC& dc, const CRect& rect, int nIte
 
 	// draw text
 	CRect rText(rect);
-	rText.left += 20; // for icon always
+	rText.left += (m_ilImages.GetImageSize() + 4); // for icon always
 
 	COwnerdrawComboBoxBase::DrawItemText(dc, rText, nItem, nItemState, dwItemData, sItem, bList, crText);
 }

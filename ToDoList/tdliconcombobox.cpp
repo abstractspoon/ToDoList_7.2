@@ -42,7 +42,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 									DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText)
 {
 	CRect rImage(rect);
-	rImage.bottom = (rImage.top + 16);
+	rImage.bottom = (rImage.top + m_ilImages.GetImageSize());
 
 	GraphicsMisc::CentreRect(rImage, rect, FALSE, TRUE);
 

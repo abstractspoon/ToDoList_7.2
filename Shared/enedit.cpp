@@ -763,12 +763,16 @@ void CEnEdit::DrawButton(CDC* pDC, const CRect& rWindow, int nBtn, const CPoint&
 	// draw caption/image
 	if (eb.iImage != -1)
 	{
-		CPoint ptDraw(rBtn.CenterPoint() - CPoint(8, 8));
+		int nImageSize;
+		ImageList_GetIconSize(m_ilBtns, &nImageSize, &nImageSize);
+
+		CRect rDraw(0, 0, nImageSize, nImageSize);
+		GraphicsMisc::CentreRect(rDraw, rBtn, TRUE, TRUE);
 
 		if (bEnabled)
-			m_ilBtns.Draw(pDC, eb.iImage, ptDraw, ILD_TRANSPARENT);
+			m_ilBtns.Draw(pDC, eb.iImage, rDraw.TopLeft(), ILD_TRANSPARENT);
 		else
-			m_ilDisabledBtns.Draw(pDC, eb.iImage, ptDraw, ILD_TRANSPARENT);
+			m_ilDisabledBtns.Draw(pDC, eb.iImage, rDraw.TopLeft(), ILD_TRANSPARENT);
 	}
 	else if (!eb.sCaption.IsEmpty())
 	{

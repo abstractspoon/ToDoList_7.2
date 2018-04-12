@@ -11,6 +11,7 @@
 #include "..\shared\enbitmap.h"
 #include "..\shared\misc.h"
 #include "..\shared\icon.h"
+#include "..\shared\graphicsmisc.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -46,9 +47,12 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 	{
 		// add folder icon first always
 		// because we may need it for parent tasks
-		CIcon icon(CSysImageList().ExtractFolderIcon());
-		ASSERT (icon.IsValid());
-		VERIFY (Add(icon) == 0);
+		CIcon iconFolder(CSysImageList().ExtractFolderIcon());
+
+		CEnBitmap bmpFolder;
+		bmpFolder.CopyImage(iconFolder, crTransparent);
+
+		VERIFY(Add(&bmpFolder, crTransparent) == 0);
 
 		m_mapNameToIndex[_T("0")] = 0;
 		m_mapIndexToName[0] = _T("0");
@@ -90,18 +94,28 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 		// else try application location
 		if (!dwResult)
 			dwResult = LoadImagesFromFolder(sAppResPath, crTransparent, this);
+
+		GraphicsMisc::ScaleByDPIFactor(*this);
 	}
 
 	return (GetSafeHandle() != NULL);
 }
 
+int CTDCImageList::GetImageSize() const
+{
+	int nImageSize;
+	ImageList_GetIconSize(GetSafeHandle(), &nImageSize, &nImageSize);
+
+	return nImageSize;
+}
+
 int CTDCImageList::GetImageIndex(const CString& sImageName) const
 {
 	int nIndex = -1;
-
+	
 	if (!sImageName.IsEmpty())
 		m_mapNameToIndex.Lookup(sImageName, nIndex);
-
+	
 	return nIndex;
 }
 

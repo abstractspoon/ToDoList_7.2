@@ -423,7 +423,13 @@ void CDateTimeCtrlEx::OnPaint()
 			dc.FillSolidRect(&dtpi.rcCheck, GetSysColor(COLOR_WINDOW));
 		}
 
-		// Always draw the checkbox
+		// Always draw the checkbox because Windows gets
+		// the scaling wrong for high DPI
+		int nCheckboxSize = GraphicsMisc::ScaleByDPIFactor(16);
+
+		CRect rCheck(CPoint(dtpi.rcCheck.left, dtpi.rcCheck.top), CSize(nCheckboxSize, nCheckboxSize));
+		GraphicsMisc::CentreRect(rCheck, &dtpi.rcCheck, TRUE, TRUE);
+
 		UINT nState = DFCS_BUTTONCHECK;
 		
 		if (IsDateSet())
@@ -432,7 +438,7 @@ void CDateTimeCtrlEx::OnPaint()
 		if (!IsWindowEnabled())
 			nState |= DFCS_INACTIVE;
 		
-		CThemed::DrawFrameControl(this, &dc, &dtpi.rcCheck, DFC_BUTTON, nState);
+		CThemed::DrawFrameControl(this, &dc, rCheck, DFC_BUTTON, nState);
 
 		// Clip out our drawing
 		dc.ExcludeClipRect(&dtpi.rcCheck);

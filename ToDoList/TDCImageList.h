@@ -25,6 +25,7 @@ public:
 	BOOL LoadDefaultImages() { return LoadImages(_T("")); }
 	BOOL LoadImages(const CString& sTaskList, COLORREF crTransparent = TDCIL_MAGENTA, BOOL bWantDefaultIcons = TRUE);
 
+	int GetImageSize() const;
 	int GetImageIndex(const CString& sImageName) const;
 	CString GetImageName(int nIndex) const;
 

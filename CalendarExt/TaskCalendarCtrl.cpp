@@ -25,6 +25,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 
 const int PADDING = 3;
+const int DEF_TASK_HEIGHT = (GraphicsMisc::ScaleByDPIFactor(16) + 3); // Effective height is 1 less
+const int MIN_TASK_HEIGHT = (DEF_TASK_HEIGHT - 6);
 
 /////////////////////////////////////////////////////////////////////////////
 
