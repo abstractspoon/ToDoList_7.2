@@ -90,7 +90,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 				CPoint pt = rImage.TopLeft();
 
 				m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
-				rImage.left += nImageSize;
+				rImage.left += (nImageSize + 2);
 			}
 
 			// draw optional text
