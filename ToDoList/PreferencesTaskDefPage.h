@@ -67,7 +67,6 @@ protected:
 
 	CString	m_sDefCreatedBy;
 	double	m_dDefCost;
-	BOOL	m_bUpdateInheritAttributes;
 	BOOL	m_bReminderBeforeDue;
 	int		m_nDefPriority;
 	int		m_nDefRisk;
