@@ -17,6 +17,7 @@
 #include "..\shared\localizer.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\holdredraw.h"
+#include "..\shared\dlgunits.h"
 
 #include "..\3rdparty\T64Utils.h"
 #include "..\3rdparty\dibdata.h"
@@ -778,11 +779,9 @@ void CGanttChartWnd::Resize(int cx, int cy)
 {
 	if (m_tree.GetSafeHwnd())
 	{
-		CRect rDisplay;
-		m_cbDisplayOptions.GetWindowRect(rDisplay);
-		ScreenToClient(rDisplay);
+		CRect rGantt(0, 0, cx, cy);
+		rGantt.top = CDlgUnits(this).ToPixelsY(28);
 
-		CRect rGantt(0, rDisplay.bottom + 9, cx, cy);
 		m_ctrlGantt.Resize(rGantt);
 
 		// selected task dates takes available space

@@ -1785,19 +1785,20 @@ int GraphicsMisc::ScaleByDPIFactor(int nValue)
 
 BOOL GraphicsMisc::ScaleByDPIFactor(CImageList& il)
 {
-	int nOldSize = 0;
-	ImageList_GetIconSize(il, &nOldSize, &nOldSize);
+	int nOldCx = 0, nOldCy = 0;
+	ImageList_GetIconSize(il, &nOldCx, &nOldCy);
 
-	int nNewSize = ScaleByDPIFactor(nOldSize);
+	int nNewCx = ScaleByDPIFactor(nOldCx);
+	int nNewCy = ScaleByDPIFactor(nOldCy);
 	
-	if (nOldSize == nNewSize)
+	if (nOldCx == nNewCx)
 		return TRUE;
 	
 	int nCount = il.GetImageCount();
 	
 	CImageList ilTemp;
 	
-	if (!ilTemp.Create(nNewSize, nNewSize, ILC_COLOR24 | ILC_MASK, nCount, 1)) 
+	if (!ilTemp.Create(nNewCx, nNewCy, ILC_COLOR24 | ILC_MASK, nCount, 1)) 
 		return FALSE;
 	
 	for (int nImage = 0; nImage < nCount; nImage++)

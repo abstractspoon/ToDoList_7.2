@@ -854,23 +854,18 @@ void CToDoCtrl::Resize(int cx, int cy, BOOL bSplitting)
 void CToDoCtrl::ReposProjectName(CDeferWndMove* pDWM, CRect& rAvailable)
 {
 	// project name
-	CDlgUnits dlu(this);
-	CRect rLabel = GetCtrlRect(IDC_PROJECTLABEL); 
-	CRect rProject = GetCtrlRect(IDC_PROJECTNAME); 
+	CRect rProject = GetCtrlRect(IDC_PROJECTNAME), rLabel(rProject); 
 
-	int nOffset = rAvailable.left - rLabel.left;
+	rLabel.OffsetRect(-rLabel.left, 0);
+	rLabel.right = rProject.left;
 
-	rLabel.OffsetRect(nOffset, 0);
-	rProject.left += nOffset;
 	rProject.right = rAvailable.right;
 
 	pDWM->MoveWindow(GetDlgItem(IDC_PROJECTLABEL), rLabel);
 	pDWM->MoveWindow(GetDlgItem(IDC_PROJECTNAME), rProject);
 
 	if (m_nMaxState != TDCMS_MAXTASKLIST && HasStyle(TDCS_SHOWPROJECTNAME))
-	{
 		rAvailable.top = rProject.bottom + 5;
-	}
 	else
 		rAvailable.top = rProject.top;
 }

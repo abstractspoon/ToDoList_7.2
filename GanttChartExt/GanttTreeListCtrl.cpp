@@ -68,6 +68,7 @@ const int HD_COLPADDING			= 6;
 const int MAX_HEADER_WIDTH		= 32000; // (SHRT_MAX - tolerance)
 const int DRAG_BUFFER			= 50;
 const int DONE_BOX				= 6;
+const int IMAGE_SIZE			= GraphicsMisc::ScaleByDPIFactor(16);
 
 const LONG DEPENDPICKPOS_NONE = 0xFFFFFFFF;
 const double DAY_WEEK_MULTIPLIER = 1.5;
@@ -1738,8 +1739,8 @@ LRESULT CGanttTreeListCtrl::OnTreeCustomDraw(NMTVCUSTOMDRAW* pTVCD)
 						m_tree.GetItemRect(hti, rItem, TRUE);
 
 						CRect rIcon(rItem);
-						rIcon.left -= 18;
-						rIcon.bottom = (rIcon.top + 16);
+						rIcon.left -= (IMAGE_SIZE + 2);
+						rIcon.bottom = (rIcon.top + IMAGE_SIZE);
 						GraphicsMisc::CentreRect(rIcon, rItem, FALSE, TRUE);
 
 						ImageList_Draw(hilTask, iImageIndex, *pDC, rIcon.left, rIcon.top, ILD_TRANSPARENT);

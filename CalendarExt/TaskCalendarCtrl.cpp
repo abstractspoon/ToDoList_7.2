@@ -757,7 +757,11 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 				if (hilTask && (iImageIndex != -1))
 				{
 					ImageList_Draw(hilTask, iImageIndex, *pDC, (rTask.left + 1), (rTask.top + 1), ILD_TRANSPARENT);
-					rTask.left += 18;
+
+					int nImageSize;
+					ImageList_GetIconSize(hilTask, &nImageSize, &nImageSize);
+
+					rTask.left += (nImageSize + 2);
 				}
 			}
 		}

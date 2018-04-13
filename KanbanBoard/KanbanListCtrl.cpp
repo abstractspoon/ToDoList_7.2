@@ -67,6 +67,7 @@ const int CHECKBOX_PADDING		= 1;
 const int ICON_OFFSET			= 2;
 const int ATTRIB_INDENT			= 6;
 const int TIP_PADDING			= 4;
+const int IMAGE_SIZE			= GraphicsMisc::ScaleByDPIFactor(16);
 
 const CRect TEXT_BORDER			= CRect(4, 3, 3, 2);
 
@@ -849,6 +850,7 @@ int CKanbanListCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_header.ModifyStyle(HDS_FULLDRAG | HDS_DRAGDROP, 0, 0);
 
 	m_ilFlags.Create(IDB_FLAG, 16, 1, RGB(255, 0, 255));
+	GraphicsMisc::ScaleByDPIFactor(m_ilFlags);
 
 	RefreshColumnTitle();
 	OnDisplayAttributeChanged();
@@ -1252,7 +1254,7 @@ void CKanbanListCtrl::OnListCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 
 				// Attributes are not affected by the icon
 				if (bHasIcon)
-					rTitle.left = max(rAttributes.left, (rItem.left + 16 + ICON_OFFSET));
+					rTitle.left = max(rAttributes.left, (rItem.left + IMAGE_SIZE + ICON_OFFSET));
 				
 				// Text
 				DrawItemTitle(pDC, pKI, rTitle, crText);
@@ -1348,7 +1350,7 @@ BOOL CKanbanListCtrl::DrawItemIcons(CDC* pDC, const KANBANITEM* pKI, const CRect
 			ImageList_Draw(hilTask, iImageIndex, *pDC, rIcon.left, rIcon.top, ILD_TRANSPARENT);
 			bHasIcons = TRUE;
 
-			rIcon.top += (16 + ICON_OFFSET);
+			rIcon.top += (IMAGE_SIZE + ICON_OFFSET);
 		}
 	}
 
@@ -1372,7 +1374,7 @@ BOOL CKanbanListCtrl::DrawItemBar(CDC* pDC, const KANBANITEM* pKI, BOOL bHasIcon
 		rBar.right = (rBar.left + BAR_WIDTH);
 
 		if (bHasIcon)
-			rBar.top += (16 + ICON_OFFSET);
+			rBar.top += (IMAGE_SIZE + ICON_OFFSET);
 
 		if (!pKI->IsDone(TRUE))
 		{
