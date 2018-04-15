@@ -9,6 +9,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "..\Shared\enimagelist.h"
+
 #include <afxtempl.h>
 
 typedef CMap<CString, LPCTSTR, int, int> CMapStringToInt;
@@ -16,7 +18,7 @@ typedef CMap<int, int, CString, CString&> CMapIntToString;
 
 #define TDCIL_MAGENTA RGB(255, 0, 255)
 
-class CTDCImageList : public CImageList  
+class CTDCImageList : public CEnImageList  
 {
 public:
 	CTDCImageList();
@@ -25,7 +27,6 @@ public:
 	BOOL LoadDefaultImages() { return LoadImages(_T("")); }
 	BOOL LoadImages(const CString& sTaskList, COLORREF crTransparent = TDCIL_MAGENTA, BOOL bWantDefaultIcons = TRUE);
 
-	int GetImageSize() const;
 	int GetImageIndex(const CString& sImageName) const;
 	CString GetImageName(int nIndex) const;
 

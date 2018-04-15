@@ -14,6 +14,8 @@
 #include "..\shared\enstring.h"
 #include "..\shared\holdredraw.h"
 #include "..\shared\themed.h"
+#include "..\shared\icon.h"
+#include "..\shared\GraphicsMisc.h"
 
 #include "..\Interfaces\IPreferences.h"
 #include "..\Interfaces\ITaskList.h"
@@ -156,17 +158,18 @@ BOOL CTDLImportOutlookDlg::BuildItemImageList()
 
 	for (int nIcon = 0; nIcon < NUM_ICONS; nIcon++)
 	{
-		HICON hIcon = AfxGetApp()->LoadIcon(ICONS[nIcon][1]);
+		CIcon icon;
+		icon.LoadIcon(ICONS[nIcon][1]);
 
-		if (!hIcon)
+		if (!icon.IsValid())
 			return FALSE;
 
-		m_mapItemTypes[ICONS[nIcon][0]] = m_ilItemTypes.Add(hIcon);
-		::DestroyIcon(hIcon);
+		m_mapItemTypes[ICONS[nIcon][0]] = m_ilItemTypes.Add(icon);
 	}
 
 	ASSERT(m_ilItemTypes.GetImageCount() == NUM_ICONS);
 
+//	m_ilItemTypes.ScaleByDPIFactor();
 	m_tcTasks.SetImageList(&m_ilItemTypes, TVSIL_NORMAL);
 
 	return TRUE;

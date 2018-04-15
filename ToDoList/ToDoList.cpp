@@ -177,18 +177,12 @@ BOOL CToDoListApp::InitInstance()
 
 	// Set up file edit icons because these will be needed by
 	// welcome wizard and main app
-	HICON hBrowse = AfxGetApp()->LoadIcon(IDI_FILEEDIT_BROWSE);
-	HICON hGo = AfxGetApp()->LoadIcon(IDI_FILEEDIT_GO);
+	CIcon iconBrowse, iconGo;
+	iconBrowse.LoadIcon(IDI_FILEEDIT_BROWSE);
+	iconGo.LoadIcon(IDI_FILEEDIT_GO);
 	
-	if (hBrowse && hGo)
-	{
-		CFileEdit::SetDefaultButtonImages(hBrowse, hGo);
-	}
-	else
-	{
-		::DestroyIcon(hBrowse);
-		::DestroyIcon(hGo);
-	}
+	if (iconBrowse.IsValid() && iconGo.IsValid())
+		CFileEdit::SetDefaultButtonImages(iconBrowse.Detach(), iconGo.Detach());
 	
 	// init prefs 
 	if (!InitPreferences(cmdInfo))

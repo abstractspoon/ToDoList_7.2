@@ -95,18 +95,10 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 		if (!dwResult)
 			dwResult = LoadImagesFromFolder(sAppResPath, crTransparent, this);
 
-		GraphicsMisc::ScaleByDPIFactor(*this);
+		ScaleByDPIFactor();
 	}
 
 	return (GetSafeHandle() != NULL);
-}
-
-int CTDCImageList::GetImageSize() const
-{
-	int nImageSize;
-	ImageList_GetIconSize(GetSafeHandle(), &nImageSize, &nImageSize);
-
-	return nImageSize;
 }
 
 int CTDCImageList::GetImageIndex(const CString& sImageName) const

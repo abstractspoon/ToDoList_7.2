@@ -151,9 +151,8 @@ BOOL CEnToolBar::SetImage(CEnBitmapEx* pBitmap, COLORREF crMask)
 	if (m_ilNormal.Create(sizeBmp.cx, sizeBmp.cy, ILC_COLOR24 | ILC_MASK, 0, 1)) 
 	{
 		m_ilNormal.Add(pBitmap, crMask);
+		m_ilNormal.ScaleByDPIFactor();
 
-		GraphicsMisc::ScaleByDPIFactor(m_ilNormal);
-				
 		CImageList* pILPrev = GetToolBarCtrl().SetImageList(&m_ilNormal);
 
 		if (pILPrev)
@@ -237,8 +236,7 @@ void CEnToolBar::RefreshDisabledImageList(CEnBitmapEx* pBitmap, COLORREF crMask)
 		m_ilDisabled.DeleteImageList();
 		m_ilDisabled.Create(m_sizeImage.cx, m_sizeImage.cy, ILC_COLOR24 | ILC_MASK, 0, 1);
 		m_ilDisabled.Add(pBitmap, crMask);
-
-		GraphicsMisc::ScaleByDPIFactor(m_ilDisabled);
+		m_ilDisabled.ScaleByDPIFactor();
 		
 		CImageList* pILPrev = GetToolBarCtrl().SetDisabledImageList(&m_ilDisabled);
 		

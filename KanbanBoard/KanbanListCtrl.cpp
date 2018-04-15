@@ -19,6 +19,7 @@
 #include "..\shared\holdredraw.h"
 #include "..\shared\winclasses.h"
 #include "..\shared\wclassdefines.h"
+#include "..\Shared\enimagelist.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -850,7 +851,7 @@ int CKanbanListCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_header.ModifyStyle(HDS_FULLDRAG | HDS_DRAGDROP, 0, 0);
 
 	m_ilFlags.Create(IDB_FLAG, 16, 1, RGB(255, 0, 255));
-	GraphicsMisc::ScaleByDPIFactor(m_ilFlags);
+	CEnImageList::ScaleByDPIFactor(m_ilFlags);
 
 	RefreshColumnTitle();
 	OnDisplayAttributeChanged();
@@ -1454,10 +1455,7 @@ BOOL CKanbanListCtrl::GetItemCheckboxRect(CRect& rItem) const
 	{
 		rItem.bottom = (rItem.top + CalcRequiredItemHeight(1));
 
-		int cx, cy;
-		ImageList_GetIconSize(m_ilCheckboxes, &cx, &cy);
-		
-		rItem.DeflateRect(0, ((rItem.Height() - cy) / 2));
+		rItem.DeflateRect(0, ((rItem.Height() - CEnImageList::GetImageSize(m_ilCheckboxes)) / 2));
 		rItem.right = (rItem.left + rItem.Height());
 
 		return TRUE;

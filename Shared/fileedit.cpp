@@ -330,7 +330,7 @@ void CFileEdit::DrawFileIcon(CDC* pDC, const CString& sFilePath, const CRect& rI
 			if (HasStyle(FES_DISPLAYSIMAGES) && CEnBitmap::IsSupportedImageFile(sFullPath))
 			{
 				if (m_ilImageIcon.GetSafeHandle() == NULL)
-					VERIFY(m_ilImageIcon.Create(16, 16, (ILC_COLOR32 | ILC_MASK), 1, 1));
+					VERIFY(m_ilImageIcon.Create(nImageSize, nImageSize, (ILC_COLOR32 | ILC_MASK), 1, 1));
 
 				if (m_ilImageIcon.GetImageCount() == 0)
 				{

@@ -939,7 +939,7 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS) || (m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1))
 		return FALSE;
 	
-	GraphicsMisc::ScaleByDPIFactor(m_ilColSymbols);
+	m_ilColSymbols.ScaleByDPIFactor();
 
 	// primary header
 	const TDCCOLUMN* pClient = GetColumn(TDCC_CLIENT);
@@ -2799,8 +2799,7 @@ void CTDLTaskCtrlBase::DrawColumnImage(CDC* pDC, TDC_COLUMN nColID, const CRect&
 	
 		if (iImage != TDCC_NONE)
 		{
-			int nImageSize = 0;
-			ImageList_GetIconSize(m_ilColSymbols, &nImageSize, &nImageSize);
+			int nImageSize = m_ilColSymbols.GetImageSize();
 
 			CPoint ptDraw(CalcColumnIconTopLeft(rect, iImage, 1, nImageSize));
 			m_ilColSymbols.Draw(pDC, iImage, ptDraw, ILD_TRANSPARENT);
@@ -2810,9 +2809,7 @@ void CTDLTaskCtrlBase::DrawColumnImage(CDC* pDC, TDC_COLUMN nColID, const CRect&
 
 void CTDLTaskCtrlBase::DrawColumnCheckBox(CDC* pDC, const CRect& rSubItem, TTCB_CHECK nCheck)
 {
-	int nImageSize = 0;
-	ImageList_GetIconSize(m_ilCheckboxes, &nImageSize, &nImageSize);
-
+	int nImageSize = m_ilCheckboxes.GetImageSize();
 	CPoint pt(CalcColumnIconTopLeft(rSubItem, 0, 1, nImageSize));
 				
 	// if the line height is odd, move one pixel down

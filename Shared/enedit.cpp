@@ -8,6 +8,7 @@
 #include "graphicsmisc.h"
 #include "enbitmapex.h"
 #include "AcceleratorString.h"
+#include "icon.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -167,6 +168,8 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 		}
 	}
 
+	ASSERT(m_ilBtns.GetImageCount() == m_ilDisabledBtns.GetImageCount());
+
 	nPos = max(nPos, 0);
 	nPos = min(nPos, GetButtonCount());
 	
@@ -176,14 +179,19 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 	eb.sTip = szTip;
 	eb.iImage = m_ilBtns.Add(hIcon);
 
+#ifdef _DEBUG
+	int nCount = m_ilBtns.GetImageCount();
+#endif
+
 	if (nWidth != DEF_BTNWIDTH)
 		eb.nWidth = GraphicsMisc::ScaleByDPIFactor(nWidth);
 	else
 		eb.nWidth = (nImageSize + 4); // 2 px padding
 
-	HICON hDisabled = CEnBitmapEx::CreateDisabledIcon(hIcon);
-	VERIFY(m_ilDisabledBtns.Add(hDisabled) == eb.iImage);
-	::DestroyIcon(hDisabled);
+	CIcon iconDisabled(CEnBitmapEx::CreateDisabledIcon(hIcon));
+	VERIFY(m_ilDisabledBtns.Add(iconDisabled) == eb.iImage);
+	
+	ASSERT(m_ilBtns.GetImageCount() == m_ilDisabledBtns.GetImageCount());
 
 	m_aButtons.InsertAt(nPos, eb);
 	
@@ -763,8 +771,7 @@ void CEnEdit::DrawButton(CDC* pDC, const CRect& rWindow, int nBtn, const CPoint&
 	// draw caption/image
 	if (eb.iImage != -1)
 	{
-		int nImageSize;
-		ImageList_GetIconSize(m_ilBtns, &nImageSize, &nImageSize);
+		int nImageSize = m_ilBtns.GetImageSize();
 
 		CRect rDraw(0, 0, nImageSize, nImageSize);
 		GraphicsMisc::CentreRect(rDraw, rBtn, TRUE, TRUE);

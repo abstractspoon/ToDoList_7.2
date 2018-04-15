@@ -8,6 +8,7 @@
 #include "filemisc.h"
 #include "webmisc.h"
 #include "misc.h"
+#include "enimagelist.h"
 
 #include <shlwapi.h>
 
@@ -58,10 +59,8 @@ BOOL CSysImageList::Initialize()
 	{
 		m_hImageList = hIL;
 		
-		// intialize the stock icons
 		m_nFolderImage = sfi.iIcon;
-
-		ImageList_GetIconSize(m_hImageList, &m_nImageSize, &m_nImageSize);
+		m_nImageSize = CEnImageList::GetImageSize(m_hImageList);
 		
 		// intialize html and remote folder images on demand
 	}

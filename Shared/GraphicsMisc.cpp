@@ -1739,41 +1739,35 @@ BOOL GraphicsMisc::WantDPIScaling()
 
 BOOL GraphicsMisc::ScaleByDPIFactor(LPRECT pRect)
 {
-	int nDPI = GetSystemDPI();
-
-	if (nDPI == DEFAULT_DPI)
+	if (!WantDPIScaling())
 		return FALSE;
 
-	pRect->left = ::MulDiv(pRect->left, nDPI, DEFAULT_DPI);
-	pRect->top = ::MulDiv(pRect->top, nDPI, DEFAULT_DPI);
-	pRect->right = ::MulDiv(pRect->right, nDPI, DEFAULT_DPI);
-	pRect->bottom = ::MulDiv(pRect->bottom, nDPI, DEFAULT_DPI);
+	pRect->left		= ScaleByDPIFactor(pRect->left);
+	pRect->top		= ScaleByDPIFactor(pRect->top);
+	pRect->right	= ScaleByDPIFactor(pRect->right);
+	pRect->bottom	= ScaleByDPIFactor(pRect->bottom);
 
 	return TRUE;
 }
 
 BOOL GraphicsMisc::ScaleByDPIFactor(LPSIZE pSize)
 {
-	int nDPI = GetSystemDPI();
-	
-	if (nDPI == DEFAULT_DPI)
+	if (!WantDPIScaling())
 		return FALSE;
 	
-	pSize->cx = ::MulDiv(pSize->cx, nDPI, DEFAULT_DPI);
-	pSize->cy = ::MulDiv(pSize->cy, nDPI, DEFAULT_DPI);
+	pSize->cx = ScaleByDPIFactor(pSize->cx);
+	pSize->cy = ScaleByDPIFactor(pSize->cy);
 	
 	return TRUE;
 }
 
 BOOL GraphicsMisc::ScaleByDPIFactor(LPPOINT pPoint)
 {
-	int nDPI = GetSystemDPI();
-	
-	if (nDPI == DEFAULT_DPI)
+	if (!WantDPIScaling())
 		return FALSE;
 	
-	pPoint->x = ::MulDiv(pPoint->x, nDPI, DEFAULT_DPI);
-	pPoint->y = ::MulDiv(pPoint->y, nDPI, DEFAULT_DPI);
+	pPoint->x = ScaleByDPIFactor(pPoint->x);
+	pPoint->y = ScaleByDPIFactor(pPoint->y);
 	
 	return TRUE;
 }
@@ -1783,32 +1777,3 @@ int GraphicsMisc::ScaleByDPIFactor(int nValue)
 	return ::MulDiv(nValue, GetSystemDPI(), DEFAULT_DPI);
 }
 
-BOOL GraphicsMisc::ScaleByDPIFactor(CImageList& il)
-{
-	int nOldCx = 0, nOldCy = 0;
-	ImageList_GetIconSize(il, &nOldCx, &nOldCy);
-
-	int nNewCx = ScaleByDPIFactor(nOldCx);
-	int nNewCy = ScaleByDPIFactor(nOldCy);
-	
-	if (nOldCx == nNewCx)
-		return TRUE;
-	
-	int nCount = il.GetImageCount();
-	
-	CImageList ilTemp;
-	
-	if (!ilTemp.Create(nNewCx, nNewCy, ILC_COLOR24 | ILC_MASK, nCount, 1)) 
-		return FALSE;
-	
-	for (int nImage = 0; nImage < nCount; nImage++)
-	{
-		CIcon icon = il.ExtractIcon(nImage);
-		ilTemp.Add(icon);
-	}
-	
-	il.DeleteImageList();
-	il.Attach(ilTemp.Detach());
-	
-	return TRUE;
-}

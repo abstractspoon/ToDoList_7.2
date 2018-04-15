@@ -27,6 +27,7 @@
 #include "..\shared\fontcache.h"
 #include "..\shared\graphicsmisc.h"
 #include "..\shared\tooltipctrlex.h"
+#include "..\Shared\enimagelist.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -288,7 +289,7 @@ protected:
 	CSysImageList m_ilFileRef;
 	CBrush m_brDue, m_brDueToday;
 	CFontCache m_fonts;
-	CImageList m_ilCheckboxes, m_ilColSymbols;
+	CEnImageList m_ilCheckboxes, m_ilColSymbols;
 	CIconCache m_imageIcons;
 
 	static CMap<TDC_COLUMN, TDC_COLUMN, const TDCCOLUMN*, const TDCCOLUMN*&> s_mapColumns;

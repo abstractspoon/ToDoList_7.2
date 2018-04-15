@@ -13,6 +13,7 @@
 #include "..\Shared\dialoghelper.h"
 #include "..\Shared\holdredraw.h"
 #include "..\Shared\autoflag.h"
+#include "..\Shared\enimagelist.h"
 
 #include <math.h>
 
@@ -758,10 +759,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 				{
 					ImageList_Draw(hilTask, iImageIndex, *pDC, (rTask.left + 1), (rTask.top + 1), ILD_TRANSPARENT);
 
-					int nImageSize;
-					ImageList_GetIconSize(hilTask, &nImageSize, &nImageSize);
-
-					rTask.left += (nImageSize + 2);
+					rTask.left += (CEnImageList::GetImageSize(hilTask) + 2);
 				}
 			}
 		}
