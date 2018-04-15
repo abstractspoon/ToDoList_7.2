@@ -23,7 +23,6 @@ public:
 	int Add(CBitmap* pbmImage, COLORREF crMask) { return CImageList::Add(pbmImage, crMask); }
 	int Add(HICON hIcon, COLORREF crBkgnd = RGB(223, 223, 223));
 
-	BOOL Add(COLORREF crBkgnd = RGB(223, 223, 223));
 	BOOL ScaleByDPIFactor(COLORREF crBkgnd = RGB(223, 223, 223));
 
 	static int GetImageSize(HIMAGELIST hil);
