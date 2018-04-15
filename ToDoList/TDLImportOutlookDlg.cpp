@@ -153,7 +153,7 @@ BOOL CTDLImportOutlookDlg::BuildItemImageList()
 	if (m_ilItemTypes.GetSafeHandle())
 		return TRUE;
 
-	if (!m_ilItemTypes.Create(16, 16, ILC_COLOR24 | ILC_MASK, NUM_ICONS, 1))
+	if (!m_ilItemTypes.Create(16, 16, ILC_COLOR32 | ILC_MASK, 0, 1))
 		return FALSE;
 
 	for (int nIcon = 0; nIcon < NUM_ICONS; nIcon++)
@@ -169,7 +169,7 @@ BOOL CTDLImportOutlookDlg::BuildItemImageList()
 
 	ASSERT(m_ilItemTypes.GetImageCount() == NUM_ICONS);
 
-//	m_ilItemTypes.ScaleByDPIFactor();
+	m_ilItemTypes.ScaleByDPIFactor();
 	m_tcTasks.SetImageList(&m_ilItemTypes, TVSIL_NORMAL);
 
 	return TRUE;

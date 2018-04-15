@@ -73,7 +73,7 @@ EXSTYLE WS_EX_APPWINDOW
 FONT 8, "Tahoma"
 BEGIN
     CTEXT           "01/01/2001 10:12 AM - 01/01/2001 11:12 PM",
-                    IDC_SELECTEDTASKDATES,365,13,222,12,SS_CENTERIMAGE | 
+                    IDC_SELECTEDTASKDATES,340,13,247,12,SS_CENTERIMAGE | 
                     SS_SUNKEN
     LTEXT           "Dis&play",IDC_DISPLAY_LABEL,0,2,151,8
     COMBOBOX        IDC_DISPLAY,0,13,152,118,CBS_DROPDOWNLIST | 
@@ -90,10 +90,10 @@ BEGIN
     COMBOBOX        IDC_SNAPMODES,159,13,79,161,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Snap Mode",IDC_SNAPMODES_LABEL,159,2,79,8
-    LTEXT           "Selected Task Date Range",IDC_SELECTEDTASKDATES_LABEL,
-                    366,3,210,8
+    LTEXT           "Selected Task &Date Range",IDC_SELECTEDTASKDATES_LABEL,
+                    340,3,247,8
     CONTROL         "",IDC_TB_PLACEHOLDER,"Static",SS_BLACKFRAME | NOT 
-                    WS_VISIBLE,247,12,109,17
+                    WS_VISIBLE,243,12,92,17
 END
 
 

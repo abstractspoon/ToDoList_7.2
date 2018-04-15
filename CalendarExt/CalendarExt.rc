@@ -138,7 +138,7 @@ BEGIN
     COMBOBOX        IDC_SNAPMODES,87,13,79,161,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Snap Mode",IDC_STATIC,87,2,79,8
-    LTEXT           "Selected Task Date Range",IDC_STATIC,244,2,210,8
+    LTEXT           "Selected Task &Date Range",IDC_STATIC,244,2,210,8
     CONTROL         "",IDC_TB_PLACEHOLDER,"Static",SS_BLACKFRAME | NOT 
                     WS_VISIBLE,172,12,62,17
 END

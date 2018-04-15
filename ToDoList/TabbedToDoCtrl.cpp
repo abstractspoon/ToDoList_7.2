@@ -56,6 +56,10 @@ const UINT DEFTEXTFLAGS   = (DT_END_ELLIPSIS | DT_VCENTER | DT_SINGLELINE | DT_N
 
 //////////////////////////////////////////////////////////////////////
 
+UINT CTabbedToDoCtrl::WM_TDC_RESTORELASTTASKVIEW = (WM_TDC_RECREATERECURRINGTASK + 1);
+
+//////////////////////////////////////////////////////////////////////
+
 CStringArray CTabbedToDoCtrl::s_aDefTaskViews;
 
 //////////////////////////////////////////////////////////////////////
@@ -118,6 +122,7 @@ BEGIN_MESSAGE_MAP(CTabbedToDoCtrl, CToDoCtrl)
 	ON_REGISTERED_MESSAGE(WM_TDCM_GETTASKREMINDER, OnTDCGetTaskReminder)
 
 	ON_MESSAGE(WM_TDC_RECREATERECURRINGTASK, OnRecreateRecurringTask)
+	ON_MESSAGE(WM_TDC_RESTORELASTTASKVIEW, OnRestoreLastTaskView)
 
 	ON_WM_DRAWITEM()
 	ON_WM_ERASEBKGND()
@@ -387,8 +392,13 @@ void CTabbedToDoCtrl::LoadPrefs()
 	FTC_VIEW nCurView = GetTaskView();
 	FTC_VIEW nView = (FTC_VIEW)prefs.GetProfileInt(sKey, _T("View"), FTCV_UNSET);
 
-	if ((nView != FTCV_UNSET) && (nView != nCurView))
-		SetTaskView(nView);
+	// Under high DPI displays (For reasons I don't understand) the plugin views 
+	// which a dialog have the vertical positions of their controls messed up
+	// unless we post the message.
+	if (GraphicsMisc::WantDPIScaling())
+		PostMessage(WM_TDC_RESTORELASTTASKVIEW, nCurView, nView);
+	else
+		SendMessage(WM_TDC_RESTORELASTTASKVIEW, nCurView, nView);
 
 	// clear the view so we don't keep restoring it
 	prefs.WriteProfileInt(sKey, _T("View"), FTCV_UNSET);
@@ -547,7 +557,7 @@ IUIExtensionWindow* CTabbedToDoCtrl::GetCreateExtensionWnd(FTC_VIEW nView)
 
 	try
 	{
-		pExtWnd = pVData->pExtension->CreateExtWindow(nCtrlID, WS_CHILD, 0, 0, 0, 0, GetSafeHwnd());
+		pExtWnd = pVData->pExtension->CreateExtWindow(nCtrlID, WS_CHILD, 0, 0, 0, 200, GetSafeHwnd());
 	}
 	catch (...)
 	{
@@ -6018,6 +6028,14 @@ void CTabbedToDoCtrl::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 
 	CToDoCtrl::OnContextMenu(pWnd, point);
+}
+
+LRESULT CTabbedToDoCtrl::OnRestoreLastTaskView(WPARAM nCurView, LPARAM nNewView)
+{
+	if (((FTC_VIEW)nNewView != FTCV_UNSET) && ((FTC_VIEW)nNewView != (FTC_VIEW)nCurView))
+		SetTaskView((FTC_VIEW)nNewView);
+	
+	return 0L;
 }
 
 LRESULT CTabbedToDoCtrl::OnRecreateRecurringTask(WPARAM wParam, LPARAM lParam)
