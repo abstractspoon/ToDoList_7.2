@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by ToDoList.rc
 //
 #define IDR_MANIFEST                    1
@@ -152,7 +152,6 @@
 #define IDB_TIMETRACK_TOOLBAR_STD       300
 #define IDB_UDTPREFS_TOOLBAR_STD        301
 #define IDI_SIMPLETEXT                  302
-#define IDI_RESET                       303
 #define IDI_TIMETRACK_STD               304
 #define IDI_STYLE_IMAGE                 305
 #define IDD_GOTOTASK_DIALOG             306

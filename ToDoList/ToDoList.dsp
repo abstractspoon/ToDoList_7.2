@@ -1243,10 +1243,6 @@ SOURCE=.\res\app_toolbar_std.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\appointment.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\clock.ico
 # End Source File
 # Begin Source File
@@ -1328,10 +1324,6 @@ SOURCE=.\res\plus.ico
 # Begin Source File
 
 SOURCE=.\res\prefs_dlg_std.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\reset.ico
 # End Source File
 # Begin Source File
 
