@@ -45,17 +45,14 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 
 	if (Create(16, 16, ILC_COLOR32 | ILC_MASK, 0, 200))
 	{
-		// add folder icon first always
-		// because we may need it for parent tasks
-		CIcon iconFolder(CSysImageList().ExtractFolderIcon());
-
-		CEnBitmap bmpFolder;
-		bmpFolder.CopyImage(iconFolder, crTransparent);
-
-		VERIFY(Add(&bmpFolder, crTransparent) == 0);
-
-		m_mapNameToIndex[_T("0")] = 0;
-		m_mapIndexToName[0] = _T("0");
+		// Add a dummy placeholder for the 'folder' icon which we
+		// will replace once we have rescaled the imagelist
+		{
+			CIcon iconFolder;
+			iconFolder.LoadIcon(IDI_NULL);
+			
+			Add(iconFolder);
+		}
 
 		// because the icon set must come first for backwards compatibility
 		// we must first see if any other images exist before we add them.
@@ -96,6 +93,17 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 			dwResult = LoadImagesFromFolder(sAppResPath, crTransparent, this);
 
 		ScaleByDPIFactor();
+
+		// Replace the first image with the actual folder icon
+		CIcon iconFolder(CSysImageList().ExtractFolderIcon());
+		
+// 		CEnBitmap bmpFolder;
+// 		bmpFolder.CopyImage(iconFolder, crTransparent);
+		
+		VERIFY(Replace(0, iconFolder) == 0);
+		
+		m_mapNameToIndex[_T("0")] = 0;
+		m_mapIndexToName[0] = _T("0");
 	}
 
 	return (GetSafeHandle() != NULL);
