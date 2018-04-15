@@ -158,6 +158,7 @@
 #define IDD_GOTOTASK_DIALOG             306
 #define IDD_CLEANUPINIPREFERENCES_DIALOG 307
 #define IDI_ADD_LOGGED_TIME             308
+#define IDB_OUTLOOKTYPES                309
 #define IDC_TB_FRAME                    1001
 #define IDC_DAYS                        1003
 #define IDC_WEEKS                       1004
@@ -2128,7 +2129,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        309
+#define _APS_NEXT_RESOURCE_VALUE        310
 #define _APS_NEXT_COMMAND_VALUE         34599
 #define _APS_NEXT_CONTROL_VALUE         1512
 #define _APS_NEXT_SYMED_VALUE           108

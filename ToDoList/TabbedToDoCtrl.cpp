@@ -393,8 +393,8 @@ void CTabbedToDoCtrl::LoadPrefs()
 	FTC_VIEW nView = (FTC_VIEW)prefs.GetProfileInt(sKey, _T("View"), FTCV_UNSET);
 
 	// Under high DPI displays (For reasons I don't understand) the plugin views 
-	// which a dialog have the vertical positions of their controls messed up
-	// unless we post the message.
+	// which derive from CDialog have the vertical positions of their controls 
+	// messed up unless we delay their creation
 	if (GraphicsMisc::WantDPIScaling())
 		PostMessage(WM_TDC_RESTORELASTTASKVIEW, nCurView, nView);
 	else

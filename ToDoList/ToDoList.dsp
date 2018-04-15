@@ -1255,10 +1255,6 @@ SOURCE=.\res\column_header.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\contact.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\custattrib_toolbar.bmp
 # End Source File
 # Begin Source File
@@ -1307,31 +1303,11 @@ SOURCE=.\res\find_toolbar_std.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\flaggedmail.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\folder.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\help_button.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\journal.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\list_view_std.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\mail.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\note.ico
 # End Source File
 # Begin Source File
 
@@ -1340,6 +1316,10 @@ SOURCE=.\res\null.ico
 # Begin Source File
 
 SOURCE=.\res\outlook_16.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\outlooktypes.bmp
 # End Source File
 # Begin Source File
 
@@ -1388,10 +1368,6 @@ SOURCE=.\res\style_table.ico
 # Begin Source File
 
 SOURCE=.\res\style_wrap.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\task.ico
 # End Source File
 # Begin Source File
 
