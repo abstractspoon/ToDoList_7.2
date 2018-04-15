@@ -1352,6 +1352,9 @@ BOOL CKanbanListCtrl::DrawItemIcons(CDC* pDC, const KANBANITEM* pKI, const CRect
 			bHasIcons = TRUE;
 
 			rIcon.top += (IMAGE_SIZE + ICON_OFFSET);
+
+			if (m_bShowTaskColorAsBar && !pKI->IsDone(TRUE))
+				rIcon.left += BAR_WIDTH;
 		}
 	}
 
