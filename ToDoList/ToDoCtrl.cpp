@@ -101,7 +101,7 @@ const COLORREF WHITE = RGB(240, 240, 240);
 /////////////////////////////////////////////////////////////////////////////
 
 const UINT  DAYINSECS		= 24 * 60 * 60;
-const int   COMBODROPHEIGHT	= 200;
+const int   COMBODROPHEIGHT	= GraphicsMisc::ScaleByDPIFactor(200);
 const int	DECIMALS = 4;
 
 /////////////////////////////////////////////////////////////////////////////

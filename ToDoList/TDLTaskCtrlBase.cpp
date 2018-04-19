@@ -43,14 +43,14 @@ static char THIS_FILE[]=__FILE__;
 
 //////////////////////////////////////////////////////////////////////
 
-const int LV_COLPADDING			= 3;
-const int HD_COLPADDING			= 6;
+const int LV_COLPADDING			= GraphicsMisc::ScaleByDPIFactor(3);
+const int HD_COLPADDING			= GraphicsMisc::ScaleByDPIFactor(6);
 const int ICON_SIZE				= GraphicsMisc::ScaleByDPIFactor(16); 
 const int MIN_RESIZE_WIDTH		= (ICON_SIZE + 3); 
 const int COL_ICON_SIZE			= ICON_SIZE; 
-const int COL_ICON_SPACING		= 2; 
-const int MIN_COL_WIDTH			= 6;
-const int MIN_TASKS_WIDTH		= 200;
+const int COL_ICON_SPACING		= GraphicsMisc::ScaleByDPIFactor(2); 
+const int MIN_COL_WIDTH			= GraphicsMisc::ScaleByDPIFactor(6);
+const int MIN_TASKS_WIDTH		= GraphicsMisc::ScaleByDPIFactor(200);
 
 const COLORREF COMMENTSCOLOR	= RGB(98, 98, 98);
 const COLORREF ALTCOMMENTSCOLOR = RGB(164, 164, 164);

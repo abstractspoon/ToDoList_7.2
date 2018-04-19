@@ -54,20 +54,20 @@ const int MAX_YEAR = 2100;
 const int MAX_YEAR = 2200;
 #endif
 
-const int MIN_COL_WIDTH			= 6;
-const int MIN_LABEL_EDIT_WIDTH	= 200;
-const int DEF_MONTH_WIDTH		= 72;
-const int TREE_TITLE_MIN_WIDTH	= 75; 
-const int COLUMN_PADDING		= 15;
-const int MIN_MONTH_WIDTH		= 2;
+const int MIN_COL_WIDTH			= GraphicsMisc::ScaleByDPIFactor(6);
+const int MIN_LABEL_EDIT_WIDTH	= GraphicsMisc::ScaleByDPIFactor(200);
+const int DEF_MONTH_WIDTH		= GraphicsMisc::ScaleByDPIFactor(72);
+const int TREE_TITLE_MIN_WIDTH	= GraphicsMisc::ScaleByDPIFactor(75); 
+const int COLUMN_PADDING		= GraphicsMisc::ScaleByDPIFactor(15);
+const int MIN_MONTH_WIDTH		= GraphicsMisc::ScaleByDPIFactor(2);
 const int MINS_IN_HOUR			= 60;
 const int MINS_IN_DAY			= (MINS_IN_HOUR * 24);
-const int LV_COLPADDING			= 3;
-const int TV_TIPPADDING			= 3;
-const int HD_COLPADDING			= 6;
+const int LV_COLPADDING			= GraphicsMisc::ScaleByDPIFactor(3);
+const int TV_TIPPADDING			= GraphicsMisc::ScaleByDPIFactor(3);
+const int HD_COLPADDING			= GraphicsMisc::ScaleByDPIFactor(6);
 const int MAX_HEADER_WIDTH		= 32000; // (SHRT_MAX - tolerance)
-const int DRAG_BUFFER			= 50;
-const int DONE_BOX				= 6;
+const int DRAG_BUFFER			= GraphicsMisc::ScaleByDPIFactor(50);
+const int DONE_BOX				= GraphicsMisc::ScaleByDPIFactor(6);
 const int IMAGE_SIZE			= GraphicsMisc::ScaleByDPIFactor(16);
 
 const LONG DEPENDPICKPOS_NONE = 0xFFFFFFFF;
@@ -4579,10 +4579,10 @@ void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth,
 	GetGanttBarColors(gi, crBorder, crFill);
 	
 	// adjust bar height
-	rBar.DeflateRect(0, 2, 0, 3);
+	rBar.DeflateRect(0, GraphicsMisc::ScaleByDPIFactor(2), 0, GraphicsMisc::ScaleByDPIFactor(3));
 
-	if ((gi.bParent && HasOption(GTLCF_CALCPARENTDATES))/* || bRollup*/)
-		rBar.DeflateRect(0, 0, 0, 5);
+	if (gi.bParent && HasOption(GTLCF_CALCPARENTDATES))
+		rBar.DeflateRect(0, 0, 0, GraphicsMisc::ScaleByDPIFactor(5));
 	
 	// Determine what borders to draw
 	DWORD dwBorders = (GMDR_TOP | GMDR_BOTTOM);

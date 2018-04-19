@@ -94,8 +94,8 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const int BEVEL = 3; // pixels
-const int BORDER = 3; // pixels
+const int BEVEL = GraphicsMisc::ScaleByDPIFactor(3);
+const int BORDER = GraphicsMisc::ScaleByDPIFactor(3);
 const int MAX_NUM_TOOLS = 50;
 
 #ifdef _DEBUG

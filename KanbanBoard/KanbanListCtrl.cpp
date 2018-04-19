@@ -59,15 +59,15 @@ enum // checkbox images
 
 /////////////////////////////////////////////////////////////////////////////
 
-const int MIN_LABEL_EDIT_WIDTH	= 200;
-const int BAR_WIDTH				= 6;
+const int MIN_LABEL_EDIT_WIDTH	= GraphicsMisc::ScaleByDPIFactor(200);
+const int BAR_WIDTH				= GraphicsMisc::ScaleByDPIFactor(6);
 const int NUM_TEXTLINES			= 2;
-const int TITLE_VPADDING		= 8;
-const int LV_PADDING			= 3;
-const int CHECKBOX_PADDING		= 1;
-const int ICON_OFFSET			= 2;
-const int ATTRIB_INDENT			= 6;
-const int TIP_PADDING			= 4;
+const int TITLE_VPADDING		= GraphicsMisc::ScaleByDPIFactor(8);
+const int LV_PADDING			= GraphicsMisc::ScaleByDPIFactor(3);
+const int CHECKBOX_PADDING		= GraphicsMisc::ScaleByDPIFactor(1);
+const int ICON_OFFSET			= GraphicsMisc::ScaleByDPIFactor(2);
+const int ATTRIB_INDENT			= GraphicsMisc::ScaleByDPIFactor(6);
+const int TIP_PADDING			= GraphicsMisc::ScaleByDPIFactor(4);
 const int IMAGE_SIZE			= GraphicsMisc::ScaleByDPIFactor(16);
 
 const CRect TEXT_BORDER			= CRect(4, 3, 3, 2);
