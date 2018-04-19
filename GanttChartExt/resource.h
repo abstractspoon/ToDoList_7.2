@@ -11,6 +11,7 @@
 #define IDC_GANTTTREE                   1006
 #define IDC_DISPLAY                     1015
 #define IDC_DISPLAYALLOCTO              1016
+#define IDC_DISPLAYTASKTITLE            1017
 #define IDC_GOTOTODAY                   1020
 #define IDC_SELECTEDTASKDATES           1032
 #define IDC_DRAGMODE                    1033

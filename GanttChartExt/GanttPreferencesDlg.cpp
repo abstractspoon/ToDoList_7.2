@@ -64,7 +64,8 @@ void CGanttPreferencesPage::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 
 	//{{AFX_DATA_MAP(CGanttPreferencesPage)
-	DDX_Check(pDX, IDC_DISPLAYALLOCTO, m_bDisplayAllocTo);
+	DDX_Check(pDX, IDC_DISPLAYALLOCTO, m_bDisplayTrailingAllocTo);
+	DDX_Check(pDX, IDC_DISPLAYTASKTITLE, m_bDisplayTrailingTaskTitle);
 	DDX_Check(pDX, IDC_AUTOSCROLLSELECTION, m_bAutoScrollSelection);
 	DDX_Check(pDX, IDC_WEEKENDCOLOR, m_bSpecifyWeekendColor);
 	DDX_Check(pDX, IDC_NONWORKINGHOURSCOLOR, m_bSpecifyNonWorkingHoursColor);
@@ -242,7 +243,8 @@ void CGanttPreferencesPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey)
 	pPrefs->WriteProfileString(szKey, _T("MilestoneTag"), m_sMilestoneTag);
 
 	pPrefs->WriteProfileInt(szKey, _T("UseTagForMilestone"), m_bUseTagForMilestone);
-	pPrefs->WriteProfileInt(szKey, _T("DisplayAllocTo"), m_bDisplayAllocTo);
+	pPrefs->WriteProfileInt(szKey, _T("DisplayAllocTo"), m_bDisplayTrailingAllocTo);
+	pPrefs->WriteProfileInt(szKey, _T("DisplayTaskTitle"), m_bDisplayTrailingTaskTitle);
 	pPrefs->WriteProfileInt(szKey, _T("AutoScrollSelection"), m_bAutoScrollSelection);
 	pPrefs->WriteProfileInt(szKey, _T("AutoCalcParentDates"), m_bAutoCalcParentDates);
 	pPrefs->WriteProfileInt(szKey, _T("CalculateMissingStartDates"), m_bCalculateMissingStartDates);
@@ -277,7 +279,8 @@ void CGanttPreferencesPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR 
 {
 	m_sMilestoneTag = pPrefs->GetProfileString(szKey, _T("MilestoneTag"), CEnString(_T("Milestone")));
 	m_bUseTagForMilestone = pPrefs->GetProfileInt(szKey, _T("UseTagForMilestone"), TRUE);
-	m_bDisplayAllocTo = pPrefs->GetProfileInt(szKey, _T("DisplayAllocTo"), TRUE);
+	m_bDisplayTrailingAllocTo = pPrefs->GetProfileInt(szKey, _T("DisplayAllocTo"), TRUE);
+	m_bDisplayTrailingTaskTitle = pPrefs->GetProfileInt(szKey, _T("DisplayTaskTitle"), FALSE);
 	m_bAutoScrollSelection = pPrefs->GetProfileInt(szKey, _T("AutoScrollSelection"), TRUE);
 	m_bAutoCalcParentDates = pPrefs->GetProfileInt(szKey, _T("AutoCalcParentDates"), TRUE);
 	m_bCalculateMissingStartDates = pPrefs->GetProfileInt(szKey, _T("CalculateMissingStartDates"), TRUE);

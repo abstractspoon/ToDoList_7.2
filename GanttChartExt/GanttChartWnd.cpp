@@ -969,7 +969,8 @@ void CGanttChartWnd::OnSetFocus(CWnd* pOldWnd)
 
 void CGanttChartWnd::UpdateGanttCtrlPreferences()
 {
-	m_ctrlGantt.SetOption(GTLCF_DISPLAYALLOCTOAFTERITEM, m_dlgPrefs.GetDisplayAllocTo());
+	m_ctrlGantt.SetOption(GTLCF_DISPLAYTRAILINGTASKTITLE, m_dlgPrefs.GetDisplayTrailingTaskTitle());
+	m_ctrlGantt.SetOption(GTLCF_DISPLAYTRAILINGALLOCTO, m_dlgPrefs.GetDisplayTrailingAllocTo());
 	m_ctrlGantt.SetOption(GTLCF_AUTOSCROLLTOTASK, m_dlgPrefs.GetAutoScrollSelection());
 	m_ctrlGantt.SetOption(GTLCF_CALCPARENTDATES, m_dlgPrefs.GetAutoCalcParentDates());
 	m_ctrlGantt.SetOption(GTLCF_CALCMISSINGSTARTDATES, m_dlgPrefs.GetCalculateMissingStartDates());

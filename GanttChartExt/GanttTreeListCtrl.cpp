@@ -3743,27 +3743,46 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		}
 	}
 
-	// draw alloc-to name after bar
-	if (HasOption(GTLCF_DISPLAYALLOCTOAFTERITEM) && !gi.sAllocTo.IsEmpty())
+	// draw trailing text
+	BOOL bDrawTitle = HasOption(GTLCF_DISPLAYTRAILINGTASKTITLE);
+	BOOL bDrawAllocTo = (HasOption(GTLCF_DISPLAYTRAILINGALLOCTO) && !gi.sAllocTo.IsEmpty());
+
+	CString sTrailing;
+
+	if (bDrawTitle && bDrawAllocTo)
 	{
-		CRect rItem;
-		VERIFY(GetListItemRect(nItem, rItem));
+		sTrailing.Format(_T("%s (%s)"), gi.sTitle, gi.sAllocTo);
+	}
+	else if (bDrawTitle)
+	{
+		sTrailing = gi.sTitle;
+	}
+	else if (bDrawAllocTo)
+	{
+		sTrailing = gi.sAllocTo;
+	}
+	else
+	{
+		return;
+	}
 
-		// get the end pos for this item relative to start of window
-		int nTextPos = GetBestTextPos(gi, rItem);
+	CRect rItem;
+	VERIFY(GetListItemRect(nItem, rItem));
 
-		if (nTextPos >= 0)
-		{
-			rItem.left = (nTextPos + 3);
-			rItem.top += 2;
+	// get the end pos for this item relative to start of window
+	int nTextPos = GetBestTextPos(gi, rItem);
 
-			COLORREF crFill, crBorder;
-			GetGanttBarColors(gi, crBorder, crFill);
+	if (nTextPos >= 0)
+	{
+		rItem.left = (nTextPos + 3);
+		rItem.top += 2;
 
-			pDC->SetBkMode(TRANSPARENT);
-			pDC->SetTextColor(crBorder);
-			pDC->DrawText(gi.sAllocTo, rItem, (DT_LEFT | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_list)));
-		}
+		COLORREF crFill, crBorder;
+		GetGanttBarColors(gi, crBorder, crFill);
+
+		pDC->SetBkMode(TRANSPARENT);
+		pDC->SetTextColor(crBorder);
+		pDC->DrawText(sTrailing, rItem, (DT_LEFT | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_list)));
 	}
 }
 
