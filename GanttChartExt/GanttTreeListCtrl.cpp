@@ -3561,7 +3561,7 @@ void CGanttTreeListCtrl::DrawListItemMonth(CDC* pDC, const CRect& rMonth,
 			bToday = DrawToday(pDC, rMonth, nMonth, nYear, bSelected);
 	}
 
-	DrawGanttBar(pDC, rMonth, nMonth, nYear, gi, bRollup);
+	DrawGanttBar(pDC, rMonth, nMonth, nYear, gi);
 	DrawGanttDone(pDC, rMonth, nMonth, nYear, gi);
 }
 
@@ -4560,7 +4560,7 @@ BOOL CGanttTreeListCtrl::CalcDependencyEndPos(DWORD dwTaskID, int nItem, GANTTDE
 	return TRUE;
 }
 
-void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi, BOOL /*bRollup*/)
+void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi)
 {
 	int nDaysInMonth = CDateHelper::GetDaysInMonth(nMonth, nYear);
 

@@ -229,7 +229,7 @@ protected:
 	void DrawListItemDays(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, 
 							const GANTTITEM& gi, BOOL bSelected, BOOL bRollup, BOOL& bToday, BOOL bDrawHours);
 
-	void DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi, BOOL bRollup);
+	void DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi);
 	void DrawGanttDone(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi);
 	void DrawGanttMilestone(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi);
 
