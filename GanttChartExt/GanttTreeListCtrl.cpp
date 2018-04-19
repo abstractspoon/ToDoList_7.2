@@ -283,7 +283,7 @@ BOOL CGanttTreeListCtrl::GetSelectedTaskDates(COleDateTime& dtStart, COleDateTim
 		// handle durations of whole days
 		COleDateTime dtDuration(dtDue - dtStart);
 
-		if (dtDuration > CDateHelper::GetEndOfDay(dtDuration))
+		if (CDateHelper::IsDateSet(dtDuration) && (dtDuration > CDateHelper::GetEndOfDay(dtDuration)))
 		{
 			double dWholeDays = (CDateHelper::GetDateOnly(dtDuration).m_dt + 1.0);
 
@@ -2803,6 +2803,15 @@ BOOL CGanttTreeListCtrl::OnTreeLButtonDown(UINT nFlags, CPoint point)
 		}
 	}
 
+	if (!(nFlags & TVHT_ONITEMBUTTON))
+	{
+		if (hti && (hti != GetTreeSelItem(m_tree)))
+		{
+			SelectTreeItem(m_tree, hti);
+			return TRUE;
+		}
+	}
+
 	// not handled
 	return FALSE;
 }
@@ -2810,12 +2819,6 @@ BOOL CGanttTreeListCtrl::OnTreeLButtonDown(UINT nFlags, CPoint point)
 BOOL CGanttTreeListCtrl::OnTreeLButtonUp(UINT nFlags, CPoint point)
 {
 	HTREEITEM hti = m_tree.HitTest(point, &nFlags);
-
-// 	if (!(nFlags & TVHT_ONITEMBUTTON))
-// 	{
-// 		if (hti && (hti != GetTreeSelItem(m_tree)))
-// 			SelectTreeItem(m_tree, hti);
-// 	}
 
 	if (!m_bReadOnly && (nFlags & TVHT_ONITEMSTATEICON))
 	{
@@ -4383,41 +4386,52 @@ int CGanttTreeListCtrl::BuildVisibleDependencyList(CGanttDependArray& aDepends) 
 	TCH().BuildHTIMap(mapItems);
 	
 	// iterate all list items checking for dependencies
-	int nFirstVis = m_list.GetTopIndex();
-	int nLastVis = (nFirstVis + m_list.GetCountPerPage());
-	
-	int nNumItems = m_list.GetItemCount();
-	
-	for (int nFrom = 0; nFrom < nNumItems; nFrom++)
+	HTREEITEM htiFirstVis = m_tree.GetFirstVisibleItem();
+	HTREEITEM htiLastVis = m_tree.GetLastVisibleItem();
+
+	HTREEITEM htiFrom = htiFirstVis;
+
+	while (htiFrom)
 	{
-		DWORD dwFromTaskID = GetTaskID(nFrom);
-		
-		const GANTTITEM* pGIFrom = GetGanttItem(dwFromTaskID);
-		ASSERT(pGIFrom);
-		
-		if (pGIFrom && pGIFrom->aDependIDs.GetSize())
+		BuildVisibleDependencyList(htiFrom, mapItems, aDepends);
+
+		if (htiFrom == htiLastVis)
+			break;
+
+		htiFrom = m_tree.GetNextVisibleItem(htiFrom);
+	}
+	
+	return aDepends.GetSize();
+}
+
+int CGanttTreeListCtrl::BuildVisibleDependencyList(HTREEITEM htiFrom, const CHTIMap& mapItems, CGanttDependArray& aDepends) const
+{
+	DWORD dwFromTaskID = GetTaskID(htiFrom);
+
+	const GANTTITEM* pGIFrom = GetGanttItem(dwFromTaskID);
+	ASSERT(pGIFrom);
+
+	if (pGIFrom)
+	{
+		if (pGIFrom->aDependIDs.GetSize())
 		{
 			int nDepend = pGIFrom->aDependIDs.GetSize();
-			
+
 			while (nDepend--)
 			{
 				DWORD dwToTaskID = pGIFrom->aDependIDs[nDepend];
-				
+
 				if (!m_data.HasItem(dwToTaskID))
 					continue;
 
-				int nTo = FindListItem(dwToTaskID, mapItems);
+				// Check if both items are above or below the visible range
+				HTREEITEM htiTo = NULL;
+				mapItems.Lookup(dwToTaskID, htiTo);
+				ASSERT(htiTo);
 
-				if (nTo != -1)
-				{
-					// Check if both items are above or below the visible range
-					if ((nFrom < nFirstVis) && (nTo < nFirstVis))
-						continue;
+				if (!IsDependencyVisible(htiFrom, htiTo))
+					continue;
 
-					if ((nFrom >= nLastVis) && (nTo >= nLastVis))
-						continue;
-				}
-				
 				// else
 				GANTTDEPENDENCY depend;
 
@@ -4425,9 +4439,38 @@ int CGanttTreeListCtrl::BuildVisibleDependencyList(CGanttDependArray& aDepends) 
 					aDepends.Add(depend);
 			}
 		}
+
+		if (pGIFrom->bParent && HasOption(GTLCF_DISPLAYPARENTROLLUPS) && !TCH().IsItemExpanded(htiFrom))
+		{
+			HTREEITEM htiFromChild = m_tree.GetChildItem(htiFrom);
+
+			while (htiFromChild)
+			{
+				BuildVisibleDependencyList(htiFromChild, mapItems, aDepends); // RECURSIVE CALL
+				htiFromChild = m_tree.GetNextItem(htiFromChild, TVGN_NEXT);
+			}
+		}
 	}
 
 	return aDepends.GetSize();
+}
+
+BOOL CGanttTreeListCtrl::IsDependencyVisible(HTREEITEM htiFrom, HTREEITEM htiTo) const
+{
+	CRect rFrom, rTo;
+	m_tree.GetItemRect(htiFrom, rFrom, FALSE);
+	m_tree.GetItemRect(htiTo, rTo, FALSE);
+
+	if ((rFrom.bottom < 0) && (rTo.bottom < 0))
+		return FALSE;
+
+	CRect rClient;
+	m_tree.GetClientRect(rClient);
+	
+	if ((rFrom.top > rClient.bottom) && (rTo.top > rClient.bottom))
+		return FALSE;
+
+	return TRUE;
 }
 
 BOOL CGanttTreeListCtrl::BuildDependency(DWORD dwFromTaskID, DWORD dwToTaskID, const CHTIMap& mapItems, GANTTDEPENDENCY& depend) const
@@ -4517,7 +4560,7 @@ BOOL CGanttTreeListCtrl::CalcDependencyEndPos(DWORD dwTaskID, int nItem, GANTTDE
 	return TRUE;
 }
 
-void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi, BOOL bRollup)
+void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, const GANTTITEM& gi, BOOL /*bRollup*/)
 {
 	int nDaysInMonth = CDateHelper::GetDaysInMonth(nMonth, nYear);
 
@@ -4553,7 +4596,7 @@ void CGanttTreeListCtrl::DrawGanttBar(CDC* pDC, const CRect& rMonth, int nMonth,
 	// adjust bar height
 	rBar.DeflateRect(0, 2, 0, 3);
 
-	if ((gi.bParent && HasOption(GTLCF_CALCPARENTDATES)) || bRollup)
+	if ((gi.bParent && HasOption(GTLCF_CALCPARENTDATES))/* || bRollup*/)
 		rBar.DeflateRect(0, 0, 0, 5);
 	
 	// Determine what borders to draw
@@ -4891,12 +4934,12 @@ COLORREF CGanttTreeListCtrl::GetColor(COLORREF crBase, double dLighter, BOOL bSe
 	return crResult;
 }
 
-int CGanttTreeListCtrl::GetListItem(HTREEITEM hti) const
+int CGanttTreeListCtrl::GetListItem(HTREEITEM htiFrom) const
 {
-	if (!hti)
+	if (!htiFrom)
 		return -1;
 
-	return CTreeListSyncer::FindListItem(m_list, (DWORD)hti);
+	return CTreeListSyncer::FindListItem(m_list, (DWORD)htiFrom);
 }
 
 void CGanttTreeListCtrl::ExpandList()
@@ -4905,23 +4948,23 @@ void CGanttTreeListCtrl::ExpandList()
 	ExpandList(NULL, nNextIndex);
 }
 
-void CGanttTreeListCtrl::ExpandList(HTREEITEM hti, int& nNextIndex)
+void CGanttTreeListCtrl::ExpandList(HTREEITEM htiFrom, int& nNextIndex)
 {
-	CTreeListSyncer::ExpandList(m_list, m_tree, hti, nNextIndex);
+	CTreeListSyncer::ExpandList(m_list, m_tree, htiFrom, nNextIndex);
 }
 
-void CGanttTreeListCtrl::CollapseList(HTREEITEM hti)
+void CGanttTreeListCtrl::CollapseList(HTREEITEM htiFrom)
 {
-	CTreeListSyncer::CollapseList(m_list, m_tree, hti);
+	CTreeListSyncer::CollapseList(m_list, m_tree, htiFrom);
 }
 
-void CGanttTreeListCtrl::DeleteTreeItem(HTREEITEM hti)
+void CGanttTreeListCtrl::DeleteTreeItem(HTREEITEM htiFrom)
 {
-	ASSERT(hti);
+	ASSERT(htiFrom);
 
-	DWORD dwTaskID = GetTaskID(hti);
+	DWORD dwTaskID = GetTaskID(htiFrom);
 
-	m_tree.DeleteItem(hti);
+	m_tree.DeleteItem(htiFrom);
 	VERIFY(m_data.RemoveKey(dwTaskID));
 }
 
@@ -6403,12 +6446,12 @@ DWORD CGanttTreeListCtrl::ListHitTestTask(const CPoint& point, BOOL bScreen, GTL
 	return dwTaskID;
 }
 
-DWORD CGanttTreeListCtrl::GetTaskID(HTREEITEM hti) const
+DWORD CGanttTreeListCtrl::GetTaskID(HTREEITEM htiFrom) const
 {
-	if ((hti == NULL) || (hti == TVI_FIRST) || (hti == TVI_ROOT))
+	if ((htiFrom == NULL) || (htiFrom == TVI_FIRST) || (htiFrom == TVI_ROOT))
 		return 0;
 
-	return GetTreeItemData(m_tree, hti);
+	return GetTreeItemData(m_tree, htiFrom);
 }
 
 DWORD CGanttTreeListCtrl::GetTaskID(int nItem) const
@@ -7369,17 +7412,17 @@ BOOL CGanttTreeListCtrl::SaveToImage(CBitmap& bmImage)
 	return bRes;
 }
 
-void CGanttTreeListCtrl::RefreshItemBoldState(HTREEITEM hti, BOOL bAndChildren)
+void CGanttTreeListCtrl::RefreshItemBoldState(HTREEITEM htiFrom, BOOL bAndChildren)
 {
-	if (hti && (hti != TVI_ROOT))
+	if (htiFrom && (htiFrom != TVI_ROOT))
 	{
-		TCH().SetItemBold(hti, (m_tree.GetParentItem(hti) == NULL));
+		TCH().SetItemBold(htiFrom, (m_tree.GetParentItem(htiFrom) == NULL));
 	}
 	
 	// children
 	if (bAndChildren)
 	{
-		HTREEITEM htiChild = m_tree.GetChildItem(hti);
+		HTREEITEM htiChild = m_tree.GetChildItem(htiFrom);
 		
 		while (htiChild)
 		{
