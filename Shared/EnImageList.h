@@ -9,6 +9,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+//////////////////////////////////////////////////////////////////////
+
+const COLORREF DEFAULT_BKGNDCOLOR = RGB(197, 197, 197);
+
+//////////////////////////////////////////////////////////////////////
+
 class CEnImageList : public CImageList  
 {
 public:
@@ -21,14 +27,14 @@ public:
 
 	int Add(CBitmap* pbmImage, CBitmap* pbmMask) { return CImageList::Add(pbmImage, pbmMask); }
 	int Add(CBitmap* pbmImage, COLORREF crMask) { return CImageList::Add(pbmImage, crMask); }
-	int Add(HICON hIcon, COLORREF crBkgnd = RGB(223, 223, 223));
+	int Add(HICON hIcon, COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
 
-	BOOL ScaleByDPIFactor(COLORREF crBkgnd = RGB(223, 223, 223));
+	BOOL ScaleByDPIFactor(COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
 
 	static int GetImageSize(HIMAGELIST hil);
 	static BOOL GetImageSize(HIMAGELIST hil, int& nCx, int& nCy);
 	static BOOL GetImageSize(HIMAGELIST hil, CSize& size);
-	static BOOL ScaleByDPIFactor(CImageList& il, COLORREF crBkgnd = RGB(223, 223, 223));
+	static BOOL ScaleByDPIFactor(CImageList& il, COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
 };
 
 #endif // !defined(AFX_ENIMAGELIST_H__B4DFBCE6_8AB2_4542_8E32_4C0F0EDC1160__INCLUDED_)
