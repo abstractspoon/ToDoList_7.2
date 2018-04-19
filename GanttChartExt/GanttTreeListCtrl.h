@@ -165,6 +165,7 @@ protected:
 	int m_nPrevDropHilitedItem;
 	CTreeDragDropHelper m_treeDragDrop;
 	CTreeSelectionHelper m_tshDragDrop;
+	CHTIMap m_mapHTItems;
 
 	CGanttTreeCtrl& m_tree;
 	CListCtrl& m_list;
@@ -254,7 +255,6 @@ protected:
 	void UpdateListColumnsWidthAndText(int nWidth = -1);
 	CString FormatListColumnHeaderText(GTLC_MONTH_DISPLAY nDisplay, int nMonth = 0, int nYear = 0) const;
 
-	int GetListItem(HTREEITEM hti) const;
 	void ExpandList(HTREEITEM hti, int& nNextIndex);
 	void CollapseList(HTREEITEM hti);
 	void ExpandList();
@@ -311,8 +311,9 @@ protected:
 	DWORD ListHitTestTask(const CPoint& point, BOOL bScreen, GTLC_HITTEST& nHit, BOOL bDragging) const;
 	DWORD ListDependsHitTest(const CPoint& ptClient, DWORD& dwToTaskID);
 	DWORD HitTestTask(const CPoint& point, BOOL bScreen, int& nItem) const;
-	int FindListItem(DWORD dwTaskID, const CHTIMap& mapItems) const;
-	int FindListItem(DWORD dwTaskID) const;
+	int GetListItem(DWORD dwTaskID) const;
+	int GetListItem(HTREEITEM hti) const;
+	HTREEITEM GetTreeItem(DWORD dwTaskID) const;
 	BOOL SelectTask(HTREEITEM hti, const IUISELECTTASK& select, BOOL bForwards);
 	BOOL SelectItem(HTREEITEM hti);
 
@@ -366,6 +367,7 @@ protected:
 	BOOL GetTaskStartDueDates(const GANTTITEM& gi, COleDateTime& dtStart, COleDateTime& dtDue) const;
 	BOOL HasDisplayDates(const GANTTITEM& gi) const;
 	BOOL HasDoneDate(const GANTTITEM& gi) const;
+	void RefreshTreeItemMap();
 
 	BOOL EditWantsResort(IUI_UPDATETYPE nUpdate, const CSet<IUI_ATTRIBUTE>& attrib) const;
 	void Sort(GTLC_COLUMN nBy, BOOL bAllowToggle, BOOL bAscending, BOOL bNotifyParent);
@@ -377,14 +379,12 @@ protected:
 	CTreeCtrlHelper& TCH() { return m_tree.TCH(); }
 	const CTreeCtrlHelper& TCH() const { return m_tree.TCH(); }
 
-	BOOL CalcDependencyEndPos(DWORD dwTaskID, const CHTIMap& mapItems, GANTTDEPENDENCY& depend, BOOL bTo, LPPOINT lpp = NULL) const;
 	BOOL CalcDependencyEndPos(DWORD dwTaskID, GANTTDEPENDENCY& depend, BOOL bTo, LPPOINT lpp = NULL) const;
-	BOOL BuildDependency(DWORD dwFromTaskID, DWORD, const CHTIMap& mapItems, GANTTDEPENDENCY& depend) const;
+	BOOL BuildDependency(DWORD dwFromTaskID, DWORD, GANTTDEPENDENCY& depend) const;
 	int BuildVisibleDependencyList(CGanttDependArray& aDepends) const;
-	int BuildVisibleDependencyList(HTREEITEM htiFrom, const CHTIMap& mapItems, CGanttDependArray& aDepends) const;
+	int BuildVisibleDependencyList(HTREEITEM htiFrom, CGanttDependArray& aDepends) const;
 	BOOL IsDependencyPickLinePosValid() const;
 	void ResetDependencyPickLinePos();
-	BOOL IsDependencyVisible(HTREEITEM htiFrom, HTREEITEM htiTo) const;
 
 	BOOL IsDependencyEditing() const;
 	BOOL IsPickingDependencyFromTask() const;

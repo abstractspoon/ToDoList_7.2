@@ -1783,11 +1783,11 @@ LRESULT CTabbedToDoCtrl::OnUIExtMoveSelectedTask(WPARAM /*wParam*/, LPARAM lPara
 	{
 		const IUITASKMOVE* pMove = (const IUITASKMOVE*)lParam;
 
-		HTREEITEM htiDropItem = TCH().FindItem(pMove->dwSelectedTaskID);
+		HTREEITEM htiDropItem = m_taskTree.GetItem(pMove->dwSelectedTaskID);
 		ASSERT(htiDropItem == GetSelectedItem());
 
-		HTREEITEM htiDropTarget = TCH().FindItem(pMove->dwParentID);
-		HTREEITEM htiDropAfter = TCH().FindItem(pMove->dwAfterSiblingID);
+		HTREEITEM htiDropTarget = m_taskTree.GetItem(pMove->dwParentID);
+		HTREEITEM htiDropAfter = m_taskTree.GetItem(pMove->dwAfterSiblingID);
 
 		TDC_DROPOPERATION nDrop = (pMove->bCopy ? TDC_DROPCOPY : TDC_DROPMOVE);
 		bSuccess = DropSelectedTasks(nDrop, htiDropTarget, htiDropAfter);
@@ -4481,8 +4481,8 @@ BOOL CTabbedToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 				if (m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
 				{
 					// Update the tree
-					HTREEITEM htiDestParent = TCH().FindItem(dwDestParentID);
-					HTREEITEM htiDestPrevSibling = TCH().FindItem(dwDestPrevSiblingID);
+					HTREEITEM htiDestParent = m_taskTree.GetItem(dwDestParentID);
+					HTREEITEM htiDestPrevSibling = m_taskTree.GetItem(dwDestPrevSiblingID);
 
 					m_taskTree.MoveSelection(htiDestParent, htiDestPrevSibling);
 

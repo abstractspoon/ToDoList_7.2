@@ -288,15 +288,12 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 	CHoldRedraw hr2(m_lcColumns);
 	CTLSHoldResync hr3(*this);
 
-	CHTIMap mapID;
-	TCH().BuildHTIMap(mapID);
-	
 	int nNumExpanded = aExpanded.GetSize();
 	HTREEITEM hti = NULL;
 	
 	for (int nItem = 0; nItem < nNumExpanded; nItem++)
 	{
-		if (mapID.Lookup(aExpanded[nItem], hti) && hti)
+		if (m_mapHTItems.Lookup(aExpanded[nItem], hti) && hti)
 			ExpandItemRaw(hti, TRUE, FALSE, FALSE);
 	}
 	
@@ -307,10 +304,25 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 	}
 }
 
+
+void CTDLTaskTreeCtrl::RefreshTreeItemMap()
+{
+	TCH().BuildHTIMap(m_mapHTItems);
+}
+
+HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
+{
+	HTREEITEM hti = NULL;
+	m_mapHTItems.Lookup(dwTaskID, hti);
+
+	return hti;
+}
+
 void CTDLTaskTreeCtrl::OnEndRebuild()
 {
 	CTDLTaskCtrlBase::OnEndRebuild();
 
+	RefreshTreeItemMap();
 	ExpandList();
 	RecalcColumnWidths();
 }
@@ -2094,9 +2106,6 @@ BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 {
 	if (!cache.IsEmpty())
 	{
-		CHTIMap mapHTI;
-		TCH().BuildHTIMap(mapHTI, TRUE);
-		
 		HTREEITEM htiFocus = GetItem(cache.dwFocusedTaskID);
 
 		if (htiFocus == NULL)
@@ -2104,7 +2113,7 @@ BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 			int nID = cache.aBreadcrumbs.GetSize();
 			
 			while (nID-- && !htiFocus)
-				htiFocus = mapHTI.GetItem(cache.aBreadcrumbs[nID]);
+				htiFocus = m_mapHTItems.GetItem(cache.aBreadcrumbs[nID]);
 		}
 
 		if (SelectTasks(cache.aSelTaskIDs) || htiFocus)
@@ -2120,7 +2129,7 @@ BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 			HTREEITEM htiFirstVis = NULL;
 
 			if (cache.dwFirstVisibleTaskID)
-				htiFirstVis = mapHTI.GetItem(cache.dwFirstVisibleTaskID);
+				htiFirstVis = m_mapHTItems.GetItem(cache.dwFirstVisibleTaskID);
 
 			if (htiFirstVis == NULL)
 				htiFirstVis = m_tcTasks.GetChildItem(NULL);
@@ -2209,10 +2218,6 @@ BOOL CTDLTaskTreeCtrl::SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue)
 	// clear existing selection and add to history
 	TSH().RemoveAll();
 
-	// build HTImap for quick look up
-	CHTIMap mapID2Item;
-	TCH().BuildHTIMap(mapID2Item);
-	
 	// select tasks in one hit
 	int nTask = aTrueTaskIDs.GetSize();
 	BOOL bSel = FALSE;
@@ -2220,7 +2225,7 @@ BOOL CTDLTaskTreeCtrl::SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue)
 	
 	while (nTask--)
 	{
-		if (mapID2Item.Lookup(aTrueTaskIDs[nTask], hti) && hti)
+		if (m_mapHTItems.Lookup(aTrueTaskIDs[nTask], hti) && hti)
 			bSel |= TSH().SetItem(hti, TSHS_SELECT, FALSE);
 	}
 	
@@ -2623,7 +2628,12 @@ void CTDLTaskTreeCtrl::SetModified(TDC_ATTRIBUTE nAttrib)
 	case TDCA_POSITION: // == move
 	case TDCA_UNDO:
 	case TDCA_NEWTASK:
+		RefreshTreeItemMap();
 		RefreshItemBoldState();
+		break;
+
+	case TDCA_DELETE:
+		RefreshTreeItemMap();
 		break;
 	}
 
