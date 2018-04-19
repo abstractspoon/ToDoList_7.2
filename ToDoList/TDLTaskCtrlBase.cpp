@@ -1770,25 +1770,18 @@ BOOL CTDLTaskCtrlBase::GetTaskTextColors(const TODOITEM* pTDI, const TODOSTRUCTU
 			}
 
 			// else
-			BOOL bDue = m_calculator.IsTaskDue(pTDI, pTDS); // due today or overdue
-			BOOL bDueToday = bDue ? m_calculator.IsTaskDue(pTDI, pTDS, TRUE) : FALSE;
-			BOOL bOverDue = (bDue && !bDueToday);
+			BOOL bDueToday = m_calculator.IsTaskDue(pTDI, pTDS, TRUE);
+			BOOL bOverDue = m_calculator.IsTaskDue(pTDI, pTDS, FALSE);
 
-			if (bDue)
+			if (HasColor(m_crDueToday) && bDueToday)
 			{
-				// do we have a custom 'due today' color
-				if (bDueToday && HasColor(m_crDueToday))
-				{
-					crText = m_crDueToday;
-					break;
-				}
-
-				// overdue
-				if (HasColor(m_crDue))
-				{
-					crText = m_crDue;
-					break;
-				}
+				crText = m_crDueToday;
+				break;
+			}
+			else if (HasColor(m_crDue) && bOverDue)
+			{
+				crText = m_crDue;
+				break;
 			}
 
 			// else
