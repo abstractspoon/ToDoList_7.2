@@ -236,22 +236,10 @@ void GraphicsMisc::DrawSplitBar(CDC* pDC, const CRect& rSplitter, COLORREF crSpl
 	
 	if (nSplitWidth > 2)
 	{
-		CRect rMarker(0, 0, 0, 0);
-
 		int nWidth = ScaleByDPIFactor(2);
 		int nHeight = ScaleByDPIFactor(20);
 		
-		if (bVert)
-		{
-			rMarker.right = nWidth;
-			rMarker.bottom = nHeight;
-		}
-		else // horizontal
-		{
-			rMarker.right = nHeight;
-			rMarker.bottom = nWidth;
-		}
-
+		CRect rMarker(0, 0, (bVert ? nWidth : nHeight), (bVert ? nHeight : nWidth));
 		CentreRect(rMarker, rSplitter, TRUE, TRUE);
 		
 		// use the splitter bkgnd luminance to decide whether
