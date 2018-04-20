@@ -487,6 +487,8 @@ HICON GraphicsMisc::LoadIcon(UINT nIDIcon, int nSize)
 									nSize, 
 									LR_LOADMAP3DCOLORS);
 
+	ASSERT(GetIconSize(hIcon).cx == nSize);
+
 	return hIcon;
 }
 

@@ -2784,6 +2784,7 @@ void CToDoListWnd::RestorePosition()
 	if (rect.IsRectEmpty())
 	{
 		rect.SetRect(0, 0, 1024, 730); // default
+		GraphicsMisc::ScaleByDPIFactor(rect);
 
 		// make sure it fits the screen
 		CRect rScreen;
