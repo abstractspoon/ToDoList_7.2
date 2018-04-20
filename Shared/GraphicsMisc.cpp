@@ -236,25 +236,23 @@ void GraphicsMisc::DrawSplitBar(CDC* pDC, const CRect& rSplitter, COLORREF crSpl
 	
 	if (nSplitWidth > 2)
 	{
-		CRect rMarker(rSplitter);
-		CPoint ptCentre = rMarker.CenterPoint();
+		CRect rMarker(0, 0, 0, 0);
+
+		int nWidth = ScaleByDPIFactor(2);
+		int nHeight = ScaleByDPIFactor(20);
 		
 		if (bVert)
 		{
-			rMarker.left = ptCentre.x - 1;
-			rMarker.right = ptCentre.x + 1;
-
-			rMarker.top = ptCentre.y - 10;
-			rMarker.bottom = ptCentre.y + 10;
+			rMarker.right = nWidth;
+			rMarker.bottom = nHeight;
 		}
 		else // horizontal
 		{
-			rMarker.left = ptCentre.x - 10;
-			rMarker.right = ptCentre.x + 10;
-			
-			rMarker.top = ptCentre.y - 1;
-			rMarker.bottom = ptCentre.y + 1;
+			rMarker.right = nHeight;
+			rMarker.bottom = nWidth;
 		}
+
+		CentreRect(rMarker, rSplitter, TRUE, TRUE);
 		
 		// use the splitter bkgnd luminance to decide whether
 		// to draw the marker lighter or darker
