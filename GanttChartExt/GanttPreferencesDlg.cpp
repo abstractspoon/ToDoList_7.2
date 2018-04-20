@@ -5,7 +5,7 @@
 #include "resource.h"
 #include "GanttPreferencesDlg.h"
 #include "GanttMsg.h"
-#include "Ganttenum.h"
+#include "Ganttstatic.h"
 
 #include "..\shared\dialoghelper.h"
 #include "..\shared\enstring.h"
@@ -24,24 +24,6 @@ const COLORREF DEF_WEEKENDCOLOR			= RGB(224, 224, 224);
 const COLORREF DEF_NONWORKINGHOURSCOLOR	= RGB(224, 224, 224);
 const COLORREF DEF_PARENTCOLOR			= RGB(0, 0, 0);
 const COLORREF DEF_DEFAULTCOLOR			= RGB(70, 135, 245);
-
-/////////////////////////////////////////////////////////////////////////////
-
-struct GANTTCOLUMNVIS
-{
-	UINT nIDAttribName;
-	GTLC_COLUMN nColID;
-};
-
-const GANTTCOLUMNVIS GANTTCOLUMNS[] = 
-{
-	{ IDS_ATTRIB_STARTDATE,		GTLCC_STARTDATE },
-	{ IDS_ATTRIB_DUEDATE,		GTLCC_DUEDATE },
-	{ IDS_ATTRIB_ALLOCTO,		GTLCC_ALLOCTO },
-	{ IDS_ATTRIB_PERCENTDONE,	GTLCC_PERCENT },
-	{ IDS_ATTRIB_TASKID,		GTLCC_TASKID },
-};
-const int NUM_COLUMNS = (sizeof(GANTTCOLUMNS) / sizeof(GANTTCOLUMNVIS));
 
 /////////////////////////////////////////////////////////////////////////////
 // CGanttPreferencesPage dialog
@@ -201,7 +183,7 @@ BOOL CGanttPreferencesPage::OnInitDialog()
 
 	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
 	{
-		const GANTTCOLUMNVIS& colVis = GANTTCOLUMNS[nCol];
+		const GANTTCOLUMN& colVis = GANTTCOLUMNS[nCol];
 		
 		int nItem = CDialogHelper::AddString(m_lbColumnVisibility, colVis.nIDAttribName, colVis.nColID);
 		m_lbColumnVisibility.SetCheck(nItem, m_aColumnVis[colVis.nColID]);
@@ -307,7 +289,7 @@ void CGanttPreferencesPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR 
 		GTLC_COLUMN nColID = GANTTCOLUMNS[nCol].nColID;
 		CString sCol(Misc::MakeKey(_T("Column%d"), nColID));
 
-		m_aColumnVis[nColID] = pPrefs->GetProfileInt(sColVis, sCol, TRUE);
+		m_aColumnVis[nColID] = pPrefs->GetProfileInt(sColVis, sCol, GANTTCOLUMNS[nCol].bDefaultVis);
 	}
 }
 

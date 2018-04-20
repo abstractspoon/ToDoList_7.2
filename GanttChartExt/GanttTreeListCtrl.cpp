@@ -1556,14 +1556,18 @@ void CGanttTreeListCtrl::BuildTreeColumns()
 	while (m_treeHeader.DeleteItem(0));
 
 	// add columns
-	m_treeHeader.InsertItem(GTLCC_TITLE, 0, _T("Task"), (HDF_LEFT | HDF_STRING));
-	m_treeHeader.EnableItemDragging(GTLCC_TITLE, FALSE);
+	m_treeHeader.InsertItem(0, 0, _T("Task"), (HDF_LEFT | HDF_STRING), 0, GTLCC_TITLE);
+	m_treeHeader.EnableItemDragging(0, FALSE);
 
-	m_treeHeader.InsertItem(GTLCC_STARTDATE, 0, CEnString(IDS_COL_STARTDATE), (HDF_RIGHT | HDF_STRING));
-	m_treeHeader.InsertItem(GTLCC_DUEDATE,	0, CEnString(IDS_COL_DUEDATE), (HDF_RIGHT | HDF_STRING));
-	m_treeHeader.InsertItem(GTLCC_ALLOCTO, 0, CEnString(IDS_COL_ALLOCTO), (HDF_LEFT | HDF_STRING));
-	m_treeHeader.InsertItem(GTLCC_PERCENT, 0, CEnString(IDS_COL_PERCENTDONE), (HDF_CENTER | HDF_STRING));
-	m_treeHeader.InsertItem(GTLCC_TASKID, 0, CEnString(IDS_COL_TASKID), (HDF_RIGHT | HDF_STRING));
+	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	{
+		m_treeHeader.InsertItem(nCol + 1, 
+								0, 
+								CEnString(GANTTCOLUMNS[nCol].nIDColName), 
+								(GANTTCOLUMNS[nCol].nColAlign | HDF_STRING),
+								0,
+								GANTTCOLUMNS[nCol].nColID);
+	}
 }
 
 BOOL CGanttTreeListCtrl::IsTreeItemLineOdd(HTREEITEM hti) const
@@ -1954,10 +1958,11 @@ LRESULT CGanttTreeListCtrl::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 		case CDDS_ITEMPOSTPAINT:
 			{
 				// draw sort direction
-				GTLC_COLUMN nCol = (GTLC_COLUMN)pNMCD->dwItemSpec;
+				int nCol = (int)pNMCD->dwItemSpec;
+				GTLC_COLUMN nColID = GetColumnID(nCol);
 				CDC* pDC = CDC::FromHandle(pNMCD->hdc);
 				
-				if (m_sort.IsSingleSortingBy(nCol))
+				if (m_sort.IsSingleSortingBy(nColID))
 					m_treeHeader.DrawItemSortArrow(pDC, nCol, m_sort.single.bAscending);
 			}
 			break;
@@ -1982,7 +1987,7 @@ void CGanttTreeListCtrl::OnHeaderDividerDblClk(NMHEADER* pHDN)
 	if (hwnd == m_treeHeader)
 	{
 		CClientDC dc(&m_tree);
-		RecalcTreeColumnWidth((GTLC_COLUMN)nCol, &dc);
+		RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
 
 		SetSplitPos(m_treeHeader.CalcTotalItemsWidth());
 		
@@ -2072,7 +2077,8 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 
 						if (pHDN->iButton == 0) // left button
 						{
-							Sort((GTLC_COLUMN)pHDN->iItem, TRUE, -1, TRUE);
+							GTLC_COLUMN nColID = GetColumnID(pHDN->iItem);
+							Sort(nColID, TRUE, -1, TRUE);
 						}
 					}
 					break;
@@ -2087,7 +2093,9 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 							if (pHDN->pitem->mask & HDI_WIDTH)
 							{
 								// don't allow columns get too small
-								switch (pHDN->iItem)
+								GTLC_COLUMN nColID = GetColumnID(pHDN->iItem);
+
+								switch (nColID)
 								{
 								case GTLCC_TITLE:
 									if (pHDN->pitem->cxy < TREE_TITLE_MIN_WIDTH)
@@ -2096,6 +2104,7 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 
 								case GTLCC_STARTDATE:
 								case GTLCC_DUEDATE:
+								case GTLCC_DONEDATE:
 								case GTLCC_ALLOCTO:
 								case GTLCC_PERCENT:
 								case GTLCC_TASKID:
@@ -3021,7 +3030,7 @@ BOOL CGanttTreeListCtrl::GetLabelEditRect(LPRECT pEdit) const
 	if (m_tree.GetItemRect(htiSel, pEdit, TRUE)) // label only
 	{
 		// make width of tree column or 200 whichever is larger
-		int nWidth = (m_treeHeader.GetItemWidth(GTLCC_TITLE) - pEdit->left);
+		int nWidth = (m_treeHeader.GetItemWidth(0) - pEdit->left);
 		nWidth = max(nWidth, MIN_LABEL_EDIT_WIDTH);
 
 		pEdit->right = (pEdit->left + nWidth);
@@ -3109,7 +3118,7 @@ CString CGanttTreeListCtrl::FormatDate(const COleDateTime& date, DWORD dwFlags) 
 	return CDateHelper::FormatDate(date, dwFlags);
 }
 
-CString CGanttTreeListCtrl::GetTreeItemColumnText(const GANTTITEM& gi, int nCol) const
+CString CGanttTreeListCtrl::GetTreeItemColumnText(const GANTTITEM& gi, GTLC_COLUMN nCol) const
 {
 	CString sItem;
 
@@ -3124,21 +3133,18 @@ CString CGanttTreeListCtrl::GetTreeItemColumnText(const GANTTITEM& gi, int nCol)
 			break;
 			
 		case GTLCC_STARTDATE:
+		case GTLCC_DUEDATE:
 			{
-				COleDateTime dtStart, dtDummy;
-				GetTaskStartDueDates(gi, dtStart, dtDummy);
+				COleDateTime dtStart, dtDue;
+				GetTaskStartDueDates(gi, dtStart, dtDue);
 
-				sItem = FormatDate(dtStart);
+				sItem = FormatDate((nCol == GTLCC_STARTDATE) ? dtStart : dtDue);
 			}
 			break;
 
-		case GTLCC_DUEDATE:
-			{
-				COleDateTime dtDue, dtDummy;
-				GetTaskStartDueDates(gi, dtDummy, dtDue);
-
-				sItem = FormatDate(dtDue);
-			}
+		case GTLCC_DONEDATE:
+			if (CDateHelper::IsDateSet(gi.dtDone))
+				sItem = FormatDate(gi.dtDone);
 			break;
 
 		case GTLCC_ALLOCTO:
@@ -3171,7 +3177,8 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 
 	DrawItemDivider(pDC, rItem, DIV_VERT_LIGHT, bSelected);
 
-	BOOL bTitleCol = (nCol == GTLCC_TITLE);
+	GTLC_COLUMN nColID = GetColumnID(nCol);
+	BOOL bTitleCol = (nColID == GTLCC_TITLE);
 
 	// draw item background colour
 	if (!bSelected && (crBack != CLR_NONE))
@@ -3192,7 +3199,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 		return;
 
 	// draw text
-	CString sItem = GetTreeItemColumnText(gi, nCol);
+	CString sItem = GetTreeItemColumnText(gi, nColID);
 
 	if (!sItem.IsEmpty())
 	{
@@ -3205,7 +3212,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 		BOOL bLighter = FALSE; 
 		UINT nFlags = (DT_LEFT | DT_VCENTER | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_tree));
 
-		switch (nCol)
+		switch (nColID)
 		{
 		case GTLCC_TITLE:
 			nFlags |= DT_END_ELLIPSIS;
@@ -3217,6 +3224,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 			
 		case GTLCC_STARTDATE:
 		case GTLCC_DUEDATE:
+		case GTLCC_DONEDATE:
 			{
 				// draw non-selected calculated dates lighter
 				if (!bSelected && !gi.IsDone(TRUE))
@@ -3225,7 +3233,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 
 					if (!bLighter)
 					{
-						if (nCol == GTLCC_STARTDATE)
+						if (nColID == GTLCC_STARTDATE)
 							bLighter = (!gi.HasStart() && HasOption(GTLCF_CALCMISSINGSTARTDATES));
 						else
 							bLighter = (!gi.HasDue() && HasOption(GTLCF_CALCMISSINGDUEDATES));
@@ -3246,7 +3254,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 
 		COLORREF crText = GetTreeTextColor(gi, bSelected, bLighter);
 		COLORREF crOldColor = pDC->SetTextColor(crText);
-		HGDIOBJ hFontOld = pDC->SelectObject(GetTreeItemFont(hti, gi, nCol));
+		HGDIOBJ hFontOld = pDC->SelectObject(GetTreeItemFont(hti, gi, nColID));
 		
 		pDC->SetBkMode(TRANSPARENT);
 		pDC->DrawText(sItem, rItem, nFlags);
@@ -3255,7 +3263,7 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 	}
 
 	// special case: drawing shortcut icon for reference tasks
-	if (nCol == 0 && gi.dwOrgRefID)
+	if (bTitleCol && gi.dwOrgRefID)
 	{
 		GetTreeItemRect(hti, nCol, rItem, TRUE);
 		ShellIcons::DrawIcon(pDC, ShellIcons::SI_SHORTCUT, rItem.TopLeft(), false);
@@ -3442,7 +3450,7 @@ CString CGanttTreeListCtrl::GetLongestVisibleAllocTo(HTREEITEM hti) const
 	return sLongest;
 }
 
-HFONT CGanttTreeListCtrl::GetTreeItemFont(HTREEITEM hti, const GANTTITEM& gi, int nCol)
+HFONT CGanttTreeListCtrl::GetTreeItemFont(HTREEITEM hti, const GANTTITEM& gi, GTLC_COLUMN nCol)
 {
 	BOOL bStrikThru = (HasOption(GTLCF_STRIKETHRUDONETASKS) && gi.IsDone(FALSE));
 	BOOL bBold = ((nCol == GTLCC_TITLE) && (m_tree.GetParentItem(hti) == NULL));
@@ -3456,11 +3464,13 @@ void CGanttTreeListCtrl::GetTreeItemRect(HTREEITEM hti, int nCol, CRect& rItem, 
 
 	if (m_tree.GetItemRect(hti, rItem, TRUE)) // text rect only
 	{
-		switch (nCol)
+		GTLC_COLUMN nColID = GetColumnID(nCol);
+
+		switch (nColID)
 		{
 		case GTLCC_TITLE:
 			{
-				int nColWidth = m_treeHeader.GetItemWidth(GTLCC_TITLE);
+				int nColWidth = m_treeHeader.GetItemWidth(0); // always
 	
 				if (!bText)
 					rItem.right = nColWidth;
@@ -3472,6 +3482,7 @@ void CGanttTreeListCtrl::GetTreeItemRect(HTREEITEM hti, int nCol, CRect& rItem, 
 		case GTLCC_TASKID:
 		case GTLCC_STARTDATE:
 		case GTLCC_DUEDATE:
+		case GTLCC_DONEDATE:
 		case GTLCC_ALLOCTO:
 		case GTLCC_PERCENT:
 			{
@@ -5303,6 +5314,11 @@ void CGanttTreeListCtrl::RecalcListColumnWidths(int nFromWidth, int nToWidth)
 	}
 }
 
+GTLC_COLUMN CGanttTreeListCtrl::GetColumnID(int nCol) const
+{
+	return (GTLC_COLUMN)m_treeHeader.GetItemData(nCol);
+}
+
 void CGanttTreeListCtrl::ResizeColumnsToFit()
 {
 	// tree columns
@@ -5310,7 +5326,7 @@ void CGanttTreeListCtrl::ResizeColumnsToFit()
 	int nCol = m_treeHeader.GetItemCount(), nTotalColWidth = 0;
 
 	while (nCol--)
-		nTotalColWidth += RecalcTreeColumnWidth((GTLC_COLUMN)nCol, &dc);
+		nTotalColWidth += RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
 
 	SetSplitPos(nTotalColWidth);
 	
@@ -5386,8 +5402,9 @@ int CGanttTreeListCtrl::CalcTreeColumnWidth(int nCol, CDC* pDC) const
 	CFont* pOldFont = GraphicsMisc::PrepareDCFont(pDC, m_tree);
 
 	int nColWidth = 0;
+	GTLC_COLUMN nColID = GetColumnID(nCol);
 
-	switch (nCol)
+	switch (nColID)
 	{
 	case GTLCC_TITLE:
 		nColWidth = CalcWidestItemTitle(NULL, pDC, TRUE);
@@ -5405,6 +5422,7 @@ int CGanttTreeListCtrl::CalcTreeColumnWidth(int nCol, CDC* pDC) const
 	// rest of attributes are fixed width
 	case GTLCC_STARTDATE:
 	case GTLCC_DUEDATE: 
+	case GTLCC_DONEDATE: 
 		{
 			COleDateTime date(2015, 12, 31, 23, 59, 59);
 			nColWidth = GraphicsMisc::GetAverageMaxStringWidth(FormatDate(date), pDC);
@@ -7075,20 +7093,23 @@ int CGanttTreeListCtrl::GetTreeColumnOrder(CIntArray& aTreeOrder) const
 void CGanttTreeListCtrl::SetTreeColumnVisibility(const CDWordArray& aColumnVis)
 {
 	int nNumCols = aColumnVis.GetSize();
-	//ASSERT(nNumCols == GTLCC_NUMCOLUMNS);
 
 	for (int nColID = 1; nColID < nNumCols; nColID++)
-		m_treeHeader.ShowItem(nColID, aColumnVis[nColID]);
+	{
+		int nCol = m_treeHeader.FindItem(nColID);
+		m_treeHeader.ShowItem(nCol, aColumnVis[nColID]);
+	}
 
 	Resize();
 }
 
 BOOL CGanttTreeListCtrl::SetTreeColumnOrder(const CIntArray& aTreeOrder)
 {
-	ASSERT(aTreeOrder.GetSize() && (aTreeOrder[0] == GTLCC_TITLE));
-
-	if (!(aTreeOrder.GetSize() && (aTreeOrder[0] == GTLCC_TITLE)))
+	if (!(aTreeOrder.GetSize() && (aTreeOrder[0] == 0)))
+	{
+		ASSERT(0);
 		return FALSE;
+	}
 
 	return m_treeHeader.SetItemOrder(aTreeOrder);
 }
@@ -7433,8 +7454,8 @@ BOOL CGanttTreeListCtrl::SaveToImage(CBitmap& bmImage)
 	BOOL bRes = CTreeListSyncer::SaveToImage(bmImage, nFrom, nTo);
 	
 	// Restore title column width
-	m_treeHeader.SetItemWidth(GTLCC_TITLE, nColWidth);
-	m_treeHeader.SetItemTracked(GTLCC_TITLE, bTracked);
+	m_treeHeader.SetItemWidth(0, nColWidth);
+	m_treeHeader.SetItemTracked(0, bTracked);
 
 	Resize();
 	

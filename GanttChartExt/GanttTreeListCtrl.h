@@ -261,7 +261,7 @@ protected:
 	void CollapseList(HTREEITEM hti);
 	void ExpandList();
 	void GetTreeItemRect(HTREEITEM hti, int nCol, CRect& rItem, BOOL bText = FALSE) const;
-	HFONT GetTreeItemFont(HTREEITEM hti, const GANTTITEM& gi, int nCol);
+	HFONT GetTreeItemFont(HTREEITEM hti, const GANTTITEM& gi, GTLC_COLUMN nColID);
 	void SetDropHilite(HTREEITEM hti, int nItem);
 	BOOL IsTreeItemLineOdd(HTREEITEM hti) const;
 	BOOL IsListItemLineOdd(int nItem) const;
@@ -321,6 +321,7 @@ protected:
 	DWORD GetTaskID(HTREEITEM hti) const;
 	DWORD GetTaskID(int nItem) const;
 	DWORD GetListTaskID(DWORD nItemData) const;
+	GTLC_COLUMN GetColumnID(int nCol) const;
 
 	BOOL StartDragging(const CPoint& ptCursor);
 	BOOL EndDragging(const CPoint& ptCursor);
@@ -346,7 +347,7 @@ protected:
 	int RecalcTreeColumnWidth(int nCol, CDC* pDC);
 	int CalcTreeColumnWidth(int nCol, CDC* pDC) const;
 	CString GetLongestVisibleAllocTo(HTREEITEM hti) const;
-	CString GetTreeItemColumnText(const GANTTITEM& gi, int nCol) const;
+	CString GetTreeItemColumnText(const GANTTITEM& gi, GTLC_COLUMN nColID) const;
 	BOOL IsMilestone(const GANTTITEM& gi) const;
 	int CalcWidestItemTitle(HTREEITEM htiParent, CDC* pDC, BOOL bEnd) const;
 	void RefreshItemBoldState(HTREEITEM hti = NULL, BOOL bAndChildren = TRUE);

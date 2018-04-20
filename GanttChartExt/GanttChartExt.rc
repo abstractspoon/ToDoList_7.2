@@ -432,6 +432,8 @@ BEGIN
     IDS_ATTRIB_ALLOCTO      "Allocated To"
     IDS_ATTRIB_PERCENTDONE  "Percent Complete"
     IDS_ATTRIB_TASKID       "Task ID"
+    IDS_ATTRIB_DONEDATE     "Completion Date"
+    IDS_COL_DONEDATE        "Completed"
 END
 
 #endif    // English (Australia) resources

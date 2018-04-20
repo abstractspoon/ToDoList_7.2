@@ -105,8 +105,7 @@ enum GTLC_COLUMN
 	GTLCC_ALLOCTO,
 	GTLCC_PERCENT,
 	GTLCC_TASKID,
-
-	GTLCC_DONEDATE,		// pseudo for sorting
+	GTLCC_DONEDATE,
 	GTLCC_TAGS,			// pseudo for sorting
 	GTLCC_DEPENDENCY,	// pseudo for sorting
 	// NEW ITEMS HERE 
