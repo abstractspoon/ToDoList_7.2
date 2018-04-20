@@ -1773,26 +1773,27 @@ BOOL CTDLTaskCtrlBase::GetTaskTextColors(const TODOITEM* pTDI, const TODOSTRUCTU
 			BOOL bDueToday = m_calculator.IsTaskDue(pTDI, pTDS, TRUE);
 			BOOL bOverDue = m_calculator.IsTaskDue(pTDI, pTDS, FALSE);
 
-			if (HasColor(m_crDueToday) && bDueToday)
-			{
-				crText = m_crDueToday;
-				break;
-			}
-			else if (HasColor(m_crDue) && bOverDue)
+			// overdue takes priority
+			if (HasColor(m_crDue) && bOverDue)
 			{
 				crText = m_crDue;
 				break;
 			}
-
-			// else
-			if (HasColor(m_crStartedToday) && m_calculator.IsTaskStarted(pTDI, pTDS, TRUE))
+			else if (HasColor(m_crDueToday) && bDueToday)
 			{
-				crText = m_crStartedToday;
+				crText = m_crDueToday;
 				break;
 			}
-			else if (HasColor(m_crStarted) && m_calculator.IsTaskStarted(pTDI, pTDS)) // started by now
+
+			// started 'by now' takes priority
+			if (HasColor(m_crStarted) && m_calculator.IsTaskStarted(pTDI, pTDS))
 			{
 				crText = m_crStarted;
+				break;
+			}
+			else if (HasColor(m_crStartedToday) && m_calculator.IsTaskStarted(pTDI, pTDS, TRUE))
+			{
+				crText = m_crStartedToday;
 				break;
 			}
 
