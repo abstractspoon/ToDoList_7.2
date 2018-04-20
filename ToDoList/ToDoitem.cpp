@@ -571,11 +571,15 @@ TH_UNITS TODOITEM::GetTHTimeUnits(BOOL bTimeEst) const
 
 COleDateTime TODOITEM::GetDefaultStartDueDate(const COleDateTime& dtCreation, const COleDateTime& dtStartDue)
 {
-	if (dtStartDue == dtUseCreationDateAndTime)
-		return dtCreation;
-	
-	if (dtStartDue == dtUseCreationDateOnly)
-		return CDateHelper::GetDateOnly(dtCreation);
+	// Can't use equality here because 'null' dates are always equal
+	if (dtStartDue.m_status == COleDateTime::null)
+	{
+		if (dtStartDue.m_dt == dtUseCreationDateAndTime.m_dt)
+			return dtCreation;
+
+		if (dtStartDue.m_dt == dtUseCreationDateOnly.m_dt)
+			return CDateHelper::GetDateOnly(dtCreation);
+	}
 	
 	// else
 	return CDateHelper::NullDate();
