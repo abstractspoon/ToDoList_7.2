@@ -1566,19 +1566,6 @@ void CGanttTreeListCtrl::BuildTreeColumns()
 	m_treeHeader.InsertItem(GTLCC_TASKID, 0, CEnString(IDS_COL_TASKID), (HDF_RIGHT | HDF_STRING));
 }
 
-BOOL CGanttTreeListCtrl::IsTreeItemCollapsed(int nListItem) const
-{
-	ASSERT(nListItem != -1);
-
-	HTREEITEM hti = CTreeListSyncer::GetTreeItem(m_tree, m_list, nListItem);
-	ASSERT(hti);
-
-	if (!hti)
-		return FALSE;
-
-	return TCH().IsItemExpanded(hti);
-}
-
 BOOL CGanttTreeListCtrl::IsTreeItemLineOdd(HTREEITEM hti) const
 {
 	int nItem = GetListItem(hti);
@@ -4305,16 +4292,22 @@ void CGanttTreeListCtrl::GetGanttBarColors(const GANTTITEM& gi, COLORREF& crBord
 			crBorder = crDefBorder;
 			crFill = CLR_NONE;
 			break;
-			
+
 		case GTLPC_SPECIFIEDCOLOR:
 			crBorder = GraphicsMisc::Darker(m_crParent, 0.5);
 			crFill = m_crParent;
 			break;
-			
+
 		case GTLPC_DEFAULTCOLORING:
 		default:
 			crBorder = crDefBorder;
 			crFill = crDefFill;
+
+			if (HasOption(GTLCF_DISPLAYPARENTROLLUPS) && 
+				!TCH().IsItemExpanded(GetTreeItem(gi.dwTaskID)))
+			{
+				crFill = GraphicsMisc::Lighter(crFill, 0.75);
+			}
 			break;
 		}
 	}

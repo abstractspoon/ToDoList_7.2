@@ -261,7 +261,6 @@ protected:
 	void GetTreeItemRect(HTREEITEM hti, int nCol, CRect& rItem, BOOL bText = FALSE) const;
 	HFONT GetTreeItemFont(HTREEITEM hti, const GANTTITEM& gi, int nCol);
 	void SetDropHilite(HTREEITEM hti, int nItem);
-	BOOL IsTreeItemCollapsed(int nListItem) const;
 	BOOL IsTreeItemLineOdd(HTREEITEM hti) const;
 	BOOL IsListItemLineOdd(int nItem) const;
 	BOOL GetListColumnDate(int nCol, int& nMonth, int& nYear) const;
