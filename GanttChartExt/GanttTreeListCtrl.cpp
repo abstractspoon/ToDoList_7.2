@@ -4720,6 +4720,11 @@ void CGanttTreeListCtrl::DrawGanttParentEnds(CDC* pDC, const GANTTITEM& gi, cons
 	if (!gi.bParent || !HasOption(GTLCF_CALCPARENTDATES))
 		return;
 
+	// The parent ends will be obscured by the limiting subtasks
+	// so there is no point drawing them
+	if (HasOption(GTLCF_DISPLAYPARENTROLLUPS) && !TCH().IsItemExpanded(GetTreeItem(gi.dwTaskID)))
+		return;
+
 	COleDateTime dtStart, dtDue;
 	GetTaskStartDueDates(gi, dtStart, dtDue);
 
