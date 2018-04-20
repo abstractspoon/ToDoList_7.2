@@ -1836,9 +1836,7 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 			CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 			
 			// draw item bkgnd and gridlines full width of list
-			BOOL bAlternate = (!IsListItemLineOdd(nItem) && (m_crAltLine != CLR_NONE));
-			
-			COLORREF crBack = (bAlternate ? m_crAltLine : GetSysColor(COLOR_WINDOW));
+			COLORREF crBack = GetRowColor(nItem);
 			pLVCD->clrTextBk = pLVCD->clrText = crBack;
 			
 			CRect rItem;
@@ -1901,6 +1899,14 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 	}
 
 	return CDRF_DODEFAULT;
+}
+
+COLORREF CGanttTreeListCtrl::GetRowColor(int nItem) const
+{
+	BOOL bAlternate = (!IsListItemLineOdd(nItem) && (m_crAltLine != CLR_NONE));
+	COLORREF crBack = (bAlternate ? m_crAltLine : GetSysColor(COLOR_WINDOW));
+
+	return crBack;
 }
 
 LRESULT CGanttTreeListCtrl::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
@@ -3734,7 +3740,48 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		}
 	}
 
-	// draw trailing text
+	// Trailing text
+	if (HasOption(GTLCF_DISPLAYTRAILINGTASKTITLE) || 
+		HasOption(GTLCF_DISPLAYTRAILINGALLOCTO))
+	{
+		CRect rItem;
+		VERIFY(GetListItemRect(nItem, rItem));
+
+		COLORREF crRow = GetRowColor(nItem);
+
+		if (htiRollUp)
+			DrawListItemRollupText(pDC, htiRollUp, rItem, rClip, crRow);
+		else
+			DrawListItemText(pDC, gi, rItem, rClip, crRow);
+	}
+}
+
+void CGanttTreeListCtrl::DrawListItemRollupText(CDC* pDC, HTREEITEM htiParent, const CRect& rItem, const CRect& rClip, COLORREF crRow)
+{
+	HTREEITEM htiChild = m_tree.GetChildItem(htiParent);
+
+	while (htiChild)
+	{
+		if (m_tree.GetChildItem(htiChild))
+		{
+			DrawListItemRollupText(pDC, htiChild, rItem, rClip, crRow); // RECURSIVE CALL
+		}
+		else
+		{
+			DWORD dwTaskID = GetTaskID(htiChild);
+
+			GANTTITEM* pGIChild = NULL;
+			GET_GI(dwTaskID, pGIChild);
+
+			DrawListItemText(pDC, *pGIChild, rItem, rClip, crRow);
+		}
+
+		htiChild = m_tree.GetNextItem(htiChild, TVGN_NEXT);
+	}
+}
+
+void CGanttTreeListCtrl::DrawListItemText(CDC* pDC, const GANTTITEM& gi, const CRect& rItem, const CRect& rClip, COLORREF crRow)
+{
 	BOOL bDrawTitle = HasOption(GTLCF_DISPLAYTRAILINGTASKTITLE);
 	BOOL bDrawAllocTo = (HasOption(GTLCF_DISPLAYTRAILINGALLOCTO) && !gi.sAllocTo.IsEmpty());
 
@@ -3757,24 +3804,23 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		return;
 	}
 
-	CRect rItem;
-	VERIFY(GetListItemRect(nItem, rItem));
-
 	// get the end pos for this item relative to start of window
 	int nTextPos = GetBestTextPos(gi, rItem);
 
-	if (nTextPos >= 0)
-	{
-		rItem.left = (nTextPos + 3);
-		rItem.top += 2;
+	if ((nTextPos < 0) || (!rClip.IsRectNull() && (nTextPos > rClip.right)))
+		return;
 
-		COLORREF crFill, crBorder;
-		GetGanttBarColors(gi, crBorder, crFill);
+	CRect rText(rItem);
+	rText.left = (nTextPos + 3);
+	rText.top += 2;
 
-		pDC->SetBkMode(TRANSPARENT);
-		pDC->SetTextColor(crBorder);
-		pDC->DrawText(sTrailing, rItem, (DT_LEFT | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_list)));
-	}
+	COLORREF crFill, crBorder;
+	GetGanttBarColors(gi, crBorder, crFill);
+
+	pDC->SetBkMode(OPAQUE/*TRANSPARENT*/);
+	pDC->SetTextColor(crBorder);
+	pDC->SetBkColor(crRow);
+	pDC->DrawText(sTrailing, rText, (DT_LEFT | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_list)));
 }
 
 void CGanttTreeListCtrl::DrawListItemRollup(CDC* pDC, HTREEITEM htiParent, int nCol, const CRect& rColumn, BOOL bSelected)

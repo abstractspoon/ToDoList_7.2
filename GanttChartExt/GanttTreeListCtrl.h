@@ -214,6 +214,8 @@ protected:
 	
 	void DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, BOOL bSelected);
 	BOOL DrawListItemColumn(CDC* pDC, int nItem, int nCol, const GANTTITEM& gi, BOOL bSelected, BOOL bRollup);
+	void DrawListItemText(CDC* pDC, const GANTTITEM& gi, const CRect& rItem, const CRect& rClip, COLORREF crRow);
+	void DrawListItemRollupText(CDC* pDC, HTREEITEM hti, const CRect& rItem, const CRect& rClip, COLORREF crRow);
 	BOOL DrawListItemColumnRect(CDC* pDC, int nCol, const CRect& rColumn, const GANTTITEM& gi, BOOL bSelected, BOOL bRollup);
 	void DrawListItemRollup(CDC* pDC, HTREEITEM htiParent, int nCol, const CRect& rColumn, BOOL bSelected);
 
@@ -357,6 +359,7 @@ protected:
  	COLORREF GetTreeTextColor(const GANTTITEM& gi, BOOL bSelected, BOOL bLighter = FALSE) const;
 	COLORREF GetTreeTextBkColor(const GANTTITEM& gi, BOOL bSelected, BOOL bAlternate) const;
 	void SetColor(COLORREF& color, COLORREF crNew);
+	COLORREF GetRowColor(int nItem) const;
 
 	void RebuildTree(const ITASKLISTBASE* pTasks);
 	void BuildTreeItem(const ITASKLISTBASE* pTasks, HTASKITEM hTask, HTREEITEM htiParent, BOOL bAndSiblings, BOOL bInsertAtEnd = TRUE);
