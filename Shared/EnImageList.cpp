@@ -104,14 +104,36 @@ BOOL CEnImageList::ScaleByDPIFactor(CImageList& il, COLORREF crBkgnd)
 
 int CEnImageList::Add(HICON hIcon, COLORREF crBkgnd)
 {
-	if (crBkgnd == CLR_NONE)
-		return CImageList::Add(hIcon);
+	return AddReplace(hIcon, crBkgnd, -1);
+}
 
+int CEnImageList::Replace(int nImage, HICON hIcon, COLORREF crBkgnd)
+{
+	return AddReplace(hIcon, crBkgnd, nImage);
+}
+
+int CEnImageList::AddReplace(HICON hIcon, COLORREF crBkgnd, int nImage)
+{
+	if ((crBkgnd == CLR_NONE) || 
+		!GraphicsMisc::WantDPIScaling() ||
+		(GraphicsMisc::GetIconSize(hIcon).cx >= GetImageSize()))
+	{
+		if (nImage == -1)
+			return CImageList::Add(hIcon);
+
+		// else
+		return CImageList::Replace(nImage, hIcon);
+	}
+	
 	CEnBitmapEx bmp;
 	
 	bmp.CopyImage(hIcon, crBkgnd);
 	bmp.ResizeImage(GraphicsMisc::GetDPIScaleFactor());
 	bmp.ReplaceColor(crBkgnd, MAGENTA);
-	
-	return Add(&bmp, MAGENTA);
+
+	if (nImage == -1)
+		return Add(&bmp, MAGENTA);
+
+	// else
+	return CImageList::Replace(nImage, CIcon(bmp.ExtractIcon(MAGENTA)));
 }

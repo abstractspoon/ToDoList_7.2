@@ -11,7 +11,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-const COLORREF DEFAULT_BKGNDCOLOR = RGB(197, 197, 197);
+const COLORREF DEFAULT_BKGNDCOLOR = RGB(223, 223, 223);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -28,6 +28,7 @@ public:
 	int Add(CBitmap* pbmImage, CBitmap* pbmMask) { return CImageList::Add(pbmImage, pbmMask); }
 	int Add(CBitmap* pbmImage, COLORREF crMask) { return CImageList::Add(pbmImage, crMask); }
 	int Add(HICON hIcon, COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
+	int Replace(int nImage, HICON hIcon, COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
 
 	BOOL ScaleByDPIFactor(COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
 
@@ -35,6 +36,9 @@ public:
 	static BOOL GetImageSize(HIMAGELIST hil, int& nCx, int& nCy);
 	static BOOL GetImageSize(HIMAGELIST hil, CSize& size);
 	static BOOL ScaleByDPIFactor(CImageList& il, COLORREF crBkgnd = DEFAULT_BKGNDCOLOR);
+
+protected:
+	int AddReplace(HICON hIcon, COLORREF crBkgnd, int nImage);
 };
 
 #endif // !defined(AFX_ENIMAGELIST_H__B4DFBCE6_8AB2_4542_8E32_4C0F0EDC1160__INCLUDED_)
