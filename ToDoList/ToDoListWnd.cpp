@@ -2105,19 +2105,11 @@ void CToDoListWnd::HandleLoadTasklistError(TDC_FILE& nErr, LPCTSTR szTaskList)
 		break; 
 		
 	case TDCF_NOTEXIST:
-		{
-			DWORD dwError = GetLastError();
-
-			if (dwError == ERROR_BAD_NETPATH)
-			{
-				nErr = TDCF_BADNETWORK;
-				sMessage.Format(IDS_BADNETWORK, szTaskList);
-			}
-			else
-			{
-				sMessage.Format(IDS_TASKLISTNOTFOUND, szTaskList);
-			}
-		}
+		sMessage.Format(IDS_TASKLISTNOTFOUND, szTaskList);
+		break;
+		
+	case TDCF_BADNETWORK:
+		sMessage.Format(IDS_BADNETWORK, szTaskList);
 		break;
 		
 	case TDCF_NOTTASKLIST:
@@ -2391,8 +2383,8 @@ LRESULT CToDoListWnd::OnPostOnCreate(WPARAM /*wp*/, LPARAM /*lp*/)
 				{
 					TDC_FILE nResult = OpenTaskList(sLastFile, FALSE);
 
-					// if the last active tasklist was cancelled then
-					// delay load it and mark the last active todoctrl as not found
+					// if the last active tasklist was cancelled or its an 
+					// inaccessible network path then delay load it and mark the last active todoctrl as not found
 					if (bActiveTDC && (nResult != TDCF_SUCCESS))
 					{
 						sOrgLastActiveFile = sLastActiveFile;
@@ -4270,7 +4262,13 @@ TDC_FILE CToDoListWnd::OpenTaskList(LPCTSTR szFilePath, BOOL bNotifyDueTasks)
 	TDC_PREPAREPATH nType = PrepareFilePath(sFilePath, &storageInfo);
 	
 	if (nType == TDCPP_NONE)
+	{
+		if (GetLastError() == ERROR_BAD_NETPATH)
+			return TDCF_BADNETWORK;
+
+		// else
 		return TDCF_NOTEXIST;
+	}
 	
 	// see if the tasklist is already open
 	int nExist = -1;
@@ -11621,8 +11619,8 @@ BOOL CToDoListWnd::DoTaskLink(const CString& sPath, DWORD dwTaskID, BOOL bStartu
 	if (sPath.IsEmpty())
 	{
 		ASSERT(dwTaskID);
-		bSelected = SelectTaskCheckFilter(GetToDoCtrl(), dwTaskID);
 
+		bSelected = SelectTaskCheckFilter(GetToDoCtrl(), dwTaskID);
 		bHandled = TRUE; // handled regardless of result
 	}
 	else if (!PathIsRelative(sPath) && FileMisc::FileExists(sPath))
