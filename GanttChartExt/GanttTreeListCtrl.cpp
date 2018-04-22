@@ -3266,7 +3266,9 @@ void CGanttTreeListCtrl::DrawTreeItemText(CDC* pDC, HTREEITEM hti, int nCol, con
 	if (bTitleCol && gi.dwOrgRefID)
 	{
 		GetTreeItemRect(hti, nCol, rItem, TRUE);
-		ShellIcons::DrawIcon(pDC, ShellIcons::SI_SHORTCUT, rItem.TopLeft(), false);
+		CPoint ptIcon(rItem.left, rItem.bottom - 32);
+
+		ShellIcons::DrawIcon(pDC, ShellIcons::SI_SHORTCUT, ptIcon, true);
 	}
 }
 

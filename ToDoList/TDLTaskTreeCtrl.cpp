@@ -589,7 +589,10 @@ LRESULT CTDLTaskTreeCtrl::OnTreeCustomDraw(NMTVCUSTOMDRAW* pTVCD)
 
 					// draw shortcut for references
 	 				if (dwTaskID != dwTrueID)
-	 					ShellIcons::DrawIcon(pDC, ShellIcons::SI_SHORTCUT, rItem.TopLeft(), false);
+					{
+						CPoint ptIcon(rItem.left, rItem.bottom - 32);
+	 					ShellIcons::DrawIcon(pDC, ShellIcons::SI_SHORTCUT, ptIcon, true);
+					}
 	 							
 					// draw trailing comment text
 					DrawCommentsText(pDC, pTVCD->nmcd.rc, rItem, pTDI, pTDS);
