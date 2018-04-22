@@ -2358,6 +2358,9 @@ BOOL CTDCTaskCalculator::IsTaskDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pT
 	
 	double dDue = GetTaskDueDate(pTDI, pTDS);
 	
+	if (dDue == 0.0)
+		return FALSE;
+
 	if (bToday)
 		return CDateHelper::IsToday(dDue);
 
@@ -2365,7 +2368,7 @@ BOOL CTDCTaskCalculator::IsTaskDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pT
 	if (!CDateHelper::DateHasTime(dDue))
 		dDue = CDateHelper::GetEndOfDay(dDue);
 
-	return ((dDue > 0) && (dDue < COleDateTime::GetCurrentTime()));
+	return (dDue < COleDateTime::GetCurrentTime());
 }
 
 BOOL CTDCTaskCalculator::IsTaskOverDue(DWORD dwTaskID) const
