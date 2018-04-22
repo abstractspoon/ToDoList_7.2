@@ -109,8 +109,6 @@ enum GTLC_COLUMN
 	GTLCC_TAGS,			// pseudo for sorting
 	GTLCC_DEPENDENCY,	// pseudo for sorting
 	// NEW ITEMS HERE 
-
-	GTLCC_NUMCOLUMNS // Always the last item
 };
 
 //////////////////////////////////////////////////////////////////////

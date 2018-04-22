@@ -10,7 +10,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const GANTTCOLUMN GANTTCOLUMNS[] = 
+const GANTTCOLUMN GANTTTREECOLUMNS[] = 
 {
 	{ GTLCC_STARTDATE,	IDS_ATTRIB_STARTDATE,	IDS_COL_STARTDATE,	HDF_RIGHT,	FALSE },
 	{ GTLCC_DUEDATE,	IDS_ATTRIB_DUEDATE,		IDS_COL_DUEDATE,	HDF_RIGHT,	TRUE },
@@ -19,7 +19,7 @@ const GANTTCOLUMN GANTTCOLUMNS[] =
 	{ GTLCC_PERCENT,	IDS_ATTRIB_PERCENTDONE,	IDS_COL_PERCENTDONE,HDF_CENTER,	TRUE },
 	{ GTLCC_TASKID,		IDS_ATTRIB_TASKID,		IDS_COL_TASKID,		HDF_RIGHT,	FALSE }
 };
-const int NUM_COLUMNS = (sizeof(GANTTCOLUMNS) / sizeof(GANTTCOLUMN));
+const int NUM_TREECOLUMNS = (sizeof(GANTTTREECOLUMNS) / sizeof(GANTTCOLUMN));
 
 /////////////////////////////////////////////////////////////////////////////
 

@@ -1559,14 +1559,14 @@ void CGanttTreeListCtrl::BuildTreeColumns()
 	m_treeHeader.InsertItem(0, 0, _T("Task"), (HDF_LEFT | HDF_STRING), 0, GTLCC_TITLE);
 	m_treeHeader.EnableItemDragging(0, FALSE);
 
-	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	for (int nCol = 0; nCol < NUM_TREECOLUMNS; nCol++)
 	{
 		m_treeHeader.InsertItem(nCol + 1, 
 								0, 
-								CEnString(GANTTCOLUMNS[nCol].nIDColName), 
-								(GANTTCOLUMNS[nCol].nColAlign | HDF_STRING),
+								CEnString(GANTTTREECOLUMNS[nCol].nIDColName), 
+								(GANTTTREECOLUMNS[nCol].nColAlign | HDF_STRING),
 								0,
-								GANTTCOLUMNS[nCol].nColID);
+								GANTTTREECOLUMNS[nCol].nColID);
 	}
 }
 
@@ -2566,6 +2566,15 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 	{
 		switch (msg)
 		{
+		case WM_RBUTTONDOWN:
+			{
+				DWORD dwTaskID = TreeHitTestTask(lp, FALSE);
+
+				if (dwTaskID)
+					SelectTask(dwTaskID);
+			}
+			break;
+
 		case WM_LBUTTONDOWN:
 			if (OnTreeLButtonDown(wp, lp))
 			{
@@ -7132,7 +7141,7 @@ void CGanttTreeListCtrl::GetColumnWidths(CIntArray& aTreeWidths, CIntArray& aLis
 
 BOOL CGanttTreeListCtrl::SetColumnWidths(const CIntArray& aTreeWidths, const CIntArray& aListWidths)
 {
-	if (aTreeWidths.GetSize() != GTLCC_NUMCOLUMNS)
+	if (aTreeWidths.GetSize() != (NUM_TREECOLUMNS + 1))
 		return FALSE;
 
 	m_treeHeader.SetItemWidths(aTreeWidths);
@@ -7163,7 +7172,7 @@ void CGanttTreeListCtrl::GetTrackedColumns(CIntArray& aTreeTracked, CIntArray& a
 
 BOOL CGanttTreeListCtrl::SetTrackedColumns(const CIntArray& aTreeTracked, const CIntArray& aListTracked)
 {
-	if (aTreeTracked.GetSize() != GTLCC_NUMCOLUMNS)
+	if (aTreeTracked.GetSize() != (NUM_TREECOLUMNS + 1))
 		return FALSE;
 	
 	m_treeHeader.SetTrackedItems(aTreeTracked); 

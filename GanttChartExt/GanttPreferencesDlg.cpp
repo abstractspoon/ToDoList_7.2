@@ -38,7 +38,7 @@ CGanttPreferencesPage::CGanttPreferencesPage(CWnd* /*pParent*/ /*=NULL*/)
 	m_crWeekend = DEF_WEEKENDCOLOR;
 	m_crDefault = DEF_DEFAULTCOLOR;
 
-	m_aColumnVis.SetSize(NUM_COLUMNS + 1);
+	m_aColumnVis.SetSize(NUM_TREECOLUMNS + 1);
 }
 
 void CGanttPreferencesPage::DoDataExchange(CDataExchange* pDX)
@@ -181,9 +181,9 @@ BOOL CGanttPreferencesPage::OnInitDialog()
 	m_btDefaultColor.SetColor(m_crDefault);
 	m_btParentColor.SetColor(m_crParent);
 
-	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	for (int nCol = 0; nCol < NUM_TREECOLUMNS; nCol++)
 	{
-		const GANTTCOLUMN& colVis = GANTTCOLUMNS[nCol];
+		const GANTTCOLUMN& colVis = GANTTTREECOLUMNS[nCol];
 		
 		int nItem = CDialogHelper::AddString(m_lbColumnVisibility, colVis.nIDAttribName, colVis.nColID);
 		m_lbColumnVisibility.SetCheck(nItem, m_aColumnVis[colVis.nColID]);
@@ -248,9 +248,9 @@ void CGanttPreferencesPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey)
 	CString sColVis(szKey);
 	sColVis += _T("\\ColumnVisibility");
 
-	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	for (int nCol = 0; nCol < NUM_TREECOLUMNS; nCol++)
 	{
-		GTLC_COLUMN nColID = GANTTCOLUMNS[nCol].nColID;
+		GTLC_COLUMN nColID = GANTTTREECOLUMNS[nCol].nColID;
 		CString sCol(Misc::MakeKey(_T("Column%d"), nColID));
 
 		pPrefs->WriteProfileInt(sColVis, sCol, m_aColumnVis[nColID]);
@@ -284,20 +284,20 @@ void CGanttPreferencesPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR 
 	CString sColVis(szKey);
 	sColVis += _T("\\ColumnVisibility");
 
-	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	for (int nCol = 0; nCol < NUM_TREECOLUMNS; nCol++)
 	{
-		GTLC_COLUMN nColID = GANTTCOLUMNS[nCol].nColID;
+		GTLC_COLUMN nColID = GANTTTREECOLUMNS[nCol].nColID;
 		CString sCol(Misc::MakeKey(_T("Column%d"), nColID));
 
-		m_aColumnVis[nColID] = pPrefs->GetProfileInt(sColVis, sCol, GANTTCOLUMNS[nCol].bDefaultVis);
+		m_aColumnVis[nColID] = pPrefs->GetProfileInt(sColVis, sCol, GANTTTREECOLUMNS[nCol].bDefaultVis);
 	}
 }
 
 void CGanttPreferencesPage::OnOK()
 {
-	for (int nCol = 0; nCol < NUM_COLUMNS; nCol++)
+	for (int nCol = 0; nCol < NUM_TREECOLUMNS; nCol++)
 	{
-		GTLC_COLUMN nColID = GANTTCOLUMNS[nCol].nColID;
+		GTLC_COLUMN nColID = GANTTTREECOLUMNS[nCol].nColID;
 		m_aColumnVis[nColID] = m_lbColumnVisibility.GetCheckByData(nColID);
 	}
 
