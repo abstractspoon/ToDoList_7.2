@@ -172,7 +172,6 @@ protected:
 	// private message
 	static UINT WM_TDC_RESTORELASTTASKVIEW;
 
-
 // Overrides
 protected:
 	// ClassWizard generated virtual function overrides
