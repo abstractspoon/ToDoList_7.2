@@ -4755,14 +4755,22 @@ BOOL CToDoCtrl::CanTimeTrackSelectedTask() const
 
 	DWORD dwTaskID = GetSelectedTaskID();
 	
-	return m_timeTracking.CanTrackTask(dwTaskID);
+	if (dwTaskID)
+		return m_timeTracking.CanTrackTask(dwTaskID);
+
+	// else
+	return FALSE;
 }
 
 BOOL CToDoCtrl::IsSelectedTaskBeingTimeTracked() const
 {
 	DWORD dwTaskID = GetSelectedTaskID();
 
-	return m_timeTracking.IsTrackingTask(dwTaskID);
+	if (dwTaskID)
+		return m_timeTracking.IsTrackingTask(dwTaskID);
+
+	// else
+	return FALSE;
 }
 
 DWORD CToDoCtrl::GetTimeTrackTaskID(BOOL bActive) const

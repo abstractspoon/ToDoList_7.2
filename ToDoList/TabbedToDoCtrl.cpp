@@ -2472,8 +2472,7 @@ DWORD CTabbedToDoCtrl::GetNextNonSelectedTaskID() const
 		break;
 	}
 
-	ASSERT(dwNextSelID);
-	return dwNextSelID;
+	return dwNextSelID; // Can be '0'
 }
 
 DWORD CTabbedToDoCtrl::GetNextTaskID(DWORD dwTaskID, TTC_NEXTTASK nNext, BOOL bExcludeSelected) const
