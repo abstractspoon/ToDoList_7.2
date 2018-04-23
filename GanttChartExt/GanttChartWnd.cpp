@@ -939,7 +939,12 @@ void CGanttChartWnd::OnSelchangedGanttTree(NMHDR* pNMHDR, LRESULT* pResult)
 
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	*pResult = 0;
-	
+
+	// Ignore setting selection to 'NULL' unless there are no tasks at all
+	// because we know it's temporary only
+	if ((pNMTreeView->itemNew.hItem == NULL) && (m_tree.GetCount() != 0))
+		return;
+		
 	UpdateSelectedTaskDates();
 
 	// ignore notifications arising out of SelectTask()
