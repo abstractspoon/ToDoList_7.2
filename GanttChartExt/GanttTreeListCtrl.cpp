@@ -1867,7 +1867,7 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 			GraphicsMisc::DrawExplorerItemBkgnd(pDC, m_list, nState, rItem, dwFlags);
 
 			// draw row
-			DrawListItem(pDC, nItem, *pGI, (nState == GMIS_SELECTED));
+			DrawListItem(pDC, nItem, *pGI, (nState != GMIS_NONE));
 		}
 		return CDRF_SKIPDEFAULT;
 								
@@ -3777,7 +3777,7 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		CRect rItem;
 		VERIFY(GetListItemRect(nItem, rItem));
 
-		COLORREF crRow = GetRowColor(nItem);
+		COLORREF crRow = (bSelected ? CLR_NONE : GetRowColor(nItem));
 
 		if (htiRollUp)
 			DrawListItemRollupText(pDC, htiRollUp, rItem, rClip, crRow);
@@ -3847,7 +3847,7 @@ void CGanttTreeListCtrl::DrawListItemText(CDC* pDC, const GANTTITEM& gi, const C
 	COLORREF crFill, crBorder;
 	GetGanttBarColors(gi, crBorder, crFill);
 
-	pDC->SetBkMode(OPAQUE/*TRANSPARENT*/);
+	pDC->SetBkMode((crRow == CLR_NONE) ? TRANSPARENT : OPAQUE);
 	pDC->SetTextColor(crBorder);
 	pDC->SetBkColor(crRow);
 	pDC->DrawText(sTrailing, rText, (DT_LEFT | DT_NOPREFIX | GraphicsMisc::GetRTLDrawTextFlags(m_list)));
