@@ -2692,8 +2692,13 @@ BOOL CToDoCtrl::SetSelectedTaskComments(const CString& sComments, const CBinaryD
 	{
 		// refresh the comments of the active task if we were called externally
 		// note: we don't use SetTextChange because that doesn't handle custom comments
-		if (!bInternal)
-			UpdateComments(TRUE);
+		if (!bInternal && (TSH().GetCount() == 1))
+		{
+			m_sTextComments = GetSelectedTaskComments();
+			m_customComments = GetSelectedTaskCustomComments(m_cfComments);
+
+			UpdateComments(FALSE);
+		}
 
 		TSH().InvalidateAll();
 
