@@ -472,7 +472,7 @@ BOOL CTreeListSyncer::ResyncScrollPos(HWND hwnd, HWND hwndTo)
 		// and it's equiv item in 'hwnd'
 		int nEquivFirstVisItem = GetListItem(hwnd, hwndTo, nToFirstVisItem);
 		
-		if (nEquivFirstVisItem != nFirstVisItem)
+		if ((nEquivFirstVisItem != -1) && (nEquivFirstVisItem != nFirstVisItem))
 		{
 			int nItemHeight = max(GetItemHeight(hwndTo), GetItemHeight(hwnd));
 			ListView_Scroll(hwnd, 0, (nEquivFirstVisItem - nFirstVisItem) * nItemHeight);
@@ -1240,12 +1240,16 @@ void CTreeListSyncer::ResyncListHeader(HWND hwnd)
 	{
 		CRect rHeader, rList;
 		::GetWindowRect(hwndHeader, rHeader);
-		::ScreenToClient(hwnd, &(rHeader.TopLeft()));
-		::ScreenToClient(hwnd, &(rHeader.BottomRight()));
 		::GetClientRect(hwnd, rList);
-		
-		rHeader.right = rList.right;
-		::MoveWindow(hwndHeader, rHeader.left, rHeader.top, rHeader.Width(), rHeader.Height(), FALSE); 
+
+		if (rHeader.Width() != rList.Width())
+		{
+			::ScreenToClient(hwnd, &(rHeader.TopLeft()));
+			::ScreenToClient(hwnd, &(rHeader.BottomRight()));
+
+			rHeader.right = rList.right;
+			::MoveWindow(hwndHeader, rHeader.left, rHeader.top, rHeader.Width(), rHeader.Height(), FALSE); 
+		}
 	}
 }
 
