@@ -1828,11 +1828,19 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 	switch (pLVCD->nmcd.dwDrawStage)
 	{
 	case CDDS_PREPAINT:
+#ifdef _DEBUG
+		{
+			static int nCount = 1;
+			TRACE(_T("\nCGanttTreeListCtrl::OnListCustomDraw(begin_%d)\n"), nCount++);
+		}
+#endif
+
 		return CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
 								
 	case CDDS_ITEMPREPAINT:
 		{
 			DWORD dwTaskID = GetTaskID(nItem);
+			TRACE(_T("CGanttTreeListCtrl::OnListCustomDraw(ID = %ld)\n"), dwTaskID);
 
 			GANTTITEM* pGI = NULL;
 			GET_GI_RET(dwTaskID, pGI, 0L);
@@ -1896,6 +1904,8 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 						depend.Draw(pDC, rClient, FALSE);
 				}
 			}
+
+			TRACE(_T("CGanttTreeListCtrl::OnListCustomDraw(end)\n"));
 
 			return CDRF_SKIPDEFAULT;
 		}
@@ -2146,14 +2156,6 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 					}
 					break;
 
-				case TVN_SELCHANGED:
-					if (!m_bMovingTask)
-					{
-						if (HasOption(GTLCF_AUTOSCROLLTOTASK))
-							ScrollToSelectedTask();
-					}
-					break;
-
 				case TVN_GETDISPINFO:
 					{
 						TV_DISPINFO* pDispInfo = (TV_DISPINFO*)pNMHDR;
@@ -2262,6 +2264,12 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 	}
 	
 	return CTreeListSyncer::WindowProc(hRealWnd, msg, wp, lp);
+}
+
+void CGanttTreeListCtrl::OnTreeSelectionChange(NMTREEVIEW* /*pNMTV*/)
+{
+	if (!m_bMovingTask && HasOption(GTLCF_AUTOSCROLLTOTASK))
+		ScrollToSelectedTask();
 }
 
 void CGanttTreeListCtrl::ClearDependencyPickLine(CDC* pDC)

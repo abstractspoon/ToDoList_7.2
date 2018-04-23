@@ -186,10 +186,11 @@ protected:
 	LRESULT OnTreeCustomDraw(NMTVCUSTOMDRAW* pTVCD);
 	LRESULT OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD);
 	LRESULT OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD);
-				
+			
 	// derived class callback
 	void OnNotifySplitterChange(int nSplitPos);
 	void DrawSplitBar(CDC* pDC, const CRect& rSplitter, COLORREF crSplitBar);
+	void OnTreeSelectionChange(NMTREEVIEW* pNMTV);
 
 	// pseudo-message handlers
 	void OnHeaderDividerDblClk(NMHEADER* HDN);

@@ -1505,7 +1505,7 @@ LRESULT CTreeListSyncer::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARAM l
 									if (htiSel != htiListSel)
 									{
 										TreeView_SelectItem(hwndOther, htiListSel);
-										UpdateWindow(hwndOther);
+										::UpdateWindow(hwndOther);
 									}
 								}
 							}
