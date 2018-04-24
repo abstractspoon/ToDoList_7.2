@@ -105,7 +105,7 @@ public:
 	TLS_HIDE GetHidden() const { return m_nHidden; }
 	BOOL IsHiding() const { return (m_nHidden != TLSH_NONE); }
 	
-	void InvalidateAll(BOOL bErase = TRUE, BOOL bUpdate = FALSE);
+	void InvalidateAll(BOOL bErase = FALSE, BOOL bUpdate = FALSE);
 	void UpdateAll();
 
 	BOOL HasFocus() const;

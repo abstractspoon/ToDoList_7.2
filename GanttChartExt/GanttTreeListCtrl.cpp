@@ -3105,7 +3105,7 @@ void CGanttTreeListCtrl::SetMilestoneTag(const CString& sTag)
 		m_sMilestoneTag = sTag;
 
 		if (IsHooked())
-			InvalidateAll(FALSE);
+			InvalidateAll();
 	}
 }
 
@@ -3114,7 +3114,7 @@ void CGanttTreeListCtrl::SetParentColoring(GTLC_PARENTCOLORING nOption, COLORREF
 	SetColor(m_crParent, color);
 
 	if (IsHooked() && (m_nParentColoring != nOption))
-		InvalidateAll(FALSE);
+		InvalidateAll();
 
 	m_nParentColoring = nOption;
 }
@@ -3122,7 +3122,7 @@ void CGanttTreeListCtrl::SetParentColoring(GTLC_PARENTCOLORING nOption, COLORREF
 void CGanttTreeListCtrl::SetColor(COLORREF& color, COLORREF crNew)
 {
 	if (IsHooked() && (crNew != color))
-		InvalidateAll(FALSE);
+		InvalidateAll();
 
 	color = crNew;
 }

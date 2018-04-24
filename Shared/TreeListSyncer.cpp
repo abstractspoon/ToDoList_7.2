@@ -851,7 +851,6 @@ void CTreeListSyncer::SelectTreeItem(HWND hwnd, HTREEITEM hti, BOOL bClear)
 	if (hti)
 		TreeView_SelectItem(hwnd, hti);
 
-	//SetTreeItemState(hwnd, hti, TVIS_SELECTED, TVIS_SELECTED);
 	TreeView_EnsureVisible(hwnd, hti);
 }
 
