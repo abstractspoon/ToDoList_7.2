@@ -162,6 +162,10 @@ SOURCE=.\PreferencesToolPage.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PreferencesUICustomToolbarPage.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\PreferencesUIPage.cpp
 # End Source File
 # Begin Source File
@@ -379,6 +383,10 @@ SOURCE=.\TDLCustomAttributeDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TDLCustomToolbar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDLDialog.cpp
 # End Source File
 # Begin Source File
@@ -575,6 +583,10 @@ SOURCE=.\TDLTimeTrackerDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TDLToolbarButtonListCtrl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDLToolsUserInputDlg.cpp
 # End Source File
 # Begin Source File
@@ -696,6 +708,10 @@ SOURCE=.\PreferencesTaskPage.h
 # Begin Source File
 
 SOURCE=.\PreferencesToolPage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PreferencesUICustomToolbarPage.h
 # End Source File
 # Begin Source File
 
@@ -943,6 +959,10 @@ SOURCE=.\TDLCustomAttributeDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\TDLCustomToolbar.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDLDialog.h
 # End Source File
 # Begin Source File
@@ -1140,6 +1160,10 @@ SOURCE=.\TDLThreadedExporterWnd.h
 # Begin Source File
 
 SOURCE=.\TDLTimeTrackerDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TDLToolbarButtonListCtrl.h
 # End Source File
 # Begin Source File
 

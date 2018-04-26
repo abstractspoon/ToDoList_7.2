@@ -94,7 +94,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const int BEVEL = GraphicsMisc::ScaleByDPIFactor(3);
+const int BEVEL = 3; // DON'T SCALE
 const int BORDER = GraphicsMisc::ScaleByDPIFactor(3);
 const int MAX_NUM_TOOLS = 50;
 
@@ -704,10 +704,12 @@ void CToDoListWnd::SetUITheme(const CString& sThemeFile)
 	if (themeCur != m_theme)
 	{
 		m_cbQuickFind.DestroyWindow();
-		m_tbHelper.Release();
-		m_toolbar.DestroyWindow();
+		m_tbHelperMain.Release();
+		m_toolbarMain.DestroyWindow();
+		m_toolbarCustom.DestroyWindow();
 
-		InitToolbar();
+		InitMainToolbar();
+		InitCustomToolbar();
 
 		// reinitialize the menu icon manager
 		m_mgrMenuIcons.Release();
@@ -715,11 +717,20 @@ void CToDoListWnd::SetUITheme(const CString& sThemeFile)
 	}
 	else
 	{
-		m_toolbar.SetBackgroundColors(m_theme.crToolbarLight, 
+		m_toolbarMain.SetBackgroundColors(m_theme.crToolbarLight, 
 										m_theme.crToolbarDark, 
 										m_theme.HasGradient(), 
 										m_theme.HasGlass());
-		m_toolbar.SetHotColor(m_theme.crToolbarHot);
+		m_toolbarMain.SetHotColor(m_theme.crToolbarHot);
+
+		if (m_toolbarCustom.GetSafeHwnd())
+		{
+			m_toolbarCustom.SetBackgroundColors(m_theme.crToolbarLight, 
+											m_theme.crToolbarDark, 
+											m_theme.HasGradient(), 
+											m_theme.HasGlass());
+			m_toolbarCustom.SetHotColor(m_theme.crToolbarHot);
+		}
 	}
 
 	m_statusBar.SetUIColors(m_theme.crStatusBarLight, 
@@ -727,8 +738,6 @@ void CToDoListWnd::SetUITheme(const CString& sThemeFile)
 							m_theme.crStatusBarText, 
 							m_theme.HasGradient(), 
 							m_theme.HasGlass());
-
-
 
 	m_filterBar.SetUITheme(m_theme);
 	m_dlgTimeTracker.SetUITheme(m_theme);
@@ -818,9 +827,12 @@ int CToDoListWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!InitTrayIcon())
 		return -1;
 	
-	if (!InitToolbar())
+	if (!InitMainToolbar())
 		return -1;
 
+	if (Prefs().HasCustomToolbar() && !InitCustomToolbar())
+		return -1;
+	
 	if (!InitStatusbar())
 		return -1;
 
@@ -1125,7 +1137,7 @@ LRESULT CToDoListWnd::OnFocusChange(WPARAM wp, LPARAM /*lp*/)
 			m_sCurrentFocus += ": ";
 			m_sCurrentFocus += tdc.GetControlDescription(pFocus);
 		}
-		else if (pFocus == m_cbQuickFind.GetWindow(GW_CHILD))
+		else if (m_cbQuickFind.GetSafeHwnd() && (pFocus == m_cbQuickFind.GetWindow(GW_CHILD)))
 		{
 			m_sCurrentFocus.LoadString(IDS_QUICKFIND);
 		}
@@ -1265,32 +1277,32 @@ BOOL CToDoListWnd::InitTrayIcon()
 	return TRUE;
 }
 
-BOOL CToDoListWnd::InitToolbar()
+BOOL CToDoListWnd::InitMainToolbar()
 {
-	if (m_toolbar.GetSafeHwnd())
+	if (m_toolbarMain.GetSafeHwnd())
 		return TRUE;
 
-	UINT nStyle = (WS_CHILD | CBRS_ALIGN_TOP | WS_CLIPCHILDREN | CBRS_TOOLTIPS);
+	UINT nStyle = (WS_CHILD | CBRS_ALIGN_TOP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CBRS_TOOLTIPS);
 
 	if (m_bShowToolbar)
 		nStyle |= WS_VISIBLE;
 
-	if (!m_toolbar.CreateEx(this, (TBSTYLE_FLAT | TBSTYLE_WRAPABLE), nStyle))
+	if (!m_toolbarMain.CreateEx(this, (TBSTYLE_FLAT | TBSTYLE_WRAPABLE), nStyle))
 		return FALSE;
 
-	if (!m_toolbar.LoadToolBar(IDR_APP_TOOLBAR))
+	if (!m_toolbarMain.LoadToolBar(IDR_APP_TOOLBAR))
 		return FALSE;
 	
-	m_toolbar.SetBorders(4, 2, 0, 0);
+	m_toolbarMain.SetBorders(4, 2, 0, 0);
 
 	// colors
 	if (CThemed::IsAppThemed())
 	{
-		m_toolbar.SetBackgroundColors(m_theme.crToolbarLight, 
+		m_toolbarMain.SetBackgroundColors(m_theme.crToolbarLight, 
 										m_theme.crToolbarDark, 
 										m_theme.HasGradient(), 
 										m_theme.HasGlass());
-		m_toolbar.SetHotColor(m_theme.crToolbarHot);
+		m_toolbarMain.SetHotColor(m_theme.crToolbarHot);
 	}
 	
 	// toolbar images
@@ -1299,39 +1311,39 @@ BOOL CToDoListWnd::InitToolbar()
 		COLORREF crMask = CLR_NONE;
 		CString sImagePath = m_theme.GetToolbarImageFile(_T("TODOLIST"), crMask);
 
-		VERIFY(m_toolbar.SetImage(sImagePath, crMask));
+		VERIFY(m_toolbarMain.SetImage(sImagePath, crMask));
 	}
 	else 
 	{
 		const COLORREF MAGENTA = RGB(255, 0, 255);
-		m_toolbar.SetImage(IDB_APP_TOOLBAR_STD, MAGENTA);
+		m_toolbarMain.SetImage(IDB_APP_TOOLBAR_STD, MAGENTA);
 	}
 	
 	// resize the toolbar in one row so that our subsequent calculations work
-	m_toolbar.MoveWindow(0, 2, 1000, 32); 
+	m_toolbarMain.MoveWindow(0, 2, 1000, 32); 
 	
 	// insert combobox for quick Find after Find Tasks button
-	int nPos = m_toolbar.CommandToIndex(ID_EDIT_FINDTASKS) + 1;
+	int nPos = m_toolbarMain.CommandToIndex(ID_EDIT_FINDTASKS) + 1;
 	
 	TBBUTTON tbbQuickFind = { 0, nPos, 0, TBSTYLE_SEP, 0, NULL };
 	TBBUTTON tbbSep = { 0, nPos + 1, 0, TBSTYLE_SEP, 0, NULL };
 	
-	m_toolbar.GetToolBarCtrl().InsertButton(nPos, &tbbQuickFind);
-	m_toolbar.GetToolBarCtrl().InsertButton(nPos + 1, &tbbSep);
+	m_toolbarMain.GetToolBarCtrl().InsertButton(nPos, &tbbQuickFind);
+	m_toolbarMain.GetToolBarCtrl().InsertButton(nPos + 1, &tbbSep);
 	
 	TBBUTTONINFO tbi;
 	tbi.cbSize = sizeof( TBBUTTONINFO );
 	tbi.cx = 150;
 	tbi.dwMask = TBIF_SIZE;  // By index
 	
-	m_toolbar.GetToolBarCtrl().SetButtonInfo(nPos + 1, &tbi);
+	m_toolbarMain.GetToolBarCtrl().SetButtonInfo(nPos + 1, &tbi);
 	
 	CRect rect;
-	m_toolbar.GetToolBarCtrl().GetItemRect(nPos + 1, &rect);
+	m_toolbarMain.GetToolBarCtrl().GetItemRect(nPos + 1, &rect);
 	rect.bottom += 200;
 	
 	if (!m_cbQuickFind.Create(WS_CHILD | WS_VSCROLL | WS_VISIBLE | CBS_AUTOHSCROLL | 
-		CBS_DROPDOWN, rect, &m_toolbar, IDC_QUICKFIND))
+		CBS_DROPDOWN, rect, &m_toolbarMain, IDC_QUICKFIND))
 	{
 		return FALSE;
 	}
@@ -1345,7 +1357,44 @@ BOOL CToDoListWnd::InitToolbar()
 	m_cbQuickFind.SetFont(&m_fontMain);
 	m_mgrPrompts.SetComboEditPrompt(m_cbQuickFind, IDS_QUICKFIND);
 	
-	m_tbHelper.Initialize(&m_toolbar, this, &m_mgrShortcuts);
+	m_tbHelperMain.Initialize(&m_toolbarMain, this, &m_mgrShortcuts);
+	
+	return TRUE;
+}
+
+BOOL CToDoListWnd::InitCustomToolbar()
+{
+	if (m_toolbarCustom.GetSafeHwnd())
+		return TRUE;
+
+	CToolbarButtonArray aTBButtons;
+
+	if (!Prefs().GetCustomToolbarButtons(aTBButtons))
+		return TRUE; // not an error
+
+	UINT nStyle = (WS_CHILD | CBRS_ALIGN_TOP | WS_CLIPCHILDREN | WS_VISIBLE);
+
+	if (!m_toolbarCustom.CreateEx(this, (TBSTYLE_FLAT | TBSTYLE_WRAPABLE), nStyle))
+		return FALSE;
+
+	m_toolbarCustom.SetBorders(4, 2, 0, 0);
+
+	// colors
+	if (CThemed::IsAppThemed())
+	{
+		m_toolbarCustom.SetBackgroundColors(m_theme.crToolbarLight, 
+											m_theme.crToolbarDark, 
+											m_theme.HasGradient(), 
+											m_theme.HasGlass());
+		m_toolbarCustom.SetHotColor(m_theme.crToolbarHot);
+	}
+
+	if (!m_toolbarCustom.SetButtons(aTBButtons, m_menubar, m_mgrShortcuts))
+	{
+		ASSERT(0);
+		m_toolbarCustom.DestroyWindow();
+		return FALSE;
+	}
 	
 	return TRUE;
 }
@@ -2508,8 +2557,8 @@ void CToDoListWnd::LoadSettings()
 
 	// toolbar
 	m_bShowToolbar = prefs.GetProfileInt(SETTINGS_KEY, _T("ToolbarOption"), TRUE);
-	m_toolbar.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
-	m_toolbar.EnableWindow(m_bShowToolbar);
+	m_toolbarMain.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
+	m_toolbarMain.EnableWindow(m_bShowToolbar);
 
 	// tabbars
 	m_bShowTasklistBar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowTasklistBar"), TRUE);
@@ -2714,7 +2763,7 @@ void CToDoListWnd::RestoreVisibility()
 			// Startup redraw problem
 			if (COSVersion() == OSV_LINUX)
 			{
-				m_toolbar.Invalidate(TRUE);
+				m_toolbarMain.Invalidate(TRUE);
 				m_filterBar.Invalidate(TRUE);
 				m_cbQuickFind.Invalidate(TRUE);
 			}
@@ -2877,7 +2926,8 @@ BOOL CToDoListWnd::OnEraseBkgnd(CDC* pDC)
 	if (!GetTDCCount())
 		return CFrameWnd::OnEraseBkgnd(pDC);
 
-	CDialogHelper::ExcludeChild(&m_toolbar, pDC);
+	CDialogHelper::ExcludeChild(&m_toolbarMain, pDC);
+	CDialogHelper::ExcludeChild(&m_toolbarCustom, pDC);
 	CDialogHelper::ExcludeChild(&m_statusBar, pDC);
 	CDialogHelper::ExcludeChild(&m_tabCtrl, pDC);
 	CDialogHelper::ExcludeChild(&m_filterBar, pDC);
@@ -2898,11 +2948,20 @@ BOOL CToDoListWnd::OnEraseBkgnd(CDC* pDC)
 		pDC->FillSolidRect(0, nVPos, rClient.Width(), BEVEL, m_theme.crAppBackDark);
 	}
 
-	// Bevel below the toolbar
-	if (m_bShowToolbar)
+	// Bevel below the toolbars
+	int nVPos = 0;
+
+	if (m_toolbarCustom.GetSafeHwnd())
 	{
- 		int nVPos = m_toolbar.GetHeight();
-		
+		nVPos = (CDialogHelper::GetChildRect(&m_toolbarCustom).bottom + 1);
+	}
+	else if (m_bShowToolbar)
+	{
+		nVPos = m_toolbarMain.GetHeight();
+	}
+
+	if (nVPos > 0)
+	{
 		GraphicsMisc::DrawHorzLine(pDC, 0, rClient.Width(), nVPos, m_theme.crAppLinesDark);
 		GraphicsMisc::DrawHorzLine(pDC, 0, rClient.Width(), (nVPos + 1), m_theme.crAppLinesLight);
 	}	
@@ -4949,6 +5008,16 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 
 		// then refresh filter bar for any new default cats, statuses, etc
 		RefreshFilterBarControls();
+
+		// Custom toolbar
+		CToolbarButtonArray aOldButtons, aNewButtons;
+
+		if (oldPrefs.GetCustomToolbarButtons(aOldButtons) != newPrefs.GetCustomToolbarButtons(aNewButtons) ||
+			!Misc::MatchAllT(aOldButtons, aNewButtons, TRUE))
+		{
+			m_toolbarCustom.DestroyWindow();
+			InitCustomToolbar();
+		}
 		
 		if (bResizeDlg)
 			Resize();
@@ -6081,13 +6150,13 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 	
 	// ensure m_cbQuickFind is positioned correctly
-	if (m_toolbar.GetSafeHwnd())
+	if (m_toolbarMain.GetSafeHwnd())
 	{
-		int nPos = m_toolbar.CommandToIndex(ID_EDIT_FINDTASKS) + 2;
+		int nPos = m_toolbarMain.CommandToIndex(ID_EDIT_FINDTASKS) + 2;
 
 		CRect rNewPos;
-		m_toolbar.GetItemRect(nPos, rNewPos);
-		m_toolbar.ClientToScreen(rNewPos);
+		m_toolbarMain.GetItemRect(nPos, rNewPos);
+		m_toolbarMain.ClientToScreen(rNewPos);
 
 		// check if it needs to be moved
 		CRect rPrevPos;
@@ -6095,7 +6164,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 
 		if (rNewPos.TopLeft() != rPrevPos.TopLeft())
 		{
-			m_toolbar.ScreenToClient(rNewPos);
+			m_toolbarMain.ScreenToClient(rNewPos);
 			rNewPos.bottom = rNewPos.top + 200;
 			m_cbQuickFind.MoveWindow(rNewPos);
 		}
@@ -6138,7 +6207,15 @@ BOOL CToDoListWnd::CalcToDoCtrlRect(CRect& rect, int cx, int cy, BOOL bMaximized
 	
 	// toolbar
 	if (m_bShowToolbar) 
- 		rTaskList.top += m_toolbar.GetHeight();
+ 		rTaskList.top += m_toolbarMain.GetHeight();
+	
+	if (m_toolbarCustom.GetSafeHwnd()) 
+	{
+		BOOL bSeparateLine = (!m_bShowToolbar || ((m_toolbarMain.GetMinReqLength() + m_toolbarCustom.GetMinReqLength()) > cx));
+
+		if (bSeparateLine)
+			rTaskList.top += (m_toolbarCustom.GetHeight() + BEVEL);
+	}
 	
 	// resize tabctrl
 	CDeferWndMove dwm(0); // dummy
@@ -6209,7 +6286,24 @@ void CToDoListWnd::Resize(int cx, int cy, BOOL bMaximized)
 	
 	// toolbar
 	if (m_bShowToolbar) // showing toolbar
-		rTaskList.top += m_toolbar.Resize(cx);
+		rTaskList.top += m_toolbarMain.Resize(cx);
+
+	// Attempt to put the custom toolbar on the same line
+	if (m_toolbarCustom.GetSafeHwnd())
+	{
+		int nMainLen = m_toolbarMain.GetMinReqLength();
+		BOOL bSeparateLine = (!m_bShowToolbar || ((nMainLen + m_toolbarCustom.GetMinReqLength()) > cx));
+
+		if (bSeparateLine)
+		{
+			rTaskList.top += (m_toolbarCustom.Resize(cx, CPoint(0, rTaskList.top)) + BEVEL);
+		}
+		else
+		{
+			m_toolbarMain.Resize(nMainLen);
+			m_toolbarCustom.Resize(cx - nMainLen, CPoint(nMainLen, 0));
+		}
+	}
 	
 	// resize tabctrl
 	CPoint ptOrg(0, rTaskList.top);
@@ -7441,8 +7535,8 @@ void CToDoListWnd::OnViewToolbar()
 {
 	m_bShowToolbar = !m_bShowToolbar;
 
-	m_toolbar.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
-	m_toolbar.EnableWindow(m_bShowToolbar);
+	m_toolbarMain.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
+	m_toolbarMain.EnableWindow(m_bShowToolbar);
 
 	Resize();
 	Invalidate(TRUE);
@@ -7463,15 +7557,15 @@ void CToDoListWnd::UpdateUDTsInToolbar()
 		CUserToolArray aTools;
 		Prefs().GetUserTools(aTools);
 		
-		th.AppendToolsToToolbar(aTools, m_toolbar, ID_PREFERENCES);
+		th.AppendToolsToToolbar(aTools, m_toolbarMain, ID_PREFERENCES);
 
 		// refresh tooltips
-		m_tbHelper.Release();
-		m_tbHelper.Initialize(&m_toolbar, this, &m_mgrShortcuts);
+		m_tbHelperMain.Release();
+		m_tbHelperMain.Initialize(&m_toolbarMain, this, &m_mgrShortcuts);
 	}
 	else // remove
 	{
-		th.RemoveToolsFromToolbar(m_toolbar, ID_PREFERENCES);
+		th.RemoveToolsFromToolbar(m_toolbarMain, ID_PREFERENCES);
 	}
 
 	// resize toolbar to accept the additional buttons
@@ -8530,7 +8624,7 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 		// Force components to save their state before we
 		// signal Windows that it's alright to shutdown
 		m_mgrImportExport.Release();
-		m_tbHelper.Release();
+		m_tbHelperMain.Release();
 		m_mgrShortcuts.Release();
 		m_mgrImportExport.Release();
 		m_mgrUIExtensions.Release();
@@ -8544,6 +8638,8 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 		m_reminders.DestroyWindow();
 		m_filterBar.DestroyWindow();
 		m_findDlg.DestroyWindow();
+		m_toolbarMain.DestroyWindow();
+		m_toolbarCustom.DestroyWindow();
 			
 		// Only need to destroy windows if NOT closing Windows
 #ifdef _DEBUG
