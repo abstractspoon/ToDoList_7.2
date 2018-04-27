@@ -20,14 +20,16 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 //////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 enum
 {
 	TDCIL_LOADEDSET		= 0x01,
 	TDCIL_LOADEDIMAGES	= 0x02,
 };
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
 
 CTDCImageList::CTDCImageList()
 {
@@ -54,6 +56,7 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 		// Add a dummy placeholder for the 'folder' icon which we
 		// will replace once we have rescaled the imagelist
 		Add(CIcon(IDI_NULL, 16));
+		MapImage(0, this);
 
 		// because the icon set must come first for backwards compatibility
 		// we must first see if any other images exist before we add them.
@@ -110,9 +113,6 @@ BOOL CTDCImageList::LoadImages(const CString& sTaskList, COLORREF crTransparent,
 
 		// Replace the first image with the actual folder icon
 		VERIFY(Replace(0, CIcon(CSysImageList().ExtractFolderIcon())) == 0);
-		
-		m_mapNameToIndex[_T("0")] = 0;
-		m_mapIndexToName[0] = _T("0");
 	}
 
 	return (GetSafeHandle() != NULL);
@@ -168,17 +168,13 @@ BOOL CTDCImageList::AddImage(const CString& sImageFile, CBitmap& bmImage, COLORR
 		{
 			CString sName = FileMisc::GetFileNameFromPath(sImageFile);
 			
-			pImages->m_mapNameToIndex[sName] = nStartIndex;
-			pImages->m_mapIndexToName[nStartIndex] = sName;
+			MapImage(nStartIndex, sName, pImages);
 		}
 		else // map by image index
 		{
 			for (int nIndex = nStartIndex; nIndex <= nEndIndex; nIndex++)
 			{
-				CString sName = Misc::Format(nIndex);
-				
-				pImages->m_mapNameToIndex[sName] = nIndex;
-				pImages->m_mapIndexToName[nIndex] = sName;
+				MapImage(nIndex, pImages);
 			}
 		}
 
@@ -186,6 +182,17 @@ BOOL CTDCImageList::AddImage(const CString& sImageFile, CBitmap& bmImage, COLORR
 	}
 
 	return FALSE;
+}
+
+void CTDCImageList::MapImage(int nIndex, CTDCImageList* pImages)
+{
+	MapImage(nIndex, Misc::Format(nIndex), pImages);
+}
+
+void CTDCImageList::MapImage(int nIndex, const CString& sName, CTDCImageList* pImages)
+{
+	pImages->m_mapNameToIndex[sName] = nIndex;
+	pImages->m_mapIndexToName[nIndex] = sName;
 }
 
 DWORD CTDCImageList::LoadImagesFromFolder(const CString& sFolder, COLORREF crTransparent, CTDCImageList* pImages)

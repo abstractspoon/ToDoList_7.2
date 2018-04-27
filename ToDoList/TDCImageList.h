@@ -42,6 +42,8 @@ protected:
 	static DWORD LoadImagesFromFolder(const CString& sFolder, COLORREF crTransparent, CTDCImageList* pImages);
 	static BOOL LoadImage(const CString& sImageFile, COLORREF crTransparent, CTDCImageList* pImages);
 	static BOOL AddImage(const CString& sImageFile, CBitmap& bmImage, COLORREF crTransparent, CTDCImageList* pImages);
+	static void MapImage(int nIndex, const CString& sName, CTDCImageList* pImages);
+	static void MapImage(int nIndex, CTDCImageList* pImages);
 
 };
 
