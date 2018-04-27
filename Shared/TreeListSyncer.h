@@ -198,6 +198,7 @@ protected:
 	static BOOL ListItemHasState(HWND hwnd, int nItem, UINT nStateMask);
 	static void ForceNcCalcSize(HWND hwnd);
 	static void InvalidateTreeItem(HWND hwnd, HTREEITEM hti);
+	static void InvalidateListItem(HWND hwnd, int nItem);
 	static int InsertListItem(HWND hwndList, int nInsertPos, DWORD dwItemData);
  	static void SelectTreeItem(HWND hwnd, HTREEITEM hti, BOOL bClear = TRUE);
 	static BOOL OsIsXP();

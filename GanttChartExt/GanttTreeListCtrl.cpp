@@ -5192,7 +5192,7 @@ void CGanttTreeListCtrl::OnEndDepedencyEdit()
 
 	m_tree.SelectDropTarget(NULL);
 	m_list.SetItemState(m_nPrevDropHilitedItem, 0, LVIS_DROPHILITED);
-	m_list.InvalidateRect(NULL, TRUE);
+	m_list.Invalidate(TRUE);
 
 	m_nPrevDropHilitedItem = -1;
 }
