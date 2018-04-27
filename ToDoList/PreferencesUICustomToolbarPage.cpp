@@ -153,7 +153,7 @@ void CPreferencesUICustomToolbarPage::OnDeleteButton()
 		EnableDisableButtons();
 }
 
-void CPreferencesUICustomToolbarPage::OnListSelChange(NMHDR* pNMHDR, LRESULT* pResult)
+void CPreferencesUICustomToolbarPage::OnListSelChange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
 	EnableDisableButtons();
