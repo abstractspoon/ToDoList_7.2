@@ -5345,13 +5345,18 @@ GTLC_COLUMN CGanttTreeListCtrl::GetColumnID(int nCol) const
 
 void CGanttTreeListCtrl::ResizeColumnsToFit()
 {
-	// tree columns
+	// tree columns (except title column)
 	CClientDC dc(&m_tree);
-	int nCol = m_treeHeader.GetItemCount(), nTotalColWidth = 0;
+	int nNumCols = m_treeHeader.GetItemCount(), nTotalColWidth = 0, nCol = 0;
 
-	while (nCol--)
+	for (; nCol < nNumCols; nCol++)
 	{
-		int nColWidth = RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
+		int nColWidth = 0;
+		
+		if (nCol == 0) // title
+			nColWidth = m_treeHeader.GetItemWidth(nCol);
+		else
+			nColWidth = RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
 
 		if (m_treeHeader.IsItemVisible(nCol))
 			nTotalColWidth += nColWidth;
