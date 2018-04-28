@@ -3777,7 +3777,7 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		CRect rItem;
 		VERIFY(GetListItemRect(nItem, rItem));
 
-		COLORREF crRow = (bSelected ? CLR_NONE : GetRowColor(nItem));
+		COLORREF crRow = CLR_NONE;//(bSelected ? CLR_NONE : GetRowColor(nItem));
 
 		if (htiRollUp)
 			DrawListItemRollupText(pDC, htiRollUp, rItem, rClip, crRow);
