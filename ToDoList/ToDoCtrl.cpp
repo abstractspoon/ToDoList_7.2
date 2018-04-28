@@ -12405,6 +12405,8 @@ BOOL CToDoCtrl::UndoLastAction(BOOL bUndo)
 		{
 			VERIFY(UndoLastActionItems(aElms));
 
+			m_taskTree.OnUndoRedo(bUndo);
+
 			// restore selection
 			if (!aTaskIDs.GetSize() || !m_taskTree.SelectTasks(aTaskIDs))
 			{
@@ -12412,8 +12414,6 @@ BOOL CToDoCtrl::UndoLastAction(BOOL bUndo)
 					TSH().PrevSelection(FALSE);
 			}
 			
-			m_taskTree.OnUndoRedo(bUndo);
-
 			// update current selection
 			UpdateControls();
 
