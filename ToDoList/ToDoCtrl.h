@@ -426,8 +426,8 @@ public:
 	void SetAlternatePreferencesKey(const CString& sKey) { m_sAltPrefsKey = sKey; }
 	CString GetPreferencesKey(const CString& sSubKey = _T("")) const;
 
-	virtual void NotifyBeginPreferencesUpdate() {}
-	virtual void NotifyEndPreferencesUpdate() {}
+	virtual void NotifyBeginPreferencesUpdate(BOOL bFirst);
+	virtual void NotifyEndPreferencesUpdate(BOOL bFirst);
 	virtual void UpdateVisibleColumns();
 	virtual TDC_HITTEST HitTest(const CPoint& ptScreen) const;
 	virtual TDC_COLUMN ColumnHitTest(const CPoint& ptScreen) const;
@@ -548,7 +548,6 @@ protected:
 	BOOL m_bSourceControlled;
 	BOOL m_bDragDropSubtasksAtTop;
 	BOOL m_bDelayLoaded;
-	BOOL m_bFirstLoadCommentsPrefs;
 	BOOL m_bDeletingTasks;
 	BOOL m_bFindReplacing;
 

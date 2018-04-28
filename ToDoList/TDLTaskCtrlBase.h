@@ -246,6 +246,8 @@ public:
 	static BOOL IsReservedShortcut(DWORD dwShortcut);
 	static void EnableExtendedSelection(BOOL bCtrl, BOOL bShift);
 
+	void AdjustSplitterToFitAttributeColumns();
+
 protected:
 	CListCtrl m_lcColumns;
 	CEnHeaderCtrl m_hdrColumns, m_hdrTasks;
@@ -377,7 +379,6 @@ protected:
 	void UpdateHeaderSorting();
 	CString FormatInfoTip(DWORD dwTaskID, int nMaxLen) const;
 	void RecalcColumnWidths(BOOL bCustom);
-	void ResizeSplitterToFitColumns();
 	const CEnHeaderCtrl& GetColumnHeaderCtrl(TDC_COLUMN nColID) const;
 	BOOL IsVisible() const;
 	CPoint CalcColumnIconTopLeft(const CRect& rSubItem, int nImage = 0, int nCount = 1, int nImageSize = 16) const;
@@ -469,7 +470,7 @@ protected:
 	
 	int CalcMaxDateColWidth(TDC_DATE nDate, CDC* pDC, BOOL bCustomWantsTime = FALSE) const;
 	BOOL WantDrawColumnTime(TDC_DATE nDate, BOOL bCustomWantsTime = FALSE) const;
-	int CalcSplitterPosToFitColumns() const;
+	int CalcSplitterPosToFitListColumns() const;
 	void UpdateAttributePaneVisibility();
 
 	BOOL NeedDrawColumnSelection() { return (HasFocus() && (GetFocus() != &m_lcColumns)); }
