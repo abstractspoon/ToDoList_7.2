@@ -606,6 +606,8 @@ void CTaskCalendarCtrl::DrawGrid(CDC* pDC)
 
 void CTaskCalendarCtrl::DrawCells(CDC* pDC)
 {
+	UpdateCellScrollBarVisibility();
+
 	// rebuild build display
 	m_nMaxDayTaskCount = 0;
 	m_mapVertPos.RemoveAll();
@@ -666,8 +668,6 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 {
 	// default drawing
 	CCalendarCtrl::DrawCellContent(pDC, pCell, rCell, bSelected, bToday);
-
-	UpdateCellScrollBarVisibility();
 
 	// then ours
 	if (!m_nMaxDayTaskCount)
@@ -1578,14 +1578,18 @@ void CTaskCalendarCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		SetFocus();
 		SelectTask(dwSelID, TRUE);
 
-		if (!m_bReadOnly)
-			StartDragging(point);
+		const CCalendarCell* pCell = GetCell(point);
+
+		if (pCell)
+			SelectDate(pCell->date, FALSE);
+		
+		if (!m_bReadOnly && StartDragging(point))
+			return;
 	}
-	else
-	{
-		CCalendarCtrl::OnLButtonDown(nFlags, point);
-		UpdateWindow();
-	}
+
+	// else
+	CCalendarCtrl::OnLButtonDown(nFlags, point);
+	UpdateWindow();
 }
 
 BOOL CTaskCalendarCtrl::StartDragging(const CPoint& ptCursor)
