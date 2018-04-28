@@ -606,6 +606,7 @@ void CGanttTreeListCtrl::UpdateTasks(const ITaskList* pTaskList, IUI_UPDATETYPE 
 			BuildTaskMap(pTasks, pTasks->GetFirstTask(), mapIDs, TRUE);
 			
 			RemoveDeletedTasks(NULL, pTasks, mapIDs);
+			UpdateParentStatus(pTasks, NULL, TRUE);
 
 			// cache current year range to test for changes
 			int nNumMonths = GetNumMonths(m_nMonthDisplay);
@@ -787,12 +788,6 @@ BOOL CGanttTreeListCtrl::UpdateTask(const ITASKLISTBASE* pTasks, HTASKITEM hTask
 
 		if (dwParentID)
 		{
-			if (!m_data.HasItem(dwParentID))
-			{
-				ASSERT(0);
-				return FALSE;
-			}
-
 			htiParent = GetTreeItem(dwParentID);
 
 			if (!htiParent)
@@ -800,6 +795,12 @@ BOOL CGanttTreeListCtrl::UpdateTask(const ITASKLISTBASE* pTasks, HTASKITEM hTask
 				ASSERT(0);
 				return FALSE;
 			}
+
+			// Ensure 'parent' status
+			GANTTITEM* pGIParent = NULL;
+			GET_GI_RET(dwParentID, pGIParent, FALSE);
+
+			pGIParent->bParent = TRUE;
 		}
 
 		// Before anything else we increment the position of 
@@ -844,7 +845,7 @@ BOOL CGanttTreeListCtrl::UpdateTask(const ITASKLISTBASE* pTasks, HTASKITEM hTask
 		
 	if (attrib.Has(IUI_STARTDATE))
 	{
-		if (pTasks->GetTaskStartDate64(hTask, pGI->bParent, tDate))
+		if (pTasks->GetTaskStartDate64(hTask, (pGI->bParent != FALSE), tDate))
 		{
 			pGI->dtStart = pGI->dtMinStart = GetDate(tDate, FALSE); // start of day
 		}
@@ -857,7 +858,7 @@ BOOL CGanttTreeListCtrl::UpdateTask(const ITASKLISTBASE* pTasks, HTASKITEM hTask
 	
 	if (attrib.Has(IUI_DUEDATE))
 	{
-		if (pTasks->GetTaskDueDate64(hTask, pGI->bParent, tDate))
+		if (pTasks->GetTaskDueDate64(hTask, (pGI->bParent != FALSE), tDate))
 		{
 			pGI->dtDue = pGI->dtMaxDue = GetDate(tDate, TRUE); // end of day
 		}
@@ -988,6 +989,59 @@ void CGanttTreeListCtrl::RemoveDeletedTasks(HTREEITEM hti, const ITASKLISTBASE* 
 		
 		RemoveDeletedTasks(htiChild, pTasks, mapIDs);
 		htiChild = htiNext;
+	}
+}
+
+void CGanttTreeListCtrl::UpdateParentStatus(const ITASKLISTBASE* pTasks, HTASKITEM hTask, BOOL bAndSiblings)
+{
+	if (hTask == NULL)
+		return;
+
+	// this task
+	GANTTITEM* pGI = NULL;
+	GET_GI(pTasks->GetTaskID(hTask), pGI);
+
+	pGI->bParent = pTasks->IsTaskParent(hTask);
+
+	// children
+	UpdateParentStatus(pTasks, pTasks->GetFirstTask(hTask), TRUE);
+
+	// handle siblings WITHOUT RECURSION
+	if (bAndSiblings)
+	{
+		HTASKITEM hSibling = pTasks->GetNextTask(hTask);
+
+		while (hSibling)
+		{
+			// FALSE == not siblings
+			UpdateParentStatus(pTasks, hSibling, FALSE);
+			hSibling = pTasks->GetNextTask(hSibling);
+		}
+	}
+}
+
+void CGanttTreeListCtrl::UpdateParentStatus(DWORD dwOldParentID, DWORD dwNewParentID)
+{
+	if (dwOldParentID)
+	{
+		GANTTITEM* pGIParent = NULL;
+		GET_GI(dwOldParentID, pGIParent);
+
+		HTREEITEM htiParent = GetTreeItem(dwOldParentID);
+		ASSERT(htiParent);
+
+		pGIParent->bParent = m_tree.ItemHasChildren(htiParent);
+	}
+
+	if (dwNewParentID)
+	{
+		GANTTITEM* pGIParent = NULL;
+		GET_GI(dwNewParentID, pGIParent);
+
+		HTREEITEM htiParent = GetTreeItem(dwNewParentID);
+		ASSERT(htiParent);
+
+		pGIParent->bParent = m_tree.ItemHasChildren(htiParent);;
 	}
 }
 
@@ -1135,10 +1189,10 @@ void CGanttTreeListCtrl::BuildTreeItem(const ITASKLISTBASE* pTasks, HTASKITEM hT
 
 		time64_t tDate = 0;
 
-		if (pTasks->GetTaskStartDate64(hTask, pGI->bParent, tDate))
+		if (pTasks->GetTaskStartDate64(hTask, (pGI->bParent != FALSE), tDate))
 			pGI->dtStart = GetDate(tDate, FALSE);
 
-		if (pTasks->GetTaskDueDate64(hTask, pGI->bParent, tDate))
+		if (pTasks->GetTaskDueDate64(hTask, (pGI->bParent != FALSE), tDate))
 			pGI->dtDue = GetDate(tDate, TRUE);
 
 		if (pTasks->GetTaskDoneDate64(hTask, tDate))
@@ -2249,9 +2303,12 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 					// so we do not need to perform the move ourselves
 					if (SendMessage(WM_GTLC_MOVETASK, 0, (LPARAM)&move) && !move.bCopy)
 					{
+						DWORD dwSrcParentID = GetTaskID(m_tree.GetParentItem(htiSel));
+						
 						htiSel = TCH().MoveTree(htiSel, htiDropTarget, htiAfterSibling, TRUE, TRUE);
 
 						RefreshTreeItemMap();
+						UpdateParentStatus(dwSrcParentID, move.dwParentID);
 						SelectItem(htiSel);
 					}
 				}
@@ -7563,6 +7620,7 @@ BOOL CGanttTreeListCtrl::MoveSelectedItem(const IUITASKMOVE& move)
 	CAutoFlag af(m_bMovingTask, TRUE);
 	
 	HTREEITEM htiSel = GetSelectedItem(), htiNew = NULL;
+	HTREEITEM htiSrcParent = m_tree.GetParentItem(htiSel);
 	HTREEITEM htiDestParent = GetTreeItem(move.dwParentID);
 	HTREEITEM htiDestAfterSibling = GetTreeItem(move.dwAfterSiblingID);
 	
@@ -7576,7 +7634,11 @@ BOOL CGanttTreeListCtrl::MoveSelectedItem(const IUITASKMOVE& move)
 
 	if (htiNew)
 	{
+		UpdateParentStatus(GetTaskID(htiSrcParent), move.dwParentID);
+
+		RefreshTreeItemMap();
 		SelectItem(htiNew);
+
 		return TRUE;
 	}
 
