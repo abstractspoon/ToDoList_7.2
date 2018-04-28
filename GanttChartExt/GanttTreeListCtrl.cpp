@@ -3732,10 +3732,12 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 {
 	ASSERT(nItem != -1);
 	int nNumCol = GetRequiredListColumnCount();
-
+	
 	// Rollups for collapsed parents
-	HTREEITEM htiRollUp = NULL;
 	CRect rClip;
+	pDC->GetClipBox(rClip);
+
+	HTREEITEM htiRollUp = NULL;
 
 	if (HasOption(GTLCF_DISPLAYPARENTROLLUPS) && gi.bParent)
 	{
@@ -3743,10 +3745,7 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		ASSERT(htiParent);
 
 		if (htiParent && !TCH().IsItemExpanded(htiParent))
-		{
 			htiRollUp = htiParent;
-			pDC->GetClipBox(rClip);
-		}
 	}
 
 	BOOL bContinue = TRUE;
@@ -3775,7 +3774,7 @@ void CGanttTreeListCtrl::DrawListItem(CDC* pDC, int nItem, const GANTTITEM& gi, 
 		HasOption(GTLCF_DISPLAYTRAILINGALLOCTO))
 	{
 		CRect rItem;
-		VERIFY(GetListItemRect(nItem, rItem));
+		VERIFY(m_list.GetItemRect(nItem, rItem, LVIR_BOUNDS));
 
 		COLORREF crRow = CLR_NONE;//(bSelected ? CLR_NONE : GetRowColor(nItem));
 
@@ -3837,8 +3836,14 @@ void CGanttTreeListCtrl::DrawListItemText(CDC* pDC, const GANTTITEM& gi, const C
 	// get the end pos for this item relative to start of window
 	int nTextPos = GetBestTextPos(gi, rItem);
 
-	if ((nTextPos < 0) || (!rClip.IsRectNull() && (nTextPos > rClip.right)))
-		return;
+	if (!rClip.IsRectNull())
+	{
+		if (nTextPos > rClip.right)
+			return;
+
+		if ((nTextPos + pDC->GetTextExtent(sTrailing).cx + LV_COLPADDING) < rClip.left)
+			return;
+	}
 
 	CRect rText(rItem);
 	rText.left = (nTextPos + 3);
