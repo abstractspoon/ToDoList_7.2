@@ -7739,7 +7739,10 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 													vis);
 	
 	// create somewhere out in space but with a meaningful size
-	CRect rCtrl(-33000, -33000, -31000, -31000);
+	CRect rCtrl;
+
+	CalcToDoCtrlRect(rCtrl);
+	rCtrl.OffsetRect(-30000, -30000);
 	
 	if (pTDC && pTDC->Create(rCtrl, this, IDC_TODOLIST, bVisible, bEnabled))
 	{
