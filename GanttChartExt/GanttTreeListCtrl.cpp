@@ -5350,7 +5350,12 @@ void CGanttTreeListCtrl::ResizeColumnsToFit()
 	int nCol = m_treeHeader.GetItemCount(), nTotalColWidth = 0;
 
 	while (nCol--)
-		nTotalColWidth += RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
+	{
+		int nColWidth = RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
+
+		if (m_treeHeader.IsItemVisible(nCol))
+			nTotalColWidth += nColWidth;
+	}
 
 	SetSplitPos(nTotalColWidth);
 	
