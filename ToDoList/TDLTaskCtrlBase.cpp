@@ -331,7 +331,7 @@ int CTDLTaskCtrlBase::GetTaskColumnTooltip(const CPoint& ptScreen, CString& sToo
 				sTooltip += sDepends; // always
 
 				// If local, append task name
-				if (dwDependID > 0)
+				if ((dwDependID != 0) && m_data.HasTask(dwDependID))
 				{
 					sTooltip += ' ';
 					sTooltip += '(';

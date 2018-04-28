@@ -6689,10 +6689,13 @@ COleDateTime CGanttTreeListCtrl::CalcMinDragDate(const GANTTITEM& gi) const
 		DWORD dwDependID = gi.aDependIDs[nDepend];
 		ASSERT(dwDependID);
 
-		GANTTITEM* pGI = NULL;
-		GET_GI_RET(dwDependID, pGI, dtMin);
+		if (m_data.HasItem(dwDependID))
+		{
+			GANTTITEM* pGI = NULL;
+			GET_GI_RET(dwDependID, pGI, dtMin);
 
-		CDateHelper::Max(dtMin, pGI->dtDue);
+			CDateHelper::Max(dtMin, pGI->dtDue);
+		}
 	}
 
 	return dtMin;
