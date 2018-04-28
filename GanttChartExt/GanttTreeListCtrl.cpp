@@ -1852,7 +1852,7 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 			pLVCD->clrTextBk = pLVCD->clrText = crBack;
 			
 			CRect rItem;
-			VERIFY(GetListItemRect(nItem, rItem));
+			VERIFY(m_list.GetItemRect(nItem, rItem, LVIR_BOUNDS));
 
 			CRect rFullWidth(rItem);
 			GraphicsMisc::FillItemRect(pDC, rFullWidth, crBack, m_list);
