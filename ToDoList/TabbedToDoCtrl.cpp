@@ -650,7 +650,8 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 		if (!hti)
 			hti = m_taskTree.GetChildItem(NULL);
 		
-		CToDoCtrl::SelectTask(GetTaskID(hti));
+		if (hti)
+			CToDoCtrl::SelectTask(GetTaskID(hti));
 	}
 
 	// take a note of what task is currently singly selected
