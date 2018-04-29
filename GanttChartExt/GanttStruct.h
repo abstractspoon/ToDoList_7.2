@@ -124,8 +124,7 @@ struct GANTTDATERANGE
 
 	BOOL IsValid() const;
 	BOOL IsEmpty() const;
-	BOOL Contains(const GANTTITEM& gi);
-	int Compare(const COleDateTime& date) const;
+	BOOL Contains(const GANTTITEM& gi) const;
 
 protected:
 	COleDateTime dtStart, dtEnd;
