@@ -5022,6 +5022,9 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 		if (bResizeDlg)
 			Resize();
 
+		Invalidate();
+		UpdateWindow();
+
 		// Stickies Support
 		CString sStickiesPath;
 
