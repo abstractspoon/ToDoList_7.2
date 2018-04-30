@@ -54,13 +54,7 @@ BOOL CTDLCustomToolbar::SetButtons(const CToolbarButtonArray& aButtons,
 		return FALSE;
 	}
 	
-	CSize sizeBmp(16, 16), sizeBtn(sizeBmp);
-	
-	GraphicsMisc::ScaleByDPIFactor(&sizeBtn);
-	sizeBtn.cx += 7;
-	sizeBtn.cy += 7;
-	
-	SetSizes(sizeBtn, sizeBmp);
+	SetImageSize(16, 16);
 
 	for (int nBtn = 0; nBtn < aButtons.GetSize(); nBtn++)
 	{
