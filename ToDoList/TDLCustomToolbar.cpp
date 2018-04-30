@@ -7,6 +7,7 @@
 
 #include "..\Shared\ShortcutManager.h"
 #include "..\Shared\EnMenu.h"
+#include "..\Shared\GraphicsMisc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -53,6 +54,14 @@ BOOL CTDLCustomToolbar::SetButtons(const CToolbarButtonArray& aButtons,
 		return FALSE;
 	}
 	
+	CSize sizeBmp(16, 16), sizeBtn(sizeBmp);
+	
+	GraphicsMisc::ScaleByDPIFactor(&sizeBtn);
+	sizeBtn.cx += 7;
+	sizeBtn.cy += 7;
+	
+	SetSizes(sizeBtn, sizeBmp);
+
 	for (int nBtn = 0; nBtn < aButtons.GetSize(); nBtn++)
 	{
 		const TOOLBARBUTTON& tb = aButtons[nBtn];
