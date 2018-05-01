@@ -939,7 +939,7 @@ BOOL CTDLTaskCtrlBase::BuildColumns()
 	if (!bmp.LoadBitmap(IDB_COLUMN_SYMBOLS) || (m_ilColSymbols.Add(&bmp, RGB(255, 0, 255)) == -1))
 		return FALSE;
 	
-	m_ilColSymbols.ScaleByDPIFactor();
+	m_ilColSymbols.ScaleByDPIFactor(RGB(253, 253, 253));
 
 	// primary header
 	const TDCCOLUMN* pClient = GetColumn(TDCC_CLIENT);
