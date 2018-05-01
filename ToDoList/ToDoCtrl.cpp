@@ -851,10 +851,27 @@ void CToDoCtrl::Resize(int cx, int cy, BOOL bSplitting)
 	}
 }
 
+int CToDoCtrl::GetDefaultControlHeight() const
+{
+	static int nCtrlHeight = -1;
+	
+	// One time initialisation
+	if (nCtrlHeight == -1)
+	{
+		if (GraphicsMisc::WantDPIScaling())
+			nCtrlHeight = GetCtrlRect(IDC_CATEGORY).Height();
+		else
+			nCtrlHeight = CDlgUnits(this).ToPixelsY(CTRLHEIGHT);
+	}
+
+	return nCtrlHeight;
+}
+
 void CToDoCtrl::ReposProjectName(CDeferWndMove* pDWM, CRect& rAvailable)
 {
 	// project name
 	CRect rProject = GetCtrlRect(IDC_PROJECTNAME), rLabel(rProject); 
+	rProject.bottom = (rProject.top + GetDefaultControlHeight());
 
 	rLabel.OffsetRect(-rLabel.left, 0);
 	rLabel.right = rProject.left;
@@ -1241,7 +1258,8 @@ void CToDoCtrl::ReposControl(const CTRLITEM& ctrl, CDeferWndMove* pDWM, const CD
 	// move control
 	CRect rCtrl(rItem);
 	rCtrl.top += pDLU->ToPixelsY(CTRLHEIGHT);
-				
+	rCtrl.bottom = (rCtrl.top + GetDefaultControlHeight());
+
 	// some special cases
 	switch (ctrl.nCtrlID)
 	{

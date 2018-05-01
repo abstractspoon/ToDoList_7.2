@@ -753,6 +753,13 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 			
 			if (!bCalcOnly)
 			{
+				// If scaling by DPI standadise on one of the check-combo-box heights
+				if (GraphicsMisc::WantDPIScaling())
+				{
+					static int nComboHeight = GetChildRect(&m_cbCategoryFilter).Height();
+					rCtrl.bottom = (rCtrl.top + nComboHeight);
+				}
+				
 				// add 200 to combo dropdowns
 				CWnd* pCtrl = GetDlgItem(fc.nCtrlID);
 				
