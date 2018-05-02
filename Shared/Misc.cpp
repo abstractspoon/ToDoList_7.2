@@ -944,7 +944,7 @@ BOOL Misc::MatchAll(const CStringArray& array1, const CStringArray& array2, BOOL
 		const CString& sItem1 = GetItem(array1, nItem1);
 
 		// look for matching item in array2
-		if (Find(array2, sItem1, bCaseSensitive, FALSE) == -1)
+		if (Find(array2, sItem1, bCaseSensitive, TRUE) == -1) // TRUE == whole word
 		{
 			// no-match found == not the same
 			return FALSE;
