@@ -194,7 +194,7 @@ void COwnerdrawComboBoxBase::PreSubclassWindow()
 
 void COwnerdrawComboBoxBase::MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct)
 {
-	int nMinHeight = CalcMinItemHeight(TRUE);
+	UINT nMinHeight = CalcMinItemHeight(TRUE);
 
 	lpMeasureItemStruct->itemHeight = max(lpMeasureItemStruct->itemHeight, nMinHeight); 
 }

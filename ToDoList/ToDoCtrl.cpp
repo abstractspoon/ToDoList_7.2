@@ -853,18 +853,8 @@ void CToDoCtrl::Resize(int cx, int cy, BOOL bSplitting)
 
 int CToDoCtrl::GetDefaultControlHeight() const
 {
-	static int nCtrlHeight = -1;
-	
-	// One time initialisation
-	if (nCtrlHeight == -1)
-	{
-		if (GraphicsMisc::WantDPIScaling())
-			nCtrlHeight = GetCtrlRect(IDC_CATEGORY).Height();
-		else
-			nCtrlHeight = CDlgUnits(this).ToPixelsY(CTRLHEIGHT);
-	}
-
-	return nCtrlHeight;
+	// To handle DPI scaling better simply use the height of the category combo
+	return GetChildHeight(&m_cbCategory);
 }
 
 void CToDoCtrl::ReposProjectName(CDeferWndMove* pDWM, CRect& rAvailable)
