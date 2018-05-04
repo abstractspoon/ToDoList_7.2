@@ -2016,9 +2016,11 @@ struct TDCFILTER
 			dwFlags &= ~dwFlag;
 	}
 
-	void Reset()
+	void Reset(FILTER_SHOW nInit = FS_ALL)
 	{
 		*this = TDCFILTER(); // empty filter
+
+		nShow = nInit;
 	}
 
 	BOOL Matches(const TDCFILTER& filter, DWORD dwIgnore = 0) const

@@ -88,6 +88,9 @@ FILTER_SHOW CTDCFilter::GetFilter(TDCFILTER& filter) const
 		break;
 
 	case TDCFS_ADVANCED:
+		filter.Reset(FS_ADVANCED);
+		break;
+
 	case TDCFS_NONE:
 	case TDCFS_FILTER_TOGGLED:
 	case TDCFS_ADVANCED_TOGGLED:
