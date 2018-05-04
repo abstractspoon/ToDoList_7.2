@@ -670,7 +670,7 @@ BOOL CToDoCtrlData::TaskHasDependents(DWORD dwTaskID) const
 		m_items.GetNextAssoc(pos, dwDependsID, pTDI);
 		ASSERT (pTDI);
 			
-		if (pTDI && (dwDependsID != dwTaskID) && Misc::Contains(pTDI->aDependencies, sTaskID))
+		if (pTDI && (dwDependsID != dwTaskID) && Misc::Contains(sTaskID, pTDI->aDependencies))
 			return TRUE;
 	}	
 
@@ -3349,29 +3349,29 @@ void CToDoCtrlData::FixupTaskLocalDependentsDates(DWORD dwTaskID, TDC_DATE nDate
 	}
 }
 
-TDC_SET CToDoCtrlData::CopyTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nFromAttrib, TDC_ATTRIBUTE nToAttrib)
+TDC_SET CToDoCtrlData::CopyTaskAttributeValues(DWORD dwTaskID, TDC_ATTRIBUTE nFromAttrib, TDC_ATTRIBUTE nToAttrib)
 {
 	TDCCADATA data;
 
-	if (!GetTaskAttributeData(dwTaskID, nFromAttrib, data))
+	if (!GetTaskAttributeValues(dwTaskID, nFromAttrib, data))
 		return SET_FAILED;
 
 	// else
-	return SetTaskAttributeData(dwTaskID, nToAttrib, data);
+	return SetTaskAttributeValues(dwTaskID, nToAttrib, data);
 }
 
-TDC_SET CToDoCtrlData::CopyTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nFromAttrib, const CString& sToCustomAttribID)
+TDC_SET CToDoCtrlData::CopyTaskAttributeValues(DWORD dwTaskID, TDC_ATTRIBUTE nFromAttrib, const CString& sToCustomAttribID)
 {
 	TDCCADATA data;
 
-	if (!GetTaskAttributeData(dwTaskID, nFromAttrib, data))
+	if (!GetTaskAttributeValues(dwTaskID, nFromAttrib, data))
 		return SET_FAILED;
 
 	// else
 	return SetTaskCustomAttributeData(dwTaskID, sToCustomAttribID, data);
 }
 
-BOOL CToDoCtrlData::GetTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, TDCCADATA& data) const
+BOOL CToDoCtrlData::GetTaskAttributeValues(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, TDCCADATA& data) const
 {
 	data.Clear();
 
@@ -3446,7 +3446,7 @@ BOOL CToDoCtrlData::GetTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, 
 	return !data.IsEmpty();
 }
 
-TDC_SET CToDoCtrlData::CopyTaskAttributeData(DWORD dwTaskID, const CString& sFromCustomAttribID, TDC_ATTRIBUTE nToAttrib)
+TDC_SET CToDoCtrlData::CopyTaskAttributeValues(DWORD dwTaskID, const CString& sFromCustomAttribID, TDC_ATTRIBUTE nToAttrib)
 {
 	TODOITEM* pTDI = NULL;
 	EDIT_GET_TDI(dwTaskID, pTDI);
@@ -3456,10 +3456,10 @@ TDC_SET CToDoCtrlData::CopyTaskAttributeData(DWORD dwTaskID, const CString& sFro
 	if (!pTDI->GetCustomAttributeValues().Lookup(sFromCustomAttribID, data))
 		return SET_FAILED;
 
-	return SetTaskAttributeData(dwTaskID, nToAttrib, data);
+	return SetTaskAttributeValues(dwTaskID, nToAttrib, data);
 }
 
-TDC_SET CToDoCtrlData::SetTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, const TDCCADATA& data)
+TDC_SET CToDoCtrlData::SetTaskAttributeValues(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, const TDCCADATA& data)
 {
 	switch (nAttrib)
 	{
@@ -3533,7 +3533,7 @@ TDC_SET CToDoCtrlData::SetTaskAttributeData(DWORD dwTaskID, TDC_ATTRIBUTE nAttri
 	return SET_FAILED;
 }
 
-TDC_SET CToDoCtrlData::CopyTaskAttributeData(DWORD dwTaskID, const CString& sFromCustomAttribID, const CString& sToCustomAttribID)
+TDC_SET CToDoCtrlData::CopyTaskAttributeValues(DWORD dwTaskID, const CString& sFromCustomAttribID, const CString& sToCustomAttribID)
 {
 	TODOITEM* pTDI = NULL;
 	EDIT_GET_TDI(dwTaskID, pTDI);

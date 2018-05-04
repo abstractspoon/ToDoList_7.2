@@ -369,7 +369,7 @@ BOOL CToDoCtrlMgr::RefreshFileLastModified(int nIndex)
 		return FALSE;
 
 	// else
-	return (timeNow > 0 && timePrev > 0 && timeNow != timePrev);
+	return ((timeNow > 0) && (timePrev > 0) && (timeNow != timePrev));
 }
 
 BOOL CToDoCtrlMgr::RefreshReadOnlyStatus(int nIndex)
