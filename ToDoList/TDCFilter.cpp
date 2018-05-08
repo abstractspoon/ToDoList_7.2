@@ -31,16 +31,12 @@ BOOL CTDCFilter::operator==(const CTDCFilter& filter) const
 	{
 	case TDCFS_FILTER:
 		if (filter.m_nState == TDCFS_FILTER)
-		{
 			return m_filter.Matches(filter.m_filter);
-		}
 		break;
 
 	case TDCFS_ADVANCED:
 		if (filter.m_nState == TDCFS_ADVANCED)
-		{
 			return m_advFilter.Matches(filter.m_advFilter);
-		}
 		break;
 
 	case TDCFS_NONE:
@@ -146,6 +142,12 @@ BOOL CTDCFilter::HasAnyFilter(DWORD dwIgnoreFlags) const
 
 BOOL CTDCFilter::SetFilter(const TDCFILTER& filter)
 {
+	if (filter.IsAdvanced())
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
 	m_filter = filter;
 	m_nState = TDCFS_FILTER;
 
@@ -167,7 +169,7 @@ BOOL CTDCFilter::SetAdvancedFilter(const TDCADVANCEDFILTER& filter)
 	m_nState = TDCFS_ADVANCED;
 
 	// clear user filter
-	m_filter.Reset();
+	m_filter.Reset(FS_ADVANCED);
 
 	return TRUE;
 }

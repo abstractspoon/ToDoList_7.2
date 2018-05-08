@@ -1906,6 +1906,8 @@ struct TDCFILTER
 		return !FiltersMatch(*this, filterEmpty, dwIgnore);
 	}
 
+	BOOL IsAdvanced() const { return (nShow == FS_ADVANCED); }
+
 	BOOL WantHideCompletedTasks() const
 	{
 		switch (nShow)
