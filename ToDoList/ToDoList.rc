@@ -4133,7 +4133,7 @@ BEGIN
     ID_NEWTASK              "\nNew Task"
     ID_NEWSUBTASK           "\nNew Subtask"
     ID_DELETEALLTASKS       "\nDelete All Tasks"
-    ID_NEW                  "\nCreate a New Tasklist"
+    ID_NEW                  "\nNew Tasklist"
 END
 
 STRINGTABLE DISCARDABLE 
