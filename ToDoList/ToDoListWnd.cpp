@@ -945,7 +945,7 @@ void CToDoListWnd::InitShortcutManager()
 	m_mgrShortcuts.AddShortcut(ID_EDIT_TASKTEXT,					VK_F2,			0);
 	m_mgrShortcuts.AddShortcut(ID_EDIT_UNDO,						'Z',			HOTKEYF_CONTROL);
 	m_mgrShortcuts.AddShortcut(ID_EXIT,								VK_F4,			HOTKEYF_ALT);
-	m_mgrShortcuts.AddShortcut(ID_HELP,								VK_F1,			0);
+	m_mgrShortcuts.AddShortcut(ID_HELP_WIKI,						VK_F1,			0);
 	m_mgrShortcuts.AddShortcut(ID_LOAD_NORMAL,						'O',			HOTKEYF_CONTROL); 
 	m_mgrShortcuts.AddShortcut(ID_MAXCOMMENTS,						'M',			HOTKEYF_CONTROL | HOTKEYF_SHIFT);
 	m_mgrShortcuts.AddShortcut(ID_MAXTASKLIST,						'M',			HOTKEYF_CONTROL);
