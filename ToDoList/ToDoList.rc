@@ -3165,7 +3165,8 @@ BEGIN
             MENUITEM "Task View Tab Bar",           ID_VIEW_SHOWTREELISTTABBAR
 
             MENUITEM "",                            1
-            MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+            MENUITEM "&Main Toolbar",               ID_VIEW_MAINTOOLBAR
+            MENUITEM "&Custom Toolbar",             ID_VIEW_CUSTOMTOOLBAR
             MENUITEM "Stat&us Bar",                 ID_VIEW_STATUS_BAR
         END
     END

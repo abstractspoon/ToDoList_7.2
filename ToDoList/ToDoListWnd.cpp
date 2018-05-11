@@ -175,7 +175,8 @@ CToDoListWnd::CToDoListWnd()
 	m_bShowProjectName(TRUE),
 	m_bQueryOpenAllow(FALSE),
 	m_bPasswordPrompting(TRUE),
-	m_bShowToolbar(TRUE),
+	m_bShowMainToolbar(TRUE),
+	m_bShowCustomToolbar(TRUE),
 	m_bReloading(FALSE),
 	m_hwndLastFocus(NULL),
 	m_bStartHidden(FALSE),
@@ -396,7 +397,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_COMMAND(ID_VIEW_TOGGLETASKEXPANDED, OnViewToggletaskexpanded)
 	ON_COMMAND(ID_VIEW_TOGGLETASKSANDCOMMENTS, OnViewToggletasksandcomments)
 	ON_COMMAND(ID_VIEW_TOGGLETREEANDLIST, OnViewToggleTreeandList)
-	ON_COMMAND(ID_VIEW_TOOLBAR, OnViewToolbar)
+	ON_COMMAND(ID_VIEW_MAINTOOLBAR, OnViewMainToolbar)
+	ON_COMMAND(ID_VIEW_CUSTOMTOOLBAR, OnViewCustomToolbar)
 	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 	ON_COMMAND_RANGE(ID_EDIT_OPENFILEREF1, ID_EDIT_OPENFILEREF16, OnEditOpenfileref)
 	ON_COMMAND_RANGE(ID_EDIT_SETPRIORITYNONE, ID_EDIT_SETPRIORITY10, OnSetPriority)
@@ -557,8 +559,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_SAVEALL, OnUpdateSaveall)
 	ON_UPDATE_COMMAND_UI(ID_SAVEAS, OnUpdateSaveas)
 	ON_UPDATE_COMMAND_UI(ID_SAVE_NORMAL, OnUpdateSave)
-	ON_UPDATE_COMMAND_UI(ID_SB_SELCOUNT, OnUpdateSBSelectionCount)
-	ON_UPDATE_COMMAND_UI(ID_SB_TASKCOUNT, OnUpdateSBTaskCount)
+// 	ON_UPDATE_COMMAND_UI(ID_SB_SELCOUNT, OnUpdateSBSelectionCount)
+// 	ON_UPDATE_COMMAND_UI(ID_SB_TASKCOUNT, OnUpdateSBTaskCount)
 	ON_UPDATE_COMMAND_UI(ID_SENDTASKS, OnUpdateSendTasks)
 	ON_UPDATE_COMMAND_UI(ID_SEND_SELTASKS, OnUpdateSendSelectedTasks)
 	ON_UPDATE_COMMAND_UI(ID_SHOWTIMELOGFILE, OnUpdateShowTimelogfile)
@@ -602,7 +604,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOGGLETASKEXPANDED, OnUpdateViewToggletaskexpanded)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOGGLETASKSANDCOMMENTS, OnUpdateViewToggletasksandcomments)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOGGLETREEANDLIST, OnUpdateViewToggleTreeandList)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR, OnUpdateViewToolbar)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_MAINTOOLBAR, OnUpdateViewMainToolbar)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_CUSTOMTOOLBAR, OnUpdateViewCustomToolbar)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW1, OnUpdateWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OFFSETDATES_BACKWARDSBY_ONEDAY, ID_OFFSETDATES_BACKWARDSBY_ONEYEAR, OnUpdateEditOffsetDatesBackwards)	
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OFFSETDATES_FORWARDSBY_ONEDAY, ID_OFFSETDATES_FORWARDSBY_ONEYEAR, OnUpdateEditOffsetDatesForwards)	
@@ -1295,7 +1298,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 
 	UINT nStyle = (WS_CHILD | CBRS_ALIGN_TOP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CBRS_TOOLTIPS);
 
-	if (m_bShowToolbar)
+	if (m_bShowMainToolbar)
 		nStyle |= WS_VISIBLE;
 
 	if (!m_toolbarMain.CreateEx(this, (TBSTYLE_FLAT | TBSTYLE_WRAPABLE), nStyle))
@@ -1375,7 +1378,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 
 BOOL CToDoListWnd::InitCustomToolbar()
 {
-	if (m_toolbarCustom.GetSafeHwnd())
+	if (!m_bShowCustomToolbar || m_toolbarCustom.GetSafeHwnd())
 		return TRUE;
 
 	CToolbarButtonArray aTBButtons;
@@ -1412,12 +1415,12 @@ BOOL CToDoListWnd::InitCustomToolbar()
 
 void CToDoListWnd::OnUpdateQuickFind(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(m_bShowToolbar);
+	pCmdUI->Enable(m_bShowMainToolbar);
 }
 
 void CToDoListWnd::OnQuickFind() 
 {
-	if (m_bShowToolbar)
+	if (m_bShowMainToolbar)
 		m_cbQuickFind.SetFocus();
 }
 
@@ -2270,7 +2273,8 @@ void CToDoListWnd::SaveSettings()
 	// other settings
 	prefs.WriteProfileInt(SETTINGS_KEY, _T("ViewState"), m_nMaxState);
 	prefs.WriteProfileInt(SETTINGS_KEY, _T("ShowFilterBar"), m_bShowFilterBar);
-	prefs.WriteProfileInt(SETTINGS_KEY, _T("ToolbarOption"), m_bShowToolbar);
+	prefs.WriteProfileInt(SETTINGS_KEY, _T("ToolbarOption"), m_bShowMainToolbar);
+	prefs.WriteProfileInt(SETTINGS_KEY, _T("ShowCustomToolbar"), m_bShowCustomToolbar);
 	prefs.WriteProfileInt(SETTINGS_KEY, _T("ShowProjectName"), m_bShowProjectName);
 	prefs.WriteProfileInt(SETTINGS_KEY, _T("ShowStatusBar"), m_bShowStatusBar);
 	prefs.WriteProfileInt(SETTINGS_KEY, _T("ShowTasklistBar"), m_bShowTasklistBar);
@@ -2296,7 +2300,7 @@ void CToDoListWnd::SaveSettings()
 LRESULT CToDoListWnd::OnUpdateUDTsInToolbar(WPARAM /*wp*/, LPARAM /*lp*/)
 {
 	Misc::ProcessMsgLoop();
-	UpdateUDTsInToolbar();
+	UpdateUDTsInMainToolbar();
 	return 0L;
 }
 
@@ -2520,8 +2524,8 @@ LRESULT CToDoListWnd::OnPostOnCreate(WPARAM /*wp*/, LPARAM /*lp*/)
 
 	// refresh toolbar 'tools' buttons unless minimized because
 	// we must handle it when we're first shown
-	if (m_bShowToolbar && (AfxGetApp()->m_nCmdShow != SW_SHOWMINIMIZED))
-		UpdateUDTsInToolbar();
+	if (m_bShowMainToolbar && (AfxGetApp()->m_nCmdShow != SW_SHOWMINIMIZED))
+		UpdateUDTsInMainToolbar();
 
 	// current focus
 	PostMessage(WM_FW_FOCUSCHANGE, (WPARAM)::GetFocus(), 0L);
@@ -2566,10 +2570,18 @@ void CToDoListWnd::LoadSettings()
 	m_bShowStatusBar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowStatusBar"), m_bShowStatusBar);
 	m_statusBar.ShowWindow(m_bShowStatusBar ? SW_SHOW : SW_HIDE);
 
-	// toolbar
-	m_bShowToolbar = prefs.GetProfileInt(SETTINGS_KEY, _T("ToolbarOption"), TRUE);
-	m_toolbarMain.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
-	m_toolbarMain.EnableWindow(m_bShowToolbar);
+	// toolbars
+	m_bShowMainToolbar = prefs.GetProfileInt(SETTINGS_KEY, _T("ToolbarOption"), TRUE);
+	m_toolbarMain.ShowWindow(m_bShowMainToolbar ? SW_SHOW : SW_HIDE);
+	m_toolbarMain.EnableWindow(m_bShowMainToolbar);
+
+	m_bShowCustomToolbar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowCustomToolbar"), TRUE);
+
+	if (m_toolbarCustom.GetSafeHwnd())
+	{
+		m_toolbarCustom.ShowWindow(m_bShowCustomToolbar ? SW_SHOW : SW_HIDE);
+		m_toolbarCustom.EnableWindow(m_bShowCustomToolbar);
+	}
 
 	// tabbars
 	m_bShowTasklistBar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowTasklistBar"), TRUE);
@@ -2962,11 +2974,11 @@ BOOL CToDoListWnd::OnEraseBkgnd(CDC* pDC)
 	// Bevel below the toolbars
 	int nVPos = 0;
 
-	if (m_toolbarCustom.GetSafeHwnd())
+	if (m_toolbarCustom.GetSafeHwnd() && m_bShowCustomToolbar)
 	{
 		nVPos = (CDialogHelper::GetChildRect(&m_toolbarCustom).bottom + 1);
 	}
-	else if (m_bShowToolbar)
+	else if (m_bShowMainToolbar)
 	{
 		nVPos = m_toolbarMain.GetHeight();
 	}
@@ -5052,7 +5064,7 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 		// message before we can switch image sizes so we put it
 		// right at the end after everything is done.
 		Misc::ProcessMsgLoop();
-		UpdateUDTsInToolbar();
+		UpdateUDTsInMainToolbar();
 	}
 	
 	// finally set or terminate the various status check timers
@@ -6220,12 +6232,12 @@ BOOL CToDoListWnd::CalcToDoCtrlRect(CRect& rect, int cx, int cy, BOOL bMaximized
 	CRect rTaskList(0, BEVEL, cx - BEVEL, cy);
 	
 	// toolbar
-	if (m_bShowToolbar) 
+	if (m_bShowMainToolbar) 
  		rTaskList.top += m_toolbarMain.GetHeight();
 	
-	if (m_toolbarCustom.GetSafeHwnd()) 
+	if (m_toolbarCustom.GetSafeHwnd() && m_bShowCustomToolbar) 
 	{
-		BOOL bSeparateLine = (!m_bShowToolbar || ((m_toolbarMain.GetMinReqLength() + m_toolbarCustom.GetMinReqLength()) > cx));
+		BOOL bSeparateLine = (!m_bShowMainToolbar || ((m_toolbarMain.GetMinReqLength() + m_toolbarCustom.GetMinReqLength()) > cx));
 
 		if (bSeparateLine)
 			rTaskList.top += (m_toolbarCustom.GetHeight() + BEVEL);
@@ -6299,14 +6311,14 @@ void CToDoListWnd::Resize(int cx, int cy, BOOL bMaximized)
 	CRect rTaskList(0, BEVEL, cx - BEVEL, cy);
 	
 	// toolbar
-	if (m_bShowToolbar) // showing toolbar
+	if (m_bShowMainToolbar) // showing toolbar
 		rTaskList.top += m_toolbarMain.Resize(cx);
 
 	// Attempt to put the custom toolbar on the same line
-	if (m_toolbarCustom.GetSafeHwnd())
+	if (m_toolbarCustom.GetSafeHwnd() && m_bShowCustomToolbar)
 	{
 		int nMainLen = m_toolbarMain.GetMinReqLength();
-		BOOL bSeparateLine = (!m_bShowToolbar || ((nMainLen + m_toolbarCustom.GetMinReqLength()) > cx));
+		BOOL bSeparateLine = (!m_bShowMainToolbar || ((nMainLen + m_toolbarCustom.GetMinReqLength()) > cx));
 
 		if (bSeparateLine)
 		{
@@ -7196,7 +7208,7 @@ void CToDoListWnd::OnUpdateUserTool(CCmdUI* pCmdUI)
 		CTDCToolsHelper th(Prefs().GetEnableTDLExtension(), ID_TOOLS_USERTOOL1, MAX_NUM_TOOLS);
 		th.UpdateMenu(pCmdUI, aTools, m_mgrMenuIcons);
 	}
-	else if (m_bShowToolbar) 
+	else if (m_bShowMainToolbar) 
 	{
 		int nTool = pCmdUI->m_nID - ID_TOOLS_USERTOOL1;
 		ASSERT (nTool >= 0 && nTool < MAX_NUM_TOOLS);
@@ -7545,23 +7557,40 @@ LRESULT CToDoListWnd::OnPostTranslateMenu(WPARAM /*wp*/, LPARAM lp)
 	return 0L;
 }
 
-void CToDoListWnd::OnViewToolbar() 
+void CToDoListWnd::OnViewCustomToolbar() 
 {
-	m_bShowToolbar = !m_bShowToolbar;
+	m_bShowCustomToolbar = !m_bShowCustomToolbar;
 
-	m_toolbarMain.ShowWindow(m_bShowToolbar ? SW_SHOW : SW_HIDE);
-	m_toolbarMain.EnableWindow(m_bShowToolbar);
+	m_toolbarCustom.ShowWindow(m_bShowCustomToolbar ? SW_SHOW : SW_HIDE);
+	m_toolbarCustom.EnableWindow(m_bShowCustomToolbar);
 
 	Resize();
 	Invalidate(TRUE);
 }
 
-void CToDoListWnd::OnUpdateViewToolbar(CCmdUI* pCmdUI) 
+void CToDoListWnd::OnViewMainToolbar() 
 {
-	pCmdUI->SetCheck(m_bShowToolbar ? 1 : 0);
+	m_bShowMainToolbar = !m_bShowMainToolbar;
+	
+	m_toolbarMain.ShowWindow(m_bShowMainToolbar ? SW_SHOW : SW_HIDE);
+	m_toolbarMain.EnableWindow(m_bShowMainToolbar);
+	
+	Resize();
+	Invalidate(TRUE);
 }
 
-void CToDoListWnd::UpdateUDTsInToolbar()
+void CToDoListWnd::OnUpdateViewMainToolbar(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_bShowMainToolbar ? 1 : 0);
+}
+
+void CToDoListWnd::OnUpdateViewCustomToolbar(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_bShowCustomToolbar ? 1 : 0);
+	pCmdUI->Enable(Prefs().HasCustomToolbar());
+}
+
+void CToDoListWnd::UpdateUDTsInMainToolbar()
 {
 	CTDCToolsHelper th(Prefs().GetEnableTDLExtension(), ID_TOOLS_USERTOOL1, MAX_NUM_TOOLS);
 	
