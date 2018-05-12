@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
+// Microsoft Developer Studio generated include file.
 // Used by ToDoList.rc
 //
 #define IDR_MANIFEST                    1
@@ -2131,6 +2131,7 @@
 #define IDS_PREF_TOOLBAR                58474
 #define IDS_TOOLBARMENUSEPARATOR        58475
 #define IDS_NEW_TOOLBARBUTTON           58476
+#define IDS_TASKREMINDERDLG_TITLE       58477
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects
