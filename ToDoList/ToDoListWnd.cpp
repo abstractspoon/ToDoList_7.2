@@ -1127,6 +1127,19 @@ LRESULT CToDoListWnd::OnFocusChange(WPARAM wp, LPARAM /*lp*/)
 		// grab the previous window in the z-order and if its
 		// static text then use that as the focus hint
 		CWnd* pFocus = CWnd::FromHandle((HWND)wp);
+
+#ifdef _DEBUG
+		if (pFocus)
+		{
+			CString sFocus;
+			pFocus->GetWindowText(sFocus);
+			TRACE(_T("OnFocusChange(%s = %s)\n"), CWinClasses::GetClassEx(*pFocus), sFocus);
+		}
+		else
+		{
+			TRACE(_T("OnFocusChange(NULL)\n"));
+		}
+#endif
 		const CFilteredToDoCtrl& tdc = GetToDoCtrl();
 
 		if (CDialogHelper::IsChildOrSame(tdc.GetSafeHwnd(), (HWND)wp))
