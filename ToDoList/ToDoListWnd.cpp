@@ -630,8 +630,6 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_SYSCOMMAND()
 	ON_WM_TIMER()
-	ON_WM_WINDOWPOSCHANGED()
-	ON_WM_WINDOWPOSCHANGING()
 
 	ON_COMMAND(ID_TOOLS_ADDTOSOURCECONTROL, OnToolsAddtoSourceControl)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_ADDTOSOURCECONTROL, OnUpdateToolsAddtoSourceControl)
@@ -7580,11 +7578,6 @@ void CToDoListWnd::OnSort()
 	GetToDoCtrl().Resort(TRUE);
 }
 
-void CToDoListWnd::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
-{
-	CFrameWnd::OnWindowPosChanged(lpwndpos);
-}
-
 void CToDoListWnd::OnArchiveCompletedtasks() 
 {
 	CWaitCursor cursor;
@@ -12153,11 +12146,6 @@ BOOL CToDoListWnd::PreCreateWindow(CREATESTRUCT& cs)
 	
 	// else
 	return FALSE;
-}
-
-void CToDoListWnd::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos) 
-{
-	CFrameWnd::OnWindowPosChanging(lpwndpos); 
 }
 
 void CToDoListWnd::OnEditInsertdatetime() 
