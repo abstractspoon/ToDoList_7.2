@@ -53,6 +53,7 @@ _T("James Fancy\tChinese translation\n")
 _T("Jochen Meyer\tfor his myriad contributions\n")
 _T("Johan Rosengren\tOriginal RTF comments control\n")
 _T("Martin Seibert\tGerman translation\n")
+_T("Massimo Colurcio\tCharting control used in BurnDown")
 _T("Open Office\tSpellcheck Engine and Dictionaries\n")
 _T("Patchou\tRichEdit border theming\n")
 _T("Patrice Torchet\tFrench translation\n")
@@ -68,19 +69,25 @@ _T("Valik\tPlain Text importer\n");
 // CTDLAboutDlg dialog
 
 CTDLAboutDlg::CTDLAboutDlg(const CString& sAppTitle, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_ABOUT_DIALOG, pParent), m_sAppTitle(sAppTitle)
+	: 
+	CDialog(IDD_ABOUT_DIALOG, pParent), 
+	m_sAppTitle(sAppTitle),
+	m_eAppFile(FES_NOBROWSE | FES_GOBUTTON),
+	m_ePrefsFile(FES_NOBROWSE | FES_GOBUTTON)
 {
 	//{{AFX_DATA_INIT(CTDLAboutDlg)
 	//}}AFX_DATA_INIT
 	m_sLicense.Format(CEnString(IDS_LICENSE), _T("\"http://www.abstractspoon.com/wiki/doku.php?id=free-open-source-software\""));
-	m_sAppFolder = FileMisc::GetAppFilePath();
-	m_sPrefsFile = CPreferences::GetPath(TRUE);
+	m_sAppFilePath = FileMisc::GetAppFilePath();
+	m_sPrefsFilePath = CPreferences::GetPath(TRUE);
 	
 	CLocalizer::IgnoreString(m_sAppTitle);
 	CLocalizer::IgnoreString(m_sLicense);
 	CLocalizer::IgnoreString(ABOUTCONTRIBUTION);
-}
 
+	if (!CPreferences::UsesIni())
+		m_ePrefsFile.EnableStyle(FES_GOBUTTON, FALSE);
+}
 
 void CTDLAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -89,10 +96,12 @@ void CTDLAboutDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TITLE, m_eAppTitle);
 	DDX_Control(pDX, IDC_LICENSE, m_stLicense);
 	DDX_Control(pDX, IDC_CONTRIBUTORS, m_lcContributors);
+	DDX_Control(pDX, IDC_APPPATH, m_eAppFile);
+	DDX_Control(pDX, IDC_PREFSPATH, m_ePrefsFile);
 	DDX_Text(pDX, IDC_TITLE, m_sAppTitle);
 	DDX_Text(pDX, IDC_LICENSE, m_sLicense);
-	DDX_Text(pDX, IDC_APPFOLDER, m_sAppFolder);
-	DDX_Text(pDX, IDC_PREFSFILE, m_sPrefsFile);
+	DDX_Text(pDX, IDC_APPPATH, m_sAppFilePath);
+	DDX_Text(pDX, IDC_PREFSPATH, m_sPrefsFilePath);
 	//}}AFX_DATA_MAP
 }
 
@@ -101,6 +110,7 @@ BEGIN_MESSAGE_MAP(CTDLAboutDlg, CDialog)
 	//{{AFX_MSG_MAP(CTDLAboutDlg)
 	//}}AFX_MSG_MAP
 	ON_WM_HELPINFO()
+	ON_REGISTERED_MESSAGE(WM_FE_DISPLAYFILE, OnFileEditDisplayFile)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -197,4 +207,11 @@ BOOL CTDLAboutDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	
 	// else
 	return CDialog::OnCommand(wParam, lParam);
+}
+
+LRESULT CTDLAboutDlg::OnFileEditDisplayFile(WPARAM /*wp*/, LPARAM lp)
+{
+	FileMisc::SelectFileInExplorer((LPCTSTR)lp);
+
+	return 0L;
 }

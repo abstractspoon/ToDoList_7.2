@@ -506,7 +506,7 @@ CString CToDoCtrl::FormatTaskLink(DWORD dwTaskID, BOOL bFull) const
 
 CString CToDoCtrl::FormatTaskDependency(DWORD dwTaskID, BOOL bFull) const
 {
-	if (!dwTaskID || (bFull && m_sLastSavePath.IsEmpty()))
+	if (!dwTaskID || (bFull && !HasFilePath()))
 	{
 		ASSERT(0);
 		return _T("");
@@ -6022,8 +6022,7 @@ TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath)
 	
 	// can't save if not checked-out
 	// unless we're saving to another filename or this is our first save
-	BOOL bFirstSave = (m_sLastSavePath.IsEmpty() || 
-						!FileMisc::IsSamePath(m_sLastSavePath, sFilePath));
+	BOOL bFirstSave = (!HasFilePath() || !FileMisc::IsSamePath(m_sLastSavePath, sFilePath));
 	
 	if (m_bSourceControlled && !m_bCheckedOut && !bFirstSave)
 	{
@@ -6034,14 +6033,10 @@ TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath)
 	
 	if (sSavePath.IsEmpty())
 	{
-		if (m_sLastSavePath.IsEmpty())
-		{
+		if (!HasFilePath())
 			return TDCF_OTHER;
-		}
 		else
-		{
 			sSavePath = m_sLastSavePath;
-		}
 	}
 
 	// check for later changes if it's a network file
@@ -6440,7 +6435,7 @@ TDC_FILE CToDoCtrl::Load(const CString& sFilePath, CTaskFile& tasks/*out*/)
 
 BOOL CToDoCtrl::DelayLoad(const CString& sFilePath, COleDateTime& dtEarliestDue)
 {
-	ASSERT (m_bDelayLoaded || m_sLastSavePath.IsEmpty());
+	ASSERT (m_bDelayLoaded || !HasFilePath());
 
 	m_bDelayLoaded = FALSE;
 	CTaskFile temp;
@@ -7688,7 +7683,7 @@ BOOL CToDoCtrl::PrepareTaskLinkForPaste(CString& sLink, const CMapID2ID& mapID) 
 		ASSERT (dwNewID); // sanity check
 		
 		// make sure the file path matches us
-		if (!sFile.IsEmpty() && !m_sLastSavePath.IsEmpty())
+		if (!sFile.IsEmpty() && HasFilePath())
 		{
 			if (!FileMisc::IsSamePath(sFile, m_sLastSavePath))
 				return FALSE;
@@ -7863,7 +7858,7 @@ void CToDoCtrl::SetProjectName(const CString& sProjectName)
 BOOL CToDoCtrl::GetArchivePath(CString& sArchivePath) const
 {
 	// can't archive archives
-	if (!m_bArchive && !m_sLastSavePath.IsEmpty())
+	if (!m_bArchive && HasFilePath())
 	{
 		sArchivePath = m_sLastSavePath;
 		return FileMisc::AddToFileName(sArchivePath, ARCHIVE_ID);
@@ -7881,7 +7876,7 @@ CString CToDoCtrl::GetFriendlyProjectName(int nUntitledIndex) const
 	
 	if (sProjectName.IsEmpty())
 	{
-		if (!m_sLastSavePath.IsEmpty())
+		if (HasFilePath())
 		{
 			sProjectName = FileMisc::GetFileNameFromPath(m_sLastSavePath, FALSE);
 		}
@@ -7924,7 +7919,7 @@ CString CToDoCtrl::GetStylesheetPath() const
 
 				if (FileMisc::GetExtension(Misc::ToUpper(sFile)) == _T(".XSL"))
 				{
-					if (!m_sLastSavePath.IsEmpty())
+					if (HasFilePath())
 						FileMisc::MakeFullPath(sFile, FileMisc::GetFolderFromFilePath(m_sLastSavePath));
 
 					return sFile;
@@ -10591,7 +10586,7 @@ CString CToDoCtrl::GetPreferencesKey(const CString& sSubKey) const
 	{
 		sKeyPath = CPreferences::KeyFromFile(m_sAltPrefsKey);
 	}
-	else if (!m_sLastSavePath.IsEmpty())
+	else if (HasFilePath())
 	{
 		sKeyPath = CPreferences::KeyFromFile(m_sLastSavePath);
 	}

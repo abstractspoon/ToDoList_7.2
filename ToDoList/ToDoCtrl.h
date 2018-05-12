@@ -119,6 +119,7 @@ public:
 	void SetModified(BOOL bMod = TRUE);
 
 	CString GetFilePath() const { return m_sLastSavePath; }
+	BOOL HasFilePath() const { return !m_sLastSavePath.IsEmpty(); }
 	void ClearFilePath() { m_sLastSavePath.Empty(); }
 	CString GetProjectName() const { return m_sProjectName; }
 	void SetProjectName(const CString& sProjectName);

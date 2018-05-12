@@ -25,10 +25,10 @@
 
 // predecs
 class CBinaryData;
-class TODOITEM;
 class CTDCCustomAttribDefinitionArray;
 class CTDCCustomAttributeDataMap;
 
+struct TODOITEM;
 struct TDCRECURRENCE; 
 struct TDCCOLEDITVISIBILITY;
 struct TDCCOLEDITFILTERVISIBILITY;

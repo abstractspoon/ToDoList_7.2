@@ -1643,6 +1643,7 @@ BOOL CTabbedToDoCtrl::ProcessUIExtensionMod(const IUITASKMOD& mod, BOOL& bDepend
 	case IUI_CREATIONDATE:
 	case IUI_CREATEDBY:
 	case IUI_POSITION:
+		ASSERT(0);
 		break;
 
 	default:
@@ -3000,10 +3001,8 @@ int CTabbedToDoCtrl::GetExtensionViewAttributes(IUIExtensionWindow* pExtWnd, CTD
 				mapAttrib.Add((TDC_ATTRIBUTE)nAttrib);
 		}
 
-		// Add custom attributes
+		// Always
 		mapAttrib.Add(TDCA_CUSTOMATTRIB);
-
-		// Always add lock state
 		mapAttrib.Add(TDCA_LOCK);
 
 		// Include 'position' if extension supports 'unsorted'

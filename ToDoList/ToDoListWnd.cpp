@@ -8129,8 +8129,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 	
 	if (tdc.IsModified())
 	{
-		BOOL bFirstTimeSave = (tdc.GetFilePath().IsEmpty() &&
-								!m_mgrToDoCtrls.UsesStorage(nIndex));
+		BOOL bFirstTimeSave = (!tdc.HasFilePath() && !m_mgrToDoCtrls.UsesStorage(nIndex));
 
 		// if we are closing Windows, we don't bother asking
 		// we just save and get out as fast as poss
@@ -10782,7 +10781,7 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 			if (!bClosingWindows && 
 				!bIncUnsaved &&
 				!m_mgrToDoCtrls.UsesStorage(nCtrl) && 
-				tdc.GetFilePath().IsEmpty())
+				!tdc.HasFilePath())
 			{
 				continue;
 			}
