@@ -310,12 +310,12 @@ BOOL CAcceleratorString::EnsureUniqueAccelerators(CStringArray& aText)
 
 			// This means that every char in 'sText' appears in 'sAccelerators'
 			// or the string is in a non-latin language eg. Chinese
-			// Use the next char 'sAccelerators' appearing in 'sText'
 			int nAccel = Misc::FindFirstOf(sText, sAccelerators, FALSE);
 
-			if (nAccel == -1) // non-latine language
+			if (nAccel == -1) // non-latin language
 				break;
 
+			// Use the next char 'sAccelerators' appearing in 'sText'
 			cAccel = sAccelerators[nAccel];
 			ASSERT(cAccel != NULLCHAR);
 
