@@ -146,7 +146,7 @@ enum IUI_APPCOMMAND
 	IUI_EXPANDSELECTED,
 	IUI_COLLAPSESELECTED,
 	IUI_SORT,						// IUIAPPCOMMANDDATA::nSortBy		[in]
-	IUI_TOGGLABLESORT,				// IUIAPPCOMMANDDATA::nSortBy		[in]
+	IUI_TOGGLABLESORT_DEPRECATED,	// IUIAPPCOMMANDDATA::nSortBy		[in]
 	IUI_SETFOCUS,
 	IUI_SELECTTASK,					// IUIAPPCOMMANDDATA::dwTaskID		[in]
 	IUI_RESIZEATTRIBCOLUMNS,		   
@@ -305,6 +305,12 @@ struct IUIAPPCOMMANDDATA
 		IUISELECTTASK select;
 		IUITASKMOVE move;	
 	};
+
+	union // extra
+	{
+		bool bSortAscending;
+
+	};
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -322,7 +328,7 @@ const UINT WM_IUI_MOVESELECTEDTASK		= ::RegisterWindowMessageW(L"WM_IUI_MOVESELE
 // wParam = lParam = 0
 const UINT WM_IUI_EDITSELECTEDTASKTITLE	= ::RegisterWindowMessageW(L"WM_IUI_EDITSELECTEDTASKTITLE"); 
 
-// wParam = 0, lParam = Column ID
+// wParam = sort ascending, lParam = Column ID
 const UINT WM_IUI_SORTCOLUMNCHANGE		= ::RegisterWindowMessageW(L"WM_IUI_SORTCOLUMNCHANGE"); 
 
 // wParam = 0, lParam = identifying string (LPCTSTR)
