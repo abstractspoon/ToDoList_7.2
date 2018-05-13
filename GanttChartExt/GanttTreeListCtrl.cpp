@@ -2200,17 +2200,7 @@ LRESULT CGanttTreeListCtrl::WindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 					
 				case HDN_DIVIDERDBLCLICK:
 					if (hwnd == m_treeHeader)
-					{
 						OnHeaderDividerDblClk((NMHEADER*)pNMHDR);
-					}
-					break;
-
-				case NM_RCLICK:
-					if (hwnd == m_treeHeader)
-					{
-						// pass on to parent
-						::SendMessage(hRealWnd, WM_CONTEXTMENU, (WPARAM)hwnd, (LPARAM)::GetMessagePos());
-					}
 					break;
 
 				case TVN_GETDISPINFO:
@@ -2498,44 +2488,30 @@ LRESULT CGanttTreeListCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPA
 				LPNMHDR pNMHDR = (LPNMHDR)lp;
 				HWND hwnd = pNMHDR->hwndFrom;
 				
-				// let base class have its turn first
-				LRESULT lr = CTreeListSyncer::ScWindowProc(hRealWnd, msg, wp, lp);
-
-				switch (pNMHDR->code)
+				if (hwnd == m_listHeader)
 				{
-				case NM_RCLICK:
-					if (hwnd == m_listHeader)
+					switch (pNMHDR->code)
 					{
-						// pass on to parent
-						::SendMessage(GetHwnd(), WM_CONTEXTMENU, (WPARAM)hwnd, (LPARAM)::GetMessagePos());
-					}
-					break;
-
-				case HDN_DIVIDERDBLCLICK:
-					if (hwnd == m_listHeader)
-					{
+					case HDN_DIVIDERDBLCLICK:
 						OnHeaderDividerDblClk((NMHEADER*)pNMHDR);
-					}
-					break;
+						return 0L; // no default handling
 
-				case HDN_ITEMCHANGING:
-					if (hwnd == m_listHeader)
-					{
-						NMHEADER* pHDN = (NMHEADER*)pNMHDR;
-						
-						// don't let user drag column too narrow
-						if ((pHDN->iButton == 0) && (pHDN->pitem->mask & HDI_WIDTH))
+					case HDN_ITEMCHANGING:
 						{
-							if (m_listHeader.IsItemTrackable(pHDN->iItem) && (pHDN->pitem->cxy < MIN_COL_WIDTH))
-								pHDN->pitem->cxy = MIN_COL_WIDTH;
+							NMHEADER* pHDN = (NMHEADER*)pNMHDR;
+						
+							// don't let user drag column too narrow
+							if ((pHDN->iButton == 0) && (pHDN->pitem->mask & HDI_WIDTH))
+							{
+								if (m_listHeader.IsItemTrackable(pHDN->iItem) && (pHDN->pitem->cxy < MIN_COL_WIDTH))
+									pHDN->pitem->cxy = MIN_COL_WIDTH;
 
-							m_list.Invalidate(FALSE);
+								m_list.Invalidate(FALSE);
+							}
 						}
+						break;
 					}
-					break;
-
 				}
-				return lr;
 			}
 			break;
 			
