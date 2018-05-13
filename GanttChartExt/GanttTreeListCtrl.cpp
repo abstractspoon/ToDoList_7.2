@@ -2053,10 +2053,9 @@ void CGanttTreeListCtrl::OnHeaderDividerDblClk(NMHEADER* pHDN)
 	if (hwnd == m_treeHeader)
 	{
 		CClientDC dc(&m_tree);
-		RecalcTreeColumnWidth(GetColumnID(nCol), &dc);
+		RecalcTreeColumnWidth(nCol, &dc);
 
 		SetSplitPos(m_treeHeader.CalcTotalItemsWidth());
-		
 		Resize();
 	}
 	else if (hwnd == m_listHeader)
@@ -5474,23 +5473,38 @@ void CGanttTreeListCtrl::OnNotifySplitterChange(int nSplitPos)
 
 BOOL CGanttTreeListCtrl::RecalcTreeColumns(BOOL bResize)
 {
-	// Only need recalc non-fixed column widths
-	BOOL bTitle = !m_treeHeader.IsItemTracked(GTLCC_TITLE);
-	BOOL bAllocTo = !m_treeHeader.IsItemTracked(GTLCC_ALLOCTO);
-	BOOL bTaskID = !m_treeHeader.IsItemTracked(GTLCC_TASKID);
+	BOOL bNeedRecalc = FALSE;
 
-	if (bTitle || bAllocTo || bTaskID)
+	int nNumCols = m_treeHeader.GetItemCount(), nCol;
+
+	for (nCol = 1; ((nCol < nNumCols) && !bNeedRecalc); nCol++)
+	{
+		switch (GetColumnID(nCol))
+		{
+		case GTLCC_TITLE:
+		case GTLCC_ALLOCTO:
+		case GTLCC_TASKID:
+			bNeedRecalc = !m_treeHeader.IsItemTracked(nCol);
+			break;
+		}
+	}
+
+	if (bNeedRecalc)
 	{
 		CClientDC dc(&m_tree);
 
-		if (bTitle)
-			RecalcTreeColumnWidth(GTLCC_TITLE, &dc);
-			
-		if (bAllocTo)
-			RecalcTreeColumnWidth(GTLCC_ALLOCTO, &dc);
-		
-		if (bTaskID)
-			RecalcTreeColumnWidth(GTLCC_TASKID, &dc);
+		for (nCol = 1; nCol < nNumCols; nCol++)
+		{
+			switch (GetColumnID(nCol))
+			{
+			case GTLCC_TITLE:
+			case GTLCC_ALLOCTO:
+			case GTLCC_TASKID:
+				if (!m_treeHeader.IsItemTracked(nCol))
+					RecalcTreeColumnWidth(nCol, &dc);
+				break;
+			}
+		}
 		
 		if (bResize)
 			Resize();
