@@ -3897,6 +3897,9 @@ void CGanttTreeListCtrl::DrawListItemText(CDC* pDC, const GANTTITEM& gi, const C
 	// get the end pos for this item relative to start of window
 	int nTextPos = GetBestTextPos(gi, rItem);
 
+	if (nTextPos == -1)
+		return;
+
 	if (!rClip.IsRectNull())
 	{
 		if (nTextPos > rClip.right)
@@ -4983,10 +4986,15 @@ int CGanttTreeListCtrl::GetBestTextPos(const GANTTITEM& gi, const CRect& rMonth)
 	COleDateTime dtDue = ((gi.bParent && HasOption(GTLCF_CALCPARENTDATES)) ? gi.dtMaxDue : gi.dtDue);
 
 	if (!CDateHelper::IsDateSet(dtDue))
-		return -1;
+	{
+		COleDateTime dtUnused;
+		GetTaskStartDueDates(gi, dtUnused, dtDue);
+
+		if (!CDateHelper::IsDateSet(dtDue))
+			return -1;
+	}
 
 	int nPos = GetDrawPosFromDate(dtDue);
-
 	CRect rMilestone;
 
 	if (CalcMilestoneRect(gi, rMonth, rMilestone))
