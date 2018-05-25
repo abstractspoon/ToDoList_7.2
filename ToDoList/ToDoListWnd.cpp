@@ -10128,10 +10128,13 @@ int CToDoListWnd::GetTasks(CFilteredToDoCtrl& tdc, BOOL bHtmlComments, BOOL bTra
 	
 	// build filter
 	if (taskSel.GetWantCompletedTasks() && !taskSel.GetWantInCompleteTasks())
+	{
 		nFilter = TDCGT_DONE;
-		
+	}
 	else if (!taskSel.GetWantCompletedTasks() && taskSel.GetWantInCompleteTasks())
+	{
 		nFilter = TDCGT_NOTDONE;
+	}
 		
 	TDCGETTASKS filter(nFilter);
 
@@ -10145,6 +10148,8 @@ int CToDoListWnd::GetTasks(CFilteredToDoCtrl& tdc, BOOL bHtmlComments, BOOL bTra
 		{
 			// visible columns
 			TDC::MapColumnsToAttributes(tdc.GetVisibleColumns(), filter.mapAttribs);
+
+			filter.mapAttribs.Add(TDCA_CUSTOMATTRIB_ALL);
 
 			if (taskSel.GetWantCommentsWithVisible())
 				filter.mapAttribs.Add(TDCA_COMMENTS);
