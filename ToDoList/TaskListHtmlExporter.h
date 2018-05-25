@@ -55,6 +55,8 @@ protected:
 	virtual CString FormatHeaderItem(TDC_ATTRIBUTE nAttrib, const CString& sAttribLabel) const;
 	virtual CString FormatHeader(const ITASKLISTBASE* pTasks) const;
 
+	virtual BOOL WantExportCustomAttributeID() const { return FALSE; }
+
 	// non-virtual internal helper
 	CString FormatAttribute(TDC_ATTRIBUTE nAttrib, const CString& sAttribLabel, const CString& sValue, BOOL bEncodeVal) const;
 };
