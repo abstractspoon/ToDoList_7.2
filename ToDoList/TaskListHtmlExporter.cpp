@@ -322,7 +322,7 @@ CString CTaskListHtmlExporter::FormatAttribute(TDC_ATTRIBUTE nAttrib, const CStr
 				case STYLE_TABLE:
 					// special case: custom attrib
 					if (IsCustomAttribute(nAttrib))
-						sFmtAttrib.Format(_T("<td>%s</td>"), sAttribVal);
+						sFmtAttrib = FormatTableCell(sAttribVal);
 					else
 						sFmtAttrib = sAttribVal;
 					break;
@@ -499,9 +499,13 @@ CString CTaskListHtmlExporter::FormatAttribute(const ITASKLISTBASE* pTasks, HTAS
 		if (sItem.IsEmpty())
 			sItem = SPACE;
 
-		sItem = _T("<td>") + sItem + _T("</td>");
+		sItem = FormatTableCell(sItem);
 	}
 
     return sItem;
 }
 
+CString CTaskListHtmlExporter::FormatTableCell(const CString& sValue)
+{
+	return (_T("<td valign=\"top\">") + sValue + _T("</td>"));
+}

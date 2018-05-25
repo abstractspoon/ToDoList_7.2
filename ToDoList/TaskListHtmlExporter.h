@@ -59,6 +59,8 @@ protected:
 
 	// non-virtual internal helper
 	CString FormatAttribute(TDC_ATTRIBUTE nAttrib, const CString& sAttribLabel, const CString& sValue, BOOL bEncodeVal) const;
+
+	static CString FormatTableCell(const CString& sValue);
 };
 
 #endif // !defined(AFX_TASKFILEHTMLEXPORTER_H__E4FD92AB_2BF2_40E3_9C8E_5018A72AEA89__INCLUDED_)
