@@ -278,7 +278,8 @@ CString CTaskListHtmlExporter::FormatAttribute(TDC_ATTRIBUTE nAttrib, const CStr
 	if (bEncodeVal)
 		TXT2XML(sAttribVal);
 
-	if (!sAttribVal.IsEmpty())
+	// Must process empty values in table format
+	if (!sAttribVal.IsEmpty() || (EXPORTSTYLE == STYLE_TABLE))
 	{
 		switch (nAttrib)
 		{
