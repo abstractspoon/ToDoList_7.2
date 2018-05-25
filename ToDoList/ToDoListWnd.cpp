@@ -559,8 +559,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_SAVEALL, OnUpdateSaveall)
 	ON_UPDATE_COMMAND_UI(ID_SAVEAS, OnUpdateSaveas)
 	ON_UPDATE_COMMAND_UI(ID_SAVE_NORMAL, OnUpdateSave)
-// 	ON_UPDATE_COMMAND_UI(ID_SB_SELCOUNT, OnUpdateSBSelectionCount)
-// 	ON_UPDATE_COMMAND_UI(ID_SB_TASKCOUNT, OnUpdateSBTaskCount)
+	ON_UPDATE_COMMAND_UI(ID_SB_SELCOUNT, OnUpdateSBSelectionCount)
+	ON_UPDATE_COMMAND_UI(ID_SB_TASKCOUNT, OnUpdateSBTaskCount)
 	ON_UPDATE_COMMAND_UI(ID_SENDTASKS, OnUpdateSendTasks)
 	ON_UPDATE_COMMAND_UI(ID_SEND_SELTASKS, OnUpdateSendSelectedTasks)
 	ON_UPDATE_COMMAND_UI(ID_SHOWTIMELOGFILE, OnUpdateShowTimelogfile)
@@ -7929,7 +7929,7 @@ void CToDoListWnd::OnTabCtrlSelchanging(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		tdc.Flush();
 
 		// and save
-		if (Prefs().GetAutoSaveOnSwitchTasklist() && !tdc.GetFilePath().IsEmpty() && tdc.IsModified())
+		if (Prefs().GetAutoSaveOnSwitchTasklist() && tdc.HasFilePath() && tdc.IsModified())
 		{
 			CTaskFile dummy;
 
@@ -12628,7 +12628,7 @@ LRESULT CToDoListWnd::OnToDoCtrlGetTaskReminder(WPARAM wParam, LPARAM lParam)
 		tRem = 0;
 	}
 
-	return tRem;
+	return (LRESULT)tRem;
 }
 
 LRESULT CToDoListWnd::OnToDoCtrlNotifyClickReminderCol(WPARAM /*wp*/, LPARAM /*lp*/)
