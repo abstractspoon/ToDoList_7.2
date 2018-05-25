@@ -12608,12 +12608,12 @@ LRESULT CToDoListWnd::OnToDoCtrlGetTaskReminder(WPARAM wParam, LPARAM lParam)
 	int nRem = m_reminders.FindReminder(wParam, (CFilteredToDoCtrl*)lParam, FALSE);
 
 	if (nRem == -1)
-		return 0L;
+		return 0;
 
 	COleDateTime dtRem;
 
 	if (!m_reminders.GetReminderDate(nRem, dtRem))
-		return 0xFFFFFFFF; // means the task's start/due date has not yet been set
+		return -1; // means the task's start/due date has not yet been set
 
 	time_t tRem = 0;
 
@@ -12623,7 +12623,7 @@ LRESULT CToDoListWnd::OnToDoCtrlGetTaskReminder(WPARAM wParam, LPARAM lParam)
 		tRem = 0;
 	}
 
-	return (LRESULT)tRem;
+	return tRem;
 }
 
 LRESULT CToDoListWnd::OnToDoCtrlNotifyClickReminderCol(WPARAM /*wp*/, LPARAM /*lp*/)

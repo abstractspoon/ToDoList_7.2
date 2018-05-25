@@ -5315,6 +5315,7 @@ BEGIN
     IDS_TOOLBARMENUSEPARATOR "<separator>"
     IDS_NEW_TOOLBARBUTTON   "<New Button>"
     IDS_TASKREMINDERDLG_TITLE "Task Reminders (%d)"
+    IDS_REMINDER_DATENOTSET "Reminder date not set"
 END
 
 #endif    // English (Australia) resources
