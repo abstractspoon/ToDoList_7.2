@@ -200,7 +200,15 @@ CTransWnd* CTransWnd::NewTransWnd(const CString& sClass, DWORD dwStyle)
 	else if (CWinClasses::IsClassEx(sClass, WC_MFCFRAME))
 	{
 		// don't translated application title because it's dynamic
-		return new CTransWnd(sClass/*, (TWS_NOHANDLESETTEXT*/); 
+		return new CTransWnd(sClass); 
+	}
+	else if (CWinClasses::IsClass(sClass, WC_DIRECTUIHWND))
+	{
+		return new CTransWnd(sClass); 
+	}
+	else if (CWinClasses::IsClass(sClass, WC_CTRLNOTIFYSINK))
+	{
+		return new CTransWnd(sClass); 
 	}
 
 	// everything else
