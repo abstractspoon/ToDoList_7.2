@@ -566,7 +566,7 @@ TDC_UNITS TODOITEM::GetTimeUnits(BOOL bTimeEst) const
 
 TH_UNITS TODOITEM::GetTHTimeUnits(BOOL bTimeEst) const
 {
-	return TDC::MapUnitsToTHUnits(bTimeEst ? nTimeEstUnits : nTimeSpentUnits);
+	return TDC::MapUnitsToTHUnits(GetTimeUnits(bTimeEst));
 }
 
 COleDateTime TODOITEM::GetDefaultStartDueDate(const COleDateTime& dtCreation, const COleDateTime& dtStartDue)
