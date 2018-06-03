@@ -13,10 +13,6 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-#ifndef GET_WHEEL_DELTA_WPARAM
-#	define GET_WHEEL_DELTA_WPARAM(wParam)  ((short)HIWORD(wParam))
-#endif // GET_WHEEL_DELTA_WPARAM
-
 const int HORZ_LINE_SIZE = 20; // pixels
 
 //////////////////////////////////////////////////////////////////////
@@ -67,7 +63,7 @@ BOOL CMouseWheelMgr::OnMouseEx(UINT uMouseMsg, const MOUSEHOOKSTRUCTEX& info)
 		HWND hwndPt = ::WindowFromPoint(info.pt);
 
 		int zDelta = GET_WHEEL_DELTA_WPARAM(info.mouseData);
-		BOOL bUp = (zDelta > 0), bRight = bUp;
+		BOOL bDown = (zDelta < 0), bRight = bDown;
 
 		// However this is complicated because we may also want to support
 		// Shift+MouseWheel horizontal scrolling and there is no default
@@ -80,7 +76,7 @@ BOOL CMouseWheelMgr::OnMouseEx(UINT uMouseMsg, const MOUSEHOOKSTRUCTEX& info)
 			::SendMessage(hwndPt, WM_HSCROLL, (bRight ? SB_PAGERIGHT : SB_PAGELEFT), 0L);
 			return TRUE;
 		}
-		else if (info.hwnd != hwndPt) // non-focus windows
+		else if (::GetFocus() != hwndPt) // non-focus windows
 		{
 			// special handling for spin controls buddied to other controls
 			CString sClass = CWinClasses::GetClass(hwndPt);
@@ -171,7 +167,7 @@ BOOL CMouseWheelMgr::OnMouseEx(UINT uMouseMsg, const MOUSEHOOKSTRUCTEX& info)
 			if (CWinClasses::IsClass(sClass, WC_DATETIMEPICK) ||
 				CWinClasses::IsClass(sClass, WC_MONTHCAL))
 			{
-				::SendMessage(hwndPt, WM_KEYDOWN, (bUp ? VK_UP : VK_DOWN), 0L);
+				::SendMessage(hwndPt, WM_KEYDOWN, (bDown ? VK_DOWN : VK_UP), 0L);
 				return TRUE;
 			}
 		}
