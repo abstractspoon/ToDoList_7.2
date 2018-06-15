@@ -302,7 +302,7 @@ double CTDCOutlookImportHelper::ImportDuration(const CString& sData, TDC_UNITS& 
 	{
 		if (dTime < 60.0)
 		{
-			nUnits = TDCU_MINS;
+			nUnits = TDCU_MINUTES;
 		}
 		else
 		{

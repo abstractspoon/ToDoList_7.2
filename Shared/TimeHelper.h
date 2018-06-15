@@ -15,6 +15,7 @@ enum TH_UNITS
 {
 	THU_NULL		= 0,	// error code
 	THU_MINS		= 'I',
+	THU_MINUTES		= 'I',
 	THU_HOURS		= 'H',
 	THU_WEEKDAYS	= 'K',
 	THU_DAYS		= 'D',

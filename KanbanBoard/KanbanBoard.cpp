@@ -80,7 +80,7 @@ void CKanbanExtApp::SetLocalizer(ITransText* pTT)
 	CLocalizer::Initialize(pTT);
 
 	// Initialise time units
-	CTimeHelper::SetUnits(THU_MINS,		CLocalizer::TranslateText(_T("m")));
+	CTimeHelper::SetUnits(THU_MINUTES,	CLocalizer::TranslateText(_T("m")));
 	CTimeHelper::SetUnits(THU_HOURS,	CLocalizer::TranslateText(_T("H")));
 	CTimeHelper::SetUnits(THU_DAYS,		CLocalizer::TranslateText(_T("D")));
 	CTimeHelper::SetUnits(THU_WEEKDAYS, CLocalizer::TranslateText(_T("d")));

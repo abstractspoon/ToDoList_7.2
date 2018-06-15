@@ -31,7 +31,7 @@ CTDLAddLoggedTimeDlg::CTDLAddLoggedTimeDlg(DWORD dwTaskID, LPCTSTR szTaskTitle, 
 	//{{AFX_DATA_INIT(CTDLAddLoggedTimeDlg)
 	//}}AFX_DATA_INIT
 	m_dtWhen = COleDateTime::GetCurrentTime();
-	m_nUnits = (TH_UNITS)CPreferences().GetProfileInt(_T("Preferences"), _T("AddLoggedTimeUnits"), THU_MINS);
+	m_nUnits = (TH_UNITS)CPreferences().GetProfileInt(_T("Preferences"), _T("AddLoggedTimeUnits"), THU_MINUTES);
 
 	// convert log time from hours to current units
 	m_dLoggedTime = CTimeHelper().GetTime(dHours, THU_HOURS, m_nUnits);

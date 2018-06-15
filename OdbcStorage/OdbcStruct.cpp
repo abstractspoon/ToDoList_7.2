@@ -330,7 +330,7 @@ TH_UNITS ODBCTASK::MapUnitsToTHUnits(TDC_UNITS nUnits)
 {
 	switch (nUnits)
 	{
-	case TDCU_MINS:		return THU_MINS;
+	case TDCU_MINUTES:	return THU_MINUTES;
 	case TDCU_HOURS:	return THU_HOURS;
 	case TDCU_DAYS:		return THU_DAYS;
 	case TDCU_WEEKDAYS:	return THU_WEEKDAYS;

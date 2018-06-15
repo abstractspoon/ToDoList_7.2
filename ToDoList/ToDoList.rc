@@ -4547,6 +4547,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_TDLBC_COST          "Cost"
     IDS_HOURS_ABBREV        "H"
+    IDS_SECS_ABBREV         "s"
     IDS_MINS_ABBREV         "m"
     IDS_MONTHS_ABBREV       "M"
     IDS_WEEKS_ABBREV        "W"

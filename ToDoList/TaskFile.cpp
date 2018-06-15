@@ -3935,7 +3935,7 @@ bool CTaskFile::SetTaskTime(HTASKITEM hTask, const CString& sTimeItem, double dT
 
 	switch (nUnits)
 	{
-	case TDCU_MINS:		szUnits = _T("I"); break;
+	case TDCU_MINUTES:		szUnits = _T("I"); break;
 	case TDCU_HOURS:	szUnits = _T("H"); break;
 	case TDCU_DAYS:		szUnits = _T("D"); break;
 	case TDCU_WEEKDAYS: szUnits = _T("K"); break;

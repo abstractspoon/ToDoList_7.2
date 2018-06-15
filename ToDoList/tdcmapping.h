@@ -447,7 +447,7 @@ namespace TDC
 		switch (nUnits)
 		{
 		case THU_NULL:		return TDCU_NULL;
-		case THU_MINS:		return TDCU_MINS;
+		case THU_MINUTES:	return TDCU_MINUTES;
 		case THU_HOURS:		return TDCU_HOURS;
 		case THU_DAYS:		return TDCU_DAYS;
 		case THU_WEEKDAYS:	return TDCU_WEEKDAYS;
@@ -483,7 +483,7 @@ namespace TDC
 		switch (nUnits)
 		{
 		case TDCU_NULL:		return THU_NULL;
-		case TDCU_MINS:		return THU_MINS;
+		case TDCU_MINUTES:	return THU_MINUTES;
 		case TDCU_HOURS:	return THU_HOURS;
 		case TDCU_DAYS:		return THU_DAYS;
 		case TDCU_WEEKDAYS:	return THU_WEEKDAYS;

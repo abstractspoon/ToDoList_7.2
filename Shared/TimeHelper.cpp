@@ -197,6 +197,7 @@ BOOL CTimeHelper::IsValidUnit(TH_UNITS nUnits)
 	switch (nUnits)
 	{
 	case THU_MINS:
+	case THU_MINUTES:
 	case THU_HOURS:
 	case THU_DAYS:
 	case THU_WEEKDAYS:
@@ -241,6 +242,7 @@ double CTimeHelper::GetTime(double dTime, TH_UNITS nFromUnits, TH_UNITS nToUnits
 			case THU_HOURS:
 				dTime *= MINS2HOURS;
 				nFromUnits = THU_MINS;
+				nFromUnits = THU_MINUTES;
 				break;
 				
 			case THU_WEEKDAYS:
@@ -277,6 +279,7 @@ double CTimeHelper::GetTime(double dTime, TH_UNITS nFromUnits, TH_UNITS nToUnits
 			switch (nFromUnits)
 			{
 			case THU_MINS:
+			case THU_MINUTES:
 				dTime /= MINS2HOURS;
 				nFromUnits = THU_HOURS;
 				break;
@@ -485,6 +488,7 @@ TCHAR CTimeHelper::GetUnits(TH_UNITS nUnits)
 	if (MAPUNIT2CH.GetCount() == 0)
 	{
 		SetUnits(THU_MINS,		'm');	
+		SetUnits(THU_MINUTES,		'm');	
 		SetUnits(THU_HOURS,		'H');	
 		SetUnits(THU_WEEKDAYS,	'K');	
 		SetUnits(THU_DAYS,		'D');	
@@ -543,6 +547,7 @@ CString CTimeHelper::FormatTimeHMS(double dTime, TH_UNITS nUnitsFrom, BOOL bDecP
 
 	// convert the time to minutes 
 	double dMins = GetTime(dTime, nUnitsFrom, THU_MINS);
+	double dMins = GetTime(dTime, nUnitsFrom, THU_MINUTES);
 	
 	// and all the others up to years
 	double dHours = (dMins / MINS2HOURS);
@@ -572,6 +577,7 @@ CString CTimeHelper::FormatTimeHMS(double dTime, TH_UNITS nUnitsFrom, BOOL bDecP
 	else if (dHours >= 1.0)
 	{
 		sTime = FormatTimeHMS(dHours, THU_HOURS, THU_MINS, MINS2HOURS, bDecPlaces);
+		sTime = FormatTimeHMS(dHours, THU_HOURS, THU_MINUTES, MINS2HOURS, bDecPlaces);
 	}
 	else if (dMins >= 1.0)
 	{
@@ -639,7 +645,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 
 	switch (nFromUnits)
 	{
-	case THU_MINS:
+	case THU_MINUTES:
 		return -1; // less than everything else
 	
 	case THU_HOURS:
@@ -654,7 +660,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_WEEKDAYS:
 		switch(nToUnits)
 		{
-		case THU_MINS:
+		case THU_MINUTES:
 		case THU_HOURS:
 			return 1;
 
@@ -667,7 +673,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_WEEKS:
 		switch(nToUnits)
 		{
-		case THU_MINS:
+		case THU_MINUTES:
 		case THU_HOURS:
 		case THU_DAYS:
 		case THU_WEEKDAYS:
@@ -678,7 +684,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_MONTHS:
 		switch(nToUnits)
 		{
-		case THU_MINS:
+		case THU_MINUTES:
 		case THU_HOURS:
 		case THU_DAYS:
 		case THU_WEEKDAYS:

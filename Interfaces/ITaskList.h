@@ -42,7 +42,7 @@ typedef __int64 time64_t;
 enum TDC_UNITS
 {
 	TDCU_NULL		= 0,	// error code
-	TDCU_MINS		= 'I',
+	TDCU_MINUTES		= 'I',
 	TDCU_HOURS		= 'H',
 	TDCU_DAYS		= 'D',
 	TDCU_WEEKDAYS   = 'K',
@@ -58,7 +58,7 @@ static bool IsValidUnits(TDC_UNITS nUnits)
 	case TDCU_NULL:
 		return false;
 
-	case TDCU_MINS:
+	case TDCU_MINUTES:
 	case TDCU_HOURS:
 	case TDCU_DAYS:
 	case TDCU_WEEKDAYS : 

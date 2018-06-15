@@ -3169,7 +3169,7 @@ COleDateTime CToDoCtrlData::AddDuration(COleDateTime& dateStart, double dDuratio
 	
 	switch (nUnits)
 	{
-	case TDCU_MINS:
+	case TDCU_MINUTES:
 	case TDCU_HOURS:
 	case TDCU_WEEKS:
 	case TDCU_MONTHS:
@@ -3276,7 +3276,7 @@ double CToDoCtrlData::CalcDuration(const COleDateTime& dateStart, const COleDate
 	
 	switch (nUnits)
 	{
-	case TDCU_MINS:
+	case TDCU_MINUTES:
 	case TDCU_HOURS:
 	case TDCU_WEEKS:
 	case TDCU_MONTHS:

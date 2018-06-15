@@ -49,7 +49,7 @@ enum
 
 static TIMEUNIT TIMEUNITS[] = 
 {
-	{ THU_MINS,		_T(""),	TIME_MIN_ABBREV,	ID_MINS },
+	{ THU_MINUTES,		_T(""),	TIME_MIN_ABBREV,	ID_MINS },
 	{ THU_HOURS,	_T(""),	TIME_HOUR_ABBREV,	ID_HOURS },
 	{ THU_WEEKDAYS,	_T(""),	TIME_WEEKDAY_ABBREV,ID_WEEKDAYS },
 	{ THU_DAYS,		_T(""),	TIME_DAY_ABBREV,	ID_DAYS },
@@ -299,7 +299,7 @@ UINT CTimeEdit::MapUnitsToMenuID() const
 	switch (m_nUnits)
 	{
 	case THU_NULL:		return 0;
-	case THU_MINS:		return ID_MINS;
+	case THU_MINUTES:		return ID_MINS;
 	case THU_HOURS:		return ID_HOURS;
 	case THU_WEEKDAYS:	return ID_WEEKDAYS;
 	case THU_DAYS:		return ID_DAYS;

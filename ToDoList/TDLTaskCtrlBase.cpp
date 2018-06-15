@@ -3507,7 +3507,7 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 							else
 							{
 								dRemaining *= 60; // to mins
-								sTaskColText = CTimeHelper().FormatTime(dRemaining, THU_MINS, 0);
+								sTaskColText = CTimeHelper().FormatTime(dRemaining, THU_MINUTES, 0);
 							}
 						}
 					}
