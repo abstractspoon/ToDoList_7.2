@@ -969,14 +969,16 @@ void CTDLTimeTrackerDlg::UpdateTaskTime(const CFilteredToDoCtrl* pTDC)
 		double dElapsed = pTDC->GetTimeTrackingElapsedMinutes();
 
 		if ((dElapsed > 0.0) || pTDC->GetTimeTrackTaskID(FALSE))
-			m_sElapsedTime = th.FormatTime(dElapsed, THU_MINS, 2);
+		{
+			m_sElapsedTime = th.FormatTimeHMS(dElapsed, THU_MINS, (HMS_ALLOWZERO | HMS_WANTSECONDS | HMS_DECIMALPLACES));
+		}
 	}
 	
 	if (HasOption(TTDO_FORMATTIMESASHMS))
 	{
 		m_sTaskTimes.Format(_T("%s : %s"),
-			th.FormatTimeHMS(dTimeEst, TDC::MapUnitsToTHUnits(nEstUnits), TRUE, TRUE),
-			th.FormatTimeHMS(dTimeSpent, TDC::MapUnitsToTHUnits(nSpentUnits), TRUE, TRUE));
+			th.FormatTimeHMS(dTimeEst, TDC::MapUnitsToTHUnits(nEstUnits), (HMS_ALLOWZERO | HMS_DECIMALPLACES)),
+			th.FormatTimeHMS(dTimeSpent, TDC::MapUnitsToTHUnits(nSpentUnits), (HMS_ALLOWZERO | HMS_DECIMALPLACES)));
 	}
 	else
 	{
@@ -991,7 +993,10 @@ void CTDLTimeTrackerDlg::UpdateTaskTime(const CFilteredToDoCtrl* pTDC)
 	UpdateData(FALSE);
 
 	if (IsTrackingSelectedTasklistAndTask())
+	{
 		GetDlgItem(IDC_TASKTIME)->Invalidate(FALSE);
+		GetDlgItem(IDC_ELAPSEDTIME)->Invalidate(FALSE);
+	}
 }
 
 void CTDLTimeTrackerDlg::OnStartStopTracking()
@@ -1015,7 +1020,10 @@ void CTDLTimeTrackerDlg::OnStartStopTracking()
 	}
 
 	UpdateTracking(pTTL->pTDC);
-	GetDlgItem(IDC_TASKTIME)->Invalidate(FALSE); // to change text color
+
+	// redraw text colour
+	GetDlgItem(IDC_TASKTIME)->Invalidate(FALSE);
+	GetDlgItem(IDC_ELAPSEDTIME)->Invalidate(FALSE);
 }
 
 HBRUSH CTDLTimeTrackerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

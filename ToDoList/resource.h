@@ -1674,6 +1674,7 @@
 #define IDS_TDC_COLUMN_COST             57966
 #define IDS_TDC_EDITPROMPT_DEPENDS      57967
 #define IDS_TDLBC_COST                  57968
+#define IDS_SECS_ABBREV                 57969
 #define IDS_HOURS_ABBREV                57970
 #define IDS_MINS_ABBREV                 57971
 #define IDS_MONTHS_ABBREV               57972

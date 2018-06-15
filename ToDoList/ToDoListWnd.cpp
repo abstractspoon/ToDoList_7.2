@@ -655,6 +655,11 @@ END_MESSAGE_MAP()
 void CToDoListWnd::SetupUIStrings()
 {
 	// set up UI strings for helper classes
+	CEnString sSeconds(IDS_MINS_ABBREV);
+
+	if (!sSeconds.IsEmpty())
+		CTimeHelper::SetUnits(THU_SECONDS, sSeconds[0]);
+
 	CTimeEdit::SetUnits(THU_MINS,		CEnString(IDS_TE_MINS),		CEnString(IDS_MINS_ABBREV));
 	CTimeEdit::SetUnits(THU_HOURS,		CEnString(IDS_TE_HOURS),	CEnString(IDS_HOURS_ABBREV));
 	CTimeEdit::SetUnits(THU_WEEKDAYS,	CEnString(IDS_TE_WEEKDAYS), CEnString(IDS_WEEKDAYS_ABBREV));
