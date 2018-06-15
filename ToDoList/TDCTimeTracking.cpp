@@ -13,6 +13,10 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
+const DWORD REMINDER_NEEDS_RESET = 0xffffffff;
+
+/////////////////////////////////////////////////////////////////////////////
+
 CTDCTimeTracking::CTDCTimeTracking(const CToDoCtrlData& data) 
 	: 
 	m_data(data),
@@ -90,7 +94,7 @@ BOOL CTDCTimeTracking::BeginTracking(DWORD dwTaskID)
 
 	// Continue current reminder if task ID has not changed
 	if (dwTaskID != m_dwLastTimeTrackTaskID)
-		m_dwTimeTrackElapsedTicks = 0;
+		m_dwTimeTrackElapsedTicks = REMINDER_NEEDS_RESET;
 
 	return TRUE;
 }
@@ -116,7 +120,7 @@ BOOL CTDCTimeTracking::EndTracking()
 	return TRUE;
 }
 
-double CTDCTimeTracking::IncrementTrackedTime()
+double CTDCTimeTracking::IncrementTrackedTime(BOOL bEnding)
 {
 	DWORD dwTick = GetTickCount();
 	double dIncrement = 0.0;
@@ -127,8 +131,12 @@ double CTDCTimeTracking::IncrementTrackedTime()
 
 		if (IsTracking(TRUE))
 			dIncrement = ((dwTick - m_dwTimeTrackTickLast) * TICKS2HOURS); // hours
-		
-		m_dwTimeTrackElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
+
+		if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
+			m_dwTimeTrackElapsedTicks = 0;
+
+		if (!bEnding)
+			m_dwTimeTrackElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
 	}
 	
 	m_dwTimeTrackTickLast = dwTick;
@@ -141,15 +149,22 @@ BOOL CTDCTimeTracking::IsReminderDue() const
 	if (!m_dwTimeTrackReminderIntervalTicks)
 		return FALSE;
 
+	if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
+		return FALSE;
+
 	return (IsTracking(TRUE) && (m_dwTimeTrackElapsedTicks >= m_dwTimeTrackReminderIntervalTicks));
 }
 
 void CTDCTimeTracking::ResetReminderIsDue()
 {
-	m_dwTimeTrackElapsedTicks = 0;
+	m_dwTimeTrackElapsedTicks = REMINDER_NEEDS_RESET;
 }
 
 double CTDCTimeTracking::GetElapsedMinutes() const
 {
+	if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
+		return 0.0;
+
+	// else
 	return (m_dwTimeTrackElapsedTicks * TICKS2HOURS * 60);
 }

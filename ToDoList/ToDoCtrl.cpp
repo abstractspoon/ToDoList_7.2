@@ -11868,7 +11868,7 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 	if (!bEnding && IsTaskLabelEditing() && m_timeTracking.IsTracking(GetSelectedTaskID()))
 		return;
 
-	double dIncrement = m_timeTracking.IncrementTrackedTime(); // hours
+	double dIncrement = m_timeTracking.IncrementTrackedTime(bEnding); // hours
 	
 	if (dIncrement > 0.0)
 	{

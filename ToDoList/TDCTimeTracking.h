@@ -41,7 +41,7 @@ public:
 	void SetTrackingReminderInterval(int nMinutes);
 	void ResetReminderIsDue();
 
-	double IncrementTrackedTime();
+	double IncrementTrackedTime(BOOL bEnding);
 	double GetElapsedMinutes() const;
 
 protected:
