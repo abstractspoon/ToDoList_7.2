@@ -882,24 +882,26 @@ BOOL CTDLTimeTrackerDlg::UpdateTracking(const CFilteredToDoCtrl* pTDC)
 	TRACKTASKLIST* pTTL = m_aTasklists.GetTasklist(pTDC);
 
 	if (!pTTL)
-		return FALSE;
-
-	BOOL bWasTracking = pTTL->IsTracking();
-
-	if (!m_aTasklists.UpdateTracking(pTDC))
 	{
 		ASSERT(0);
 		return FALSE;
 	}
 
-	// Show the tracker if we've just started actively tracking
-	// and switch to that tasklist
-	if (HasOption(TTDO_SHOWONBEGINTRACKING) && pTTL->IsTracking() && !bWasTracking)
+	BOOL bWasTracking = pTTL->IsTracking();
+
+	VERIFY(m_aTasklists.UpdateTracking(pTTL));
+
+	// If we've just started tracking, switch to that tasklist
+	// and show the dialog if required
+	if (pTTL->IsTracking() && !bWasTracking)
 	{
 		SelectTaskList(pTDC);
 
-		ShowWindow(SW_SHOWNORMAL);
-		SetForegroundWindow();
+		if (HasOption(TTDO_SHOWONBEGINTRACKING))
+		{
+			ShowWindow(SW_SHOWNORMAL);
+			SetForegroundWindow();
+		}
 	}
 	else
 	{
