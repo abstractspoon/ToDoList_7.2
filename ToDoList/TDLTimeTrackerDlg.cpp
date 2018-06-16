@@ -293,8 +293,11 @@ void CTDCTrackTasklistArray::DeleteAllTasklists()
 
 BOOL CTDCTrackTasklistArray::UpdateTracking(const CFilteredToDoCtrl* pTDC)
 {
-	TRACKTASKLIST* pTTL = GetTasklist(pTDC);
+	return UpdateTracking(GetTasklist(pTDC));
+}
 
+BOOL CTDCTrackTasklistArray::UpdateTracking(TRACKTASKLIST* pTTL)
+{
 	if (!pTTL)
 	{
 		ASSERT(0);
@@ -302,10 +305,10 @@ BOOL CTDCTrackTasklistArray::UpdateTracking(const CFilteredToDoCtrl* pTDC)
 	}
 
 	// else
-	DWORD dwTrackedTaskID = pTDC->GetTimeTrackTaskID(FALSE);
+	DWORD dwTrackedTaskID = pTTL->pTDC->GetTimeTrackTaskID(FALSE);
 
 	pTTL->dwTrackedTaskID = dwTrackedTaskID;
-	pTTL->bTrackingPaused = (dwTrackedTaskID && (pTDC->GetTimeTrackTaskID(TRUE) != dwTrackedTaskID));
+	pTTL->bTrackingPaused = (dwTrackedTaskID && (pTTL->pTDC->GetTimeTrackTaskID(TRUE) != dwTrackedTaskID));
 
 	return TRUE;
 }
@@ -876,8 +879,7 @@ BOOL CTDLTimeTrackerDlg::UpdateTracking(const CFilteredToDoCtrl* pTDC)
 	ASSERT(pTDC);
 	
 	// Update data struct first
-	const TRACKTASKLIST* pTTL = m_aTasklists.GetTasklist(pTDC);
-	ASSERT(pTTL);
+	TRACKTASKLIST* pTTL = m_aTasklists.GetTasklist(pTDC);
 
 	if (!pTTL)
 		return FALSE;

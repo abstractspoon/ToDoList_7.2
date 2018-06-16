@@ -84,6 +84,7 @@ public:
 
 	int GetNumTasklists() const;
 	BOOL UpdateTracking(const CFilteredToDoCtrl* pTDC);
+	BOOL UpdateTracking(TRACKTASKLIST* pTTL);
 
 	int AddTasklist(const CFilteredToDoCtrl* pTDC, const CTaskFile& tasks);
 	BOOL DeleteTasklist(const CFilteredToDoCtrl* pTDC);
