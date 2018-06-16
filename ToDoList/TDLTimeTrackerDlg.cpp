@@ -26,8 +26,7 @@ enum // btns
 	BTN_STOPDISABLED,
 };
 
-const int TIMETRACKPERIOD	= 10000; // 10 secs
-const COLORREF WHITE		= RGB(255, 255, 255);
+const int ID_RESET_ELAPSED = 1;
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -392,6 +391,7 @@ void CTDLTimeTrackerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TASKLISTS, m_cbTasklists);
 	DDX_Control(pDX, IDC_TASKS, m_cbTasks);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStart);
+	DDX_Control(pDX, IDC_ELAPSEDTIME, m_eElapsedTime);
 	DDX_Text(pDX, IDC_TASKTIME, m_sTaskTimes);
 	DDX_Text(pDX, IDC_ELAPSEDTIME, m_sElapsedTime);
 	DDX_Text(pDX, IDC_QUICKFIND, m_sQuickFind);
@@ -418,6 +418,7 @@ BEGIN_MESSAGE_MAP(CTDLTimeTrackerDlg, CDialog)
 	ON_COMMAND(ID_TIMETRACKER_ONTOP, OnToggleTopMost)
 	ON_COMMAND(ID_TIMETRACK_HELP, OnHelp)
 	ON_WM_HELPINFO()
+	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnEEBtnClick)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////
@@ -516,21 +517,19 @@ BOOL CTDLTimeTrackerDlg::OnInitDialog()
 		m_toolbar.SetDlgCtrlID(IDC_TOOLBAR);
 		m_toolbar.MoveWindow(GetCtrlRect(this, IDC_TOOLBAR));
 		m_toolbar.GetToolBarCtrl().CheckButton(ID_TIMETRACKER_ONTOP, m_bAlwaysOnTop);
-
-#ifdef WHITETHEME
-		m_toolbar.SetBackgroundColors(WHITE, WHITE, FALSE, FALSE);
-#else
 		m_toolbar.SetBackgroundColors(m_theme.crAppBackLight, CLR_NONE, FALSE, FALSE);
 		m_toolbar.SetHotColor(m_theme.crToolbarHot);
-#endif
 
 		m_tbHelper.Initialize(&m_toolbar, this);
 	}
 
 	m_mgrPrompts.SetEditPrompt(IDC_QUICKFIND, *this, IDS_QUICKTASKFIND);
+
+	m_iconResetElapsed.LoadIcon(IDI_RESET_ELAPSED);
+	m_eElapsedTime.AddButton(ID_RESET_ELAPSED, m_iconResetElapsed, CEnString(IDS_RESET_ELAPSED), 15);
 		
-	m_icon.LoadIcon(IDR_MAINFRAME_STD);
-	SetIcon(m_icon, TRUE);
+	m_iconDlg.LoadIcon(IDR_MAINFRAME_STD);
+	SetIcon(m_iconDlg, TRUE);
 
 	EnableToolTips(TRUE);
 	CalcMinMaxSizes();
@@ -583,15 +582,11 @@ void CTDLTimeTrackerDlg::SetUITheme(const CUIThemeFile& theme)
 	
 	if (m_theme != oldTheme)
 	{
-#ifdef WHITETHEME
-		m_toolbar.SetBackgroundColors(WHITE, WHITE, FALSE, FALSE);
-#else
 		m_brBack.DeleteObject();
 
 		// Use crAppBackLight so the toolbar merges with the bkgnd
 		m_toolbar.SetBackgroundColors(m_theme.crAppBackLight, m_theme.crAppBackLight, m_theme.HasGradient(), m_theme.HasGlass());
 		m_toolbar.SetHotColor(m_theme.crToolbarHot);
-#endif
 		
 		Invalidate(TRUE);
 		SendMessage(WM_NCPAINT);
@@ -1036,16 +1031,12 @@ HBRUSH CTDLTimeTrackerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		{
 			pDC->SetBkMode(TRANSPARENT);
 
-#ifdef WHITETHEME
-			hbr = (HBRUSH)GetStockObject(WHITE_BRUSH);
-#else
 			if (!m_brBack.GetSafeHandle())
 				m_brBack.CreateSolidBrush(GetBkgndColor());
 
 			hbr = (HBRUSH)m_brBack.GetSafeHandle();
 
 			pDC->SetTextColor(m_theme.crAppText);
-#endif
 		}
 
 		if (IsTrackingSelectedTasklistAndTask())
@@ -1130,11 +1121,7 @@ BOOL CTDLTimeTrackerDlg::OnEraseBkgnd(CDC* pDC)
 
 COLORREF CTDLTimeTrackerDlg::GetBkgndColor() const
 {
-#ifdef WHITETHEME
-	return WHITE;
-#else
 	return m_theme.crAppBackLight;
-#endif
 }
 
 void CTDLTimeTrackerDlg::OnChangeQuickFind()
@@ -1529,3 +1516,26 @@ void CTDLTimeTrackerDlg::SetWindowIcons(HICON hIconBig, HICON hIconSmall)
 	SetIcon(hIconBig, TRUE);
 	SetIcon(hIconSmall, FALSE);
 }
+
+LRESULT CTDLTimeTrackerDlg::OnEEBtnClick(WPARAM wParam, LPARAM lParam)
+{
+	switch (wParam)
+	{
+	case IDC_ELAPSEDTIME:
+		switch (lParam)
+		{
+		case ID_RESET_ELAPSED:
+			{
+				const CFilteredToDoCtrl* pTDC = GetSelectedTasklist();
+
+				m_pWndNotify->SendMessage(WM_TDLTTN_RESETELAPSEDTIME, 0, (LPARAM)pTDC);
+				UpdateTaskTime(pTDC);
+			}
+			break;
+		}
+		break;
+	}
+
+	return 0L;
+}
+

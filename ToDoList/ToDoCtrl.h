@@ -333,6 +333,7 @@ public:
 	BOOL DoAddTimeToLogFile();
 	void SetTimeTrackingReminderInterval(int nMinutes);
 	double GetTimeTrackingElapsedMinutes() const;
+	void ResetTimeTrackingElapsedMinutes();
 
 	static void SetInheritedParentAttributes(const CTDCAttributeMap& mapAttribs, BOOL bUpdateAttrib);
 	void SetDefaultTaskAttributes(const TODOITEM& tdi);

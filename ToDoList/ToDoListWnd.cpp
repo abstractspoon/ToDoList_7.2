@@ -468,6 +468,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_REGISTERED_MESSAGE(WM_TLDT_DROP, OnDropFile)
 	ON_REGISTERED_MESSAGE(WM_TDLTTN_STARTTRACKING, OnTimeTrackerStartTracking)
 	ON_REGISTERED_MESSAGE(WM_TDLTTN_STOPTRACKING, OnTimeTrackerStopTracking)
+	ON_REGISTERED_MESSAGE(WM_TDLTTN_RESETELAPSEDTIME, OnTimeTrackerResetElapsedTime)
 	ON_REGISTERED_MESSAGE(WM_TDLTTN_LOADDELAYEDTASKLIST, OnTimeTrackerLoadDelayedTasklist)
 	ON_REGISTERED_MESSAGE(WM_SESSIONSTATUS_CHANGE, OnSessionStatusChange)
 	ON_UPDATE_COMMAND_UI(ID_ADDTIMETOLOGFILE, OnUpdateAddtimetologfile)
@@ -3571,6 +3572,16 @@ LRESULT CToDoListWnd::OnTimeTrackerStopTracking(WPARAM /*wParam*/, LPARAM lParam
 	ASSERT(nTDC != -1);
 	
 	StopTimeTrackingTask(nTDC, FROM_TRACKER);
+	
+	return 0L;
+}
+
+LRESULT CToDoListWnd::OnTimeTrackerResetElapsedTime(WPARAM /*wParam*/, LPARAM lParam)
+{
+	int nTDC = m_mgrToDoCtrls.FindToDoCtrl((const CFilteredToDoCtrl*)lParam);
+	ASSERT(nTDC != -1);
+	
+	GetToDoCtrl(nTDC).ResetTimeTrackingElapsedMinutes();
 	
 	return 0L;
 }

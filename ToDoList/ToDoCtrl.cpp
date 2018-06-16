@@ -4752,6 +4752,11 @@ double CToDoCtrl::GetTimeTrackingElapsedMinutes() const
 	return m_timeTracking.GetElapsedMinutes();
 }
 
+void CToDoCtrl::ResetTimeTrackingElapsedMinutes()
+{
+	return m_timeTracking.ResetReminderIsDue();
+}
+
 BOOL CToDoCtrl::TimeTrackSelectedTask()
 {
 	if (!CanTimeTrackSelectedTask())
@@ -8714,6 +8719,8 @@ BOOL CToDoCtrl::BeginTimeTracking(DWORD dwTaskID, BOOL bNotify)
 	// notify parent
 	if (bNotify)
 		GetParent()->SendMessage(WM_TDCN_TIMETRACK, (WPARAM)GetSafeHwnd(), TRUE);
+
+	return TRUE;
 }
 
 void CToDoCtrl::SetTimeTrackingReminderInterval(int nMinutes)

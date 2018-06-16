@@ -1351,6 +1351,10 @@ SOURCE=.\res\prefs_dlg_std.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\reset_elapsed.ico
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\shield.ico
 # End Source File
 # Begin Source File

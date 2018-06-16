@@ -15,6 +15,7 @@
 #include "..\shared\toolbarhelper.h"
 #include "..\shared\subclass.h"
 #include "..\shared\icon.h"
+#include "..\shared\enedit.h"
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -100,8 +101,6 @@ public:
 
 /////////////////////////////////////////////////////////////////////////
 
-//#define WHITETHEME
-
 class CTDLTimeTrackerDlg : public CDialog, protected CDialogHelper
 {
 public:
@@ -148,18 +147,14 @@ protected:
 	CUIThemeFile m_theme;
 	CImageList m_ilBtns;
 	CString m_sTaskTimes, m_sElapsedTime;
+	CEnEdit m_eElapsedTime;
 	CString m_sQuickFind;
 	CEnToolBar m_toolbar;
 	CToolbarHelper m_tbHelper;
 	CString m_sOrgTitle;
 	DWORD m_dwOptions;
-	CIcon m_icon;
-
-#ifdef WHITETHEME
-#else
+	CIcon m_iconDlg, m_iconResetElapsed;
 	CBrush m_brBack;
-#endif
-
 	
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -191,6 +186,7 @@ protected:
 	afx_msg void OnToggleTopMost();
 	afx_msg void OnHelp();
 	afx_msg BOOL OnHelpInfo(HELPINFO* lpHelpInfo);
+	afx_msg LRESULT OnEEBtnClick(WPARAM wParam, LPARAM lParam);
 	
 protected:
 	DWORD GetTasklistTrackID(const CFilteredToDoCtrl* pTDC) const;
