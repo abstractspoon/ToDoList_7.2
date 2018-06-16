@@ -329,7 +329,7 @@ public:
 	DWORD GetTimeTrackTaskID(BOOL bActive = TRUE) const;
 	CString GetSelectedTaskTimeLogPath() const;
 	void EndTimeTracking(BOOL bAllowConfirm);
-	void BeginTimeTracking(DWORD dwTaskID);
+	BOOL BeginTimeTracking(DWORD dwTaskID);
 	BOOL DoAddTimeToLogFile();
 	void SetTimeTrackingReminderInterval(int nMinutes);
 	double GetTimeTrackingElapsedMinutes() const;
@@ -703,7 +703,7 @@ protected:
 	virtual BOOL GetLabelEditRect(CRect& rScreen);
 	virtual void SetEditTitleTaskID(DWORD dwTaskID);
 	virtual void EndTimeTracking(BOOL bAllowConfirm, BOOL bNotify);
-	virtual void BeginTimeTracking(DWORD dwTaskID, BOOL bNotify);
+	virtual BOOL BeginTimeTracking(DWORD dwTaskID, BOOL bNotify);
 	virtual DWORD GetNextNonSelectedTaskID() const;
 
 	virtual TODOITEM* CreateNewTask(HTREEITEM htiParent);

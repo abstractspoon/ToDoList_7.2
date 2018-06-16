@@ -25,12 +25,14 @@ class CTDCTimeTracking
 {
 // Construction
 public:
-	CTDCTimeTracking(const CToDoCtrlData& data);
+	CTDCTimeTracking(const CToDoCtrlData& data, const CTreeSelectionHelper& tsh);
 	virtual ~CTDCTimeTracking();
 
 	BOOL PauseTracking(BOOL bPause = TRUE);
 	BOOL CanTrackTask(DWORD dwTaskID) const;
+	BOOL CanTrackSelectedTask() const;
 	BOOL IsTrackingTask(DWORD dwTaskID, BOOL bActive = TRUE) const;
+	BOOL IsTrackingSelectedTask(BOOL bActive = TRUE) const;
 	BOOL IsTracking(BOOL bActive = TRUE) const;
 	BOOL EndTracking();
 	BOOL BeginTracking(DWORD dwTaskID);
@@ -46,6 +48,7 @@ public:
 
 protected:
 	const CToDoCtrlData& m_data;
+	const CTreeSelectionHelper& m_tsh;
 
 	DWORD m_dwTimeTrackReminderIntervalTicks;
 	DWORD m_dwTimeTrackElapsedTicks;
@@ -54,6 +57,9 @@ protected:
 	DWORD m_dwTimeTrackTickLast;
 
 	BOOL m_bTimeTrackingPaused;
+
+protected:
+	DWORD GetSelectedTaskID() const;
 
 };
 

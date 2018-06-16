@@ -17,9 +17,10 @@ const DWORD REMINDER_NEEDS_RESET = 0xffffffff;
 
 /////////////////////////////////////////////////////////////////////////////
 
-CTDCTimeTracking::CTDCTimeTracking(const CToDoCtrlData& data) 
+CTDCTimeTracking::CTDCTimeTracking(const CToDoCtrlData& data, const CTreeSelectionHelper& tsh) 
 	: 
 	m_data(data),
+	m_tsh(tsh),
 	m_bTimeTrackingPaused(FALSE),
 	m_dwTimeTrackTaskID(0),
 	m_dwTimeTrackTickLast(0),
@@ -53,7 +54,20 @@ BOOL CTDCTimeTracking::PauseTracking(BOOL bPause)
 
 BOOL CTDCTimeTracking::CanTrackTask(DWORD dwTaskID) const
 {
-	return m_data.IsTaskTimeTrackable(dwTaskID);
+	return ((dwTaskID != 0) && m_data.IsTaskTimeTrackable(dwTaskID));
+}
+
+BOOL CTDCTimeTracking::CanTrackSelectedTask() const
+{
+	return CanTrackTask(GetSelectedTaskID());
+}
+
+DWORD CTDCTimeTracking::GetSelectedTaskID() const
+{
+	if (m_tsh.GetCount() != 1)
+		return 0;
+
+	return m_tsh.GetFirstItemData();
 }
 
 BOOL CTDCTimeTracking::IsTrackingTask(DWORD dwTaskID, BOOL bActive) const
@@ -61,6 +75,13 @@ BOOL CTDCTimeTracking::IsTrackingTask(DWORD dwTaskID, BOOL bActive) const
 	ASSERT(dwTaskID);
 
 	return (GetTrackedTaskID(bActive) == dwTaskID);
+}
+
+BOOL CTDCTimeTracking::IsTrackingSelectedTask(BOOL bActive) const
+{
+	DWORD dwSelID = GetSelectedTaskID();
+
+	return ((dwSelID != 0) && IsTrackingTask(dwSelID, bActive));
 }
 
 DWORD CTDCTimeTracking::GetTrackedTaskID(BOOL bActive) const
@@ -77,7 +98,21 @@ BOOL CTDCTimeTracking::IsTracking(BOOL bActive) const
 	if (!m_dwTimeTrackTaskID)
 		return FALSE;
 
-	return !(bActive && m_bTimeTrackingPaused);
+	if (!bActive)
+		return TRUE; // m_dwTimeTrackTaskID != 0
+	
+	// Active tracking only
+	if (m_bTimeTrackingPaused)
+		return FALSE;
+		
+	if (m_data.HasStyle(TDCS_TRACKSELECTEDTASKONLY))
+	{
+		DWORD dwSelID = GetSelectedTaskID();
+		
+		return (m_dwTimeTrackTaskID == dwSelID);
+	}
+	
+	return TRUE;
 }
 
 BOOL CTDCTimeTracking::BeginTracking(DWORD dwTaskID)
@@ -87,6 +122,8 @@ BOOL CTDCTimeTracking::BeginTracking(DWORD dwTaskID)
 		ASSERT(0);
 		return FALSE;
 	}
+
+	ASSERT(!m_data.HasStyle(TDCS_TRACKSELECTEDTASKONLY) || (dwTaskID == GetSelectedTaskID()));
 
 	m_bTimeTrackingPaused = FALSE;
 	m_dwTimeTrackTaskID = dwTaskID;
@@ -125,15 +162,12 @@ double CTDCTimeTracking::IncrementTrackedTime(BOOL bEnding)
 	DWORD dwTick = GetTickCount();
 	double dIncrement = 0.0;
 	
-	if (IsTracking(FALSE))
+	if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
+		m_dwTimeTrackElapsedTicks = 0;
+
+	if (IsTracking(TRUE))
 	{
-		ASSERT (m_dwTimeTrackTickLast);
-
-		if (IsTracking(TRUE))
-			dIncrement = ((dwTick - m_dwTimeTrackTickLast) * TICKS2HOURS); // hours
-
-		if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
-			m_dwTimeTrackElapsedTicks = 0;
+		dIncrement = ((dwTick - m_dwTimeTrackTickLast) * TICKS2HOURS); // hours
 
 		if (!bEnding)
 			m_dwTimeTrackElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
@@ -157,6 +191,8 @@ BOOL CTDCTimeTracking::IsReminderDue() const
 
 void CTDCTimeTracking::ResetReminderIsDue()
 {
+	// The actual reset happens in IncrementTrackedTime
+	// so that everything is synchronised
 	m_dwTimeTrackElapsedTicks = REMINDER_NEEDS_RESET;
 }
 

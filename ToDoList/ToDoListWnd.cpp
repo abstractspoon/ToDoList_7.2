@@ -3456,7 +3456,11 @@ LRESULT CToDoListWnd::OnToDoCtrlNotifyTimeTrack(WPARAM wp, LPARAM lp)
 
 	if (bTrack)
 	{
-		DWORD dwTaskID = GetToDoCtrl(nTDC).GetTimeTrackTaskID(FALSE);
+		const CFilteredToDoCtrl& tdc = GetToDoCtrl(nTDC);
+		DWORD dwTaskID = tdc.GetTimeTrackTaskID(FALSE);
+
+		ASSERT((tdc.GetSelectedCount() == 1) && (dwTaskID == tdc.GetSelectedTaskID()));
+
 		StartTimeTrackingTask(nTDC, dwTaskID, FROM_TASKLIST);
 	}
 	else
@@ -3511,6 +3515,7 @@ void CToDoListWnd::StartTimeTrackingTask(int nTDC, DWORD dwTaskID, TIMETRACKSRC 
 	// always refresh the notifier tasklist
 	m_mgrToDoCtrls.RefreshTimeTracking(nTDC);
 
+	// And the one potentially being paused
 	if (nTDC != nSel)
 		m_mgrToDoCtrls.RefreshTimeTracking(nSel);
 
