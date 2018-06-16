@@ -141,20 +141,20 @@ protected:
 	CWnd* m_pWndNotify;
 	CIconButton m_btnStart;
 	CWndPromptManager m_mgrPrompts;
-	CSize m_sizeMin, m_sizeMax, m_sizeLast;
+	CIcon m_iconDlg, m_iconResetElapsed;
+	CBrush m_brBack;
+	CEnToolBar m_toolbar;
+	CEnEdit m_eElapsedTime;
+	CImageList m_ilBtns;
 	
 	CTDCTrackTasklistArray m_aTasklists;
 	CUIThemeFile m_theme;
-	CImageList m_ilBtns;
 	CString m_sTaskTimes, m_sElapsedTime;
-	CEnEdit m_eElapsedTime;
 	CString m_sQuickFind;
-	CEnToolBar m_toolbar;
 	CToolbarHelper m_tbHelper;
 	CString m_sOrgTitle;
 	DWORD m_dwOptions;
-	CIcon m_iconDlg, m_iconResetElapsed;
-	CBrush m_brBack;
+	CSize m_sizeMin, m_sizeMax, m_sizeLast;
 	
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
