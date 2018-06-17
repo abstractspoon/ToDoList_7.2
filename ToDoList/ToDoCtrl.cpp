@@ -4754,7 +4754,7 @@ CString CToDoCtrl::FormatTimeTrackingElapsedTime() const
 
 void CToDoCtrl::ResetTimeTrackingElapsedMinutes()
 {
-	return m_timeTracking.ResetReminderIsDue();
+	m_timeTracking.ResetReminderIsDue();
 }
 
 BOOL CToDoCtrl::TimeTrackSelectedTask()
