@@ -5330,7 +5330,7 @@ BEGIN
     IDS_NEW_TOOLBARBUTTON   "<New Button>"
     IDS_TASKREMINDERDLG_TITLE "Task Reminders (%d)"
     IDS_REMINDER_DATENOTSET "Task date not set"
-    IDS_RESET_ELAPSED       "Reset Time"
+    IDS_RESET_ELAPSED       "Reset Elapsed Time"
 END
 
 STRINGTABLE DISCARDABLE 
