@@ -658,12 +658,21 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 
 	switch (nFromUnits)
 	{
-	case THU_MINS:
+	case THU_SECONDS:
 		return -1; // less than everything else
+	
+	case THU_MINS:
+		switch(nToUnits)
+		{
+		case THU_SECONDS:  
+			return 1;
+		}
+		return -1; // all else
 	
 	case THU_HOURS:
 		switch(nToUnits)
 		{
+		case THU_SECONDS:  
 		case THU_MINS:  
 			return 1;
 		}
@@ -673,6 +682,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_WEEKDAYS:
 		switch(nToUnits)
 		{
+		case THU_SECONDS:  
 		case THU_MINS:
 		case THU_HOURS:
 			return 1;
@@ -686,6 +696,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_WEEKS:
 		switch(nToUnits)
 		{
+		case THU_SECONDS:  
 		case THU_MINS:
 		case THU_HOURS:
 		case THU_DAYS:
@@ -697,6 +708,7 @@ int CTimeHelper::Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits)
 	case THU_MONTHS:
 		switch(nToUnits)
 		{
+		case THU_SECONDS:  
 		case THU_MINS:
 		case THU_HOURS:
 		case THU_DAYS:

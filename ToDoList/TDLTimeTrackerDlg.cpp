@@ -963,12 +963,7 @@ void CTDLTimeTrackerDlg::UpdateTaskTime(const CFilteredToDoCtrl* pTDC)
 	if (dwSelTaskID)
 		pTDC->GetTaskTimes(dwSelTaskID, dTimeEst, nEstUnits, dTimeSpent, nSpentUnits);
 
-	double dElapsed = pTDC->GetTimeTrackingElapsedMinutes();
-
-	if ((dElapsed > 0.0) || pTDC->GetTimeTrackTaskID(FALSE))
-	{
-		m_sElapsedTime = th.FormatTimeHMS(dElapsed, THU_MINS, (HMS_ALLOWZERO | HMS_WANTSECONDS | HMS_DECIMALPLACES));
-	}
+	m_sElapsedTime = pTDC->FormatTimeTrackingElapsedTime();
 	
 	if (HasOption(TTDO_FORMATTIMESASHMS))
 	{

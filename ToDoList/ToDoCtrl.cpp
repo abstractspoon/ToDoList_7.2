@@ -4747,9 +4747,9 @@ void CToDoCtrl::PauseTimeTracking(BOOL bPause)
 	}
 }
 
-double CToDoCtrl::GetTimeTrackingElapsedMinutes() const
+CString CToDoCtrl::FormatTimeTrackingElapsedTime() const
 {
-	return m_timeTracking.GetElapsedMinutes();
+	return m_timeTracking.FormatElapsedTime();
 }
 
 void CToDoCtrl::ResetTimeTrackingElapsedMinutes()
@@ -11853,7 +11853,7 @@ void CToDoCtrl::IncrementTrackedTime(BOOL bEnding)
 	if (!bEnding && IsTaskLabelEditing() && m_timeTracking.IsTracking(GetSelectedTaskID()))
 		return;
 
-	double dIncrement = m_timeTracking.IncrementTrackedTime(bEnding); // hours
+	double dIncrement = m_timeTracking.IncrementTrackedTime(); // hours
 	
 	if (dIncrement > 0.0)
 	{

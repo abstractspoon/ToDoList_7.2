@@ -9,11 +9,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#ifdef _DEBUG
-const double TICKS2HOURS = 10.0 / (1000 * 3600);
-#else
+// #ifdef _DEBUG
+// const double TICKS2HOURS = 10.0 / (1000 * 3600);
+// #else
 const double TICKS2HOURS = 1.0 / (1000 * 3600);
-#endif
+// #endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -43,8 +43,10 @@ public:
 	void SetTrackingReminderInterval(int nMinutes);
 	void ResetReminderIsDue();
 
-	double IncrementTrackedTime(BOOL bEnding);
-	double GetElapsedMinutes() const;
+	double IncrementTrackedTime();
+	CString FormatElapsedTime() const;
+
+	static void SetUpdateInterval(DWORD dwTicks);
 
 protected:
 	const CToDoCtrlData& m_data;
@@ -58,8 +60,11 @@ protected:
 
 	BOOL m_bTimeTrackingPaused;
 
+	static DWORD s_dwUpdateIntervalTicks;
+
 protected:
 	DWORD GetSelectedTaskID() const;
+	DWORD GetElapsedTicks() const;
 
 };
 

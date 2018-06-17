@@ -332,7 +332,7 @@ public:
 	BOOL BeginTimeTracking(DWORD dwTaskID);
 	BOOL DoAddTimeToLogFile();
 	void SetTimeTrackingReminderInterval(int nMinutes);
-	double GetTimeTrackingElapsedMinutes() const;
+	CString FormatTimeTrackingElapsedTime() const;
 	void ResetTimeTrackingElapsedMinutes();
 
 	static void SetInheritedParentAttributes(const CTDCAttributeMap& mapAttribs, BOOL bUpdateAttrib);

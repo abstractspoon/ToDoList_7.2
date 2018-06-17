@@ -17,6 +17,10 @@ const DWORD REMINDER_NEEDS_RESET = 0xffffffff;
 
 /////////////////////////////////////////////////////////////////////////////
 
+DWORD CTDCTimeTracking::s_dwUpdateIntervalTicks = 10000; // 10 secs
+
+/////////////////////////////////////////////////////////////////////////////
+
 CTDCTimeTracking::CTDCTimeTracking(const CToDoCtrlData& data, const CTreeSelectionHelper& tsh) 
 	: 
 	m_data(data),
@@ -115,6 +119,18 @@ BOOL CTDCTimeTracking::IsTracking(BOOL bActive) const
 	return TRUE;
 }
 
+void CTDCTimeTracking::SetUpdateInterval(DWORD dwTicks)
+{
+	// whole seconds only
+	if (!dwTicks || (dwTicks % 1000))
+	{
+		ASSERT(0);
+		return;
+	}
+
+	s_dwUpdateIntervalTicks = dwTicks;
+}
+
 BOOL CTDCTimeTracking::BeginTracking(DWORD dwTaskID)
 {
 	if (!CanTrackTask(dwTaskID))
@@ -157,7 +173,7 @@ BOOL CTDCTimeTracking::EndTracking()
 	return TRUE;
 }
 
-double CTDCTimeTracking::IncrementTrackedTime(BOOL bEnding)
+double CTDCTimeTracking::IncrementTrackedTime()
 {
 	DWORD dwTick = GetTickCount();
 	double dIncrement = 0.0;
@@ -169,8 +185,7 @@ double CTDCTimeTracking::IncrementTrackedTime(BOOL bEnding)
 	{
 		dIncrement = ((dwTick - m_dwTimeTrackTickLast) * TICKS2HOURS); // hours
 
-		if (!bEnding)
-			m_dwTimeTrackElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
+		m_dwTimeTrackElapsedTicks += (dwTick - m_dwTimeTrackTickLast);
 	}
 	
 	m_dwTimeTrackTickLast = dwTick;
@@ -196,11 +211,24 @@ void CTDCTimeTracking::ResetReminderIsDue()
 	m_dwTimeTrackElapsedTicks = REMINDER_NEEDS_RESET;
 }
 
-double CTDCTimeTracking::GetElapsedMinutes() const
+CString CTDCTimeTracking::FormatElapsedTime() const
+{
+	double dElapsedMins = (GetElapsedTicks() / 60000.0);
+
+	return CTimeHelper().FormatTimeHMS(dElapsedMins, THU_MINS, (HMS_ALLOWZERO | HMS_WANTSECONDS | HMS_DECIMALPLACES));
+}
+
+DWORD CTDCTimeTracking::GetElapsedTicks() const
 {
 	if (m_dwTimeTrackElapsedTicks == REMINDER_NEEDS_RESET)
-		return 0.0;
+		return 0;
 
-	// else
-	return (m_dwTimeTrackElapsedTicks * TICKS2HOURS * 60);
+	// Round value to nearest multiple of update interval
+	DWORD dwTicks = m_dwTimeTrackElapsedTicks;
+	
+	dwTicks += (s_dwUpdateIntervalTicks / 2);
+	dwTicks /= s_dwUpdateIntervalTicks;
+	dwTicks *= s_dwUpdateIntervalTicks;
+
+	return dwTicks;
 }
