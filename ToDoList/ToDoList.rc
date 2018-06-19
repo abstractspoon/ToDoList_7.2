@@ -206,7 +206,7 @@ END
 
 IDD_PREFGEN_PAGE DIALOGEX 0, 0, 400, 438
 STYLE WS_CHILD
-FONT 8, "Tahoma", 0, 0, 0x1
+FONT 8, "Tahoma"
 BEGIN
     LTEXT           "&Display Language:",IDC_STATIC,7,10,376,10
     CONTROL         "",IDC_LANGUAGE,"ComboBoxEx32",CBS_DROPDOWNLIST | 
@@ -236,9 +236,9 @@ BEGIN
     CONTROL         "&Display save confirmation dialog on exit, otherwise the tasklist will be auto-saved",
                     IDC_CONFIRMSAVEONEXIT,"Button",BS_AUTOCHECKBOX | BS_TOP | 
                     WS_TABSTOP,7,160,386,10
-    CONTROL         "Di&splay delete confirmation dialog\n",
-                    IDC_CONFIRMDELETE,"Button",BS_AUTOCHECKBOX | BS_TOP | 
-                    WS_TABSTOP,7,175,386,10
+    CONTROL         "Di&splay delete confirmation dialog",IDC_CONFIRMDELETE,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | WS_TABSTOP,7,175,386,
+                    10
     CONTROL         "Allo&w multiple instances of ToDoList",
                     IDC_MULTIINSTANCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     7,190,386,10
