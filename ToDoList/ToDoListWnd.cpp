@@ -7811,7 +7811,7 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 		// set global styles once only allowing the taskfile 
 		// itself to override from this point on
 		pTDC->SetStyle(TDCS_SAVEUIVISINTASKLIST, m_bSaveUIVisInTaskList);
-		pTDC->SetStyle(TDCS_DISABLEPASSWORDPROMPTING, m_bPasswordPrompting);
+		pTDC->SetStyle(TDCS_DISABLEPASSWORDPROMPTING, !m_bPasswordPrompting);
 
 		// Set initial theme before it becomes visible
 		pTDC->SetUITheme(m_theme);
