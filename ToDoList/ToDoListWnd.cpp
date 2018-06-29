@@ -906,6 +906,8 @@ BOOL CToDoListWnd::InitTabCtrl()
 			bm.LoadBitmap(IDB_SOURCECONTROL_STD);
 			
 			m_ilTabCtrl.Add(&bm, RGB(255, 0, 255));
+			m_ilTabCtrl.ScaleByDPIFactor();
+
 			m_tabCtrl.SetImageList(&m_ilTabCtrl);
 			
 			return TRUE;
