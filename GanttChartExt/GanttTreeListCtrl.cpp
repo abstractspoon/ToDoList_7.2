@@ -1149,8 +1149,6 @@ void CGanttTreeListCtrl::BuildTreeItem(const ITASKLISTBASE* pTasks, HTASKITEM hT
 	
 	pGI->dwTaskID = dwTaskID;
 	pGI->dwRefID = pTasks->GetTaskReferenceID(hTask);
-
-	// Except for position
 	pGI->nPosition = pTasks->GetTaskPosition(hTask);
 
 	// Only save data for non-references

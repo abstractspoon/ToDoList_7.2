@@ -5078,7 +5078,7 @@ HTREEITEM CToDoCtrl::InsertNewTask(const CString& sText, HTREEITEM htiParent, HT
 		m_taskTree.InvalidateAll();
 
 		if (bEdit)
-			EditSelectedTask(TRUE);
+			EditSelectedTaskTitle(TRUE);
 		else
 			SetFocusToTasks();
 	}
@@ -5344,7 +5344,7 @@ BOOL CToDoCtrl::GetLabelEditRect(CRect& rScreen)
 	return FALSE;
 }
 
-BOOL CToDoCtrl::EditSelectedTask(BOOL bTaskIsNew)
+BOOL CToDoCtrl::EditSelectedTaskTitle(BOOL bTaskIsNew)
 {
 	if (IsReadOnly() || GetSelectedCount() != 1)
 		return FALSE;
@@ -6587,7 +6587,7 @@ int CToDoCtrl::GetArchivableTasks(CTaskFile& tasks, BOOL bSelectedOnly) const
 
 void CToDoCtrl::RemoveArchivedTasks(const CTaskFile& tasks, TDC_ARCHIVE nRemove, BOOL bRemoveFlagged)
 {
-	if (IsReadOnly() || nRemove == TDC_REMOVENONE || !tasks.GetTaskCount())
+	if (IsReadOnly() || (nRemove == TDC_REMOVENONE) || !tasks.GetTaskCount())
 		return; // nothing to do
 
 	CPreferences prefs;
@@ -8402,7 +8402,7 @@ LRESULT CToDoCtrl::OnColumnEditClick(WPARAM wParam, LPARAM lParam)
 	{
 	case TDCC_CLIENT:
 		ASSERT(!IsReadOnly());
-		EditSelectedTask(FALSE);
+		EditSelectedTaskTitle(FALSE);
 		break;
 		
 	case TDCC_DONE:
