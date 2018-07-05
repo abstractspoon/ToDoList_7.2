@@ -258,42 +258,19 @@ BOOL CTimeEdit::CreateUnitsPopupMenu(BOOL bUpdateState)
 	ASSERT(GetSafeHwnd());
 
 	// create once only
-	if (!m_menuUnits.GetSafeHmenu())
+	if (!m_menuUnits.GetSafeHmenu() && m_menuUnits.CreatePopupMenu())
 	{
-		if (m_menuUnits.CreatePopupMenu())
-		{			
-			CString sMenuItem;
-
-			for (int nUnit = 0; nUnit < NUM_UNITS; nUnit++)
-			{
-				const TIMEUNIT& tu = TIMEUNITS[nUnit];
-				sMenuItem.Format(_T("%c\t%s"), tu.cAbbrLabel, tu.szLabel);
-
-				m_menuUnits.AppendMenu(MF_STRING, tu.nMenuID, sMenuItem);
-			}
-
-			// translate
-			if (CLocalizer::TranslateMenu(m_menuUnits, *this))
-			{
-				// update static abbreviations once only
-				if (!s_bUnitsTranslated)
-				{
-					for (int nUnit = 0; nUnit < NUM_UNITS; nUnit++)
-					{
-						CString sMenuItem;
-						m_menuUnits.GetMenuString(nUnit, sMenuItem, MF_BYPOSITION);
-						
-						if (!sMenuItem.IsEmpty())
-						{
-							TIMEUNIT& tu = TIMEUNITS[nUnit];
-							tu.cAbbrLabel = sMenuItem[0];
-						}
-					}
-
-					s_bUnitsTranslated = TRUE;
-				}
-			}
+		CString sMenuItem;
+		
+		for (int nUnit = 0; nUnit < NUM_UNITS; nUnit++)
+		{
+			const TIMEUNIT& tu = TIMEUNITS[nUnit];
+			sMenuItem.Format(_T("%c\t%s"), tu.cAbbrLabel, tu.szLabel);
+			
+			m_menuUnits.AppendMenu(MF_STRING, tu.nMenuID, sMenuItem);
 		}
+
+		CLocalizer::EnableTranslation(m_menuUnits, FALSE);
 	}
 
 	// state
