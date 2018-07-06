@@ -3880,7 +3880,7 @@ void CGanttTreeListCtrl::DrawListItemText(CDC* pDC, const GANTTITEM& gi, const C
 	}
 
 	CRect rText(rItem);
-	rText.left = (nTextPos + 3);
+	rText.left = nTextPos;
 	rText.top += 2;
 
 	COLORREF crFill, crBorder;
