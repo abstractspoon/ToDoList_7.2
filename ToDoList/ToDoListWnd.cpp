@@ -95,8 +95,11 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 
 const int BEVEL = 3; // DON'T SCALE
-const int BORDER = GraphicsMisc::ScaleByDPIFactor(3);
 const int MAX_NUM_TOOLS = 50;
+const int BORDER = GraphicsMisc::ScaleByDPIFactor(3);
+
+const int QUICKFIND_HEIGHT = GraphicsMisc::ScaleByDPIFactor(200);
+const int QUICKFIND_VOFFSET = (GraphicsMisc::WantDPIScaling() ? (GraphicsMisc::ScaleByDPIFactor(2) - 1) : 0);
 
 #ifdef _DEBUG
 const UINT ONE_MINUTE = 10000;
@@ -1362,7 +1365,9 @@ BOOL CToDoListWnd::InitMainToolbar()
 	
 	CRect rect;
 	m_toolbarMain.GetToolBarCtrl().GetItemRect(nPos + 1, &rect);
-	rect.bottom += 200;
+
+	rect.top += QUICKFIND_VOFFSET;
+	rect.bottom += QUICKFIND_HEIGHT;
 	
 	if (!m_cbQuickFind.Create(WS_CHILD | WS_VSCROLL | WS_VISIBLE | CBS_AUTOHSCROLL | 
 		CBS_DROPDOWN, rect, &m_toolbarMain, IDC_QUICKFIND))
@@ -6214,7 +6219,10 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 		if (rNewPos.TopLeft() != rPrevPos.TopLeft())
 		{
 			m_toolbarMain.ScreenToClient(rNewPos);
-			rNewPos.bottom = rNewPos.top + 200;
+
+			rNewPos.top += QUICKFIND_VOFFSET;
+			rNewPos.bottom = rNewPos.top + QUICKFIND_HEIGHT;
+
 			m_cbQuickFind.MoveWindow(rNewPos);
 		}
 
