@@ -5,6 +5,8 @@
 #include "xmlcharmap.h"
 #include "regkey.h"
 
+#include <comdef.h>
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <wininet.h>
@@ -372,7 +374,18 @@ BOOL WebMisc::GetPageTitle(const CString& sPageHtml, CString& sTitle)
 
 BOOL WebMisc::DownloadFile(LPCTSTR szDownloadUri, LPCTSTR szDownloadFile, IBindStatusCallback* pCallback)
 {
-	return (S_OK == ::URLDownloadToFile(NULL, szDownloadUri, szDownloadFile, 0, pCallback));
+	HRESULT hr = ::URLDownloadToFile(NULL, szDownloadUri, szDownloadFile, 0, pCallback);
+
+	if (hr == S_OK)
+		return TRUE;
+
+	// else
+	FileMisc::LogText(_T("WebMisc::DownloadFile(failed to download %s to %s)"), szDownloadUri, szDownloadFile);
+
+	_com_error err(hr);
+	FileMisc::LogText(_T("\tURLDownloadToFile reported %s"), err.ErrorMessage());
+
+	return FALSE;
 }
 
 BOOL WebMisc::DownloadPage(LPCTSTR szDownloadUri, CString& sPageContents, IBindStatusCallback* pCallback)
