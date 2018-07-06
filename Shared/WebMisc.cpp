@@ -347,3 +347,40 @@ BOOL WebMisc::IsProtocolRegistered(LPCTSTR szProtocol, LPCTSTR szAppName, LPCTST
 	// else
 	return TRUE;
 }
+
+BOOL WebMisc::GetPageTitle(const CString& sPageHtml, CString& sTitle)
+{
+	int nTitleStart = sPageHtml.Find(_T("<title"));
+
+	if (nTitleStart == -1)
+		return FALSE;
+
+	int nTitleStartEndBrace = sPageHtml.Find('>', nTitleStart);
+
+	if (nTitleStartEndBrace == -1)
+		return FALSE;
+
+	int nTitleEnd = sPageHtml.Find(_T("</title>"));
+
+	if ((nTitleEnd == -1) || (nTitleEnd <= nTitleStartEndBrace))
+		return FALSE;
+
+	sTitle = sPageHtml.Mid(nTitleStartEndBrace + 1, (nTitleEnd - (nTitleStartEndBrace + 1)));
+
+	return !sTitle.IsEmpty();
+}
+
+BOOL WebMisc::DownloadFile(LPCTSTR szDownloadUri, LPCTSTR szDownloadFile, IBindStatusCallback* pCallback)
+{
+	return (S_OK == ::URLDownloadToFile(NULL, szDownloadUri, szDownloadFile, 0, pCallback));
+}
+
+BOOL WebMisc::DownloadPage(LPCTSTR szDownloadUri, CString& sPageContents, IBindStatusCallback* pCallback)
+{
+	CString sTempFile = FileMisc::GetTempFilePath();
+
+	if (!DownloadFile(szDownloadUri, sTempFile, pCallback))
+		return FALSE;
+
+	return FileMisc::LoadFile(sTempFile, sPageContents);
+}
