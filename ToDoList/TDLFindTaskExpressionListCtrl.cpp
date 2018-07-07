@@ -17,6 +17,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum 
 { 
 	ATTRIB_COL, 
@@ -24,6 +26,8 @@ enum
 	VALUE_COL, 
 	ANDOR_COL 
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum 
 { 
@@ -38,7 +42,13 @@ enum
 	CUSTOMICON_ID,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 const float COL_PROPORTIONS[] = { 15.0f/47, 13.0f/47, 13.0f/47, 6.0f/47 };
+
+/////////////////////////////////////////////////////////////////////////////
+
+const UINT RELATIVEDATEPLACEHOLDER_BTNID = 1;
 
 /////////////////////////////////////////////////////////////////////////////
 // CTDLFindTaskExpressionListCtrl
@@ -79,8 +89,9 @@ BEGIN_MESSAGE_MAP(CTDLFindTaskExpressionListCtrl, CInputListCtrl)
 	ON_NOTIFY_REFLECT_EX(LVN_ITEMCHANGED, OnSelItemChanged)
 	ON_NOTIFY(DTN_DATETIMECHANGE, DATE_ID, OnDateChange)
 	ON_NOTIFY(DTN_CLOSEUP, DATE_ID, OnDateCloseUp)
-	ON_REGISTERED_MESSAGE(WM_TEN_UNITSCHANGE, OnTimeUnitsChange)
 	ON_EN_CHANGE(TIME_ID, OnTimeChange)
+	ON_REGISTERED_MESSAGE(WM_TEN_UNITSCHANGE, OnTimeUnitsChange)
+	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnEEBtnClick)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -333,6 +344,14 @@ void CTDLFindTaskExpressionListCtrl::EditCell(int nItem, int nCol, BOOL bBtnClic
 				ShowControl(*pEdit, nItem, nCol);
 				break;
 
+			case FT_DATERELATIVE:
+				PrepareEdit(nItem, nCol);
+				CInputListCtrl::EditCell(nItem, nCol, bBtnClick);
+
+				if (bBtnClick)
+					OnEEBtnClick(m_editBox.GetDlgCtrlID(), RELATIVEDATEPLACEHOLDER_BTNID);
+				break;
+
 			case FT_ICON:
 				{
 					BOOL bBrowse = (sp.GetAttribute() == TDCA_ICON);
@@ -418,6 +437,9 @@ IL_COLUMNTYPE CTDLFindTaskExpressionListCtrl::GetCellType(int nRow, int nCol) co
 			{
 			case FT_DATE:
 				return ILCT_DATE;
+
+			case FT_DATERELATIVE:
+				return ILCT_POPUPMENU;
 
 			case FT_ICON:
 				{
@@ -529,6 +551,8 @@ void CTDLFindTaskExpressionListCtrl::PrepareEdit(int nRow, int /*nCol*/)
 {
 	const SEARCHPARAM& sp = m_aSearchParams[nRow];
 
+	m_editBox.DeleteAllButtons();
+
 	switch (sp.GetAttribType())
 	{
 	case FT_STRING:
@@ -541,6 +565,8 @@ void CTDLFindTaskExpressionListCtrl::PrepareEdit(int nRow, int /*nCol*/)
 		
 	case FT_DATERELATIVE:
 		m_editBox.SetMask(_T("nNtTdDWMY+-1234567890"));
+		m_editBox.AddButton(RELATIVEDATEPLACEHOLDER_BTNID, _T(""), _T(""));
+		m_editBox.SetDropMenuButton(RELATIVEDATEPLACEHOLDER_BTNID);
 		break;
 		
 	case FT_DOUBLE:
@@ -1292,6 +1318,44 @@ LRESULT CTDLFindTaskExpressionListCtrl::OnTimeUnitsChange(WPARAM /*wp*/, LPARAM 
 	rule.SetFlags(TDC::MapTHUnitsToUnits(m_eTime.GetUnits()));
 
 	UpdateValueColumnText(nRow);
+
+	return 0L;
+}
+
+LRESULT CTDLFindTaskExpressionListCtrl::OnEEBtnClick(WPARAM /*wp*/, LPARAM lp)
+{
+	switch (lp)
+	{
+	case RELATIVEDATEPLACEHOLDER_BTNID:
+		{
+			CMenu menu;
+
+			if (menu.LoadMenu(IDR_FINDTASKS))
+			{
+				UINT nID = m_editBox.TrackPopupMenu(lp, menu.GetSubMenu(0), EETPM_RETURNCMD);
+
+				switch (nID)
+				{
+				case ID_RELATIVEDATE_TODAY:			m_editBox.ReplaceSel(_T("t"),	TRUE); break;
+				case ID_RELATIVEDATE_TOMORROW:		m_editBox.ReplaceSel(_T("t+1"), TRUE); break;
+				case ID_RELATIVEDATE_YESTERDAY:		m_editBox.ReplaceSel(_T("t-1"), TRUE); break;
+
+				case ID_RELATIVEDATE_ENDTHISWEEK:	m_editBox.ReplaceSel(_T("W"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDNEXTWEEK:	m_editBox.ReplaceSel(_T("W+1"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDLASTWEEK:	m_editBox.ReplaceSel(_T("W-1"), TRUE); break;
+
+				case ID_RELATIVEDATE_ENDTHISMONTH:	m_editBox.ReplaceSel(_T("M"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDNEXTMONTH:	m_editBox.ReplaceSel(_T("M+1"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDLASTMONTH:	m_editBox.ReplaceSel(_T("M-1"), TRUE); break;
+
+				case ID_RELATIVEDATE_ENDTHISYEAR:	m_editBox.ReplaceSel(_T("Y"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDNEXTYEAR:	m_editBox.ReplaceSel(_T("Y+1"),	TRUE); break;
+				case ID_RELATIVEDATE_ENDLASTYEAR:	m_editBox.ReplaceSel(_T("Y-1"), TRUE); break;
+				}
+			}
+		}
+		break;
+	}
 
 	return 0L;
 }

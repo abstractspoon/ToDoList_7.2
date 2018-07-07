@@ -110,6 +110,7 @@ protected:
 	afx_msg void OnDateCloseUp(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTimeChange();
 	afx_msg LRESULT OnTimeUnitsChange(WPARAM wp, LPARAM lp);
+	afx_msg LRESULT OnEEBtnClick(WPARAM wp, LPARAM lp);
 	
 	DECLARE_MESSAGE_MAP()
 

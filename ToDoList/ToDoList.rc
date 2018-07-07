@@ -3794,6 +3794,30 @@ BEGIN
     END
 END
 
+IDR_FINDTASKS MENU DISCARDABLE 
+BEGIN
+    POPUP "Relative Date Placeholders"
+    BEGIN
+        MENUITEM "&Today",                      ID_RELATIVEDATE_TODAY
+        MENUITEM "T&omorrow",                   ID_RELATIVEDATE_TOMORROW
+        MENUITEM "&Yesterday",                  ID_RELATIVEDATE_YESTERDAY
+        MENUITEM SEPARATOR
+        MENUITEM "&End of This Week",           ID_RELATIVEDATE_ENDTHISWEEK
+        MENUITEM "&End of Next Week",           ID_RELATIVEDATE_ENDNEXTWEEK
+        MENUITEM "&End of Last Week",           ID_RELATIVEDATE_ENDLASTWEEK
+        MENUITEM SEPARATOR
+        MENUITEM "&End of This Month",          ID_RELATIVEDATE_ENDTHISMONTH
+        MENUITEM "&End of Next Month",          ID_RELATIVEDATE_ENDNEXTMONTH
+        MENUITEM "&End of Last Month",          ID_RELATIVEDATE_ENDLASTMONTH
+        MENUITEM SEPARATOR
+        MENUITEM "&End of This Year",           ID_RELATIVEDATE_ENDTHISYEAR
+        MENUITEM "&End of Next Year",           ID_RELATIVEDATE_ENDNEXTYEAR
+        MENUITEM "&End of Last Year",           ID_RELATIVEDATE_ENDLASTYEAR
+        MENUITEM SEPARATOR
+        MENUITEM "Cancel",                      IDCANCEL
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
