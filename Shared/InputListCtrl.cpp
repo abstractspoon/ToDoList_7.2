@@ -126,7 +126,7 @@ void CInputListCtrl::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 			// double clicks on an already selected item. 
 			// ie the WM_LBUTTONDOWN that preceeds WM_LBUTTONDBLCLK will already
 			// have initiated an edit 
-			EditCell(nItem, nCol);
+			EditCell(nItem, nCol, FALSE);
 		}
 	}
 }
@@ -163,11 +163,11 @@ void CInputListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 			SetCurSel(nItem, nCol, TRUE); // notifies parent
 			SetItemFocus(nItem, TRUE);
 
-			EditCell(nItem, nCol);
+			EditCell(nItem, nCol, TRUE);
 		}
 		else if (CanEditSelectedCell() && bHadFocus && nItem == nSelItem && nCol == nSelCol)
 		{
-			EditCell(nItem, nCol);
+			EditCell(nItem, nCol, FALSE);
 		}
 		else
 		{
@@ -185,7 +185,7 @@ void CInputListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-void CInputListCtrl::EditCell(int nItem, int nCol)
+void CInputListCtrl::EditCell(int nItem, int nCol, BOOL bBtnClick)
 {
 	CString sText;
 	CRect rEdit;
@@ -453,7 +453,7 @@ void CInputListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	else if ((nChar == VK_F2 || nChar == VK_SPACE || nChar == VK_RETURN) && CanEditSelectedCell())
 	{
 		// if its the space bar then edit the current cell
-		EditCell(nItem, nCol);
+		EditCell(nItem, nCol, FALSE);
 	}
 
 	// update the list selection if its changed
@@ -971,7 +971,7 @@ BOOL CInputListCtrl::CanEditSelectedCell() const
 
 void CInputListCtrl::EditSelectedCell()
 {
-	EditCell(GetCurSel(), m_nCurCol);
+	EditCell(GetCurSel(), m_nCurCol, FALSE);
 }
 
 void CInputListCtrl::OnKillFocus(CWnd* pNewWnd) 

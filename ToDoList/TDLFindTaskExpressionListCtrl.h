@@ -113,7 +113,7 @@ protected:
 	
 	DECLARE_MESSAGE_MAP()
 
-	virtual void EditCell(int nItem, int nCol);
+	virtual void EditCell(int nItem, int nCol, BOOL bBtnClick);
 	virtual BOOL IsEditing() const;
 	virtual BOOL DeleteSelectedCell();
 	virtual BOOL CanEditSelectedCell() const;

@@ -301,7 +301,7 @@ CWnd* CTDLFindTaskExpressionListCtrl::GetEditControl(int nItem, int nCol)
 	return NULL;
 }
 
-void CTDLFindTaskExpressionListCtrl::EditCell(int nItem, int nCol)
+void CTDLFindTaskExpressionListCtrl::EditCell(int nItem, int nCol, BOOL bBtnClick)
 {
 	// handle new rules
 	if (nItem == GetRuleCount() && nCol == ATTRIB_COL)
@@ -375,7 +375,7 @@ void CTDLFindTaskExpressionListCtrl::EditCell(int nItem, int nCol)
 					PrepareEdit(nItem, nCol);
 
 					if (pEdit == &m_editBox)
-						CInputListCtrl::EditCell(nItem, nCol);
+						CInputListCtrl::EditCell(nItem, nCol, bBtnClick);
 					else
 						ShowControl(*pEdit, nItem, nCol);
 					break;
@@ -1333,7 +1333,7 @@ void CTDLFindTaskExpressionListCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlag
 		// numeric keys only work for value column
 		if (isalpha(nChar) || (nCol == VALUE_COL && isdigit(nChar)))
 		{
-			EditCell(nItem, nCol);
+			EditCell(nItem, nCol, FALSE);
 
 			// forward key down on to edit control
 			CWnd* pEdit = GetEditControl(nItem, nCol);
