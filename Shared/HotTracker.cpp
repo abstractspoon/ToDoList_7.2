@@ -59,6 +59,15 @@ BOOL CHotTracker::UpdateRect(int nRect, const CRect& rect)
 	return TRUE;
 }
 
+BOOL CHotTracker::DeleteRect(int nRect)
+{
+	if (nRect < 0 || nRect >= m_aRects.GetSize())
+		return FALSE;
+
+	m_aRects.RemoveAt(nRect);
+	return TRUE;
+}
+
 BOOL CHotTracker::GetRect(int nRect, CRect& rect)
 {
 	if (nRect < 0 || nRect >= m_aRects.GetSize())

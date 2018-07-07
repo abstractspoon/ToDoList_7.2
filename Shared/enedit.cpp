@@ -210,6 +210,31 @@ BOOL CEnEdit::InsertButton(int nPos, UINT nID, HICON hIcon, LPCTSTR szTip, int n
 	return TRUE;
 }
 
+BOOL CEnEdit::DeleteButton(UINT nID)
+{
+	int nBtn = ButtonHitTest(nID);
+
+	if (nBtn == -1)
+		return FALSE;
+
+	m_aButtons.RemoveAt(nBtn);
+	m_hotTrack.DeleteRect(nBtn);
+
+	if (GetSafeHwnd() && !m_bFirstShow)
+		SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER); 
+
+	return TRUE;
+}
+
+void CEnEdit::DeleteAllButtons()
+{
+	m_aButtons.RemoveAll();
+	m_hotTrack.Reset();
+
+	if (GetSafeHwnd() && !m_bFirstShow)
+		SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER); 
+}
+
 void CEnEdit::SetBorders(int nTop, int nBottom)
 {
 	nTop = max(nTop, 0);
