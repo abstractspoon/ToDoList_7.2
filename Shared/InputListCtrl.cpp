@@ -658,13 +658,13 @@ void CInputListCtrl::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 			// adjust for button
 			if (bHasBtn)
 			{
-				if (rButton.left == rCell.left)
+				if (rButton.left <= rCell.left)
 				{
-					rText.left += rButton.Width();
+					rText.left = rButton.right;
 				}
-				else if (rButton.right == rCell.right)
+				else if (rButton.right >= rCell.right)
 				{
-					rText.right -= rButton.Width();
+					rText.right = rButton.left;
 				}
 				else // button is centred => no text
 				{
@@ -760,12 +760,21 @@ BOOL CInputListCtrl::DrawButton(CDC* pDC, int nRow, int nCol, CRect& rButton, BO
 			CThemed::DrawFrameControl(this, pDC, rButton, DFC_SCROLL, (DFCS_SCROLLCOMBOBOX | dwDisabled));
 			break;
 					
-		case ILCT_DATE:
+		case ILCT_POPUPMENU:
 			{
-				CRect rDate(rButton);
-				rDate.DeflateRect(0, 1, 1, 2);
-				CThemed::DrawFrameControl(this, pDC, rDate, DFC_SCROLL, (DFCS_SCROLLCOMBOBOX | dwDisabled));
+				CThemed::DrawFrameControl(this, pDC, rButton, DFC_BUTTON, (DFCS_BUTTONPUSH | dwDisabled));
+
+				if (dwDisabled)
+					pDC->SetTextColor(GetSysColor(COLOR_3DSHADOW));
+
+				UINT nFlags = DT_END_ELLIPSIS | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP | DT_CENTER;
+				GraphicsMisc::DrawAnsiSymbol(pDC, '6', rButton, nFlags, &GraphicsMisc::Marlett());
 			}
+			break;
+
+		case ILCT_DATE:
+			rButton.DeflateRect(0, 1, 1, 2);
+			CThemed::DrawFrameControl(this, pDC, rButton, DFC_SCROLL, (DFCS_SCROLLCOMBOBOX | dwDisabled));
 			break;
 					
 		case ILCT_BROWSE:
@@ -817,14 +826,17 @@ BOOL CInputListCtrl::GetButtonRect(int nRow, int nCol, CRect& rButton) const
 			rButton.left = (rButton.right - BTN_WIDTH);
 			break;
 
-		case ILCT_BROWSE:
-			rButton.left = (rButton.right - BTN_WIDTH - 1);
+		case ILCT_POPUPMENU:
+			rButton.right++;
+			rButton.left = (rButton.right - BTN_WIDTH - 2);
+			rButton.top--;
 			break;
-					
+
+		case ILCT_BROWSE:
 		case ILCT_DATE:
 			rButton.left = (rButton.right - BTN_WIDTH - 1);
 			break;
-			
+					
 		case ILCT_CHECK:
 			rButton.left += ((rButton.Width() - BTN_WIDTH) / 2);
 			rButton.right = (rButton.left + BTN_WIDTH);

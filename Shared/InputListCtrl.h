@@ -22,7 +22,8 @@ enum IL_COLUMNTYPE
 	ILCT_DROPLIST, 
 	ILCT_BROWSE, 
 	ILCT_DATE,
-	ILCT_CHECK
+	ILCT_CHECK,
+	ILCT_POPUPMENU, 
 }; 
 
 /////////////////////////////////////////////////////////////////////////////
