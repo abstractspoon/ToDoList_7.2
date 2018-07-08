@@ -1333,25 +1333,35 @@ LRESULT CTDLFindTaskExpressionListCtrl::OnEEBtnClick(WPARAM /*wp*/, LPARAM lp)
 			if (menu.LoadMenu(IDR_FINDTASKS))
 			{
 				UINT nID = m_editBox.TrackPopupMenu(lp, menu.GetSubMenu(0), EETPM_RETURNCMD);
+				CString sRelDate;
 
 				switch (nID)
 				{
-				case ID_RELATIVEDATE_TODAY:			m_editBox.ReplaceSel(_T("t"),	TRUE); break;
-				case ID_RELATIVEDATE_TOMORROW:		m_editBox.ReplaceSel(_T("t+1"), TRUE); break;
-				case ID_RELATIVEDATE_YESTERDAY:		m_editBox.ReplaceSel(_T("t-1"), TRUE); break;
+				case ID_RELATIVEDATE_TODAY:			sRelDate = _T("t");	  break;
+				case ID_RELATIVEDATE_TOMORROW:		sRelDate = _T("t+1"); break;
+				case ID_RELATIVEDATE_YESTERDAY:		sRelDate = _T("t-1"); break;
 
-				case ID_RELATIVEDATE_ENDTHISWEEK:	m_editBox.ReplaceSel(_T("W"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDNEXTWEEK:	m_editBox.ReplaceSel(_T("W+1"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDLASTWEEK:	m_editBox.ReplaceSel(_T("W-1"), TRUE); break;
+				case ID_RELATIVEDATE_ENDTHISWEEK:	sRelDate = _T("W");   break;
+				case ID_RELATIVEDATE_ENDNEXTWEEK:	sRelDate = _T("W+1"); break;
+				case ID_RELATIVEDATE_ENDLASTWEEK:	sRelDate = _T("W-1"); break;
 
-				case ID_RELATIVEDATE_ENDTHISMONTH:	m_editBox.ReplaceSel(_T("M"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDNEXTMONTH:	m_editBox.ReplaceSel(_T("M+1"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDLASTMONTH:	m_editBox.ReplaceSel(_T("M-1"), TRUE); break;
+				case ID_RELATIVEDATE_ENDTHISMONTH:	sRelDate = _T("M");   break;
+				case ID_RELATIVEDATE_ENDNEXTMONTH:	sRelDate = _T("M+1"); break;
+				case ID_RELATIVEDATE_ENDLASTMONTH:	sRelDate = _T("M-1"); break;
 
-				case ID_RELATIVEDATE_ENDTHISYEAR:	m_editBox.ReplaceSel(_T("Y"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDNEXTYEAR:	m_editBox.ReplaceSel(_T("Y+1"),	TRUE); break;
-				case ID_RELATIVEDATE_ENDLASTYEAR:	m_editBox.ReplaceSel(_T("Y-1"), TRUE); break;
+				case ID_RELATIVEDATE_ENDTHISYEAR:	sRelDate = _T("Y");   break;
+				case ID_RELATIVEDATE_ENDNEXTYEAR:	sRelDate = _T("Y+1"); break;
+				case ID_RELATIVEDATE_ENDLASTYEAR:	sRelDate = _T("Y-1"); break;
+
+				case 0: // Cancel
+					break;
+
+				default:
+					ASSERT(0);
 				}
+
+				if (!sRelDate.IsEmpty())
+					m_editBox.ReplaceSel(sRelDate, TRUE);
 			}
 		}
 		break;
