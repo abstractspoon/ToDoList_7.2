@@ -993,7 +993,7 @@ CString CToDoCtrlMgr::GetTabItemText(int nIndex) const
 	// cleanup
 	sText.Replace(_T("&&"), _T("&"));
 
-	return sText;
+	return Misc::Trim(sText);
 }
 
 int CToDoCtrlMgr::UpdateTabItemImage(int nIndex) const

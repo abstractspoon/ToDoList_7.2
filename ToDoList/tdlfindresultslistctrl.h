@@ -69,7 +69,7 @@ protected:
 
 protected:
   	COLORREF GetResultTextColor(const FTDRESULT* pRes, BOOL bSelected, BOOL bHot) const;
-	CFont* GetResultFont(const FTDRESULT* pRes, BOOL bHot);
+	CFont* GetResultFont(const FTDRESULT* pRes, int nCol, BOOL bHot);
 	BOOL IsResultHot(const RECT& rResult) const;
 
 	static BOOL OsIsXP();
