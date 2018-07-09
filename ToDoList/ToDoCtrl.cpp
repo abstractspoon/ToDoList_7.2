@@ -9280,10 +9280,11 @@ HTREEITEM CToDoCtrl::RebuildTree(const void* pContext)
 		hti = m_taskTree.GetChildItem();
 	}
 	
-	m_taskTree.SetExpandedTasks(aExpanded);
-
 	// Notify tree that the rebuild is over
 	m_taskTree.OnEndRebuild();
+
+	// Then restore previous state
+	m_taskTree.SetExpandedTasks(aExpanded);
 
 	if (!RestoreTreeSelection(cache))
 	{
