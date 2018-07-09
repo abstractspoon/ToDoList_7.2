@@ -24,7 +24,7 @@ public:
 // Attributes
 public:
 	BOOL AddHeaderRow(LPCTSTR szText);
-	int AddResult(const SEARCHRESULT& result, LPCTSTR szTask, LPCTSTR szPath, const CFilteredToDoCtrl* pTDC);
+	int AddResult(const SEARCHRESULT& result, const CFilteredToDoCtrl* pTDC);
 
 	int GetResultCount() const; // all tasklists
 	int GetResultCount(const CFilteredToDoCtrl* pTDC) const;

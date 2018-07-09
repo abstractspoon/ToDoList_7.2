@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "tdlfindresultslistctrl.h"
+#include "FilteredToDoCtrl.h"
 
 #include "..\shared\preferences.h"
 #include "..\shared\misc.h"
@@ -354,14 +355,16 @@ void CTDLFindResultsListCtrl::RefreshUserPreferences()
 		Invalidate();
 }
 
-int CTDLFindResultsListCtrl::AddResult(const SEARCHRESULT& result, LPCTSTR szTask, LPCTSTR szPath, const CFilteredToDoCtrl* pTDC)
+int CTDLFindResultsListCtrl::AddResult(const SEARCHRESULT& result, const CFilteredToDoCtrl* pTDC)
 {
 	int nPos = GetItemCount();
+	CString sTitle = pTDC->GetTaskTitle(result.dwTaskID);
+	CString sPath = pTDC->GetTaskPath(result.dwTaskID);
 		
 	// add result
-	int nIndex = InsertItem(nPos, szTask);
+	int nIndex = InsertItem(nPos, sTitle);
 	SetItemText(nIndex, 1, Misc::FormatArray(result.aMatched));
-	SetItemText(nIndex, 2, szPath);
+	SetItemText(nIndex, 2, sPath);
 
 	if (m_nCurGroupID != -1)
 		SetItemGroupId(nIndex, m_nCurGroupID);
