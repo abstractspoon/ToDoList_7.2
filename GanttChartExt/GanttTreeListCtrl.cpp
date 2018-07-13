@@ -1075,8 +1075,8 @@ void CGanttTreeListCtrl::RebuildTree(const ITASKLISTBASE* pTasks)
 	BuildTreeItem(pTasks, pTasks->GetFirstTask(), NULL, TRUE);
 
 	RefreshTreeItemMap();
-	ExpandList();
 	RefreshItemBoldState();
+	ExpandList();
 }
 
 void CGanttTreeListCtrl::RefreshTreeItemMap()
@@ -6567,7 +6567,9 @@ DWORD CGanttTreeListCtrl::ListHitTestTask(const CPoint& point, BOOL bScreen, GTL
 		return 0;
 
 	COleDateTime dtStart, dtDue;
-	GetTaskStartDueDates(*pGI, dtStart, dtDue);
+	
+	if (!GetTaskStartEndDates(*pGI, dtStart, dtDue))
+		return 0;
 
 	// Calculate the task rect
 	CRect rTask;
