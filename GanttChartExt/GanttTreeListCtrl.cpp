@@ -4310,13 +4310,18 @@ BOOL CGanttTreeListCtrl::GetTaskStartDueDates(const GANTTITEM& gi, COleDateTime&
 		{
 			dtDue = gi.dtDone;
 		}
-		else // take later of start date and today
+		// take later of start date and today
+		else if (CDateHelper::IsDateSet(dtStart))
 		{
 			dtDue = CDateHelper::GetDateOnly(dtStart);
 			CDateHelper::Max(dtDue, CDateHelper::GetDate(DHD_TODAY));
 			
 			// and move to end of the day
 			dtDue = CDateHelper::GetEndOfDay(dtDue);
+		}
+		else // take today
+		{
+			dtDue = CDateHelper::GetEndOfDay(CDateHelper::GetDate(DHD_TODAY));
 		}
 		
 		ASSERT(CDateHelper::IsDateSet(dtDue));
@@ -4325,9 +4330,12 @@ BOOL CGanttTreeListCtrl::GetTaskStartDueDates(const GANTTITEM& gi, COleDateTime&
 	// do we need to calculate start date?
 	if (!CDateHelper::IsDateSet(dtStart) && HasOption(GTLCF_CALCMISSINGSTARTDATES))
 	{
-		// take earlier of due or completed date
-		dtStart = CDateHelper::GetDateOnly(dtDue);
-		CDateHelper::Min(dtStart, CDateHelper::GetDateOnly(gi.dtDone));
+		// take earlier of due and completed date and Today
+		if (CDateHelper::IsDateSet(dtDue))
+			dtStart = CDateHelper::GetDateOnly(dtDue);
+
+		if (bDoneSet)
+			CDateHelper::Min(dtStart, CDateHelper::GetDateOnly(gi.dtDone));
 
 		// take the earlier of that and 'today'
 		CDateHelper::Min(dtStart, CDateHelper::GetDate(DHD_TODAY));
@@ -4631,9 +4639,18 @@ BOOL CGanttTreeListCtrl::CalcDependencyEndPos(DWORD dwTaskID, int nItem, GANTTDE
 	int nPos = -1;
 
 	if (CalcMilestoneRect(*pGI, rItem, rMilestone))
+	{
 		nPos = rMilestone.CenterPoint().x;
+	}
 	else
-		nPos = GetScrollPosFromDate(bFrom ? pGI->dtStart : pGI->dtDue) - m_list.GetScrollPos(SB_HORZ);
+	{
+		COleDateTime dtStart, dtDue;
+
+		if (!GetTaskStartDueDates(*pGI, dtStart, dtDue))
+			return FALSE;
+
+		nPos = GetScrollPosFromDate(bFrom ? dtStart : dtDue) - m_list.GetScrollPos(SB_HORZ);
+	}
 
 	CPoint pt(nPos, ((rItem.top + rItem.bottom) / 2));
 
@@ -4976,7 +4993,7 @@ int CGanttTreeListCtrl::GetBestTextPos(const GANTTITEM& gi, const CRect& rMonth)
 		nPos = (GetDrawPosFromDate(gi.dtDone) + (DONE_BOX / 2));
 	}
 
-	return nPos;
+	return (nPos + 2);
 }
 
 BOOL CGanttTreeListCtrl::DrawToday(CDC* pDC, const CRect& rMonth, int nMonth, int nYear, BOOL bSelected)
