@@ -6568,7 +6568,7 @@ DWORD CGanttTreeListCtrl::ListHitTestTask(const CPoint& point, BOOL bScreen, GTL
 
 	COleDateTime dtStart, dtDue;
 	
-	if (!GetTaskStartEndDates(*pGI, dtStart, dtDue))
+	if (!GetTaskStartDueDates(*pGI, dtStart, dtDue))
 		return 0;
 
 	// Calculate the task rect
