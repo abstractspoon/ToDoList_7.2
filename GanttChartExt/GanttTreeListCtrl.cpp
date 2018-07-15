@@ -578,7 +578,6 @@ void CGanttTreeListCtrl::UpdateTasks(const ITaskList* pTaskList, IUI_UPDATETYPE 
 			// update the task(s)
 			if (UpdateTask(pTasks, pTasks->GetFirstTask(), nUpdate, attrib, TRUE))
 			{
-				// recalc parent dates as required
 				if (attrib.Has(IUI_STARTDATE) || attrib.Has(IUI_DUEDATE) || attrib.Has(IUI_DONEDATE))
 					RecalcDateRange();
 			}
@@ -1110,6 +1109,8 @@ void CGanttTreeListCtrl::RecalcDateRange()
 				m_dateRange.MinMax(dtEnd);
 			}
 		}
+
+		//m_dateRange.MinMax(COleDateTime::GetCurrentTime());
 
 		RecalcParentDates();
 
@@ -1864,12 +1865,11 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 	{
 	case CDDS_PREPAINT:
 #ifdef _DEBUG
-		{
-			static int nCount = 1;
-			TRACE(_T("\nCGanttTreeListCtrl::OnListCustomDraw(begin_%d)\n"), nCount++);
-		}
+// 		{
+// 			static int nCount = 1;
+// 			TRACE(_T("\nCGanttTreeListCtrl::OnListCustomDraw(begin_%d)\n"), nCount++);
+// 		}
 #endif
-
 		return CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
 								
 	case CDDS_ITEMPREPAINT:
@@ -1940,7 +1940,7 @@ LRESULT CGanttTreeListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 				}
 			}
 
-			TRACE(_T("CGanttTreeListCtrl::OnListCustomDraw(end)\n"));
+			//TRACE(_T("CGanttTreeListCtrl::OnListCustomDraw(end)\n"));
 
 			return CDRF_SKIPDEFAULT;
 		}
@@ -4300,47 +4300,47 @@ BOOL CGanttTreeListCtrl::GetTaskStartDueDates(const GANTTITEM& gi, COleDateTime&
 		dtDue = gi.dtDue;
 
 		bDoneSet = CDateHelper::IsDateSet(gi.dtDone);
-	}
-		
-	// do we need to calculate due date?
-	if (!CDateHelper::IsDateSet(dtDue) && HasOption(GTLCF_CALCMISSINGDUEDATES))
-	{
-		// always take completed date if that is set
-		if (bDoneSet)
+
+		// do we need to calculate due date?
+		if (!CDateHelper::IsDateSet(dtDue) && HasOption(GTLCF_CALCMISSINGDUEDATES))
 		{
-			dtDue = gi.dtDone;
-		}
-		// take later of start date and today
-		else if (CDateHelper::IsDateSet(dtStart))
-		{
-			dtDue = CDateHelper::GetDateOnly(dtStart);
-			CDateHelper::Max(dtDue, CDateHelper::GetDate(DHD_TODAY));
+			// always take completed date if that is set
+			if (bDoneSet)
+			{
+				dtDue = gi.dtDone;
+			}
+			// take later of start date and today
+			else if (CDateHelper::IsDateSet(dtStart))
+			{
+				dtDue = CDateHelper::GetDateOnly(dtStart);
+				CDateHelper::Max(dtDue, CDateHelper::GetDate(DHD_TODAY));
+				
+				// and move to end of the day
+				dtDue = CDateHelper::GetEndOfDay(dtDue);
+			}
+			else // take today
+			{
+				dtDue = CDateHelper::GetEndOfDay(CDateHelper::GetDate(DHD_TODAY));
+			}
 			
-			// and move to end of the day
-			dtDue = CDateHelper::GetEndOfDay(dtDue);
+			ASSERT(CDateHelper::IsDateSet(dtDue));
 		}
-		else // take today
+		
+		// do we need to calculate start date?
+		if (!CDateHelper::IsDateSet(dtStart) && HasOption(GTLCF_CALCMISSINGSTARTDATES))
 		{
-			dtDue = CDateHelper::GetEndOfDay(CDateHelper::GetDate(DHD_TODAY));
+			// take earlier of due and completed date and Today
+			if (CDateHelper::IsDateSet(dtDue))
+				dtStart = CDateHelper::GetDateOnly(dtDue);
+
+			if (bDoneSet)
+				CDateHelper::Min(dtStart, CDateHelper::GetDateOnly(gi.dtDone));
+
+			// take the earlier of that and 'today'
+			CDateHelper::Min(dtStart, CDateHelper::GetDate(DHD_TODAY));
+			
+			ASSERT(CDateHelper::IsDateSet(dtStart));
 		}
-		
-		ASSERT(CDateHelper::IsDateSet(dtDue));
-	}
-	
-	// do we need to calculate start date?
-	if (!CDateHelper::IsDateSet(dtStart) && HasOption(GTLCF_CALCMISSINGSTARTDATES))
-	{
-		// take earlier of due and completed date and Today
-		if (CDateHelper::IsDateSet(dtDue))
-			dtStart = CDateHelper::GetDateOnly(dtDue);
-
-		if (bDoneSet)
-			CDateHelper::Min(dtStart, CDateHelper::GetDateOnly(gi.dtDone));
-
-		// take the earlier of that and 'today'
-		CDateHelper::Min(dtStart, CDateHelper::GetDate(DHD_TODAY));
-		
-		ASSERT(CDateHelper::IsDateSet(dtStart));
 	}
 
 	return (CDateHelper::IsDateSet(dtStart) && CDateHelper::IsDateSet(dtDue));
