@@ -2902,6 +2902,10 @@ BOOL CGanttTreeListCtrl::OnTreeLButtonDblClk(UINT nFlags, CPoint point)
 	}
 	else
 	{
+		// Kill any built-in timers for label editing
+		m_tree.KillTimer(0x2A);
+		m_tree.KillTimer(0x2B);
+
 		ExpandItem(hti, !TCH().IsItemExpanded(hti), TRUE);
 		return TRUE;
 	}
