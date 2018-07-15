@@ -1143,16 +1143,16 @@ LRESULT CToDoListWnd::OnFocusChange(WPARAM wp, LPARAM /*lp*/)
 		CWnd* pFocus = CWnd::FromHandle((HWND)wp);
 
 #ifdef _DEBUG
-		if (pFocus)
-		{
-			CString sFocus;
-			pFocus->GetWindowText(sFocus);
-			TRACE(_T("OnFocusChange(%s = %s)\n"), CWinClasses::GetClassEx(*pFocus), sFocus.Left(100));
-		}
-		else
-		{
-			TRACE(_T("OnFocusChange(NULL)\n"));
-		}
+// 		if (pFocus)
+// 		{
+// 			CString sFocus;
+// 			pFocus->GetWindowText(sFocus);
+// 			TRACE(_T("OnFocusChange(%s = %s)\n"), CWinClasses::GetClassEx(*pFocus), sFocus.Left(100));
+// 		}
+// 		else
+// 		{
+// 			TRACE(_T("OnFocusChange(NULL)\n"));
+// 		}
 #endif
 		const CFilteredToDoCtrl& tdc = GetToDoCtrl();
 
