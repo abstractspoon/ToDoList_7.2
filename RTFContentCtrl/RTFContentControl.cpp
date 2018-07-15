@@ -811,10 +811,10 @@ void CRTFContentControl::OnUpdateEditHorzRule(CCmdUI* pCmdUI)
 
 void CRTFContentControl::OnEditOpenUrl() 
 {
-	int nUrl = m_rtf.GetContextUrl();
-
-	if (nUrl != -1)
-		m_rtf.GoToUrl(nUrl);
+// 	int nUrl = m_rtf.GetContextUrl();
+// 
+// 	if (nUrl != -1)
+// 		m_rtf.GoToUrl(nUrl);
 }
 
 void CRTFContentControl::OnEditCopyUrl() 

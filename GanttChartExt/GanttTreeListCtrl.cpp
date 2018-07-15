@@ -1087,6 +1087,8 @@ void CGanttTreeListCtrl::RecalcDateRange()
 {
 	if (m_data.GetCount())
 	{
+		RecalcParentDates();
+	
 		GANTTDATERANGE prevRange = m_dateRange;
 
 		m_dateRange.Clear();
@@ -1109,10 +1111,6 @@ void CGanttTreeListCtrl::RecalcDateRange()
 				m_dateRange.MinMax(dtEnd);
 			}
 		}
-
-		//m_dateRange.MinMax(COleDateTime::GetCurrentTime());
-
-		RecalcParentDates();
 
 		if (!(m_dateRange == prevRange))
 		{
@@ -4988,7 +4986,7 @@ int CGanttTreeListCtrl::GetBestTextPos(const GANTTITEM& gi, const CRect& rMonth)
 	{
 		nPos = max(nPos, rMilestone.right);
 	}
-	else if (gi.IsDone(FALSE) && (gi.dtDone > gi.dtDue))
+	else if (gi.IsDone(FALSE) && (gi.dtDone > dtDue))
 	{
 		nPos = (GetDrawPosFromDate(gi.dtDone) + (DONE_BOX / 2));
 	}
