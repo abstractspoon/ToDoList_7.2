@@ -557,14 +557,11 @@ HCURSOR GraphicsMisc::LoadAppCursor(LPCTSTR szName, LPCTSTR szSubFolder)
 	sCursorPath += szName;
 	FileMisc::ReplaceExtension(sCursorPath, _T("cur"));
 
-	const int DEF_ICONSIZE = 32;
-	int nSize = (WantDPIScaling() ? ScaleByDPIFactor(DEF_ICONSIZE) : DEF_ICONSIZE);
-
 	HCURSOR hCursor = (HCURSOR)::LoadImage(NULL, 
 											sCursorPath, 
 											IMAGE_CURSOR, 
-											nSize, 
-											nSize, 
+											0, 
+											0, 
 											LR_LOADFROMFILE | LR_MONOCHROME | LR_SHARED);
 	return hCursor;
 }
