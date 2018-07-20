@@ -10490,16 +10490,7 @@ LRESULT CToDoListWnd::OnFindSelectResult(WPARAM /*wp*/, LPARAM lp)
 	
 	if (tdc.GetSelectedTaskID() != pResult->dwTaskID)
 	{
-		if (!tdc.SelectTask(pResult->dwTaskID))
-		{
-			// perhaps the task is filtered out so we toggle the filter
-			// and try again
-			if (tdc.HasAnyFilter() && tdc.HasTask(pResult->dwTaskID))
-			{
-				tdc.ToggleFilter();
-				VERIFY (tdc.SelectTask(pResult->dwTaskID));
-			}
-		}
+		tdc.SelectTask(pResult->dwTaskID);
 
 		Invalidate();
 		UpdateWindow();
