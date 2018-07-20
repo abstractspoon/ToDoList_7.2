@@ -15,14 +15,18 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const LPCTSTR TITLE_MASK = _T("0123456789");
+const LPCTSTR ID_MASK = _T("0123456789");
 
 /////////////////////////////////////////////////////////////////////////////
 // CTDLGoToTaskDlg dialog
 
 
 CTDLGoToTaskDlg::CTDLGoToTaskDlg(const CToDoCtrl& tdc, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_GOTOTASK_DIALOG, pParent), m_tdc(tdc), m_eTaskID(TITLE_MASK)
+	: 
+	CDialog(IDD_GOTOTASK_DIALOG, pParent), 
+	m_tdc(tdc), 
+	m_eTaskID(ID_MASK),
+	m_dwTaskID(0)
 {
 	//{{AFX_DATA_INIT(CTDLGoToTaskDlg)
 	//}}AFX_DATA_INIT
@@ -43,10 +47,10 @@ void CTDLGoToTaskDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTDLGoToTaskDlg, CDialog)
 	//{{AFX_MSG_MAP(CTDLGoToTaskDlg)
-	ON_EN_SETFOCUS(IDC_TASKID, OnEditFocusChange)
-	ON_EN_SETFOCUS(IDC_TASKTITLE, OnEditFocusChange)
-	ON_EN_KILLFOCUS(IDC_TASKID, OnEditFocusChange)
-	ON_EN_KILLFOCUS(IDC_TASKTITLE, OnEditFocusChange)
+	ON_EN_SETFOCUS(IDC_TASKID, OnEditSetFocusTaskID)
+	ON_EN_SETFOCUS(IDC_TASKTITLE, OnEditSetFocusTaskTitle)
+	ON_EN_KILLFOCUS(IDC_TASKID, OnEditKillFocusTaskID)
+	ON_EN_KILLFOCUS(IDC_TASKTITLE, OnEditKillFocusTaskTitle)
 	ON_EN_CHANGE(IDC_TASKTITLE, OnChangeTaskTitle)
 	ON_EN_CHANGE(IDC_TASKID, OnChangeTaskID)
 	//}}AFX_MSG_MAP
@@ -76,30 +80,34 @@ void CTDLGoToTaskDlg::UpdateEditPrompts()
 	// Hide the prompts when the 'other's' text is empty
 	m_wndPrompts.SetEditPrompt(m_eTaskID, (m_sTaskTitle.IsEmpty() ? _T("") : sPrompt), TRUE);
 	m_wndPrompts.SetEditPrompt(m_eTaskTitle, (m_sTaskID.IsEmpty() ? _T("") : sPrompt), TRUE);
+
+	m_eTaskTitle.SetReadOnly(TRUE);
 }
 
-void CTDLGoToTaskDlg::OnEditFocusChange() 
+void CTDLGoToTaskDlg::OnEditSetFocusTaskID()
 {
-	if (GetFocus() == &m_eTaskID)
-	{
-		m_eTaskID.SetReadOnly(FALSE);
-		m_eTaskID.SetMask(TITLE_MASK); // restore mask
-	}
-	else
-	{
-		m_eTaskID.SetReadOnly(TRUE);
-		m_eTaskID.SetMask(_T(""), ME_EXCLUDE); // clear mask
-	}
+	m_eTaskID.SetReadOnly(FALSE);
+	m_eTaskID.SetMask(ID_MASK); 
 
-	if (GetFocus() == &m_eTaskTitle)
-		m_eTaskTitle.SetReadOnly(FALSE);
-	else
-		m_eTaskTitle.SetReadOnly(TRUE);
+	ReformatTaskID();
+}
 
-	UpdateTaskID();
-	UpdateTaskTitle();
-	
-	GetDlgItem(IDOK)->EnableWindow(GetTaskID() != 0);
+void CTDLGoToTaskDlg::OnEditSetFocusTaskTitle()
+{
+	m_eTaskTitle.SetReadOnly(FALSE);
+}
+
+void CTDLGoToTaskDlg::OnEditKillFocusTaskID()
+{
+	m_eTaskID.SetReadOnly(TRUE);
+	m_eTaskID.SetMask(_T(""), ME_EXCLUDE);
+
+	ReformatTaskID();
+}
+
+void CTDLGoToTaskDlg::OnEditKillFocusTaskTitle()
+{
+	m_eTaskTitle.SetReadOnly(TRUE);
 }
 
 void CTDLGoToTaskDlg::OnChangeTaskTitle() 
@@ -115,6 +123,9 @@ void CTDLGoToTaskDlg::OnChangeTaskID()
 {
 	if (GetFocus() == &m_eTaskID)
 	{
+		UpdateData(TRUE);
+		m_dwTaskID = _ttol(m_sTaskID);
+
 		UpdateTaskTitle();
 		GetDlgItem(IDOK)->EnableWindow(!m_sTaskTitle.IsEmpty());
 	}
@@ -137,48 +148,49 @@ DWORD CTDLGoToTaskDlg::FindTask(const CString& sText, CString& sTitle) const
 	return 0;
 }
 
-void CTDLGoToTaskDlg::UpdateTaskID()
+void CTDLGoToTaskDlg::ReformatTaskID()
 {
-	UpdateData(TRUE);
-
 	if (m_eTaskID.GetStyle() & ES_READONLY)
 	{
 		// Restore trailing text
-		CString sTitle;
-		DWORD dwTaskID = FindTask(m_sTaskTitle, sTitle);
-
-		if (dwTaskID)
-			m_sTaskID.Format(_T("%ld (%s)"), dwTaskID, sTitle);
+		if (m_dwTaskID)
+		{
+			CString sTitle = m_tdc.GetTaskTitle(m_dwTaskID);
+			m_sTaskID.Format(_T("%ld (%s)"), m_dwTaskID, sTitle);
+		}
 		else
+		{
 			m_sTaskID.Empty();
+		}
 	}
-	else
+	else if (m_dwTaskID)
 	{
-		// Remove trailing text
-		DWORD dwTaskID = GetTaskID();
-
-		if (dwTaskID)
-			m_sTaskID.Format(_T("%ld"), dwTaskID);
+		m_sTaskID.Format(_T("%ld"), m_dwTaskID);
 	}
 
 	UpdateData(FALSE);
 	UpdateEditPrompts();
 }
 
+void CTDLGoToTaskDlg::UpdateTaskID()
+{
+	UpdateData(TRUE);
+
+	CString sTitle;
+	m_dwTaskID = FindTask(m_sTaskTitle, sTitle);
+
+	ReformatTaskID();
+}
+
 void CTDLGoToTaskDlg::UpdateTaskTitle()
 {
-	if (m_eTaskTitle.GetStyle() & ES_READONLY)
-	{
-		UpdateData(TRUE);
+	UpdateData(TRUE);
 
-		DWORD dwTaskID = GetTaskID();
+	if (m_tdc.HasTask(m_dwTaskID))
+		m_sTaskTitle = m_tdc.GetTaskTitle(m_dwTaskID);
+	else
+		m_sTaskTitle.Empty();
 
-		if (m_tdc.HasTask(dwTaskID))
-			m_sTaskTitle = m_tdc.GetTaskTitle(dwTaskID);
-		else
-			m_sTaskTitle.Empty();
-
-		UpdateData(FALSE);
-		UpdateEditPrompts();
-	}
+	UpdateData(FALSE);
+	UpdateEditPrompts();
 }

@@ -21,7 +21,7 @@ class CTDLGoToTaskDlg : public CDialog
 public:
 	CTDLGoToTaskDlg(const CToDoCtrl& tdc, CWnd* pParent = NULL);   // standard constructor
 
-	DWORD GetTaskID() const { return _ttol(m_sTaskID); }
+	DWORD GetTaskID() const { return m_dwTaskID; }
 
 protected:
 // Dialog Data
@@ -31,6 +31,7 @@ protected:
 	CString		m_sTaskID;
 	CString		m_sTaskTitle;
 	//}}AFX_DATA
+	DWORD		m_dwTaskID;
 
 	const CToDoCtrl& m_tdc;
 	CWndPromptManager m_wndPrompts;
@@ -47,7 +48,10 @@ protected:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CTDLGoToTaskDlg)
-	afx_msg void OnEditFocusChange();
+	afx_msg void OnEditSetFocusTaskID();
+	afx_msg void OnEditSetFocusTaskTitle();
+	afx_msg void OnEditKillFocusTaskID();
+	afx_msg void OnEditKillFocusTaskTitle();
 	afx_msg void OnChangeTaskTitle();
 	afx_msg void OnChangeTaskID();
 	//}}AFX_MSG
@@ -58,6 +62,7 @@ protected:
 	void UpdateTaskID();
 	void UpdateTaskTitle();
 	void UpdateEditPrompts();
+	void ReformatTaskID();
 };
 
 //{{AFX_INSERT_LOCATION}}
