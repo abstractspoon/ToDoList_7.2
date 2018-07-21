@@ -21,7 +21,7 @@ const LPCTSTR ID_MASK = _T("0123456789");
 // CTDLGoToTaskDlg dialog
 
 
-CTDLGoToTaskDlg::CTDLGoToTaskDlg(const CToDoCtrl& tdc, CWnd* pParent /*=NULL*/)
+CTDLGoToTaskDlg::CTDLGoToTaskDlg(const CFilteredToDoCtrl& tdc, CWnd* pParent /*=NULL*/)
 	: 
 	CDialog(IDD_GOTOTASK_DIALOG, pParent), 
 	m_tdc(tdc), 
@@ -133,10 +133,11 @@ void CTDLGoToTaskDlg::OnChangeTaskID()
 
 DWORD CTDLGoToTaskDlg::FindTask(const CString& sText, CString& sTitle) const
 {
-	SEARCHPARAMS params;
-	params.aRules.Add(SEARCHPARAM(TDCA_TASKNAME, FOP_INCLUDES, Misc::GetQuoted(sText)));
-
 	CResultArray aResults;
+	SEARCHPARAMS params;
+
+	params.aRules.Add(SEARCHPARAM(TDCA_TASKNAME, FOP_INCLUDES, Misc::GetQuoted(sText)));
+	params.bIgnoreFilteredOut = FALSE;
 
 	if (m_tdc.FindTasks(params, aResults))
 	{

@@ -7,7 +7,7 @@
 // TDLGoToTaskDlg.h : header file
 //
 
-#include "ToDoCtrl.h"
+#include "FilteredToDoCtrl.h"
 
 #include "..\Shared\MASKEDIT.H"
 #include "..\Shared\wndprompt.H"
@@ -19,7 +19,7 @@ class CTDLGoToTaskDlg : public CDialog
 {
 // Construction
 public:
-	CTDLGoToTaskDlg(const CToDoCtrl& tdc, CWnd* pParent = NULL);   // standard constructor
+	CTDLGoToTaskDlg(const CFilteredToDoCtrl& tdc, CWnd* pParent = NULL);   // standard constructor
 
 	DWORD GetTaskID() const { return m_dwTaskID; }
 
@@ -33,7 +33,7 @@ protected:
 	//}}AFX_DATA
 	DWORD		m_dwTaskID;
 
-	const CToDoCtrl& m_tdc;
+	const CFilteredToDoCtrl& m_tdc;
 	CWndPromptManager m_wndPrompts;
 
 // Overrides

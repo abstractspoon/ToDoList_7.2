@@ -11777,7 +11777,7 @@ BOOL CToDoListWnd::DoTaskLink(const CString& sPath, DWORD dwTaskID, BOOL bStartu
 	{
 		ASSERT(dwTaskID);
 
-		bSelected = SelectTaskCheckFilter(GetToDoCtrl(), dwTaskID);
+		bSelected = GetToDoCtrl().SelectTask(dwTaskID);
 		bHandled = TRUE; // handled regardless of result
 	}
 	else if (!PathIsRelative(sPath) && FileMisc::FileExists(sPath))
@@ -11794,7 +11794,7 @@ BOOL CToDoListWnd::DoTaskLink(const CString& sPath, DWORD dwTaskID, BOOL bStartu
 				bSelected = TRUE;
 
 				if (dwTaskID)
-					SelectTaskCheckFilter(GetToDoCtrl(), dwTaskID);
+					GetToDoCtrl().SelectTask(dwTaskID);
 			}
 			else
 			{
@@ -11812,7 +11812,7 @@ BOOL CToDoListWnd::DoTaskLink(const CString& sPath, DWORD dwTaskID, BOOL bStartu
 				bSelected = TRUE;
 
 				if (dwTaskID)
-					SelectTaskCheckFilter(GetToDoCtrl(), dwTaskID);
+					GetToDoCtrl().SelectTask(dwTaskID);
 			}
 			else
 			{
@@ -11831,29 +11831,6 @@ BOOL CToDoListWnd::DoTaskLink(const CString& sPath, DWORD dwTaskID, BOOL bStartu
 		Show(FALSE);
 
 	return bHandled;
-}
-
-BOOL CToDoListWnd::SelectTaskCheckFilter(CFilteredToDoCtrl& tdc, DWORD dwTaskID)
-{
-	if (tdc.SelectTask(dwTaskID))
-		return TRUE;
-
-	if (tdc.HasTask(dwTaskID) && tdc.HasAnyFilter())
-	{
-		tdc.ToggleFilter();
-
-		if (tdc.SelectTask(dwTaskID))
-		{
-			RefreshFilterBarControls();
-			return TRUE;
-		}
-
-		// else
-		ASSERT(0);
-		tdc.ToggleFilter();
-	}
-
-	return FALSE;
 }
 
 BOOL CToDoListWnd::ValidateTaskLinkFilePath(CString& sPath) const

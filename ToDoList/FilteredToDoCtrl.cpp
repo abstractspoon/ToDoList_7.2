@@ -107,8 +107,14 @@ BOOL CFilteredToDoCtrl::SelectTask(DWORD dwTaskID, BOOL bTrue)
 	// If the task is filtered out we toggle the filter and try again
 	if (HasAnyFilter() && HasTask(dwTaskID))
 	{
-		ToggleFilter();
-		return CTabbedToDoCtrl::SelectTask(dwTaskID);
+		ToggleFilter(); // show all tasks
+		
+		if (CTabbedToDoCtrl::SelectTask(dwTaskID, bTrue))
+			return TRUE;
+
+		// else
+		ASSERT(0);
+		ToggleFilter(); // restore filter
 	}
 	
 	return FALSE;
