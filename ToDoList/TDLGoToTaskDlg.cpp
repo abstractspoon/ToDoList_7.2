@@ -63,6 +63,7 @@ BOOL CTDLGoToTaskDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	EnableDisableControls();
 	UpdateEditPrompts();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -80,34 +81,28 @@ void CTDLGoToTaskDlg::UpdateEditPrompts()
 	// Hide the prompts when the 'other's' text is empty
 	m_wndPrompts.SetEditPrompt(m_eTaskID, (m_sTaskTitle.IsEmpty() ? _T("") : sPrompt), TRUE);
 	m_wndPrompts.SetEditPrompt(m_eTaskTitle, (m_sTaskID.IsEmpty() ? _T("") : sPrompt), TRUE);
-
-	m_eTaskTitle.SetReadOnly(TRUE);
 }
 
 void CTDLGoToTaskDlg::OnEditSetFocusTaskID()
 {
-	m_eTaskID.SetReadOnly(FALSE);
-	m_eTaskID.SetMask(ID_MASK); 
-
+	EnableDisableControls();
 	ReformatTaskID();
 }
 
 void CTDLGoToTaskDlg::OnEditSetFocusTaskTitle()
 {
-	m_eTaskTitle.SetReadOnly(FALSE);
+	EnableDisableControls();
 }
 
 void CTDLGoToTaskDlg::OnEditKillFocusTaskID()
 {
-	m_eTaskID.SetReadOnly(TRUE);
-	m_eTaskID.SetMask(_T(""), ME_EXCLUDE);
-
+	EnableDisableControls();
 	ReformatTaskID();
 }
 
 void CTDLGoToTaskDlg::OnEditKillFocusTaskTitle()
 {
-	m_eTaskTitle.SetReadOnly(TRUE);
+	EnableDisableControls();
 }
 
 void CTDLGoToTaskDlg::OnChangeTaskTitle() 
@@ -115,7 +110,7 @@ void CTDLGoToTaskDlg::OnChangeTaskTitle()
 	if (GetFocus() == &m_eTaskTitle)
 	{
 		UpdateTaskID();
-		GetDlgItem(IDOK)->EnableWindow(!m_sTaskID.IsEmpty());
+		EnableDisableControls();
 	}
 }
 
@@ -127,8 +122,35 @@ void CTDLGoToTaskDlg::OnChangeTaskID()
 		m_dwTaskID = _ttol(m_sTaskID);
 
 		UpdateTaskTitle();
-		GetDlgItem(IDOK)->EnableWindow(!m_sTaskTitle.IsEmpty());
+		EnableDisableControls();
 	}
+}
+
+void CTDLGoToTaskDlg::EnableDisableControls()
+{
+	if (GetFocus() == &m_eTaskID)
+	{
+		m_eTaskID.SetReadOnly(FALSE);
+		m_eTaskID.SetMask(ID_MASK); // restore mask
+
+		m_eTaskTitle.SetReadOnly(TRUE);
+	}
+	else if (GetFocus() == &m_eTaskTitle)
+	{
+		m_eTaskID.SetReadOnly(TRUE);
+		m_eTaskID.SetMask(_T(""), ME_EXCLUDE); // clear mask
+
+		m_eTaskTitle.SetReadOnly(FALSE);
+	}
+	else
+	{
+		m_eTaskID.SetReadOnly(TRUE);
+		m_eTaskID.SetMask(_T(""), ME_EXCLUDE); // clear mask
+
+		m_eTaskTitle.SetReadOnly(TRUE);
+	}
+
+	GetDlgItem(IDOK)->EnableWindow(m_dwTaskID);
 }
 
 DWORD CTDLGoToTaskDlg::FindTask(const CString& sText, CString& sTitle) const

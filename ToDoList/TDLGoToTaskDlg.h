@@ -63,6 +63,7 @@ protected:
 	void UpdateTaskTitle();
 	void UpdateEditPrompts();
 	void ReformatTaskID();
+	void EnableDisableControls();
 };
 
 //{{AFX_INSERT_LOCATION}}
