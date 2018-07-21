@@ -1255,6 +1255,14 @@ BOOL CDateHelper::IsLeapYear(const COleDateTime& date)
 	return IsLeapYear(date.GetYear());
 }
 
+BOOL CDateHelper::IsEndOfDay(const COleDateTime& date)
+{
+	double dTime = GetTimeOnly(date).m_dt;
+
+	// Handle rounding
+	return (fabs(dTime - END_OF_DAY) < ONE_SECOND);
+}
+
 BOOL CDateHelper::IsLeapYear(int nYear)
 {
 	return ((nYear % 4 == 0) && ((nYear % 100 != 0) || (nYear % 400 == 0)));
