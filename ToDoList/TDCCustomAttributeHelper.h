@@ -115,18 +115,18 @@ public:
 										DWORD& dwDataType, DWORD& dwListType);
 
 	static BOOL GetControlData(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
-									const CTDCCustomAttribDefinitionArray& aAttribDefs,
-									TDCCADATA& data);
+								const CTDCCustomAttribDefinitionArray& aAttribDefs,
+								TDCCADATA& data);
 
 	static BOOL GetControlData(const CWnd* pParent, const CTDCCustomControlArray& aControls,
 								const CTDCCustomAttribDefinitionArray& aAttribDefs,
 								CTDCCustomAttributeDataMap& mapData);
 
 	static FIND_ATTRIBTYPE GetAttributeFindType(const CString& sUniqueID, BOOL bRelativeDate,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs);
+												const CTDCCustomAttribDefinitionArray& aAttribDefs);
 
 	static FIND_ATTRIBTYPE GetAttributeFindType(TDC_ATTRIBUTE nAttribID, BOOL bRelativeDate,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs);
+												const CTDCCustomAttribDefinitionArray& aAttribDefs);
 
 	static void ValidateAttributeFindOperator(const SEARCHPARAM& sp, 
 											const CTDCCustomAttribDefinitionArray& aAttribDefs);

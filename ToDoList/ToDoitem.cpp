@@ -480,7 +480,13 @@ COleDateTime TODOITEM::GetDate(TDC_DATE nDate) const
 
 BOOL TODOITEM::GetCustomAttributeValue(const CString& sAttribID, TDCCADATA& data) const
 {
-	return (mapCustomData.Lookup(sAttribID, data) && !data.IsEmpty());
+	if (mapCustomData.Lookup(sAttribID, data) && !data.IsEmpty())
+	{
+		ASSERT(!data.HasExtra());
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 void TODOITEM::SetCustomAttributeValue(const CString& sAttribID, const TDCCADATA& data)

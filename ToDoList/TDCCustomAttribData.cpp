@@ -36,6 +36,11 @@ TDCCADATA::TDCCADATA(const CStringArray& aValues)
 	Set(aValues); 
 }
 
+TDCCADATA::TDCCADATA(const CStringArray& aValues, const CStringArray& aExtra) 
+{ 
+	Set(aValues, aExtra); 
+}
+
 TDCCADATA::TDCCADATA(int nValue) 
 { 
 	Set(nValue); 
@@ -59,46 +64,68 @@ TDCCADATA::TDCCADATA(const TDCCADATA& data)
 TDCCADATA& TDCCADATA::operator=(const TDCCADATA& data)
 {
 	sData = data.sData;
+	sExtra = data.sExtra;
+
 	return *this;
 }
 
 BOOL TDCCADATA::operator==(const TDCCADATA& data) const 
 { 
-	return sData == data.sData; 
+	return ((sData == data.sData) && 
+			(sExtra == data.sExtra)); 
 }
 
 BOOL TDCCADATA::operator!=(const TDCCADATA& data) const 
 { 
-	return sData != data.sData; 
+	return ((sData != data.sData) || 
+			(sExtra != data.sExtra)); 
+}
+
+BOOL TDCCADATA::HasExtra() const
+{
+	if (!sData.IsEmpty())
+		return !sExtra.IsEmpty();
+
+	ASSERT(sExtra.IsEmpty());
+	return FALSE;
 }
 
 BOOL TDCCADATA::IsEmpty() const 
 { 
-	return sData.IsEmpty(); 
+	return (sData.IsEmpty() && sExtra.IsEmpty()); 
 }
 
 void TDCCADATA::Clear() 
 { 
 	sData.Empty(); 
+	sExtra.Empty();
 }
 
 const CString& TDCCADATA::AsString() const 
 { 
+	ASSERT(sExtra.IsEmpty());
+
 	return sData; 
 }
 
 double TDCCADATA::AsDouble() const 
 { 
+	ASSERT(sExtra.IsEmpty());
+
 	return _ttof(sData); 
 }
 
 int TDCCADATA::AsInteger() const 
 { 
+	ASSERT(sExtra.IsEmpty());
+
 	return _ttoi(sData); 
 } 
 
 COleDateTime TDCCADATA::AsDate() const 
 { 
+	ASSERT(sExtra.IsEmpty());
+
 	if (sData.IsEmpty())
 		return CDateHelper::NullDate();
 
@@ -107,11 +134,15 @@ COleDateTime TDCCADATA::AsDate() const
 
 bool TDCCADATA::AsBool() const 
 { 
+	ASSERT(sExtra.IsEmpty());
+
 	return !IsEmpty(); 
 }
 
 int TDCCADATA::AsArray(CStringArray& aValues) const
 {
+	ASSERT(sExtra.IsEmpty());
+
 	return AsArray(sData, aValues);
 }
 
@@ -215,11 +246,22 @@ void TDCCADATA::Set(bool bValue, TCHAR nChar)
 
 void TDCCADATA::Set(const CStringArray& aValues) 
 { 
+	Set(aValues, sData);
+}
+
+void TDCCADATA::Set(const CStringArray& aValues, const CStringArray& aExtra) 
+{ 
+	Set(aValues, sData);
+	Set(aExtra, sExtra);
+}
+
+void TDCCADATA::Set(const CStringArray& aValues, CString& sValue)
+{
 	// Special case: 1 empty value
 	if ((aValues.GetSize() == 1) && aValues[0].IsEmpty())
-		sData = '\n';
+		sValue = '\n';
 	else
-		sData = Misc::FormatArray(aValues, '\n'); 
+		sValue = Misc::FormatArray(aValues, '\n'); 
 }
 
 CString TDCCADATA::FormatAsArray(TCHAR cSep) const

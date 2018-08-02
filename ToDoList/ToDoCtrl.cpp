@@ -6224,7 +6224,7 @@ void CToDoCtrl::RebuildCustomAttributeUI()
 {
 	// and add fields after the 'version' control
  	CTDCCustomAttributeHelper::RebuildEditControls(m_aCustomAttribDefs, m_aCustomControls, 
- 															m_ilTaskIcons, this, IDC_VERSION);
+ 													m_ilTaskIcons, this, IDC_VERSION);
 	Resize();
 
 	m_taskTree.OnCustomAttributeChange();

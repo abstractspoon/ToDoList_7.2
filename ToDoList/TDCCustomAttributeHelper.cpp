@@ -880,8 +880,8 @@ CString CTDCCustomAttributeHelper::GetAttributeTypeID(UINT nCtrlID, const CTDCCu
 }
 
 void CTDCCustomAttributeHelper::UpdateControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
-																const CTDCCustomAttribDefinitionArray& aAttribDefs,
-																const CTDCCustomAttributeDataMap& mapData)
+												const CTDCCustomAttribDefinitionArray& aAttribDefs,
+												const CTDCCustomAttributeDataMap& mapData)
 {
 	int nCtrl = aControls.GetSize();
 	TDCCADATA data;
@@ -898,7 +898,7 @@ void CTDCCustomAttributeHelper::UpdateControls(const CWnd* pParent, CTDCCustomCo
 }
 
 void CTDCCustomAttributeHelper::ClearControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
-															const CTDCCustomAttribDefinitionArray& aAttribDefs)
+												const CTDCCustomAttribDefinitionArray& aAttribDefs)
 {
 	int nCtrl = aControls.GetSize();
 
@@ -1022,21 +1022,24 @@ BOOL CTDCCustomAttributeHelper::GetControlData(const CWnd* pParent, const CUSTOM
 		
 		case TDCCA_FIXEDLIST:
 			if (dwDataType == TDCCA_ICON)
-			{
-				// decode icons
 				sText = ((CTDLIconComboBox*)pCtrl)->GetSelectedImage();
-			}
 			else
-			{
 				pCtrl->GetWindowText(sText);
-			}
+
 			data.Set(sText);
 			break;
 		
 		case TDCCA_AUTOMULTILIST:
 		case TDCCA_FIXEDMULTILIST:
-			((CCheckComboBox*)pCtrl)->GetChecked(aItems);
-			data.Set(aItems);
+			{
+				const CCheckComboBox* pCombo = (CCheckComboBox*)pCtrl;
+				CStringArray aExtra;
+
+				pCombo->GetChecked(aItems);
+				pCombo->GetChecked(aExtra, CCBC_MIXED);
+
+				data.Set(aItems, aExtra);
+			}
 			break;
 		}
 	}
@@ -1071,14 +1074,14 @@ CString CTDCCustomAttributeHelper::FormatData(const TDCCADATA& data, const TDCCU
 }
 
 void CTDCCustomAttributeHelper::ClearControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
-															const CTDCCustomAttribDefinitionArray& aAttribDefs)
+											const CTDCCustomAttribDefinitionArray& aAttribDefs)
 {
 	UpdateControl(pParent, ctrl, aAttribDefs, TDCCADATA());
 }
 
 void CTDCCustomAttributeHelper::UpdateControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
-															  const CTDCCustomAttribDefinitionArray& aAttribDefs,
-															  const TDCCADATA& data)
+											const CTDCCustomAttribDefinitionArray& aAttribDefs,
+											const TDCCADATA& data)
 {
 	ASSERT_VALID(pParent);
 

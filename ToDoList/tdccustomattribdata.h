@@ -31,6 +31,7 @@ struct TDCCADATA
 	BOOL operator==(const TDCCADATA& data) const;
 	BOOL operator!=(const TDCCADATA& data) const;
 
+	BOOL HasExtra() const;
 	BOOL IsEmpty() const;
 	void Clear();
 
@@ -52,6 +53,7 @@ struct TDCCADATA
 	void Set(double dValue, TDC_UNITS nUnits);
 	void Set(bool bValue, TCHAR nChar = 0);
 	void Set(const CStringArray& aValues);
+	void Set(const CStringArray& aValues, const CStringArray& aExtra);
 
 	CString FormatAsArray(TCHAR cSep = 0) const;
 	CString FormatAsDate(BOOL bISO = FALSE) const;
@@ -61,6 +63,7 @@ protected:
 	CString sData, sExtra;
 
 protected:
+	static void Set(const CStringArray& aValues, CString& sValue);
 	static int AsArray(const CString& sValue, CStringArray& aValues);
 
 };
