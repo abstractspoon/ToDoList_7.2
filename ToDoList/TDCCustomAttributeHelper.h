@@ -11,31 +11,37 @@
 
 #include "tdcstruct.h"
 
+//////////////////////////////////////////////////////////////////////
+
 class CTDCCustomAttribDefinitionArray;
 class CTDCCustomControlArray;
 class CTDCImageList;
 
+//////////////////////////////////////////////////////////////////////
+
 class CTDCCustomAttributeHelper  
 {
 public:
-	static BOOL RebuildCustomAttributeEditUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-										CTDCCustomControlArray& aControls, 
-										const CTDCImageList& ilImages, 
-										CWnd* pParent, UINT nCtrlIDPos);
-	static BOOL RebuildCustomAttributeFilterUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-										CTDCCustomControlArray& aControls, 
-										const CTDCImageList& ilImages, 
-										CWnd* pParent, UINT nCtrlIDPos,
-										BOOL bMultiSelection);
+	static BOOL RebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+									CTDCCustomControlArray& aControls, 
+									const CTDCImageList& ilImages, 
+									CWnd* pParent, UINT nCtrlIDPos);
+	static BOOL RebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+									CTDCCustomControlArray& aControls, 
+									const CTDCImageList& ilImages, 
+									CWnd* pParent, UINT nCtrlIDPos,
+									BOOL bMultiSelection);
 
-	static BOOL NeedRebuildCustomAttributeEditUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-												const CTDCCustomControlArray& aControls);
-	static BOOL NeedRebuildCustomAttributeFilterUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-												const CTDCCustomControlArray& aControls);
+	static BOOL NeedRebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+										const CTDCCustomControlArray& aControls);
+	static BOOL NeedRebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+											const CTDCCustomControlArray& aControls);
+
+	static void CleanupControls(CTDCCustomControlArray& aControls, CWnd* pParent);
+
+	// -------------------------------------------------------------------------
 
 	static int EnableMultiSelectionFilter(const CTDCCustomControlArray& aControls, CWnd* pParent, BOOL bEnable = TRUE);
-
-	static void CleanupCustomAttributeUI(CTDCCustomControlArray& aControls, CWnd* pParent);
 	
 	static CString GetAttributeTypeID(UINT nCtrlID, const CTDCCustomControlArray& aControls);
 	static CString GetAttributeTypeID(TDC_COLUMN nColID, const CTDCCustomAttribDefinitionArray& aAttribDefs);
@@ -90,19 +96,19 @@ public:
 	static BOOL GetControl(UINT nCtrlID, const CTDCCustomControlArray& aControls, CUSTOMATTRIBCTRLITEM& ctrl);
 	static BOOL GetControl(const CString& sUniqueID, const CTDCCustomControlArray& aControls, CUSTOMATTRIBCTRLITEM& ctrl);
 
-	static void UpdateCustomAttributeControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs,
-											const TDCCADATA& data);
+	static void UpdateControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
+								const CTDCCustomAttribDefinitionArray& aAttribDefs,
+								const TDCCADATA& data);
 
-	static void ClearCustomAttributeControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs);
+	static void ClearControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
+								const CTDCCustomAttribDefinitionArray& aAttribDefs);
 
-	static void UpdateCustomAttributeControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs,
-											const CTDCCustomAttributeDataMap& mapData);
+	static void UpdateControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
+								const CTDCCustomAttribDefinitionArray& aAttribDefs,
+								const CTDCCustomAttributeDataMap& mapData);
 
-	static void ClearCustomAttributeControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
-											const CTDCCustomAttribDefinitionArray& aAttribDefs);
+	static void ClearControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
+								const CTDCCustomAttribDefinitionArray& aAttribDefs);
 
 	static BOOL GetControlAttributeTypes(const CUSTOMATTRIBCTRLITEM& ctrl,
 										const CTDCCustomAttribDefinitionArray& aAttribDefs,
@@ -129,11 +135,11 @@ public:
 								const CTDCCustomAttribDefinitionArray& aAttribDefs, CSearchParamArray& aRules);
 
 protected:
-	static CWnd* CreateCustomAttribute(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
+	static CWnd* CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
 										const CTDCImageList& ilImages, CWnd* pParent, 
 										UINT nCtrlID, BOOL bBuddy, BOOL bFilter, BOOL bMultiSelectionFilter);
 	
-	static CWnd* CreateCustomAttributeLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
+	static CWnd* CreateAttributeLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
 											CWnd* pParent, UINT nCtrlID, BOOL bBuddy);
 	
 	static BOOL AttributeWantsBuddy(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef);

@@ -339,9 +339,9 @@ void CToDoCtrl::DoDataExchange(CDataExchange* pDX)
 		m_eRecurrence.SetRecurrenceOptions(m_tRecurrence);
 
 		if (m_mapCustomCtrlData.GetCount() == 0)
-			CTDCCustomAttributeHelper::ClearCustomAttributeControls(this, m_aCustomControls, m_aCustomAttribDefs);
+			CTDCCustomAttributeHelper::ClearControls(this, m_aCustomControls, m_aCustomAttribDefs);
 		else
-			CTDCCustomAttributeHelper::UpdateCustomAttributeControls(this, m_aCustomControls, m_aCustomAttribDefs, m_mapCustomCtrlData);
+			CTDCCustomAttributeHelper::UpdateControls(this, m_aCustomControls, m_aCustomAttribDefs, m_mapCustomCtrlData);
 	}
 }
 
@@ -2334,7 +2334,7 @@ BOOL CToDoCtrl::SetSelectedTaskCustomAttributeData(const CString& sAttribID, con
 		if (CTDCCustomAttributeHelper::GetControl(sAttribID, m_aCustomControls, ctrl))
 		{
 			if (!bCtrlEdited)
-				CTDCCustomAttributeHelper::UpdateCustomAttributeControl(this, ctrl, m_aCustomAttribDefs, data);
+				CTDCCustomAttributeHelper::UpdateControl(this, ctrl, m_aCustomAttribDefs, data);
 
 			if (ctrl.HasBuddy())
 				EnableDisableControls(GetSelectedItem());
@@ -6223,7 +6223,7 @@ void CToDoCtrl::LoadCustomAttributeDefinitions(const CTaskFile& tasks)
 void CToDoCtrl::RebuildCustomAttributeUI()
 {
 	// and add fields after the 'version' control
- 	CTDCCustomAttributeHelper::RebuildCustomAttributeEditUI(m_aCustomAttribDefs, m_aCustomControls, 
+ 	CTDCCustomAttributeHelper::RebuildEditControls(m_aCustomAttribDefs, m_aCustomControls, 
  															m_ilTaskIcons, this, IDC_VERSION);
 	Resize();
 
@@ -6961,7 +6961,7 @@ void CToDoCtrl::OnDestroy()
 	}
 	
 	// clean up custom controls
-	CTDCCustomAttributeHelper::CleanupCustomAttributeUI(m_aCustomControls, this);
+	CTDCCustomAttributeHelper::CleanupControls(m_aCustomControls, this);
 	
 	CRuntimeDlg::OnDestroy();
 }

@@ -32,7 +32,7 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CWnd* CTDCCustomAttributeHelper::CreateCustomAttribute(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
+CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
 													   const CTDCImageList& ilImages, CWnd* pParent, 
 													   UINT nCtrlID, BOOL bBuddy, 
 													   BOOL bFilter, BOOL bMultiSelectionFilter)
@@ -319,7 +319,7 @@ CString CTDCCustomAttributeHelper::GetControlLabel(const TDCCUSTOMATTRIBUTEDEFIN
 	return _T("");
 }
 
-CWnd* CTDCCustomAttributeHelper::CreateCustomAttributeLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
+CWnd* CTDCCustomAttributeHelper::CreateAttributeLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
 															CWnd* pParent, UINT nCtrlID, BOOL bBuddy)
 {
 	CStatic* pLabel = new CStatic;
@@ -398,19 +398,19 @@ BOOL CTDCCustomAttributeHelper::GetControl(const CString& sUniqueID, const CTDCC
 	return FALSE;
 }
 
-void CTDCCustomAttributeHelper::CleanupCustomAttributeUI(CTDCCustomControlArray& aControls, CWnd* pParent)
+void CTDCCustomAttributeHelper::CleanupControls(CTDCCustomControlArray& aControls, CWnd* pParent)
 {
 	aControls.DeleteCtrls(pParent);
 	aControls.RemoveAll();
 }
 
-BOOL CTDCCustomAttributeHelper::NeedRebuildCustomAttributeEditUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::NeedRebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										const CTDCCustomControlArray& aControls)
 {
 	return NeedRebuildCustomAttributeUI(aAttribDefs, aControls, IDC_FIRST_CUSTOMEDITFIELD, FALSE);
 }
 
-BOOL CTDCCustomAttributeHelper::NeedRebuildCustomAttributeFilterUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::NeedRebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										const CTDCCustomControlArray& aControls)
 {
 	return NeedRebuildCustomAttributeUI(aAttribDefs, aControls, IDC_FIRST_CUSTOMFILTERFIELD, TRUE);
@@ -481,7 +481,7 @@ int CTDCCustomAttributeHelper::GetCustomAttributeCtrls(const CTDCCustomAttribDef
 	return aControls.GetSize();
 }
 
-BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeEditUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::RebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										CTDCCustomControlArray& aControls, 
 										const CTDCImageList& ilImages, 
 										CWnd* pParent, UINT nCtrlIDPos)
@@ -489,7 +489,7 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeEditUI(const CTDCCustomAtt
 	return RebuildCustomAttributeUI(aAttribDefs, aControls, ilImages, pParent, nCtrlIDPos, IDC_FIRST_CUSTOMEDITFIELD, FALSE, FALSE);
 }
 
-BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeFilterUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::RebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										CTDCCustomControlArray& aControls, 
 										const CTDCImageList& ilImages, 
 										CWnd* pParent, UINT nCtrlIDPos, 
@@ -509,7 +509,7 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribD
 	CHoldRedraw hr(*pParent);
 
 	// remove all existing custom attribute fields
-	CleanupCustomAttributeUI(aControls, pParent);
+	CleanupControls(aControls, pParent);
 
 	// recreate controls and columns
 	UINT nID = nCtrlIDStart;
@@ -553,10 +553,10 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribD
 				ctrl.nCtrlID = nID++;
 				ctrl.nLabelID = nID++;
 				
-				pLabel = CreateCustomAttributeLabel(attribDef, pParent, ctrl.nLabelID, FALSE);
+				pLabel = CreateAttributeLabel(attribDef, pParent, ctrl.nLabelID, FALSE);
 				ASSERT_VALID(pLabel);
 				
-				pCtrl = CreateCustomAttribute(attribDef, ilImages, pParent, ctrl.nCtrlID, FALSE, bFilter, bMultiSelectionFilter);
+				pCtrl = CreateAttribute(attribDef, ilImages, pParent, ctrl.nCtrlID, FALSE, bFilter, bMultiSelectionFilter);
 				ASSERT_VALID(pCtrl);
 
 				// Buddy control
@@ -567,10 +567,10 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribD
 					ctrl.nBuddyCtrlID = nID++;
 					ctrl.nBuddyLabelID = nID++;
 					
-					pBuddyLabel = CreateCustomAttributeLabel(attribDef, pParent, ctrl.nBuddyLabelID, TRUE);
+					pBuddyLabel = CreateAttributeLabel(attribDef, pParent, ctrl.nBuddyLabelID, TRUE);
 					ASSERT_VALID(pLabel);
 					
-					pBuddyCtrl = CreateCustomAttribute(attribDef, ilImages, pParent, ctrl.nBuddyCtrlID, TRUE, bFilter, bMultiSelectionFilter);
+					pBuddyCtrl = CreateAttribute(attribDef, ilImages, pParent, ctrl.nBuddyCtrlID, TRUE, bFilter, bMultiSelectionFilter);
 					ASSERT_VALID(pCtrl);
 				}					
 				
@@ -879,7 +879,7 @@ CString CTDCCustomAttributeHelper::GetAttributeTypeID(UINT nCtrlID, const CTDCCu
 	return _T("");
 }
 
-void CTDCCustomAttributeHelper::UpdateCustomAttributeControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
+void CTDCCustomAttributeHelper::UpdateControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
 																const CTDCCustomAttribDefinitionArray& aAttribDefs,
 																const CTDCCustomAttributeDataMap& mapData)
 {
@@ -891,13 +891,13 @@ void CTDCCustomAttributeHelper::UpdateCustomAttributeControls(const CWnd* pParen
 		const CUSTOMATTRIBCTRLITEM& ctrl = aControls.GetData()[nCtrl];
 		
 		if (mapData.Lookup(ctrl.sAttribID, data))
-			UpdateCustomAttributeControl(pParent, ctrl, aAttribDefs, data);
+			UpdateControl(pParent, ctrl, aAttribDefs, data);
 		else
-			ClearCustomAttributeControl(pParent, ctrl, aAttribDefs);
+			ClearControl(pParent, ctrl, aAttribDefs);
 	}
 }
 
-void CTDCCustomAttributeHelper::ClearCustomAttributeControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
+void CTDCCustomAttributeHelper::ClearControls(const CWnd* pParent, CTDCCustomControlArray& aControls,
 															const CTDCCustomAttribDefinitionArray& aAttribDefs)
 {
 	int nCtrl = aControls.GetSize();
@@ -905,7 +905,7 @@ void CTDCCustomAttributeHelper::ClearCustomAttributeControls(const CWnd* pParent
 	while (nCtrl--)
 	{
 		const CUSTOMATTRIBCTRLITEM& ctrl = aControls.GetData()[nCtrl];
-		ClearCustomAttributeControl(pParent, ctrl, aAttribDefs);
+		ClearControl(pParent, ctrl, aAttribDefs);
 	}
 }
 
@@ -1070,13 +1070,13 @@ CString CTDCCustomAttributeHelper::FormatData(const TDCCADATA& data, const TDCCU
 	return data.AsString();
 }
 
-void CTDCCustomAttributeHelper::ClearCustomAttributeControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
+void CTDCCustomAttributeHelper::ClearControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
 															const CTDCCustomAttribDefinitionArray& aAttribDefs)
 {
-	UpdateCustomAttributeControl(pParent, ctrl, aAttribDefs, TDCCADATA());
+	UpdateControl(pParent, ctrl, aAttribDefs, TDCCADATA());
 }
 
-void CTDCCustomAttributeHelper::UpdateCustomAttributeControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
+void CTDCCustomAttributeHelper::UpdateControl(const CWnd* pParent, const CUSTOMATTRIBCTRLITEM& ctrl,
 															  const CTDCCustomAttribDefinitionArray& aAttribDefs,
 															  const TDCCADATA& data)
 {
@@ -1204,8 +1204,10 @@ void CTDCCustomAttributeHelper::UpdateCustomAttributeControl(const CWnd* pParent
 		case TDCCA_AUTOMULTILIST:
 		case TDCCA_FIXEDMULTILIST:
 			{
-				data.AsArray(aItems);
-				((CCheckComboBox*)pCtrl)->SetChecked(aItems);
+				CStringArray aExtra;
+				data.AsArrays(aItems, aExtra);
+
+				((CCheckComboBox*)pCtrl)->SetChecked(aItems, aExtra);
 			}
 			break;
 		}
