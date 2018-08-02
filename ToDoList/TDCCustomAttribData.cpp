@@ -110,10 +110,22 @@ bool TDCCADATA::AsBool() const
 	return !IsEmpty(); 
 }
 
-int TDCCADATA::AsArray(CStringArray& aValues) const 
+int TDCCADATA::AsArray(CStringArray& aValues) const
+{
+	return AsArray(sData, aValues);
+}
+
+int TDCCADATA::AsArrays(CStringArray& aValues, CStringArray& aExtra) const
+{
+	AsArray(sExtra, aExtra);
+
+	return AsArray(sData, aValues);
+}
+
+int TDCCADATA::AsArray(const CString& sValue, CStringArray& aValues) 
 { 
 	// Special case: 1 empty value
-	if (sData == _T("\n"))
+	if (sValue == _T("\n"))
 	{
 		aValues.RemoveAll();
 		aValues.Add(_T(""));
@@ -121,7 +133,7 @@ int TDCCADATA::AsArray(CStringArray& aValues) const
 	}
 	
 	// else
-	return Misc::Split(sData, aValues, '\n', TRUE); 
+	return Misc::Split(sValue, aValues, '\n', TRUE); 
 }
 
 double TDCCADATA::AsTimePeriod(TDC_UNITS& nUnits) const

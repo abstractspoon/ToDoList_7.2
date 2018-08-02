@@ -20,6 +20,7 @@ struct TDCCADATA
 	TDCCADATA(double dValue);
 	TDCCADATA(double dValue, TDC_UNITS nUnits);
 	TDCCADATA(const CStringArray& aValues);
+	TDCCADATA(const CStringArray& aValues, const CStringArray& aExtra);
 	TDCCADATA(int nValue);
 	TDCCADATA(const COleDateTime& dtValue);
 	TDCCADATA(bool bValue);
@@ -39,6 +40,7 @@ struct TDCCADATA
 	COleDateTime AsDate() const;
 	bool AsBool() const;
 	int AsArray(CStringArray& aValues) const;
+	int AsArrays(CStringArray& aValues, CStringArray& aExtra) const;
 	double AsTimePeriod(TDC_UNITS& nUnits) const;
 
 	TDC_UNITS GetTimeUnits() const;
@@ -56,7 +58,11 @@ struct TDCCADATA
 	CString FormatAsTimePeriod(int nDecimalPlaces = 2) const;
 
 protected:
-	CString sData;
+	CString sData, sExtra;
+
+protected:
+	static int AsArray(const CString& sValue, CStringArray& aValues);
+
 };
 
 /////////////////////////////////////////////////////////////////////////////
