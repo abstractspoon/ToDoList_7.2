@@ -1338,7 +1338,7 @@ LRESULT CGanttChartWnd::OnGanttDependencyDlgClose(WPARAM wp, LPARAM lp)
 		}
 
 		// notify parent
-		CString sDepends = Misc::FormatArray(aDepends);
+		CString sDepends = Misc::FormatArray(aDepends, '\n');
 		IUITASKMOD mod = { IUI_DEPENDENCY, 0 };
 
 		mod.szValue = sDepends;

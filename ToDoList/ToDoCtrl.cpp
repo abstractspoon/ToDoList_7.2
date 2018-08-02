@@ -4721,12 +4721,13 @@ BOOL CToDoCtrl::SetSelectedTaskDependencies(const CStringArray& aDepends, BOOL b
 		{
 			UpdateDateTimeControls(TRUE);
 		}
-		else if (!bEdit)
+
+		// We only update the control if not editing otherwise
+		// if the user is partially way thru typing a task ID
+		// and the partial ID does not exist then it gets 
+		// removed from the edit field. 
+		if (!bEdit)
 		{
-			// We only update the control if not editing otherwise
-			// if the user is partially way thru typing a task ID
-			// and the partial ID does not exist then it gets 
-			// removed from the edit field. 
 			ASSERT(dwRefTaskID);
 			m_sDepends = Misc::FormatArray(aDepends);
 			UpdateDataEx(this, IDC_DEPENDS, m_sDepends, FALSE);
