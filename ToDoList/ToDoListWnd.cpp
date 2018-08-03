@@ -73,6 +73,7 @@
 #include "..\shared\rtlstylemgr.h"
 #include "..\shared\xslfile.h"
 #include "..\shared\soundedit.h"
+#include "..\shared\ComboListboxPositioner.h"
 
 #include "..\3rdparty\gui.h"
 #include "..\3rdparty\sendfileto.h"
@@ -2377,6 +2378,8 @@ LRESULT CToDoListWnd::OnPostOnCreate(WPARAM /*wp*/, LPARAM /*lp*/)
 	CMouseWheelMgr::Initialize();
 	CEditShortcutMgr::Initialize();
 	CFocusWatcher::Initialize(this);
+	CComboListboxPositioner::Initialize();
+
 	CLocalizer::SetMenuPostTranslationCallback(*this);
 
 	InitShortcutManager();
