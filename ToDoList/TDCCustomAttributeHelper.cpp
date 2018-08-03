@@ -407,16 +407,16 @@ void CTDCCustomAttributeHelper::CleanupControls(CTDCCustomControlArray& aControl
 BOOL CTDCCustomAttributeHelper::NeedRebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										const CTDCCustomControlArray& aControls)
 {
-	return NeedRebuildCustomAttributeUI(aAttribDefs, aControls, IDC_FIRST_CUSTOMEDITFIELD, FALSE);
+	return NeedRebuildControls(aAttribDefs, aControls, IDC_FIRST_CUSTOMEDITFIELD, FALSE);
 }
 
 BOOL CTDCCustomAttributeHelper::NeedRebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										const CTDCCustomControlArray& aControls)
 {
-	return NeedRebuildCustomAttributeUI(aAttribDefs, aControls, IDC_FIRST_CUSTOMFILTERFIELD, TRUE);
+	return NeedRebuildControls(aAttribDefs, aControls, IDC_FIRST_CUSTOMFILTERFIELD, TRUE);
 }
 
-BOOL CTDCCustomAttributeHelper::NeedRebuildCustomAttributeUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::NeedRebuildControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 										const CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter)
 {
 	CTDCCustomControlArray aNewControls;
@@ -440,7 +440,7 @@ int CTDCCustomAttributeHelper::GetCustomAttributeCtrls(const CTDCCustomAttribDef
 		const TDCCUSTOMATTRIBUTEDEFINITION& attribDef = aAttribDefs.GetData()[nAttrib];
 
 		// don't add unwanted controls
-		if (!WantCtrlUI(attribDef, bFilter))
+		if (!WantControl(attribDef, bFilter))
 			continue;
 
 		// NOTE: flag and image types don't need controls because they are 
@@ -486,7 +486,7 @@ BOOL CTDCCustomAttributeHelper::RebuildEditControls(const CTDCCustomAttribDefini
 										const CTDCImageList& ilImages, 
 										CWnd* pParent, UINT nCtrlIDPos)
 {
-	return RebuildCustomAttributeUI(aAttribDefs, aControls, ilImages, pParent, nCtrlIDPos, IDC_FIRST_CUSTOMEDITFIELD, FALSE, FALSE);
+	return RebuildControls(aAttribDefs, aControls, ilImages, pParent, nCtrlIDPos, IDC_FIRST_CUSTOMEDITFIELD, FALSE, FALSE);
 }
 
 BOOL CTDCCustomAttributeHelper::RebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
@@ -495,10 +495,10 @@ BOOL CTDCCustomAttributeHelper::RebuildFilterControls(const CTDCCustomAttribDefi
 										CWnd* pParent, UINT nCtrlIDPos, 
 										BOOL bMultiSelection)
 {
-	return RebuildCustomAttributeUI(aAttribDefs, aControls, ilImages, pParent, nCtrlIDPos, IDC_FIRST_CUSTOMFILTERFIELD, TRUE, bMultiSelection);
+	return RebuildControls(aAttribDefs, aControls, ilImages, pParent, nCtrlIDPos, IDC_FIRST_CUSTOMFILTERFIELD, TRUE, bMultiSelection);
 }
 
-BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+BOOL CTDCCustomAttributeHelper::RebuildControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 														 CTDCCustomControlArray& aControls, 
 														 const CTDCImageList& ilImages,
 														 CWnd* pParent, UINT nCtrlIDPos, UINT nCtrlIDStart, 
@@ -522,7 +522,7 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribD
 		const TDCCUSTOMATTRIBUTEDEFINITION& attribDef = aAttribDefs.GetData()[nAttrib];
 
 		// don't add unwanted controls
-		if (!WantCtrlUI(attribDef, bFilter))
+		if (!WantControl(attribDef, bFilter))
 			continue;
 		
 		// NOTE: flag and image types don't need controls because they are 
@@ -611,7 +611,7 @@ BOOL CTDCCustomAttributeHelper::RebuildCustomAttributeUI(const CTDCCustomAttribD
 	return TRUE;
 }
 
-BOOL CTDCCustomAttributeHelper::WantCtrlUI(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter)
+BOOL CTDCCustomAttributeHelper::WantControl(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter)
 {
 	if (attribDef.bEnabled)
 		return (!bFilter || attribDef.HasFeature(TDCCAF_FILTER));

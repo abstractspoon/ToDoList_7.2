@@ -136,25 +136,25 @@ public:
 
 protected:
 	static CWnd* CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
-										const CTDCImageList& ilImages, CWnd* pParent, 
-										UINT nCtrlID, BOOL bBuddy, BOOL bFilter, BOOL bMultiSelectionFilter);
+								const CTDCImageList& ilImages, CWnd* pParent, 
+								UINT nCtrlID, BOOL bBuddy, BOOL bFilter, BOOL bMultiSelectionFilter);
 	
 	static CWnd* CreateAttributeLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, 
-											CWnd* pParent, UINT nCtrlID, BOOL bBuddy);
+										CWnd* pParent, UINT nCtrlID, BOOL bBuddy);
 	
 	static BOOL AttributeWantsBuddy(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef);
 	static CString GetControlLabel(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bBuddy);
 
-	static BOOL RebuildCustomAttributeUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-										CTDCCustomControlArray& aControls, 
-										const CTDCImageList& ilImages, CWnd* pParent, 
-										UINT nCtrlIDPos, UINT nCtrlIDStart, 
-										BOOL bFilter, BOOL bMultiSelectionFilter);
-	static BOOL NeedRebuildCustomAttributeUI(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+	static BOOL RebuildControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
+								CTDCCustomControlArray& aControls, 
+								const CTDCImageList& ilImages, CWnd* pParent, 
+								UINT nCtrlIDPos, UINT nCtrlIDStart, 
+								BOOL bFilter, BOOL bMultiSelectionFilter);
+	static BOOL NeedRebuildControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 									const CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter);
 	static int GetCustomAttributeCtrls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 									CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter);
-	static BOOL WantCtrlUI(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter);
+	static BOOL WantControl(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter);
 };
 
 #endif // !defined(AFX_TDCCUSTOMATTRIBUTEHELPER_H__4044B3B7_1EA0_4279_9620_F2035DAE87DF__INCLUDED_)
