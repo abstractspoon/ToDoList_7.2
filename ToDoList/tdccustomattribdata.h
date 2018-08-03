@@ -74,7 +74,7 @@ class CTDCCustomAttributeDataMap : public CMap<CString, LPCTSTR, TDCCADATA, TDCC
 {
 public:
 	BOOL Lookup(LPCTSTR key, TDCCADATA& rValue) const;
-	void SetAt(LPCTSTR key, TDCCADATA& newValue);
+	void SetAt(LPCTSTR key, const TDCCADATA& newValue);
 	void Copy(const CTDCCustomAttributeDataMap& mapData);
 	BOOL MatchAll(const CTDCCustomAttributeDataMap& mapData) const;
 

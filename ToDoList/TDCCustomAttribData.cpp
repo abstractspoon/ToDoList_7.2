@@ -317,7 +317,7 @@ TDCCADATA& CTDCCustomAttributeDataMap::operator[](LPCTSTR key)
 	return CMap<CString, LPCTSTR, TDCCADATA, TDCCADATA&>::operator[](Misc::ToUpper(key));
 }
 
-void CTDCCustomAttributeDataMap::SetAt(LPCTSTR key, TDCCADATA& newValue)
+void CTDCCustomAttributeDataMap::SetAt(LPCTSTR key, const TDCCADATA& newValue)
 { 
 	(*this)[key] = newValue; 
 }
