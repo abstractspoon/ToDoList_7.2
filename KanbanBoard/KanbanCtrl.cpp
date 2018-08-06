@@ -1805,6 +1805,7 @@ CKanbanListCtrl* CKanbanCtrl::AddNewListCtrl(const KANBANCOLUMN& colDef)
 		pList->SetColorTaskBarByPriority(HasOption(KBCF_COLORBARBYPRIORITY));
 		pList->SetShowTaskColorAsBar(HasOption(KBCF_SHOWTASKCOLORASBAR));
 		pList->SetShowCompletionCheckboxes(HasOption(KBCF_SHOWCOMPLETIONCHECKBOXES));
+		pList->SetIndentSubtasks(HasOption(KBCF_INDENTSUBTASKS));
 
 		if (pList->Create(IDC_LISTCTRL, this))
 		{
@@ -2019,6 +2020,10 @@ void CKanbanCtrl::SetOption(DWORD dwOption, BOOL bSet)
 
 			case KBCF_SHOWCOMPLETIONCHECKBOXES:
 				m_aListCtrls.SetShowCompletionCheckboxes(bSet);
+				break;
+
+			case KBCF_INDENTSUBTASKS:
+				m_aListCtrls.SetIndentSubtasks(bSet);
 				break;
 			}
 		}
