@@ -469,7 +469,7 @@ bool CKanbanWnd::WantTaskUpdate(IUI_ATTRIBUTE nAttribute) const
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return (CKanbanCtrl::WantEditUpdate(nAttribute) != FALSE);
+	return (m_ctrlKanban.WantEditUpdate(nAttribute) != FALSE);
 }
 
 void CKanbanWnd::UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, const IUI_ATTRIBUTE* pAttributes, int nNumAttributes)
@@ -608,7 +608,7 @@ bool CKanbanWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, const IUIAPPCOMMANDDATA* p
 
 	case IUI_SORT:
 		if (pData)
-			return (CKanbanCtrl::WantSortUpdate(pData->nSortBy) != FALSE);
+			return (m_ctrlKanban.WantSortUpdate(pData->nSortBy) != FALSE);
 		break;
 
 	case IUI_SETFOCUS:

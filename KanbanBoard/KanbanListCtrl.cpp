@@ -2049,6 +2049,12 @@ int CALLBACK CKanbanListCtrl::SortProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 			nCompare = CTimeHelper().Compare(pKI1->dTimeSpent, MapUnitsToTHUnits(pKI1->nTimeSpentUnits), 
 											pKI2->dTimeSpent, MapUnitsToTHUnits(pKI2->nTimeSpentUnits));
 			break;
+
+		case IUI_NONE: // Synonymous with IUI_POSITION
+			ASSERT(pSort->bSubtasksBelowParent);
+
+			// Avoid reversal of sign below
+			return ((pKI1->nPosition > pKI2->nPosition) ? 1 : -1);
 		}
 	}
 	
