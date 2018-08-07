@@ -910,6 +910,11 @@ BOOL CTDLFilterBar::OnToolTipNotify(UINT /*id*/, NMHDR* pNMHDR, LRESULT* /*pResu
         case IDC_OPTIONFILTERCOMBO:
 			sTooltip = m_cbOptions.GetTooltip();
             break;
+			
+		default:
+			if (CTDCCustomAttributeHelper::IsCustomFilterControl(nID))
+				sTooltip = CTDCCustomAttributeHelper::GetFilterControlTooltip(nID, this);
+			break;
         }
 
 		if (!sTooltip.IsEmpty())

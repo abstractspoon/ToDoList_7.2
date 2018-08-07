@@ -818,6 +818,31 @@ BOOL CTDCCustomAttributeHelper::IsCustomFilterControl(UINT nCtrlID)
 	return (nCtrlID >= IDC_FIRST_CUSTOMFILTERFIELD && nCtrlID <= IDC_LAST_CUSTOMFILTERFIELD);
 }
 
+CString CTDCCustomAttributeHelper::GetFilterControlTooltip(UINT nCtrlID, CWnd* pParent)
+{
+	ASSERT(IsCustomFilterControl(nCtrlID));
+
+	return GetControlTooltip(nCtrlID, pParent);
+}
+
+CString CTDCCustomAttributeHelper::GetEditControlTooltip(UINT nCtrlID, CWnd* pParent)
+{
+	ASSERT(IsCustomEditControl(nCtrlID));
+	
+	return GetControlTooltip(nCtrlID, pParent);
+}
+
+CString CTDCCustomAttributeHelper::GetControlTooltip(UINT nCtrlID, CWnd* pParent)
+{
+	CWnd* pCtrl = pParent->GetDlgItem(nCtrlID);
+
+	if (pCtrl && pCtrl->IsKindOf(RUNTIME_CLASS(CCheckComboBox)))
+		return ((CCheckComboBox*)pCtrl)->GetTooltip();
+
+	// else
+	return _T("");
+}
+
 void CTDCCustomAttributeHelper::SaveAutoListDataToDefs(const CWnd* pParent, 
 														const CTDCCustomControlArray& aControls, 
 														const CTDCCustomAttribDefinitionArray& aAttribDefs)

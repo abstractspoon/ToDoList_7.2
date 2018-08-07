@@ -54,6 +54,9 @@ public:
 	static BOOL IsCustomEditControl(UINT nCtrlID);
 	static BOOL IsCustomFilterControl(UINT nCtrlID);
 
+	static CString GetFilterControlTooltip(UINT nCtrlID, CWnd* pParent);
+	static CString GetEditControlTooltip(UINT nCtrlID, CWnd* pParent);
+
 	static BOOL GetAttributeDef(TDC_COLUMN nColID, 
 								const CTDCCustomAttribDefinitionArray& aAttribDefs,
 								TDCCUSTOMATTRIBUTEDEFINITION& attribDef);
@@ -155,6 +158,7 @@ protected:
 	static int GetCustomAttributeCtrls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 									CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter);
 	static BOOL WantControl(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter);
+	static CString GetControlTooltip(UINT nCtrlID, CWnd* pParent);
 };
 
 #endif // !defined(AFX_TDCCUSTOMATTRIBUTEHELPER_H__4044B3B7_1EA0_4279_9620_F2035DAE87DF__INCLUDED_)
