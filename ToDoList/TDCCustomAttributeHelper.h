@@ -32,10 +32,13 @@ public:
 									CWnd* pParent, UINT nCtrlIDPos,
 									BOOL bMultiSelection);
 
-	static BOOL NeedRebuildEditControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-										const CTDCCustomControlArray& aControls);
-	static BOOL NeedRebuildFilterControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-											const CTDCCustomControlArray& aControls);
+	static BOOL NeedRebuildEditControls(const CTDCCustomAttribDefinitionArray& aOldAttribDefs, 
+										const CTDCCustomAttribDefinitionArray& aNewAttribDefs, 
+										const CTDCCustomControlArray& aOldControls);
+
+	static BOOL NeedRebuildFilterControls(const CTDCCustomAttribDefinitionArray& aOldAttribDefs, 
+											const CTDCCustomAttribDefinitionArray& aNewAttribDefs, 
+											const CTDCCustomControlArray& aOldControls);
 
 	static void CleanupControls(CTDCCustomControlArray& aControls, CWnd* pParent);
 
@@ -153,8 +156,9 @@ protected:
 								const CTDCImageList& ilImages, CWnd* pParent, 
 								UINT nCtrlIDPos, UINT nCtrlIDStart, 
 								BOOL bFilter, BOOL bMultiSelectionFilter);
-	static BOOL NeedRebuildControls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
-									const CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter);
+	static BOOL NeedRebuildControls(const CTDCCustomAttribDefinitionArray& aOldAttribDefs, 
+									const CTDCCustomAttribDefinitionArray& aNewAttribDefs, 
+									const CTDCCustomControlArray& aOldControls, UINT nCtrlIDStart, BOOL bFilter);
 	static int GetCustomAttributeCtrls(const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 									CTDCCustomControlArray& aControls, UINT nCtrlIDStart, BOOL bFilter);
 	static BOOL WantControl(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, BOOL bFilter);

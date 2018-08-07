@@ -540,21 +540,25 @@ BOOL CTDLFilterBar::SetTitleFilterOption(FILTER_TITLE nOption)
 
 void CTDLFilterBar::UpdateCustomControls(const CFilteredToDoCtrl& tdc)
 {
-	tdc.GetCustomAttributeDefs(m_aCustomAttribDefs);
+	CTDCCustomAttribDefinitionArray aNewAttribDefs;
+	tdc.GetCustomAttributeDefs(aNewAttribDefs);
 
 	if (CTDCCustomAttributeHelper::NeedRebuildFilterControls(m_aCustomAttribDefs, 
-																		m_aCustomControls))
+																aNewAttribDefs,
+																m_aCustomControls))
 	{
-		CTDCCustomAttributeHelper::RebuildFilterControls(m_aCustomAttribDefs, 
-																	m_aCustomControls, 
-																	tdc.GetTaskIconImageList(), 
-																	this, 
-																	IDC_OPTIONFILTERCOMBO, 
-																	m_bMultiSelection);
+		CTDCCustomAttributeHelper::RebuildFilterControls(aNewAttribDefs, 
+														m_aCustomControls, 
+														tdc.GetTaskIconImageList(), 
+														this, 
+														IDC_OPTIONFILTERCOMBO, 
+														m_bMultiSelection);
 	}
 
 	// Update data
-	CTDCCustomAttributeHelper::UpdateControls(this, m_aCustomControls, m_aCustomAttribDefs, m_filter.mapCustomAttrib);
+	CTDCCustomAttributeHelper::UpdateControls(this, m_aCustomControls, aNewAttribDefs, m_filter.mapCustomAttrib);
+
+	m_aCustomAttribDefs.Copy(aNewAttribDefs);
 }
 
 void CTDLFilterBar::SetFilterLabelAlignment(BOOL bLeft)
