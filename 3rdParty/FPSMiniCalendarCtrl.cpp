@@ -230,6 +230,7 @@ BEGIN_MESSAGE_MAP(CFPSMiniCalendarCtrl, CWnd)
 	ON_WM_LBUTTONDBLCLK()
 	//}}AFX_MSG_MAP
 	ON_WM_SIZE()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 
@@ -1462,6 +1463,46 @@ void CFPSMiniCalendarCtrl::OnMouseMove(UINT nFlags, CPoint point)
 	}
 	
 	CWnd::OnMouseMove(nFlags, point);
+}
+
+#if _MSC_VER >= 1400
+BOOL CFPSMiniCalendarCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+#else
+void CFPSMiniCalendarCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+#endif
+{	
+	if (zDelta < 0)
+	{
+		m_iCurrentMonth++;
+
+		if (m_iCurrentMonth > 12)
+		{
+			m_iCurrentMonth = 1;
+			m_iCurrentYear++;
+		}
+
+		RedrawWindow();
+		FireNotifyHScroll(SB_LEFT);
+	}
+	else
+	{
+		m_iCurrentMonth--;
+
+		if (m_iCurrentMonth < 1)
+		{
+			m_iCurrentMonth = 12;
+			m_iCurrentYear--;
+		}
+
+		RedrawWindow();
+		FireNotifyHScroll(SB_RIGHT);
+	}
+
+#if _MSC_VER >= 1400
+	return CWnd::OnMouseWheel(nFlags, zDelta, pt);
+#else
+	CWnd::OnMouseWheel(nFlags, zDelta, pt);
+#endif
 }
 
 void CFPSMiniCalendarCtrl::ScrollLeft(int iCount)
