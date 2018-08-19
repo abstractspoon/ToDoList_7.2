@@ -151,8 +151,9 @@ public:
 	BOOL IsDateSelected(COleDateTime& dt);
 	void AutoConfigure();
 	void AutoSize();
-	void ScrollRight(int iCount = 1);
-	void ScrollLeft(int iCount = 1);
+
+	void ScrollMonth(int nNumMonths);
+	void ScrollPage(int nNumPages);
 	void ClearSelections();
 
 	virtual CFPSMiniCalendarCtrlFontHotSpot* HitTest(POINT& pt);
