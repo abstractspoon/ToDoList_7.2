@@ -712,37 +712,45 @@ void CPreferencesUITasklistColorsPage::OnSelchangeAttribValue()
 
 LRESULT CPreferencesUITasklistColorsPage::OnAttribValueAdded(WPARAM /*wParam*/, LPARAM lParam)
 {
-   CString sAttrib((LPCTSTR)lParam);
-
-   if (!sAttrib.IsEmpty() && FindAttribValue(sAttrib) == -1)
-   {
+	CString sAttrib((LPCTSTR)lParam);
+	
+	if (!sAttrib.IsEmpty() && FindAttribValue(sAttrib) == -1)
+	{
 		ATTRIBCOLOR ac;
 		ac.sAttrib = sAttrib;
 		ac.color = CLR_NONE;
-
+		
 		m_aAttribColors.Add(ac);
 
+		OnSelchangeAttribValue();
+		UpdateData(FALSE);
+		
 		CPreferencesPageBase::OnControlChange();
-   }
-  
-   return 0L;
+	}
+	
+	return 0L;
 }
 
 LRESULT CPreferencesUITasklistColorsPage::OnAttribValueDeleted(WPARAM /*wParam*/, LPARAM lParam)
 {
-   CString sAttrib((LPCTSTR)lParam);
+	CString sAttrib((LPCTSTR)lParam);
+	
+	if (!sAttrib.IsEmpty())
+	{
+		int nDel = FindAttribValue(sAttrib);
+		
+		if (nDel != -1)
+		{
+			m_aAttribColors.RemoveAt(nDel);
 
-   if (!sAttrib.IsEmpty())
-   {
-	   int nDel = FindAttribValue(sAttrib);
-	   
-	   if (nDel != -1)
-		   m_aAttribColors.RemoveAt(nDel);
-	   
-	   CPreferencesPageBase::OnControlChange();
-   }
-   
-   return 0L;
+			OnSelchangeAttribValue();
+			UpdateData(FALSE);
+		}
+		
+		CPreferencesPageBase::OnControlChange();
+	}
+	
+	return 0L;
 }
 
 void CPreferencesUITasklistColorsPage::OnCommentsusetreefont() 
