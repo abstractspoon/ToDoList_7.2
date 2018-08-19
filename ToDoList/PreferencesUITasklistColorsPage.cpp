@@ -41,9 +41,9 @@ const int DEFFONTSIZE = 8;
 
 //IMPLEMENT_DYNCREATE(CPreferencesUITasklistColorsPage, CPreferencesPageBase)
 
-CPreferencesUITasklistColorsPage::CPreferencesUITasklistColorsPage(const TDCAUTOLISTDATA& defaultListData) : 
+CPreferencesUITasklistColorsPage::CPreferencesUITasklistColorsPage() 
+	: 
 	CPreferencesPageBase(CPreferencesUITasklistColorsPage::IDD),
-	m_defaultListData(defaultListData),
 	m_nTextColorOption(COLOROPT_PRIORITY), 
 	m_cbAttributes(CCBS_DRAWNOCOLOR, ACBS_ALLOWDELETE), 
 	m_nColorAttribute(TDCA_NONE)
@@ -635,6 +635,7 @@ void CPreferencesUITasklistColorsPage::OnChangeTextColorOption()
 	GetDlgItem(IDC_ATTRIBUTETOCOLORBY)->EnableWindow(bColorByAttrib);
 	GetDlgItem(IDC_ATTRIBUTECOLORS)->EnableWindow(bColorByAttrib);
 	GetDlgItem(IDC_POPULATEATTRIBLIST)->EnableWindow(bColorByAttrib);
+
 	m_btAttribColor.EnableWindow(bColorByAttrib && !m_sSelAttribValue.IsEmpty());
 
 	CPreferencesPageBase::OnControlChange();
@@ -661,7 +662,7 @@ void CPreferencesUITasklistColorsPage::OnSetAttribValuecolor()
 		ASSERT(nColor == (m_cbAttributes.GetCount() - 1));
 	}
 
-	m_cbAttributes.SetColor(nColor, crAttrib);
+	m_cbAttributes.SetColor(m_sSelAttribValue, crAttrib);
 
 	CPreferencesPageBase::OnControlChange();
 }
@@ -1043,6 +1044,11 @@ void CPreferencesUITasklistColorsPage::SavePreferences(IPreferences* pPrefs, LPC
 void CPreferencesUITasklistColorsPage::OnPopulateattriblist() 
 {
 	AddDefaultListItemsToAttributeColors();
+}
+
+void CPreferencesUITasklistColorsPage::SetDefaultListData(const TDCAUTOLISTDATA& defaultListData)
+{
+	m_defaultListData.Copy(defaultListData);
 }
 
 void CPreferencesUITasklistColorsPage::OnSelchangeAttributetocolorby() 
