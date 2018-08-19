@@ -11188,6 +11188,10 @@ void CToDoListWnd::OnEnable(BOOL bEnable)
 	}
 	else
 	{
+		// clear any pressed state
+		m_toolbarMain.Invalidate(FALSE);
+		m_toolbarCustom.Invalidate(FALSE);
+
 		UpdateWindow();
 
 		if (m_bReshowTimeTrackerOnEnable)
