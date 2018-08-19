@@ -131,7 +131,7 @@ protected:
 	void SyncMiniCalendar(BOOL bScroll);
 	void SyncBigCalendar(BOOL bScroll);
 
-	static BOOL CALLBACK IsMiniCalSpecialDateCallback(COleDateTime &dt, DWORD dwUserData);
+	static BOOL CALLBACK IsMiniCalSpecialDateCallback(const COleDateTime &dt, DWORD dwUserData);
 };
 
 /////////////////////////////////////////////////////////////////////////////

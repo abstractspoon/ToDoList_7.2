@@ -532,7 +532,7 @@ void CCalendarWnd::OnSize(UINT nType, int cx, int cy)
 		ResizeControls(cx, cy);
 }
 
-BOOL CALLBACK CCalendarWnd::IsMiniCalSpecialDateCallback(COleDateTime &dt, DWORD dwUserData)
+BOOL CALLBACK CCalendarWnd::IsMiniCalSpecialDateCallback(const COleDateTime &dt, DWORD dwUserData)
 {
 	ASSERT(dwUserData);
 

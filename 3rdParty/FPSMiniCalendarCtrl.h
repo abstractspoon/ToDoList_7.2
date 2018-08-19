@@ -65,7 +65,7 @@
 
 // callback function (definition) for the IsSpecialDate
 // function
-typedef BOOL (CALLBACK* funcSPECIALDATE)(COleDateTime&, DWORD);
+typedef BOOL (CALLBACK* funcSPECIALDATE)(const COleDateTime&, DWORD);
 
 enum FMC_FONT_TYPE
 {
@@ -156,8 +156,8 @@ public:
 	void ScrollPage(int nNumPages);
 	void ClearSelections();
 
-	virtual CFPSMiniCalendarCtrlFontHotSpot* HitTest(POINT& pt);
-	virtual CFPSMiniCalendarCtrlCell* HeaderHitTest(POINT& point);
+	CFPSMiniCalendarCtrlFontHotSpot* HitTest(POINT& pt) const;
+	CFPSMiniCalendarCtrlCell* HeaderHitTest(POINT& point) const;
 
 	COleDateTime GetDate();
 	void SetDate(COleDateTime dt);
@@ -305,7 +305,7 @@ protected:
 	CRect							m_rectNone;
 
 protected:
-	BOOL IsSpecialDate(COleDateTime& dt);
+	BOOL IsSpecialDate(const COleDateTime& dt) const;
 	void AllocateCells();
 	void SetCellHeaderPosition(int iMonthRow, int iMonthCol, RECT rect);
 	void SetCellPosition(int iMonthRow, int iMonthCol, RECT rect);

@@ -881,8 +881,8 @@ int CFPSMiniCalendarCtrl::DrawDays(CDC &dc, int iY, int iLeftX, int iMonthRow, i
 		for (int iDayOfWeek = 1; iDayOfWeek <= 7; iDayOfWeek++)
 		{
 			if (dt.GetMonth() == dtStart.GetMonth() ||
-				(dt > dtStart && iMonthCol == m_iCols && iMonthRow == m_iRows && m_bShowNonMonthDays) ||
-				(dt < dtStart && iMonthCol == 1 && iMonthRow == 1 && m_bShowNonMonthDays))
+				(dt > dtStart && /*iMonthCol == m_iCols && iMonthRow == m_iRows &&*/ m_bShowNonMonthDays) ||
+				(dt < dtStart && /*iMonthCol == 1 && iMonthRow == 1 &&*/ m_bShowNonMonthDays))
 			{
 				BOOL bSelected = IsDateSelected(dt);
 				CString strText = CStr(dt.GetDay());
@@ -1628,7 +1628,7 @@ void CFPSMiniCalendarCtrl::SetRowsAndColumns(int iRows, int iCols)
 	}
 }
 
-CFPSMiniCalendarCtrlFontHotSpot* CFPSMiniCalendarCtrl::HitTest(POINT& pt)
+CFPSMiniCalendarCtrlFontHotSpot* CFPSMiniCalendarCtrl::HitTest(POINT& pt) const
 {
 	int iCell = 0;
 	BOOL bFound = FALSE;
@@ -1936,7 +1936,7 @@ void CFPSMiniCalendarCtrl::SetDate(COleDateTime dt)
 
 // determines whether or not a given date is special.  This function
 // calls a callback function to make this determination
-BOOL CFPSMiniCalendarCtrl::IsSpecialDate(COleDateTime &dt)
+BOOL CFPSMiniCalendarCtrl::IsSpecialDate(const COleDateTime &dt) const
 {
 	if (m_pfuncCallback)
 	{
@@ -1961,7 +1961,7 @@ void CFPSMiniCalendarCtrl::SetSpecialDaysCallback(funcSPECIALDATE pValue, DWORD 
 	m_dwCallbackData = dwUserData;
 }
 
-CFPSMiniCalendarCtrlCell* CFPSMiniCalendarCtrl::HeaderHitTest(POINT& point)
+CFPSMiniCalendarCtrlCell* CFPSMiniCalendarCtrl::HeaderHitTest(POINT& point) const
 {
 	CFPSMiniCalendarCtrlCell* pReturn = NULL;
 
