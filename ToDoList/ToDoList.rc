@@ -5410,6 +5410,11 @@ BEGIN
     IDS_CMDLINE_HELP        "-h, -help, -?\tDisplays a message box showing all the available commandline options"
 END
 
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_REMINDER_TASKPARENTCOL "Parent"
+END
+
 #endif    // English (Australia) resources
 /////////////////////////////////////////////////////////////////////////////
 
