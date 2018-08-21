@@ -28,6 +28,12 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef LVS_EX_DOUBLEBUFFER
+#define LVS_EX_DOUBLEBUFFER 0x00010000
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+
 // for PlaySound
 #pragma comment(lib, "winmm.lib")
 
@@ -136,6 +142,7 @@ BOOL CTDLShowReminderDlg::OnInitDialog()
 	m_lcReminders.InsertColumn(WHEN_COL, CEnString(IDS_REMINDER_WHENCOL), LVCFMT_LEFT, GraphicsMisc::ScaleByDPIFactor(150));
 
 	ListView_SetExtendedListViewStyleEx(m_lcReminders, LVS_EX_FULLROWSELECT, LVS_EX_FULLROWSELECT);
+	ListView_SetExtendedListViewStyleEx(m_lcReminders, LVS_EX_DOUBLEBUFFER, LVS_EX_DOUBLEBUFFER);
 
 	CThemed::SetWindowTheme(&m_lcReminders, _T("Explorer"));
 
