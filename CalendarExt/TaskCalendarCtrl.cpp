@@ -610,8 +610,8 @@ void CTaskCalendarCtrl::DrawCells(CDC* pDC)
 
 	// rebuild build display
 	m_nMaxDayTaskCount = 0;
-//	m_mapVertPos.RemoveAll();
 	m_mapTextOffset.RemoveAll();
+	m_mapVertPos.RemoveAll();
 
 	if (m_mapData.GetCount())
 	{
@@ -692,6 +692,9 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 	{
 		const TASKCALITEM* pTCI = pTasks->GetAt(nTask);
 		ASSERT(pTCI);
+
+		DWORD dwTaskID = pTCI->GetTaskID();
+		ASSERT(dwTaskID);
 		
 		CRect rTask;
 		
@@ -699,7 +702,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 			continue;
 
 		// draw selection
-		BOOL bSelTask = (!m_bSavingToImage && (pTCI->GetTaskID() == m_dwSelectedTaskID));
+		BOOL bSelTask = (!m_bSavingToImage && (dwTaskID == m_dwSelectedTaskID));
 		COLORREF crText = pTCI->GetTextColor(bSelTask, bTextColorIsBkgnd);
 
 		if (bSelTask)
@@ -758,7 +761,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 		// draw text if there is enough space
 		if (nTaskHeight >= MIN_TASK_HEIGHT)
 		{
-			int nOffset = GetTaskTextOffset(pTCI->GetTaskID());
+			int nOffset = GetTaskTextOffset(dwTaskID);
 			
 			if (nOffset != -1)
 			{
@@ -783,7 +786,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 				if (nOffset >= nExtent)
 					nOffset = -1;
 				
-				m_mapTextOffset[pTCI->GetTaskID()] = nOffset;
+				m_mapTextOffset[dwTaskID] = nOffset;
 			}
 						
 			if (rTask.bottom >= rCellTrue.bottom)
@@ -1132,7 +1135,34 @@ int CTaskCalendarCtrl::RebuildCellTasks(CCalendarCell* pCell) const
 		s_bSortAscending = -1;
 	}
 
+	// now go thru the list and set the position of each item 
+	// if not already done
+	int nMaxPos = 0;
+
+	for (int nTask = 0; nTask < pTasks->GetSize(); nTask++)
+	{
+		const TASKCALITEM* pTCI = pTasks->GetAt(nTask);
+		ASSERT(pTCI);
+
+		dwTaskID = pTCI->GetTaskID();
+
+		if (HasOption(TCCO_DISPLAYCONTINUOUS))
+		{
+			int nPos;
+
+			if (!m_mapVertPos.Lookup(dwTaskID, nPos))
+			{
+				nPos = max(nMaxPos, nTask);
+				m_mapVertPos[dwTaskID] = nPos;
+			}
+			
+			nMaxPos = max(nMaxPos, nPos+1);
+		}
+		// else pos is just task index
+	}
+
 	m_nMaxDayTaskCount = max(m_nMaxDayTaskCount, pTasks->GetSize());
+	m_nMaxDayTaskCount = max(m_nMaxDayTaskCount, nMaxPos);
 
 	return pTasks->GetSize();
 }
@@ -1237,7 +1267,10 @@ DWORD CTaskCalendarCtrl::HitTest(const CPoint& ptCursor, TCC_HITTEST& nHit) cons
 		const TASKCALITEM* pTCI = (*pTasks)[nTask];
 		ASSERT(pTCI);
 
-		int nTaskPos = GetTaskVertPos(nTask, pCell);
+		DWORD dwTaskID = pTCI->GetTaskID();
+		ASSERT(dwTaskID);
+
+		int nTaskPos = GetTaskVertPos(dwTaskID, pCell, nTask);
 		
 		if (nTaskPos == nPos)
 		{
@@ -1261,7 +1294,7 @@ DWORD CTaskCalendarCtrl::HitTest(const CPoint& ptCursor, TCC_HITTEST& nHit) cons
 				nHit = TCCHT_MIDDLE;
 			}
 			
-			return (nHit == TCCHT_NOWHERE) ? 0 : pTCI->GetTaskID();
+			return ((nHit == TCCHT_NOWHERE) ? 0 : dwTaskID);
 		}
 	}
 
@@ -1279,20 +1312,25 @@ BOOL CTaskCalendarCtrl::IsValidTask(int nTask, const CCalendarCell* pCell) const
 	return ((nTask >= 0) && (nTask < pTasks->GetSize()));
 }
 
-int CTaskCalendarCtrl::GetTaskVertPos(int nTask, const CCalendarCell* pCell) const
+int CTaskCalendarCtrl::GetTaskVertPos(DWORD dwTaskID, const CCalendarCell* pCell, int nTask) const
 {
-	ASSERT(IsValidTask(nTask, pCell));
+	ASSERT(dwTaskID);
+	int nPos = -1;
+
+	if (HasOption(TCCO_DISPLAYCONTINUOUS))
+		m_mapVertPos.Lookup(dwTaskID, nPos);
+	else
+		nPos = ((nTask == -1) ? GetTaskIndex(dwTaskID, pCell) : nTask);
 
 	BOOL bVScrolled = (IsGridCellSelected(pCell) || HasOption(TCCO_DISPLAYCONTINUOUS));
-	int nPos = nTask;
-	
+
 	if (bVScrolled)
 		nPos -= m_nCellVScrollPos;
 
 	return nPos;
 }
 
-BOOL CTaskCalendarCtrl::GetTaskIndex(DWORD dwTask, const CCalendarCell* pCell) const
+int CTaskCalendarCtrl::GetTaskIndex(DWORD dwTask, const CCalendarCell* pCell) const
 {
 	const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
 	ASSERT(pTasks);
@@ -1302,10 +1340,10 @@ BOOL CTaskCalendarCtrl::GetTaskIndex(DWORD dwTask, const CCalendarCell* pCell) c
 	while (nTask--)
 	{
 		if (pTasks->GetAt(nTask)->GetTaskID() == dwTask)
-			return TRUE;
+			return nTask;
 	}
 
-	return FALSE;
+	return -1;
 }
 
 double CTaskCalendarCtrl::CalcDateDragTolerance() const
@@ -1429,7 +1467,7 @@ BOOL CTaskCalendarCtrl::CalcTaskCellRect(int nTask, const CCalendarCell* pCell, 
 		return FALSE;
 
 	// check vertical (pos) intersection next
-	int nPos = GetTaskVertPos(nTask, pCell);
+	int nPos = GetTaskVertPos(pTCI->GetTaskID(), pCell, nTask);
 	ASSERT(nPos >= 0 && nPos < m_nMaxDayTaskCount);
 
 	int nTaskHeight = GetTaskHeight();

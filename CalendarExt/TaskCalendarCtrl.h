@@ -92,7 +92,7 @@ protected:
 	IUI_ATTRIBUTE m_nSortBy;
 	BOOL m_bSortAscending;
 	
-	mutable CMap<DWORD, DWORD, int, int> m_mapTextOffset;
+	mutable CMap<DWORD, DWORD, int, int> m_mapVertPos, m_mapTextOffset;
 	mutable int m_nMaxDayTaskCount;
 	mutable TCC_SNAPMODE m_nSnapMode;
 
@@ -143,7 +143,7 @@ protected:
 	CTaskCalItemArray* GetCellTasks(CCalendarCell* pCell) const;
 
 	BOOL CalcTaskCellRect(int nTask, const CCalendarCell* pCell, const CRect& rCell, CRect& rTask) const;
-	int GetTaskVertPos(int nTask, const CCalendarCell* pCell) const;
+	int GetTaskVertPos(DWORD dwTaskID, const CCalendarCell* pCell, int nTask = -1) const;
 	BOOL GetTaskIndex(DWORD dwTaskID, const CCalendarCell* pCell) const;
 
 	void ResetPositions();
