@@ -33,7 +33,7 @@ public:
 	virtual ~CTaskCalendarCtrl();
 
 	void UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, const CSet<IUI_ATTRIBUTE>& attrib);
-	bool PrepareNewTask(ITaskList* pTask) const;
+	BOOL PrepareNewTask(ITaskList* pTask) const;
 
 	BOOL SaveToImage(CBitmap& bmImage);
 	BOOL CanSaveToImage() const;
@@ -42,7 +42,7 @@ public:
 	BOOL CancelDrag();
 	BOOL HasTask(DWORD dwTaskID) const;
 	DWORD HitTest(const CPoint& ptCursor) const;
-	void SetReadOnly(bool bReadOnly) { m_bReadOnly = bReadOnly; }
+	void SetReadOnly(BOOL bReadOnly) { m_bReadOnly = bReadOnly; }
 	BOOL SetVisibleWeeks(int nWeeks);
 	void SetStrikeThruDoneTasks(BOOL bStrikeThru);
 	void EnsureVisible(DWORD dwTaskID, BOOL bShowStart);
@@ -62,7 +62,7 @@ public:
 	void SetOption(DWORD dwOption, BOOL bSet);
 	BOOL HasOption(DWORD dwOption) const { return ((m_dwOptions & dwOption) == dwOption); }
 
-	bool ProcessMessage(MSG* pMsg);
+	BOOL ProcessMessage(MSG* pMsg);
 	void FilterToolTipMessage(MSG* pMsg);
 
 	static BOOL WantEditUpdate(IUI_ATTRIBUTE nEditAttribute);
@@ -142,19 +142,19 @@ protected:
 	const CTaskCalItemArray* GetCellTasks(const CCalendarCell* pCell) const;
 	CTaskCalItemArray* GetCellTasks(CCalendarCell* pCell) const;
 
-	BOOL CalcTaskCellRect(DWORD dwTaskID, const CCalendarCell* pCell, const CRect& rCell, CRect& rTask) const;
 	BOOL CalcTaskCellRect(int nTask, const CCalendarCell* pCell, const CRect& rCell, CRect& rTask) const;
 	int GetTaskVertPos(int nTask, const CCalendarCell* pCell) const;
-	int GetTaskVertPos(DWORD dwTask, const CCalendarCell* pCell) const;
+	BOOL GetTaskIndex(DWORD dwTaskID, const CCalendarCell* pCell) const;
 
 	void ResetPositions();
-	BOOL IsValidTask(int nTask, const CCalendarCell* pCell);
+	BOOL IsValidTask(int nTask, const CCalendarCell* pCell) const;
 	int GetTaskTextOffset(DWORD dwTaskID) const;
 	TASKCALITEM* GetTaskCalItem(DWORD dwTaskID) const;
 	BOOL IsTaskCalItemLocked(DWORD dwTaskID) const;
 	BOOL IsTaskCalItemDone(DWORD dwTaskID, BOOL bIncGoodAs) const;
 	BOOL TaskCalItemHasDependencies(DWORD dwTaskID) const;
-	bool GetGridCellFromTask(DWORD dwTaskID, int &nRow, int &nCol) const;
+	BOOL GetGridCellFromTask(DWORD dwTaskID, int &nRow, int &nCol) const;
+	BOOL GetGridCellFromTask(DWORD dwTaskID, int &nRow, int &nCol, int& nTask) const;
 	int GetGridRowFromPoint(const CPoint& point) const;
 	BOOL CanDragTask(DWORD dwTaskID, TCC_HITTEST nHit) const;
 	BOOL SetTaskCursor(DWORD dwTaskID, TCC_HITTEST nHit) const;

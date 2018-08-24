@@ -506,7 +506,7 @@ bool CCalendarWnd::PrepareNewTask(ITaskList* pTask) const
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	
-	return m_BigCalendar.PrepareNewTask(pTask);
+	return (m_BigCalendar.PrepareNewTask(pTask) != FALSE);
 }
 
 void CCalendarWnd::UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, const IUI_ATTRIBUTE* pAttributes, int nNumAttributes)
