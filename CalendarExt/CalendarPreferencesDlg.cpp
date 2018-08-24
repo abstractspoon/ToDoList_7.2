@@ -83,11 +83,10 @@ BOOL CCalendarPreferencesPage::OnInitDialog()
 {
 	CPreferencesPageBase::OnInitDialog();
 
-	// inter-dependencies
 	GetDlgItem(IDC_SHOWSTARTDATES)->EnableWindow(!m_bShowTasksContinuous);
 	GetDlgItem(IDC_SHOWDUEDATES)->EnableWindow(!m_bShowTasksContinuous);
-	GetDlgItem(IDC_SHOWCALCSTARTDATES)->EnableWindow(m_bShowStartDates);
-	GetDlgItem(IDC_SHOWCALCDUEDATES)->EnableWindow(m_bShowDueDates);
+	GetDlgItem(IDC_SHOWCALCSTARTDATES)->EnableWindow(!m_bShowTasksContinuous && m_bShowStartDates);
+	GetDlgItem(IDC_SHOWCALCDUEDATES)->EnableWindow(!m_bShowTasksContinuous && m_bShowDueDates);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -97,20 +96,10 @@ void CCalendarPreferencesPage::OnShowTasksContinuous()
 {
 	UpdateData();
 
-	// inter-dependencies
-	if (m_bShowTasksContinuous)
-	{
-		m_bShowStartDates = FALSE;
-		m_bShowDueDates = FALSE;
-
-		UpdateData(FALSE);
-
-		GetDlgItem(IDC_SHOWCALCSTARTDATES)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SHOWCALCDUEDATES)->EnableWindow(FALSE);
-	}
-
 	GetDlgItem(IDC_SHOWSTARTDATES)->EnableWindow(!m_bShowTasksContinuous);
 	GetDlgItem(IDC_SHOWDUEDATES)->EnableWindow(!m_bShowTasksContinuous);
+	GetDlgItem(IDC_SHOWCALCSTARTDATES)->EnableWindow(!m_bShowTasksContinuous && m_bShowStartDates);
+	GetDlgItem(IDC_SHOWCALCDUEDATES)->EnableWindow(!m_bShowTasksContinuous && m_bShowDueDates);
 }
 
 void CCalendarPreferencesPage::OnShowStartDates() 
