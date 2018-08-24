@@ -610,7 +610,7 @@ void CTaskCalendarCtrl::DrawCells(CDC* pDC)
 
 	// rebuild build display
 	m_nMaxDayTaskCount = 0;
-	m_mapVertPos.RemoveAll();
+//	m_mapVertPos.RemoveAll();
 	m_mapTextOffset.RemoveAll();
 
 	if (m_mapData.GetCount())
@@ -622,16 +622,7 @@ void CTaskCalendarCtrl::DrawCells(CDC* pDC)
 				CCalendarCell* pCell = GetCell(i, u);
 				ASSERT(pCell);
 
-				CTaskCalItemArray* pTasks = static_cast<CTaskCalItemArray*>(pCell->pUserData);
-
-				if (pTasks == NULL)
-				{
-					pTasks = new CTaskCalItemArray();
-					pCell->pUserData = pTasks;
-				}
-
-				ASSERT(pTasks);
-				GetCellTasks(pCell->date, *pTasks, TRUE);
+				RebuildCellTasks(pCell);
 			}
 		}
 	}
@@ -673,7 +664,7 @@ void CTaskCalendarCtrl::DrawCellContent(CDC* pDC, const CCalendarCell* pCell, co
 	if (!m_nMaxDayTaskCount)
 		return;
 	
-	CTaskCalItemArray* pTasks = static_cast<CTaskCalItemArray*>(pCell->pUserData);
+	const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
 	ASSERT(pTasks);
 	
 	int nNumTasks = (pTasks ? pTasks->GetSize() : 0);
@@ -863,9 +854,7 @@ BOOL CTaskCalendarCtrl::UpdateCellScrollBarVisibility()
 		if (bShowSB)
 		{
 			const CCalendarCell* pCell = GetCell(nRow, nCol);
-			ASSERT(pCell);
-			
-			const CTaskCalItemArray* pTasks = static_cast<CTaskCalItemArray*>(pCell->pUserData);
+			const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
 
 			if (pTasks)
 			{
@@ -1040,18 +1029,36 @@ BOOL CTaskCalendarCtrl::SortBy(IUI_ATTRIBUTE nSortBy, BOOL bAscending)
 	return TRUE;
 }
 
-int CTaskCalendarCtrl::GetCellTasks(const COleDateTime& dtCell, CTaskCalItemArray& aTasks, BOOL bOrdered) const
+const CTaskCalItemArray* CTaskCalendarCtrl::GetCellTasks(const CCalendarCell* pCell) const
 {
-	ASSERT(dtCell);
+	ASSERT(pCell);
+	
+	return static_cast<CTaskCalItemArray*>(pCell->pUserData);
+}
+
+CTaskCalItemArray* CTaskCalendarCtrl::GetCellTasks(CCalendarCell* pCell) const
+{
+	ASSERT(pCell);
+
+	if (pCell->pUserData == NULL)
+		pCell->pUserData = new CTaskCalItemArray();
+	
+	return static_cast<CTaskCalItemArray*>(pCell->pUserData);
+}
+
+int CTaskCalendarCtrl::RebuildCellTasks(CCalendarCell* pCell) const
+{
+	ASSERT(pCell);
 
 #ifdef _DEBUG
-	int nDay = dtCell.GetDay();
-	int nMonth = dtCell.GetMonth();
+	int nDay = pCell->date.GetDay();
+	int nMonth = pCell->date.GetMonth();
 #endif
 
-	aTasks.RemoveAll();
+	CTaskCalItemArray* pTasks = GetCellTasks(pCell);
+	pTasks->RemoveAll();
 
-	double dCellStart = dtCell, dCellEnd = dCellStart + 1.0;
+	double dCellStart = pCell->date, dCellEnd = dCellStart + 1.0;
 	POSITION pos = m_mapData.GetStartPosition();
 	DWORD dwTaskID = 0;
 	TASKCALITEM* pTCI = NULL;
@@ -1077,7 +1084,7 @@ int CTaskCalendarCtrl::GetCellTasks(const COleDateTime& dtCell, CTaskCalItemArra
 			if ((pTCI->GetAnyStartDate().m_dt < dCellEnd) && 
 				(pTCI->GetAnyEndDate().m_dt >= dCellStart))
 			{
-				aTasks.Add(pTCI);
+				pTasks->Add(pTCI);
 			}
 		}
 		else
@@ -1086,9 +1093,9 @@ int CTaskCalendarCtrl::GetCellTasks(const COleDateTime& dtCell, CTaskCalItemArra
 
 			if (HasOption(TCCO_DISPLAYCALCSTART) || (HasOption(TCCO_DISPLAYSTART) && pTCI->IsStartDateSet()))
 			{
-				if (CDateHelper::GetDateOnly(pTCI->GetAnyStartDate()) == dtCell)
+				if (CDateHelper::GetDateOnly(pTCI->GetAnyStartDate()).m_dt == dCellStart)
 				{
-					aTasks.Add(pTCI);
+					pTasks->Add(pTCI);
 					bAdded = TRUE;
 				}
 			}
@@ -1098,56 +1105,36 @@ int CTaskCalendarCtrl::GetCellTasks(const COleDateTime& dtCell, CTaskCalItemArra
 			{
 				if (HasOption(TCCO_DISPLAYCALCDUE) || (HasOption(TCCO_DISPLAYDUE) && pTCI->IsEndDateSet()))
 				{
-					if (CDateHelper::GetDateOnly(pTCI->GetAnyEndDate()) == dtCell)
+					if (CDateHelper::GetDateOnly(pTCI->GetAnyEndDate()).m_dt == dCellStart)
 					{
-						aTasks.Add(pTCI);
+						pTasks->Add(pTCI);
 						bAdded = TRUE;
 					}
 				}
 
 				if (!bAdded && HasOption(TCCO_DISPLAYDONE) && pTCI->IsDone(FALSE))
 				{
-					if (CDateHelper::GetDateOnly(pTCI->GetDoneDate()) == dtCell)
-						aTasks.Add(pTCI);
+					if (CDateHelper::GetDateOnly(pTCI->GetDoneDate()).m_dt == dCellStart)
+						pTasks->Add(pTCI);
 				}
 			}
 		}
 	}
 
-	if (bOrdered && aTasks.GetSize() > 1)
+	if (pTasks->GetSize() > 1)
 	{
 		s_nSortBy = m_nSortBy;
 		s_bSortAscending = m_bSortAscending;
 
-		qsort(aTasks.GetData(), aTasks.GetSize(), sizeof(TASKCALITEM*), CompareTCItems);
+		qsort(pTasks->GetData(), pTasks->GetSize(), sizeof(TASKCALITEM*), CompareTCItems);
 
 		s_nSortBy = IUI_NONE;
 		s_bSortAscending = -1;
 	}
 
-	// now go thru the list and set the position of each item 
-	// if not already done
-	int nMaxPos = 0;
+	m_nMaxDayTaskCount = max(m_nMaxDayTaskCount, pTasks->GetSize());
 
-	for (int nTask = 0; nTask < aTasks.GetSize(); nTask++)
-	{
-		const TASKCALITEM* pTCI = aTasks[nTask];
-		ASSERT(pTCI);
-
-		int nPos;
-
-		if (!m_mapVertPos.Lookup(pTCI->GetTaskID(), nPos))
-		{
-			nPos = max(nMaxPos, nTask);
-			m_mapVertPos[pTCI->GetTaskID()] = nPos;
-		}
-
-		nMaxPos = max(nMaxPos, nPos+1);
-	}
-
-	m_nMaxDayTaskCount = max(m_nMaxDayTaskCount, nMaxPos);
-
-	return aTasks.GetSize();
+	return pTasks->GetSize();
 }
 
 int CTaskCalendarCtrl::CompareTCItems(const void* pV1, const void* pV2)
@@ -1250,8 +1237,7 @@ DWORD CTaskCalendarCtrl::HitTest(const CPoint& ptCursor, TCC_HITTEST& nHit) cons
 		const TASKCALITEM* pTCI = (*pTasks)[nTask];
 		ASSERT(pTCI);
 
-		BOOL bVScrolled = (IsGridCellSelected(pCell) || HasOption(TCCO_DISPLAYCONTINUOUS));
-		int nTaskPos = GetTaskVertPos(pTCI->GetTaskID(), bVScrolled);
+		int nTaskPos = GetTaskVertPos(pCell, nTask);
 		
 		if (nTaskPos == nPos)
 		{
@@ -1280,6 +1266,45 @@ DWORD CTaskCalendarCtrl::HitTest(const CPoint& ptCursor, TCC_HITTEST& nHit) cons
 	}
 
 	// nothing hit
+	return 0;
+}
+
+BOOL CTaskCalendarCtrl::IsValidTask(int nTask, const CCalendarCell* pCell)
+{
+	ASSERT(pCell);
+
+	const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
+	ASSERT(pTasks);
+
+	return ((nTask >= 0) && (nTask < pTasks->GetSize()));
+}
+
+int CTaskCalendarCtrl::GetTaskVertPos(int nTask, const CCalendarCell* pCell) const
+{
+	ASSERT(IsValidTask(nTask, pCell));
+
+	BOOL bVScrolled = (IsGridCellSelected(pCell) || HasOption(TCCO_DISPLAYCONTINUOUS));
+	int nPos = nTask;
+	
+	if (bVScrolled)
+		nPos -= m_nCellVScrollPos;
+
+	return nPos;
+}
+
+int CTaskCalendarCtrl::GetTaskVertPos(DWORD dwTask, const CCalendarCell* pCell) const
+{
+	const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
+	ASSERT(pTasks);
+
+	int nTask = pTasks->GetSize();
+
+	while (nTask--)
+	{
+		if (pTasks->GetAt(nTask)->GetTaskID() == dwTask)
+			return GetTaskVertPos(pCell, nTask);
+	}
+
 	return 0;
 }
 
@@ -1336,24 +1361,26 @@ void CTaskCalendarCtrl::EnsureVisible(DWORD dwTaskID, BOOL bShowStart)
 bool CTaskCalendarCtrl::GetGridCellFromTask(DWORD dwTaskID, int &nRow, int &nCol) const
 {
 	// iterate the visible cells for the specified task
-	CTaskCalItemArray aTasks;
-
 	for(int i=0; i < GetVisibleWeeks() ; i++)
 	{
 		for(int u=0; u<CALENDAR_NUM_COLUMNS; u++)
 		{
 			const CCalendarCell* pCell = GetCell(i, u);
-			
-			int nTask = GetCellTasks(pCell->date, aTasks, FALSE);
+			const CTaskCalItemArray* pTasks = GetCellTasks(pCell);
 
-			while (nTask--)
+			if (pTasks)
 			{
-				if (aTasks[nTask]->GetTaskID() == dwTaskID)
-				{
-					nRow = i;
-					nCol = u;
+				int nTask = pTasks->GetSize();
 
-					return true;
+				while (nTask--)
+				{
+					if (pTasks->GetAt(nTask)->GetTaskID() == dwTaskID)
+					{
+						nRow = i;
+						nCol = u;
+
+						return true;
+					}
 				}
 			}
 		}
@@ -1379,6 +1406,11 @@ BOOL CTaskCalendarCtrl::GetTaskLabelRect(DWORD dwTaskID, CRect& rLabel) const
 	return CalcTaskCellRect(dwTaskID, pCell, rCell, rLabel);
 }
 
+BOOL CTaskCalendarCtrl::CalcTaskCellRect(int nTask, const CCalendarCell* pCell, const CRect& rCell, CRect& rTask) const
+{
+
+}
+
 BOOL CTaskCalendarCtrl::CalcTaskCellRect(DWORD dwTaskID, const CCalendarCell* pCell, const CRect& rCell, CRect& rTask) const
 {
 	// check horizontal (date) intersection first
@@ -1392,9 +1424,7 @@ BOOL CTaskCalendarCtrl::CalcTaskCellRect(DWORD dwTaskID, const CCalendarCell* pC
 		return FALSE;
 
 	// check vertical (pos) intersection next
-	BOOL bVScrolled = (IsGridCellSelected(pCell) || HasOption(TCCO_DISPLAYCONTINUOUS));
-	int nPos = GetTaskVertPos(dwTaskID, bVScrolled);
-
+	int nPos = GetTaskVertPos(pCell, dwTaskID);
 	ASSERT(nPos >= 0 && nPos < m_nMaxDayTaskCount);
 
 	int nTaskHeight = GetTaskHeight();
@@ -1434,6 +1464,7 @@ BOOL CTaskCalendarCtrl::CalcTaskCellRect(DWORD dwTaskID, const CCalendarCell* pC
 	return TRUE;
 }
 
+/*
 int CTaskCalendarCtrl::GetTaskVertPos(DWORD dwTaskID, BOOL bVScrolled) const
 {
 	ASSERT(dwTaskID);
@@ -1447,6 +1478,7 @@ int CTaskCalendarCtrl::GetTaskVertPos(DWORD dwTaskID, BOOL bVScrolled) const
 
 	return nPos;
 }
+*/
 
 int CTaskCalendarCtrl::GetTaskTextOffset(DWORD dwTaskID) const
 {
