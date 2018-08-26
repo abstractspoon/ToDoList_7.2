@@ -1367,18 +1367,12 @@ LRESULT CTabbedToDoCtrl::OnUIExtGetTaskIcon(WPARAM wParam, LPARAM lParam)
 
 LRESULT CTabbedToDoCtrl::OnUIExtEditSelectedTaskTitle(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	BOOL bEdit = EditSelectedTaskTitle();
-	ASSERT(bEdit);
-
-	return bEdit;
+	return EditSelectedTaskTitle();
 }
 
 LRESULT CTabbedToDoCtrl::OnUIExtEditSelectedTaskIcon(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	BOOL bEdit = EditSelectedTaskIcon();
-	ASSERT(bEdit);
-
-	return bEdit;
+	return EditSelectedTaskIcon();
 }
 
 BOOL CTabbedToDoCtrl::ProcessUIExtensionMod(const IUITASKMOD& mod, BOOL& bDependChange, BOOL& bMoveTask)
