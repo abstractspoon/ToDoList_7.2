@@ -112,6 +112,8 @@ BEGIN_MESSAGE_MAP(CTDLShowReminderDlg, CTDLDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_REMINDERS, OnDblClkReminders)
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -483,4 +485,58 @@ void CTDLShowReminderDlg::OnDblClkReminders(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 void CTDLShowReminderDlg::HideWindow()
 {
 	ShowWindow(SW_HIDE);
+}
+
+void CTDLShowReminderDlg::OnSize(UINT nType, int cx, int cy)
+{
+	static CSize sizePrev(0, 0);
+
+	// initialize min size
+	if (m_sizeMin.cx == 0 || m_sizeMin.cy == 0)
+	{
+		CRect rWindow;
+		GetWindowRect(rWindow);
+
+		m_sizeMin = rWindow.Size();
+	}
+
+	CTDLDialog::OnSize(nType, cx, cy);
+
+	// move the controls required
+	if (m_cbSnoozeFor.GetSafeHwnd() && (sizePrev.cx > 0 || sizePrev.cy > 0))
+	{
+		int nDx = (cx - sizePrev.cx);
+		int nDy = (cy - sizePrev.cy);
+
+		CDialogHelper::ResizeChild(&m_lcReminders, nDx, nDy);
+		
+		CDialogHelper::ResizeCtrl(this, IDC_DIVIDER, nDx, 0);
+		CDialogHelper::OffsetCtrl(this, IDC_DIVIDER, 0, nDy);
+
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZE, nDx, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_DISMISS, nDx, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_DISMISSANDGOTOTASK, nDx, nDy);
+
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZEOPTIONFOR, 0, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZEOPTIONUNTIL, 0, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZEFOR, 0, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZEUNTILDATE, 0, nDy);
+		CDialogHelper::OffsetCtrl(this, IDC_SNOOZEUNTILTIME, 0, nDy);
+
+		Invalidate(FALSE);
+		UpdateWindow();
+	}
+
+	// snapshot current size before the change
+	sizePrev.cx = cx;
+	sizePrev.cy = cy;
+}
+
+
+void CTDLShowReminderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	CTDLDialog::OnGetMinMaxInfo(lpMMI);
+	
+	lpMMI->ptMinTrackSize.x = m_sizeMin.cx;
+	lpMMI->ptMinTrackSize.y = m_sizeMin.cy;
 }
