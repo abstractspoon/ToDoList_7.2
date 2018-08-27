@@ -28,7 +28,7 @@ CTDLExportDlg::CTDLExportDlg(const CImportExportMgr& mgr, BOOL bSingleTaskList, 
 					   BOOL bVisibleColumnsOnly, LPCTSTR szFilePath, LPCTSTR szFolderPath, 
 					   const CTDCCustomAttribDefinitionArray& aAttribDefs, CWnd* pParent /*=NULL*/)
 	: 
-	CTDLDialog(IDD_EXPORT_DIALOG, pParent), 
+	CTDLDialog(IDD_EXPORT_DIALOG, _T("Exporting"), pParent), 
 	m_mgrImportExport(mgr),
 	m_bSingleTaskList(bSingleTaskList), 
 	m_sFilePath(szFilePath), m_sOrgFilePath(szFilePath),
@@ -44,17 +44,17 @@ CTDLExportDlg::CTDLExportDlg(const CImportExportMgr& mgr, BOOL bSingleTaskList, 
 	CPreferences prefs;
 
 	// retrieve previous user input
-	m_bExportOneFile = prefs.GetProfileInt(_T("Exporting"), _T("ExportOneFile"), FALSE);
-	m_sMultiFilePath = prefs.GetProfileString(_T("Exporting"), _T("LastMultiFilePath"));
+	m_bExportOneFile = prefs.GetProfileInt(m_sPrefsKey, _T("ExportOneFile"), FALSE);
+	m_sMultiFilePath = prefs.GetProfileString(m_sPrefsKey, _T("LastMultiFilePath"));
 
-	m_nExportOption = m_bSingleTaskList ? ACTIVETASKLIST : prefs.GetProfileInt(_T("Exporting"), _T("ExportOption"), ACTIVETASKLIST);
+	m_nExportOption = m_bSingleTaskList ? ACTIVETASKLIST : prefs.GetProfileInt(m_sPrefsKey, _T("ExportOption"), ACTIVETASKLIST);
 	
-	m_nFormatOption = prefs.GetProfileInt(_T("Exporting"), _T("FormatOption"), 0);
+	m_nFormatOption = prefs.GetProfileInt(m_sPrefsKey, _T("FormatOption"), 0);
 	m_nFormatOption = min(m_nFormatOption, mgr.GetNumExporters());
 
 	if (m_sFolderPath.IsEmpty())
 	{
-		m_sFolderPath = prefs.GetProfileString(_T("Exporting"), _T("LastFolder"));
+		m_sFolderPath = prefs.GetProfileString(m_sPrefsKey, _T("LastFolder"));
 
 		if (m_sFolderPath.IsEmpty())
 			m_sFolderPath = FileMisc::GetFolderFromFilePath(szFilePath);
@@ -325,14 +325,14 @@ void CTDLExportDlg::OnOK()
 
 	CPreferences prefs;
 
-	prefs.WriteProfileInt(_T("Exporting"), _T("FormatOption"), m_nFormatOption);
-	prefs.WriteProfileInt(_T("Exporting"), _T("ExportOneFile"), m_bExportOneFile);
+	prefs.WriteProfileInt(m_sPrefsKey, _T("FormatOption"), m_nFormatOption);
+	prefs.WriteProfileInt(m_sPrefsKey, _T("ExportOneFile"), m_bExportOneFile);
 
 	if (!m_bSingleTaskList)
 	{
-		prefs.WriteProfileInt(_T("Exporting"), _T("ExportOption"), m_nExportOption);
-		prefs.WriteProfileString(_T("Exporting"), _T("LastMultiFilePath"), m_sMultiFilePath);
-		prefs.WriteProfileString(_T("Exporting"), _T("LastFolder"), m_sFolderPath);
+		prefs.WriteProfileInt(m_sPrefsKey, _T("ExportOption"), m_nExportOption);
+		prefs.WriteProfileString(m_sPrefsKey, _T("LastMultiFilePath"), m_sMultiFilePath);
+		prefs.WriteProfileString(m_sPrefsKey, _T("LastFolder"), m_sFolderPath);
 	}
 }
 

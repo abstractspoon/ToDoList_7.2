@@ -52,7 +52,6 @@ protected:
 	int m_bSnoozeUntil;
 	DWORD m_dwNextReminderID;
 	BOOL m_bChangingReminders;
-	CSize m_sizeMin;
 
 	CTDLReminderPeriodComboBox m_cbSnoozeFor;
 	CDateTimeCtrlEx m_dtcSnoozeDate;
@@ -76,6 +75,7 @@ protected:
 	virtual void DoDismissReminder(const TDCREMINDER& /*rem*/, BOOL /*bGotoTask*/) {}
 	virtual void DoGotoTask(const TDCREMINDER& /*rem*/) {}
 	virtual void HideWindow();
+	virtual void OnRepositionControls(int dx, int dy);
 
 // Implementation
 protected:
@@ -91,8 +91,6 @@ protected:
 	afx_msg void OnDblClkReminders(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
 
 protected:
