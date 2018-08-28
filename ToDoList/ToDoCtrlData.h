@@ -47,7 +47,7 @@ class CToDoCtrlData
 	friend class CTDCTaskFormatter;
 
 public:
-	CToDoCtrlData(const CWordArray& aStyles);
+	CToDoCtrlData(const CWordArray& aStyles, const CTDCCustomAttribDefinitionArray& aCustomAttribDefs);
 	virtual ~CToDoCtrlData();
 
 	int BuildDataModel(const CTaskFile& tasks);
@@ -223,10 +223,12 @@ public:
 
 protected:
 	CToDoCtrlDataItems m_items; // the real data
-	const CWordArray& m_aStyles; // CToDoCtrl styles
 	CToDoCtrlUndo m_undo;
 	CToDoCtrlDataStructure m_struct;
 	BOOL m_bUndoRedoing;
+
+	const CWordArray& m_aStyles;
+	const CTDCCustomAttribDefinitionArray& m_aCustomAttribDefs;
 
 	CString m_cfDefault;
 	TDC_UNITS m_nDefTimeEstUnits, m_nDefTimeSpentUnits;
