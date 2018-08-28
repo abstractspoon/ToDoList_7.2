@@ -48,6 +48,7 @@ enum
 	TASKPARENT_COL,
 	TASKLIST_COL,
 	WHEN_COL,
+	NUM_COLS,
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,6 +150,7 @@ BOOL CTDLShowReminderDlg::OnInitDialog()
 	CThemed::SetWindowTheme(&m_lcReminders, _T("Explorer"));
 
 	EnableControls();
+	UpdateColumnWidths();
 
 	return TRUE;
 }
@@ -503,4 +505,27 @@ void CTDLShowReminderDlg::OnRepositionControls(int dx, int dy)
 	CDialogHelper::OffsetCtrl(this, IDC_SNOOZEFOR, 0, dy);
 	CDialogHelper::OffsetCtrl(this, IDC_SNOOZEUNTILDATE, 0, dy);
 	CDialogHelper::OffsetCtrl(this, IDC_SNOOZEUNTILTIME, 0, dy);
+
+	UpdateColumnWidths();
+}
+
+void CTDLShowReminderDlg::UpdateColumnWidths()
+{
+	CRect rAvail;
+	m_lcReminders.GetClientRect(rAvail);
+
+	int nCol = (NUM_COLS - 1), nTotalColWidth = 0;
+
+	while (nCol--)
+		nTotalColWidth += m_lcReminders.GetColumnWidth(nCol);
+
+	// The 'when' column is essentially of fixed width so we leave it alone
+	int nAvailWidth = (rAvail.Width() - m_lcReminders.GetColumnWidth(WHEN_COL));
+
+	double dFactor = (double)nAvailWidth / nTotalColWidth;
+
+	nCol = (NUM_COLS - 1);
+
+	while (nCol--)
+		m_lcReminders.SetColumnWidth(nCol, (int)(m_lcReminders.GetColumnWidth(nCol) * dFactor));
 }

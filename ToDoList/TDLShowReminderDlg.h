@@ -100,7 +100,7 @@ protected:
 	void EnableControls();
 	void UpdateControls();
 	void UpdateTitleText();
-
+	void UpdateColumnWidths();
 };
 
 //{{AFX_INSERT_LOCATION}}
