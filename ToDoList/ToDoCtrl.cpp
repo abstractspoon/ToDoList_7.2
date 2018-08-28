@@ -3332,7 +3332,7 @@ TDC_SET CToDoCtrl::OffsetTaskStartAndDueDates(DWORD dwTaskID, int nAmount, TDC_U
 
 void CToDoCtrl::SetInheritedParentAttributes(const CTDCAttributeMap& mapAttribs, BOOL bUpdateAttrib)
 {
-	CToDoCtrlData::SetInheritedParentAttributes(mapAttribs, bUpdateAttrib);
+	m_data.SetInheritedParentAttributes(mapAttribs, bUpdateAttrib);
 }
 
 int CToDoCtrl::CheckWantSubtasksCompleted()
