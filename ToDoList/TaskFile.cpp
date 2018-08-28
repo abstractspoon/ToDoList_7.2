@@ -2040,7 +2040,7 @@ BOOL CTaskFile::SetTaskCustomAttributeData(HTASKITEM hTask, const CTDCCustomAttr
 		TDCCADATA data;
 		mapData.GetNextAssoc(pos, sTypeID, data);
 
-		VERIFY(SetTaskCustomAttributeData(hTask, sTypeID, data));
+		SetTaskCustomAttributeData(hTask, sTypeID, data);
 	}
 
 	return TRUE;
@@ -2060,7 +2060,10 @@ BOOL CTaskFile::SetTaskCustomAttributeData(CXmlItem* pXITask, const CString& sCu
 		return FALSE;
 
 	if (!HasCustomAttribute(sCustAttribID))
+	{
+		ASSERT(0);
 		return FALSE;
+	}
 
 	CXmlItem* pXICustData = pXITask->AddItem(TDL_TASKCUSTOMATTRIBDATA);
 	ASSERT(pXICustData);
