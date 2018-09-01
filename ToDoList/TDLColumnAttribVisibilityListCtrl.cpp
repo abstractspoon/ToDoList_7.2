@@ -134,7 +134,7 @@ void CTDLColumnAttribVisibilityListCtrl::BuildListCtrl()
 	// build once only
 	if (GetColumnCount() == 0)
 	{
-		AddCol(CEnString(IDS_COLATTRIBNAME), GraphicsMisc::ScaleByDPIFactor(100));
+		AddCol(CEnString(IDS_COLATTRIBNAME), GraphicsMisc::ScaleByDPIFactor(150));
 
 		SetColumnType(AddCol(CEnString(IDS_COLUMNVISIBILITY), GraphicsMisc::ScaleByDPIFactor(100)), ILCT_CHECK);
 		SetColumnType(AddCol(CEnString(IDS_ATTRIBVISIBILITY), GraphicsMisc::ScaleByDPIFactor(100)), ILCT_CHECK);
