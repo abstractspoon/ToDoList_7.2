@@ -306,7 +306,16 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 
 void CTDLTaskTreeCtrl::RefreshTreeItemMap()
 {
+#ifdef _DEBUG
+	int nPrevCount = m_mapHTItems.GetCount();
+#endif
+
 	TCH().BuildHTIMap(m_mapHTItems);
+
+#ifdef _DEBUG
+	int nNewCount = m_mapHTItems.GetCount();
+	TRACE(_T("CTDLTaskTreeCtrl::RefreshTreeItemMap(%d -> %d)\n"), nPrevCount, nNewCount);
+#endif
 }
 
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
@@ -321,7 +330,10 @@ void CTDLTaskTreeCtrl::OnEndRebuild()
 {
 	CTDLTaskCtrlBase::OnEndRebuild();
 
-	RefreshTreeItemMap();
+	// No need to refresh tree item map because 
+	// InsertTreeItem handles it
+	// RefreshTreeItemMap();
+	
 	ExpandList();
 	RecalcColumnWidths();
 }
@@ -398,6 +410,7 @@ void CTDLTaskTreeCtrl::DeleteAll()
 		m_lcColumns.DeleteAllItems();
 		
 	m_tcTasks.DeleteAllItems();
+	m_mapHTItems.RemoveAll();
 
 	ASSERT(m_lcColumns.GetItemCount() == 0);
 }
@@ -2320,14 +2333,18 @@ DWORD CTDLTaskTreeCtrl::GetTaskParentID(HTREEITEM hti) const
 
 HTREEITEM  CTDLTaskTreeCtrl::InsertItem(DWORD dwTaskID, HTREEITEM htiParent, HTREEITEM htiAfter)
 {
-	return TCH().InsertItem(LPSTR_TEXTCALLBACK, 
-							I_IMAGECALLBACK, 
-							I_IMAGECALLBACK, 
-							dwTaskID, // lParam
-							htiParent, 
-							(htiAfter ? htiAfter : TVI_FIRST),
-							FALSE,
-							FALSE);
+	HTREEITEM htiNew = TCH().InsertItem(LPSTR_TEXTCALLBACK, 
+										I_IMAGECALLBACK, 
+										I_IMAGECALLBACK, 
+										dwTaskID, // lParam
+										htiParent, 
+										(htiAfter ? htiAfter : TVI_FIRST),
+										FALSE,
+										FALSE);
+
+	m_mapHTItems[dwTaskID] = htiNew;
+
+	return htiNew;
 }
 
 BOOL CTDLTaskTreeCtrl::GetInsertLocation(TDC_MOVETASK nDirection, DWORD& dwDest, DWORD& dwDestAfter) const
@@ -2650,15 +2667,24 @@ void CTDLTaskTreeCtrl::SetModified(TDC_ATTRIBUTE nAttrib)
 	// Update bold-states
 	switch (nAttrib)
 	{
+	case TDCA_UNDO:
+		// Already handled in OnUndoRedo
+		ASSERT(m_mapHTItems.GetCount() == m_data.GetTaskCount());
+		break;
+
+	case TDCA_NEWTASK:
+		// Already handled in InsertTreeItem
+		ASSERT(m_mapHTItems.GetCount() == m_data.GetTaskCount());
+		break;
+
 	case TDCA_PASTE:
 	case TDCA_POSITION: // == move
-	case TDCA_UNDO:
-	case TDCA_NEWTASK:
 		RefreshTreeItemMap();
 		RefreshItemBoldState();
 		break;
 
 	case TDCA_DELETE:
+	case TDCA_ARCHIVE:
 		RefreshTreeItemMap();
 		break;
 	}

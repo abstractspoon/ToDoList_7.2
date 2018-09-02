@@ -6749,14 +6749,9 @@ BOOL CToDoCtrl::ArchiveSelectedTasks(BOOL bRemove)
 	// delete the selected tasks
 	if (bRemove)
 	{
-		TDCSELECTIONCACHE cache;
-		CacheTreeSelection(cache);
-		
-		BOOL bDeleted = DeleteSelectedTask();
+		IMPLEMENT_DATA_UNDO(m_data, TDCUAT_ARCHIVE);
 
-		RestoreTreeSelection(cache);
-
-		return bDeleted;
+		return DeleteSelectedTask(FALSE, TRUE);
 	}
 
 	// else
