@@ -2402,6 +2402,7 @@ void CTDLTaskCtrlBase::DrawColumnsRowText(CDC* pDC, int nItem, DWORD dwTaskID, c
 		case TDCC_SUBTASKDONE:
 		case TDCC_TIMEEST:
 		case TDCC_LASTMODBY:
+		case TDCC_COMMENTSSIZE:
 			DrawColumnText(pDC, sTaskColText, rSubItem, pCol->nTextAlignment, crText);
 			break;
 			
@@ -3556,6 +3557,15 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 
 	case TDCC_SUBTASKDONE:
 		sTaskColText = m_formatter.GetTaskSubtaskCompletion(pTDI, pTDS);
+		break;
+
+	case TDCC_COMMENTSSIZE:
+		{
+			DWORD dwByteSize = pTDI->GetCommentsSize();
+
+			if (dwByteSize > 1024)
+				sTaskColText = Misc::Format(dwByteSize / 1024);
+		}
 		break;
 
 	default:
@@ -4949,6 +4959,15 @@ int CTDLTaskCtrlBase::RecalcColumnWidth(int nCol, CDC* pDC, BOOL bVisibleOnly) c
 	case TDCC_STARTDATE:
 	case TDCC_DONEDATE:
 		nColWidth = CalcMaxDateColWidth(TDC::MapColumnToDate(nColID), pDC);
+		break;
+
+	case TDCC_COMMENTSSIZE:
+		{
+			DWORD dwByteSize = m_find.GetLargestCommentsSize();
+
+			if (dwByteSize > 1024)
+				nColWidth = (1 + (int)log10(dwByteSize / 1024.0));
+		}
 		break;
 
 	default:

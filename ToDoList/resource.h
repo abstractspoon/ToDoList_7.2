@@ -2202,6 +2202,8 @@
 #define IDS_RESET_ELAPSED               58479
 #define IDS_REMINDER_TASKPARENTCOL      58480
 #define IDS_CUSTOM_FEATURE_INHERITANCE  58481
+#define IDS_TDLBC_COMMENTSSIZE          58482
+#define IDS_TDC_COLUMN_COMMENTSSIZE     58483
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects
