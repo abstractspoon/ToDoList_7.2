@@ -449,11 +449,13 @@ void CTaskCalendarCtrl::BuildData(const ITASKLISTBASE* pTasks, HTASKITEM hTask, 
 
 	// sanity check
 	DWORD dwTaskID = pTasks->GetTaskID(hTask);
-	ASSERT(!HasTask(dwTaskID));
 
-	TASKCALITEM* pTCI = new TASKCALITEM(pTasks, hTask, attrib, m_dwOptions);
-	m_mapData[dwTaskID] = pTCI;
-
+	if (!HasTask(dwTaskID))
+	{
+		TASKCALITEM* pTCI = new TASKCALITEM(pTasks, hTask, attrib, m_dwOptions);
+		m_mapData[dwTaskID] = pTCI;
+	}
+	
 	// process children
 	BuildData(pTasks, pTasks->GetFirstTask(hTask), attrib, TRUE);
 
