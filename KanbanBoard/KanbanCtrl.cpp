@@ -1022,7 +1022,9 @@ BOOL CKanbanCtrl::UpdateGlobalAttributeValues(const ITASKLISTBASE* pTasks, IUI_A
 				if (pTasks->IsCustomAttributeEnabled(nCustom))
 				{
 					CString sAttribID(pTasks->GetCustomAttributeID(nCustom));
-					int nDef = m_aCustomAttribDefs.AddDefinition(sAttribID);
+					CString sAttribName(pTasks->GetCustomAttributeLabel(nCustom));
+
+					int nDef = m_aCustomAttribDefs.AddDefinition(sAttribID, sAttribName);
 
 					// Add non-empty values to the map
 					CKanbanValueMap* pDefValues = m_mapGlobalAttributeValues.GetAddMapping(sAttribID);
@@ -1122,11 +1124,6 @@ int CKanbanCtrl::GetAttributeValues(IUI_ATTRIBUTE nAttrib, CStringArray& aValues
 	}
 
 	return aValues.GetSize();
-}
-
-int CKanbanCtrl::GetCustomAttributeIDs(CStringArray& aCustAttribIDs) const
-{
-	return m_aCustomAttribDefs.GetAttributeIDs(aCustAttribIDs);
 }
 
 int CKanbanCtrl::GetAttributeValues(CKanbanAttributeValueMap& mapValues) const

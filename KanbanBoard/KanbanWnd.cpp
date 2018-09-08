@@ -70,12 +70,12 @@ void CKanbanWnd::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_nTrackedAttrib = m_cbAttributes.GetSelectedAttribute();
-		m_sCustomAttribID = CDialogHelper::GetSelectedItem(m_cbCustomAttributes);
+		m_sTrackedCustomAttribID = m_cbCustomAttributes.GetSelectedAttributeID();
 	}
 	else if (m_nTrackedAttrib != IUI_NONE)
 	{
 		m_cbAttributes.SetSelectedAttribute(m_nTrackedAttrib);
-		m_cbCustomAttributes.SelectString(-1, m_sCustomAttribID);
+		m_cbCustomAttributes.SetSelectedAttributeID(m_sTrackedCustomAttribID);
 	}
 }
 
@@ -216,7 +216,7 @@ void CKanbanWnd::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey) const
 	pPrefs->WriteProfileInt(szKey, _T("LastTrackedAttribute"), m_nTrackedAttrib);
 
 	if (m_nTrackedAttrib == IUI_CUSTOMATTRIB)
-		pPrefs->WriteProfileString(sKey, _T("CustomAttrib"), m_sCustomAttribID);
+		pPrefs->WriteProfileString(sKey, _T("CustomAttrib"), m_sTrackedCustomAttribID);
 	else
 		pPrefs->DeleteProfileEntry(sKey, _T("CustomAttrib"));
 
@@ -342,10 +342,10 @@ void CKanbanWnd::LoadPreferences(const IPreferences* pPrefs, LPCTSTR szKey, bool
 			break;
 
 		case IUI_CUSTOMATTRIB:
-			m_sCustomAttribID = pPrefs->GetProfileString(sKey, _T("CustomAttrib"));
+			m_sTrackedCustomAttribID = pPrefs->GetProfileString(sKey, _T("CustomAttrib"));
 
 			// fallback
-			if (m_sCustomAttribID.IsEmpty())
+			if (m_sTrackedCustomAttribID.IsEmpty())
 				m_nTrackedAttrib = IUI_STATUS;
 			break;
 		}
@@ -481,17 +481,15 @@ void CKanbanWnd::UpdateTasks(const ITaskList* pTasks, IUI_UPDATETYPE nUpdate, co
 	m_ctrlKanban.UpdateTasks(pTasks, nUpdate, attrib);
 
 	// Update custom attribute combo
-	CStringArray aCustAttribIDs;
-	m_ctrlKanban.GetCustomAttributeIDs(aCustAttribIDs);
+	const CKanbanCustomAttributeDefinitionArray& aCustDefs = m_ctrlKanban.GetCustomAttributeDefinitions();
 
 	if (attrib.Has(IUI_CUSTOMATTRIB))
 	{
-		CLocalizer::EnableTranslation(m_cbCustomAttributes, FALSE);
-		CDialogHelper::SetComboBoxItems(m_cbCustomAttributes, aCustAttribIDs);
-		m_cbCustomAttributes.SelectString(-1, m_sCustomAttribID);
+		m_cbCustomAttributes.SetAttributeDefinitions(aCustDefs);
+		m_cbCustomAttributes.SetSelectedAttributeID(m_sTrackedCustomAttribID);
 	}
 
-	m_cbAttributes.ShowCustomAttribute(aCustAttribIDs.GetSize());
+	m_cbAttributes.ShowCustomAttribute(aCustDefs.GetSize());
 
 	// Validate any change in selection
 	UpdateData(TRUE);
@@ -794,7 +792,7 @@ LRESULT CKanbanWnd::OnKanbanNotifyValueChange(WPARAM wp, LPARAM lp)
 	else
 	{
 		nAttrib = m_nTrackedAttrib;
-		sCustAttribID = m_sCustomAttribID;
+		sCustAttribID = m_sTrackedCustomAttribID;
 	}
 
 	int nNumTasks = pChangedIDs->GetSize();
@@ -875,8 +873,7 @@ void CKanbanWnd::OnKanbanPreferences()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	CStringArray aCustAttribIDs;
-	m_ctrlKanban.GetCustomAttributeIDs(aCustAttribIDs);
+	const CKanbanCustomAttributeDefinitionArray& aCustAttribDefs = m_ctrlKanban.GetCustomAttributeDefinitions();
 
 	CKanbanAttributeValueMap mapValues;
 	m_ctrlKanban.GetAttributeValues(mapValues);
@@ -888,7 +885,7 @@ void CKanbanWnd::OnKanbanPreferences()
 	// we will automatically turn them on
 	BOOL bHadFixedColumns = m_dlgPrefs.HasFixedColumns();
 	
-	if (m_dlgPrefs.DoModal(aCustAttribIDs, mapValues, aDisplayAttrib) == IDOK)
+	if (m_dlgPrefs.DoModal(aCustAttribDefs, mapValues, aDisplayAttrib) == IDOK)
 	{
 		UpdateKanbanCtrlPreferences(bHadFixedColumns != m_dlgPrefs.HasFixedColumns());
 		Resize();
@@ -941,19 +938,21 @@ void CKanbanWnd::ProcessTrackedAttributeChange()
 	{
 		// If the new type is 'custom' auto-select the first custom attribute
 		// else hide the custom attribute field
-		if ((m_nTrackedAttrib == IUI_CUSTOMATTRIB) && m_sCustomAttribID.IsEmpty())
+		if ((m_nTrackedAttrib == IUI_CUSTOMATTRIB) && m_sTrackedCustomAttribID.IsEmpty())
 		{
-			m_sCustomAttribID = CDialogHelper::GetItem(m_cbCustomAttributes, 0);
+			m_cbCustomAttributes.SetCurSel(0);
+			m_sTrackedCustomAttribID = m_cbCustomAttributes.GetSelectedAttributeID();
 
 			// Fallback
-			if (m_sCustomAttribID.IsEmpty())
+			if (m_sTrackedCustomAttribID.IsEmpty())
+			{
 				m_nTrackedAttrib = IUI_STATUS;
-
-			UpdateData(FALSE);
+				UpdateData(FALSE);
+			}
 		}
 			
 		nTrackAttrib = m_nTrackedAttrib;
-		sCustomAttrib = m_sCustomAttribID;
+		sCustomAttrib = m_sTrackedCustomAttribID;
 	}
 
 	EnableDisableCtrls();

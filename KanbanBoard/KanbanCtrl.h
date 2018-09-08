@@ -77,7 +77,7 @@ public:
 	IUI_ATTRIBUTE GetTrackedAttribute() const { return m_nTrackAttribute; }
 	IUI_ATTRIBUTE GetTrackedAttribute(CString& sCustomAttrib) const;
 
-	int GetCustomAttributeIDs(CStringArray& aCustAttribIDs) const;
+	const CKanbanCustomAttributeDefinitionArray& GetCustomAttributeDefinitions() const { return m_aCustomAttribDefs; }
 	int GetAttributeValues(CKanbanAttributeValueMap& mapValues) const;
 
 	BOOL WantSortUpdate(IUI_ATTRIBUTE nAttribute) const;
