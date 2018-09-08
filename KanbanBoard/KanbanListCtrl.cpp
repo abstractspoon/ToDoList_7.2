@@ -1094,7 +1094,13 @@ int CKanbanListCtrl::CalcLineHeight() const
 
 int CKanbanListCtrl::AddTask(const KANBANITEM& ki, BOOL bSelect)
 {
-	ASSERT(FindTask(ki.dwTaskID) == -1);
+	int nFind = FindTask(ki.dwTaskID);
+
+	if (nFind != -1)
+	{
+		ASSERT(m_columnDef.aAttribValues.GetSize() > 1);
+		return nFind;
+	}
 
 	int nNewItem = InsertItem(LVIF_TEXT | LVIF_PARAM, 
 								GetItemCount(), 
