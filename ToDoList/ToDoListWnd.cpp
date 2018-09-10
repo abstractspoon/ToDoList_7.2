@@ -9212,7 +9212,9 @@ LRESULT CToDoListWnd::OnPreferencesClearMRU(WPARAM /*wp*/, LPARAM /*lp*/)
 
 LRESULT CToDoListWnd::OnPreferencesEditLanguageFile(WPARAM /*wp*/, LPARAM /*lp*/)
 {
-	return FileMisc::Run(*this, _T("TDLTransEdit.exe"), Prefs().GetLanguageFile(), SW_SHOWNORMAL, FileMisc::GetModuleFolder());
+	CString sLangFilePath = Misc::GetQuoted(Prefs().GetLanguageFile());
+
+	return FileMisc::Run(*this, _T("TDLTransEdit.exe"), sLangFilePath, SW_SHOWNORMAL, FileMisc::GetModuleFolder());
 }
 
 void CToDoListWnd::PrepareSortMenu(CMenu* pMenu)
