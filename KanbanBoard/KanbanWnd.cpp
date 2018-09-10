@@ -836,7 +836,7 @@ LRESULT CKanbanWnd::OnKanbanNotifyValueChange(WPARAM wp, LPARAM lp)
 		case IUI_CUSTOMATTRIB:
 			ASSERT(!sCustAttribID.IsEmpty());
 		
-			mod.szValue = aTaskValues[nTask];
+			mod.szValue = aTempModValues[nTask];
 			mod.szCustomAttribID = sCustAttribID;
 
 			// TODO - multi value items and time periods
