@@ -250,10 +250,10 @@ bool CGPExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask,
 	}
 
 	// Dates
-	time_t tStart = 0, tDue = 0, tDone = 0;
+	time64_t tStart = 0, tDue = 0, tDone = 0;
 	GetTaskDates(pSrcTaskFile, hTask, tStart, tDue, tDone);
 	
-	if (tStart)
+	if (tStart != T64Utils::T64_NULL)
 	{
 		// Milestone
 		BOOL bMilestone = FALSE;
@@ -273,7 +273,7 @@ bool CGPExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask,
 			}
 		}
 
-		COleDateTime start(tStart);
+		COleDateTime start(CDateHelper::GetDate(tStart));
 		pXIDestItem->AddItem(_T("start"), CDateHelper::FormatDate(start, DHFD_ISO));
 
 		// Duration

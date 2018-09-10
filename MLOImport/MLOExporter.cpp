@@ -11,6 +11,8 @@
 #include "..\shared\timehelper.h"
 #include "..\shared\misc.h"
 
+#include "..\3rdParty\T64Utils.h"
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -116,14 +118,19 @@ bool CMLOExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask
 	pXIDestItem->AddItem(_T("Importance"), nImportance);
 	
 	// dates
-	time_t tDue = pSrcTaskFile->GetTaskDueDate(hTask, FALSE);
-	time_t tDone = pSrcTaskFile->GetTaskDoneDate(hTask);
+	time64_t tDue = T64Utils::T64_NULL, tDone = T64Utils::T64_NULL;
 	
-	if (tDone)
-		pXIDestItem->AddItem(_T("CompletionDateTime"), CDateHelper::FormatDate(tDone, DHFD_ISO));
+	if (pSrcTaskFile->GetTaskDoneDate64(hTask, tDone))
+	{
+		COleDateTime dtDone = CDateHelper::GetDate(tDone);
+		pXIDestItem->AddItem(_T("CompletionDateTime"), CDateHelper::FormatDate(dtDone, DHFD_ISO));
+	}
 	
-	if (tDue)
-		pXIDestItem->AddItem(_T("DueDateTime"), CDateHelper::FormatDate(tDue, DHFD_ISO));
+	if (pSrcTaskFile->GetTaskDueDate64(hTask, false, tDue))
+	{
+		COleDateTime dtDue = CDateHelper::GetDate(tDue);
+		pXIDestItem->AddItem(_T("DueDateTime"), CDateHelper::FormatDate(dtDue, DHFD_ISO));
+	}
 	
 	// time estimate
 	TDC_UNITS nUnits;

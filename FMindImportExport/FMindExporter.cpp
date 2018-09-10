@@ -329,16 +329,5 @@ void CFMindExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTa
 	}
 }
 
-CString CFMindExporter::FormatDate(time_t tDate)
-{
-	if (tDate)
-	{
-		COleDateTime date(tDate);
-		return CDateHelper::FormatDate(date, DHFD_ISO | DHFD_TIME);
-	}
-
-	// else
-	return "";
-}
 
 
