@@ -5416,6 +5416,7 @@ BEGIN
     IDS_CUSTOM_FEATURE_INHERITANCE "Inherit parent changes"
     IDS_TDLBC_COMMENTSSIZE  "Comments Size"
     IDS_TDC_COLUMN_COMMENTSSIZE "KB"
+    IDS_SAVETASKVIEWTOIMAGE_TITLE "Save Task View to Image"
 END
 
 #endif    // English (Australia) resources

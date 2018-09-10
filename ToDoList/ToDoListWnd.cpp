@@ -13026,7 +13026,7 @@ void CToDoListWnd::OnViewSaveToImage()
 	sFilePath += tdc.GetTaskViewName();
 	sFilePath += _T(".bmp");
 
-	CFileSaveDialog dialog(IDS_SAVETASKLISTAS_TITLE,
+	CFileSaveDialog dialog(IDS_SAVETASKVIEWTOIMAGE_TITLE,
 							_T("bmp"), 
 							sFilePath, 
 							EOFN_DEFAULTSAVE,

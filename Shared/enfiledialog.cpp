@@ -137,9 +137,10 @@ int CEnFileDialog::DoModal(IPreferences* pPrefs)
 		sFilename = FileMisc::GetFileNameFromPath(m_ofn.lpstrFile);
 		sInitialFolder = FileMisc::GetFolderFromFilePath(m_ofn.lpstrFile);
 	}
-	else if (!m_sTitle.IsEmpty())
+
+	// restore last saved folder if present
+	if (!m_sTitle.IsEmpty())
 	{
-		// restore last saved folder
 		CString sLastFolder;
 		
 		if (pPrefs)
@@ -173,11 +174,14 @@ int CEnFileDialog::DoModal(IPreferences* pPrefs)
 		m_ofn.lpstrInitialDir = szOrgFolder;
 		
 	// get and save off current working directory
-	::GetCurrentDirectory(MAX_PATH, m_sLastFolder.GetBuffer(MAX_PATH + 1));
-	m_sLastFolder.ReleaseBuffer();
-
 	if ((nRet == IDOK) && !m_sTitle.IsEmpty())
 	{
+		POSITION pos = GetStartPosition();
+		ASSERT(pos);
+
+		m_sLastFolder = FileMisc::GetFolderFromFilePath(GetNextPathName(pos));
+		ASSERT(!m_sLastFolder.IsEmpty());
+
 		if (pPrefs)
 			pPrefs->WriteProfileString(GetPreferenceKey(), m_sTitle, m_sLastFolder);
 		else
