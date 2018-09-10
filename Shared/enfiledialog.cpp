@@ -138,7 +138,7 @@ int CEnFileDialog::DoModal(IPreferences* pPrefs)
 		sInitialFolder = FileMisc::GetFolderFromFilePath(m_ofn.lpstrFile);
 	}
 
-	// restore last saved folder if present
+	// Use last saved folder if present
 	if (!m_sTitle.IsEmpty())
 	{
 		CString sLastFolder;
@@ -152,7 +152,7 @@ int CEnFileDialog::DoModal(IPreferences* pPrefs)
 			sInitialFolder = sLastFolder;
 	}
 
-	// save off original values and apply new ones
+	// save off original folder before applying new one
 	LPCTSTR szOrgFolder = NULL;
 
 	if (!sInitialFolder.IsEmpty())
@@ -173,7 +173,7 @@ int CEnFileDialog::DoModal(IPreferences* pPrefs)
 	if (szOrgFolder)
 		m_ofn.lpstrInitialDir = szOrgFolder;
 		
-	// get and save off current working directory
+	// get and save off the last open folder
 	if ((nRet == IDOK) && !m_sTitle.IsEmpty())
 	{
 		POSITION pos = GetStartPosition();
