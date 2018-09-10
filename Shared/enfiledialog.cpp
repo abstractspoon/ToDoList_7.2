@@ -203,12 +203,12 @@ void CEnFileDialog::SetTitle(LPCTSTR szTitle)
 
 BOOL CEnFileDialog::HasInitialFileName() const
 {
-	return (m_ofn.lpstrFile && lstrlen(m_ofn.lpstrFile));
+	return !Misc::IsEmpty(m_ofn.lpstrFile);
 }
 
 BOOL CEnFileDialog::HasInitialFolder() const
 {
-	return (m_ofn.lpstrInitialDir && lstrlen(m_ofn.lpstrInitialDir));
+	return !Misc::IsEmpty(m_ofn.lpstrInitialDir);
 }
 
 int CEnFileDialog::GetPathNames(CStringArray& aPaths) const
