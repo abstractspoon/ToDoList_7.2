@@ -77,7 +77,7 @@ public:
 	BOOL CanExpandItem(HTREEITEM hti, BOOL bExpand = TRUE) const;
 
 	void Resize(const CRect& rect);
-	void ResizeColumnsToFit();
+	void ResizeAttributeColumnsToFit(BOOL bForce = FALSE);
 	void AdjustSplitterToFitAttributeColumns();
 	BOOL PtInSplitter(const CPoint& pt, BOOL bScreen = FALSE) const { return CTreeListSyncer::PtInSplitter(pt, bScreen); }
 
@@ -346,8 +346,8 @@ protected:
 	void NotifyParentDragChange();
 
 	int GetTotalTreeColumnsWidth() const;
-	BOOL RecalcTreeColumns(BOOL bResize = TRUE);
-	int RecalcTreeColumnWidth(int nCol, CDC* pDC);
+	BOOL UpdateTreeColumnWidths(BOOL bResize = TRUE);
+	int RecalcTreeColumnWidth(int nCol, CDC* pDC, BOOL bForce);
 	int CalcTreeColumnWidth(int nCol, CDC* pDC) const;
 	CString GetLongestVisibleAllocTo(HTREEITEM hti) const;
 	CString GetTreeItemColumnText(const GANTTITEM& gi, GTLC_COLUMN nColID) const;

@@ -347,7 +347,7 @@ void CGanttChartWnd::LoadPreferences(const IPreferences* pPrefs, LPCTSTR szKey, 
 			!LoadColumnState(pPrefs, (sKey + _T("\\ListWidths")), aListWidths) ||
 			!m_ctrlGantt.SetColumnWidths(aTreeWidths, aListWidths))
 		{
-			m_ctrlGantt.ResizeColumnsToFit();
+			m_ctrlGantt.ResizeAttributeColumnsToFit();
 		}
 		
 		// column tracking
@@ -580,7 +580,7 @@ bool CGanttChartWnd::DoAppCommand(IUI_APPCOMMAND nCmd, IUIAPPCOMMANDDATA* pData)
 		return true;
 
 	case IUI_RESIZEATTRIBCOLUMNS:
-		m_ctrlGantt.ResizeColumnsToFit();
+		m_ctrlGantt.ResizeAttributeColumnsToFit(TRUE);
 		return true;
 		
 	case IUI_SELECTTASK:
