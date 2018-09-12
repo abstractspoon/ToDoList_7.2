@@ -273,8 +273,8 @@ bool CGPExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask,
 			}
 		}
 
-		COleDateTime start(CDateHelper::GetDate(tStart));
-		pXIDestItem->AddItem(_T("start"), CDateHelper::FormatDate(start, DHFD_ISO));
+		COleDateTime dtStart(CDateHelper::GetDate(tStart));
+		pXIDestItem->AddItem(_T("start"), CDateHelper::FormatDate(dtStart, DHFD_ISO));
 
 		// Duration
 		if (bMilestone)
@@ -285,12 +285,16 @@ bool CGPExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask,
 		{
 			if (tDone >= tStart) // completion date takes precedence
 			{
-				int nDays = CDateHelper::CalcDaysFromTo(start, tDone, TRUE, TRUE);
+				COleDateTime dtDone = CDateHelper::GetDate(tDone);
+				int nDays = CDateHelper::CalcDaysFromTo(dtStart, dtDone, TRUE, TRUE);
+
 				pXIDestItem->AddItem(_T("duration"), nDays);
 			}
 			else if (tDue >= tStart)
 			{
-				int nDays = CDateHelper::CalcDaysFromTo(start, tDue, TRUE, TRUE);
+				COleDateTime dtDue = CDateHelper::GetDate(tDue);
+				int nDays = CDateHelper::CalcDaysFromTo(dtStart, dtDue, TRUE, TRUE);
+
 				pXIDestItem->AddItem(_T("duration"), nDays);
 			}
 		}

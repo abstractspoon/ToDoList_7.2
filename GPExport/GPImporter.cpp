@@ -150,7 +150,7 @@ bool CGPImporter::ImportTask(const CXmlItem* pXISrcTask, ITASKLISTBASE* pDestTas
 			}
 			else if (nDuration > 0)
 			{
-				COleDateTime dtEnd(tStart);
+				COleDateTime dtEnd = CDateHelper::GetDate(tStart);
 				CDateHelper::OffsetDate(dtEnd, (nDuration - 1), DHU_WEEKDAYS); // gp dates are inclusive
 
 				time64_t tEnd = 0;
@@ -163,7 +163,7 @@ bool CGPImporter::ImportTask(const CXmlItem* pXISrcTask, ITASKLISTBASE* pDestTas
 				}
 				else
 				{
-					pDestTaskFile->SetTaskDueDate64(hTask, tEnd); // gp dates are inclusive
+					pDestTaskFile->SetTaskDueDate64(hTask, tEnd);
 					pDestTaskFile->SetTaskTimeEstimate(hTask, nDuration, TDCU_WEEKDAYS);
 				}
 			}
