@@ -721,14 +721,38 @@ void CTDLTaskTreeCtrl::OnListSelectionChange(NMLISTVIEW* pNMLV)
 	NotifyParentSelChange();
 }
 
-void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks()
+void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks(BOOL bUpdateWindow)
 {
-	// temporarily turn off resyncing to prevent re-entrancy
-	CTLSHoldResync hr(*this);
-	
-	CHTIList lstHTI;
-	TSH().CopySelection(lstHTI);
+	// Scope hold resync else trailing UpdateWindow will not work
+	{
+		// Prevent re-entrancy
+		CTLSHoldResync hr(*this);
+		
+		m_lcColumns.SetItemState(-1, 0, (LVIS_SELECTED | LVIS_FOCUSED));
+		
+		HTREEITEM htiSel = TSH().GetAnchor();
+		POSITION pos = TSH().GetFirstItemPos();
+		
+		while (pos)
+		{
+			HTREEITEM hti = TSH().GetNextItem(pos);
+			int nItem = GetListItem(hti);
+			
+			if (hti == htiSel)
+			{
+				m_lcColumns.SetItemState(nItem, LVIS_FOCUSED, LVIS_FOCUSED);
+				m_lcColumns.SetSelectionMark(nItem);
+			}
+			else
+			{
+				m_lcColumns.SetItemState(nItem, (LVIS_SELECTED | LVIS_FOCUSED), (LVIS_SELECTED | LVIS_FOCUSED));
+			}
+		}
+	}
 
+	if (bUpdateWindow)
+	 	m_lcColumns.UpdateWindow();
+/*
 	// build a list of the current list selection
 	CArray<int, int> aItemSel;
 	POSITION pos = m_lcColumns.GetFirstSelectedItemPosition();
@@ -775,6 +799,7 @@ void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks()
 	}
 
 	m_lcColumns.Invalidate(FALSE);
+*/
 }
 
 void CTDLTaskTreeCtrl::NotifyParentSelChange(SELCHANGE_ACTION nAction)
@@ -941,7 +966,7 @@ BOOL CTDLTaskTreeCtrl::HandleClientColumnClick(const CPoint& pt, BOOL bDblClk)
 			if (nEditCol != TDCC_NONE)
 			{
 				// make sure attribute pane is synced
-				SyncColumnSelectionToTasks();
+				SyncColumnSelectionToTasks(TRUE);
 
 				// forward the click
 				NotifyParentOfColumnEditClick(nEditCol, dwTaskID);
@@ -1627,7 +1652,7 @@ LRESULT CTDLTaskTreeCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		// Handle selection change before column click/dblclk
 		if (bSelChange)
 		{
-			SyncColumnSelectionToTasks();
+			SyncColumnSelectionToTasks(nAction == SC_BYMOUSE);
 			
 			if (!TSH().Matches(lstPrevSel))
 			{

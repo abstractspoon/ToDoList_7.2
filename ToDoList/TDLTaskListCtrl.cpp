@@ -1173,7 +1173,7 @@ BOOL CTDLTaskListCtrl::EnsureSelectionVisible()
 		}
 		else
 		{
-			CHoldRedraw hr(*this);
+			//CHoldRedraw hr(*this);
 			
 			m_lcTasks.EnsureVisible(GetSelectedItem(), FALSE);
 		}
@@ -1308,10 +1308,11 @@ BOOL CTDLTaskListCtrl::SelectTask(DWORD dwTaskID, BOOL bTrue)
 
 void CTDLTaskListCtrl::SetSelectedTasks(const CDWordArray& aTaskIDs, DWORD dwFocusedTaskID)
 {
-	CHoldRedraw hr2(m_lcTasks, 0); 
-	CHoldRedraw hr3(m_lcColumns, 0);
+	// Prevent re-entrancy
+	CTLSHoldResync hr(*this);
 
-	DeselectAll();
+	m_lcTasks.SetItemState(-1, 0, LVIS_SELECTED | LVIS_FOCUSED);
+	m_lcColumns.SetItemState(-1, 0, LVIS_SELECTED | LVIS_FOCUSED);
 
 	int nID = aTaskIDs.GetSize();
 

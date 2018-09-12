@@ -491,8 +491,7 @@ BOOL CTreeListSyncer::ResyncScrollPos(HWND hwnd, HWND hwndTo)
 		//TraceResync(hwnd, hwndTo);
 #endif
 
-		::UpdateWindow(hwnd);
-		::UpdateWindow(hwndTo);
+		UpdateAll();
 	}
 
 	return bSynced;
@@ -598,8 +597,7 @@ BOOL CTreeListSyncer::ResyncSelection(HWND hwnd, HWND hwndTo, BOOL bClearTreeSel
 		//TraceResync(hwnd, hwndTo);
 #endif
 
-		::UpdateWindow(hwnd);
-		::UpdateWindow(hwndTo);
+		UpdateAll();
 	}
 
 	return bSynced;
