@@ -744,24 +744,16 @@ void CTDLTaskCtrlBase::OnColumnVisibilityChange()
 void CTDLTaskCtrlBase::UpdateAttributePaneVisibility()
 {
 	// we only need to find one visible column
-	BOOL bShow = (m_aCustomAttribDefs.GetSize());
+	BOOL bShow = FALSE;
+	int nItem = m_hdrColumns.GetItemCount();
 	
-	if (!bShow)
-	{
-		int nItem = m_hdrColumns.GetItemCount();
+	while (nItem-- && !bShow)
+	{		
+		TDC_COLUMN nColID = (TDC_COLUMN)m_hdrColumns.GetItemData(nItem);
 		
-		while (nItem--)
-		{		
-			TDC_COLUMN nColID = (TDC_COLUMN)m_hdrColumns.GetItemData(nItem);
-			
-			// Ignore custom columns because they are always
-			// visible and so we handled it above
-			if (!CTDCCustomAttributeHelper::IsCustomColumn(nColID) && IsColumnShowing(nColID))
-			{
-				bShow = TRUE;
-				break;
-			}
-		}
+		// Ignore custom columns because they are always
+		// visible and so we handled it above
+		bShow = IsColumnShowing(nColID);
 	}
 	
 	if (bShow)
