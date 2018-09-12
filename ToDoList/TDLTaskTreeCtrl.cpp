@@ -179,7 +179,7 @@ void CTDLTaskTreeCtrl::DeselectAll()
 	TSH().RemoveAll();
 	TCH().SelectItem(NULL);
 
-	m_lcColumns.SetItemState(-1, 0, LVIS_SELECTED);
+	m_lcColumns.SetItemState(-1, 0, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
 BOOL CTDLTaskTreeCtrl::SelectAll() 
@@ -740,12 +740,12 @@ void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks(BOOL bUpdateWindow)
 			
 			if (hti == htiSel)
 			{
-				m_lcColumns.SetItemState(nItem, LVIS_FOCUSED, LVIS_FOCUSED);
+				m_lcColumns.SetItemState(nItem, (LVIS_SELECTED | LVIS_FOCUSED), (LVIS_SELECTED | LVIS_FOCUSED));
 				m_lcColumns.SetSelectionMark(nItem);
 			}
 			else
 			{
-				m_lcColumns.SetItemState(nItem, (LVIS_SELECTED | LVIS_FOCUSED), (LVIS_SELECTED | LVIS_FOCUSED));
+				m_lcColumns.SetItemState(nItem, LVIS_SELECTED, LVIS_SELECTED);
 			}
 		}
 	}
@@ -1699,15 +1699,12 @@ LRESULT CTDLTaskTreeCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 			// handle bulk selection here
 			if (Misc::IsKeyPressed(VK_SHIFT)) // bulk-selection
 			{
+				CTLSHoldResync hr(*this);
+				
 				int nAnchor = m_lcColumns.GetSelectionMark();
 
 				if (!Misc::IsKeyPressed(VK_CONTROL))
-				{
 					DeselectAll();
-				}
-
-				// prevent resyncing
-				CTLSHoldResync hr(*this);
 
 				// Add new items to tree and list
 				TDC_COLUMN nColID = TDCC_NONE;
