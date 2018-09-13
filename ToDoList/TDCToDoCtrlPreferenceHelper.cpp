@@ -201,8 +201,8 @@ void CTDCToDoCtrlPreferenceHelper::UpdateToDoCtrlPrefs(CFilteredToDoCtrl& tdc, c
 	CTDCAttributeMap mapParentAttrib;
 	BOOL bUpdateAttrib;
 
-	prefs.GetParentAttribsUsed(mapParentAttrib, bUpdateAttrib);
-	tdc.SetInheritedParentAttributes(mapParentAttrib, bUpdateAttrib);
+	prefs.GetInheritParentAttributes(mapParentAttrib);
+	tdc.SetInheritedParentAttributes(mapParentAttrib, prefs.GetContinueToUpdateSubtasks());
 
 	// we're done
 	tdc.NotifyEndPreferencesUpdate(bFirst);

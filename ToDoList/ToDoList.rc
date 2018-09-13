@@ -470,7 +470,7 @@ BEGIN
                     WS_HSCROLL | WS_TABSTOP
     CONTROL         "Contin&ue to update subtasks as parent changes",
                     IDC_UPDATEINHERITATTRIB,"Button",BS_AUTOCHECKBOX | 
-                    BS_TOP | WS_TABSTOP,18,110,376,10
+                    BS_TOP | WS_TABSTOP,7,110,387,10
     LTEXT           "Dynamic Droplists",IDC_DROPLISTGROUP,7,127,384,8
     LTEXT           "Default &Categories",IDC_STATIC,7,141,127,8
     EDITTEXT        IDC_CATEGORYLIST,7,154,121,62,ES_MULTILINE | 
@@ -5417,7 +5417,6 @@ BEGIN
     IDS_TDLBC_COMMENTSSIZE  "Comments Size"
     IDS_TDC_COLUMN_COMMENTSSIZE "KB"
     IDS_SAVETASKVIEWTOIMAGE_TITLE "Save Task View to Image"
-    IDS_TDLBC_CUSTOMATTRIBS  "Custom Attributes"
 END
 
 #endif    // English (Australia) resources
