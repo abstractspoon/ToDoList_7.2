@@ -1862,8 +1862,8 @@ TDC_SET CToDoCtrlData::SetTaskDate(DWORD dwTaskID, TODOITEM* pTDI, TDC_DATE nDat
 	COleDateTime dtDate(date);
 	BOOL bDateIsSet = CDateHelper::IsDateSet(dtDate);
 	
-	// whole days only for creation or 'end of day'
-	if ((nDate == TDCD_CREATE) || (bDateIsSet && IsEndOfDay(dtDate)))
+	// Convert 'end of day' to whole days
+	if (bDateIsSet && IsEndOfDay(dtDate))
 	{
 		dtDate = CDateHelper::GetDateOnly(dtDate);
 	}
