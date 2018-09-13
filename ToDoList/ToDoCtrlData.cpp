@@ -105,15 +105,19 @@ void CToDoCtrlData::SetInheritedParentAttributes(const CTDCAttributeMap& mapAttr
 
 BOOL CToDoCtrlData::WantUpdateInheritedAttibute(TDC_ATTRIBUTE nAttrib) const
 {
-	if (m_bUpdateInheritAttrib && m_mapParentAttribs.Has(nAttrib))
-		return TRUE;
-
-	if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib))
+	if (m_bUpdateInheritAttrib)
 	{
-		TDCCUSTOMATTRIBUTEDEFINITION attribDef;
-		VERIFY(CTDCCustomAttributeHelper::GetAttributeDef(nAttrib, m_aCustomAttribDefs, attribDef));
+		if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib) && 
+			m_mapParentAttribs.Has(TDCA_CUSTOMATTRIB))
+		{
+			TDCCUSTOMATTRIBUTEDEFINITION attribDef;
+			VERIFY(CTDCCustomAttributeHelper::GetAttributeDef(nAttrib, m_aCustomAttribDefs, attribDef));
 
-		return attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES);
+			return attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES);
+		}
+
+		// else
+		return m_mapParentAttribs.Has(nAttrib);
 	}
 
 	// All else
@@ -1211,7 +1215,29 @@ TDC_SET CToDoCtrlData::CopyTaskAttributes(TODOITEM* pToTDI, DWORD dwFromTaskID, 
 			}
 		}
 	}
-	
+
+	if (mapAttribs.Has(TDCA_CUSTOMATTRIB))
+	{
+		// Copy those custom attributes that have the 'Inherit' feature enabled
+		for (int nDef = 0; nDef < m_aCustomAttribDefs.GetSize(); nDef++)
+		{
+			const TDCCUSTOMATTRIBUTEDEFINITION& attribDef = m_aCustomAttribDefs.GetData()[nDef];
+
+			if (attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES))
+			{
+				TDCCADATA dataFrom, dataTo;
+				pFromTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
+				pToTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataTo);
+
+				if (dataFrom != dataTo)
+				{
+					pToTDI->SetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
+					nRes = SET_CHANGE;
+				}
+			}
+		}
+	}
+		
 	return nRes;
 }
 
@@ -1424,6 +1450,11 @@ void CToDoCtrlData::ApplyLastInheritedChangeToSubtasks(DWORD dwTaskID, TDC_ATTRI
 			ApplyLastChangeToSubtasks(dwTaskID, nAttrib, FALSE);
 		}
 	}
+	else if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib) &&
+			WantUpdateInheritedAttibute(TDCA_CUSTOMATTRIB))
+	{
+		ApplyLastChangeToSubtasks(dwTaskID, nAttrib);
+	}
 	else if (WantUpdateInheritedAttibute(nAttrib))
 	{
 		ApplyLastChangeToSubtasks(dwTaskID, nAttrib);
@@ -1615,26 +1646,27 @@ BOOL CToDoCtrlData::ApplyLastChangeToSubtask(const TODOITEM* pTDIParent, const T
 		break;
 
 	default:
-		if (!CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib))
-		{
-			ASSERT(0);
-			return FALSE;
-		}
-		else
+		if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib))
 		{
 			TDCCUSTOMATTRIBUTEDEFINITION attribDef;
 			VERIFY(CTDCCustomAttributeHelper::GetAttributeDef(nAttrib, m_aCustomAttribDefs, attribDef));
 
 			if (attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES))
 			{
-				TDCCADATA dataParent;
-				pTDIParent->GetCustomAttributeValue(attribDef.sUniqueID, dataParent);
+				if (bIncludeBlank || pTDIParent->HasCustomAttributeValue(attribDef.sUniqueID))
+				{
+					TDCCADATA data;
+					pTDIParent->GetCustomAttributeValue(attribDef.sUniqueID, data);
 
-				if (bIncludeBlank || !dataParent.IsEmpty())
-					pTDIChild->SetCustomAttributeValue(attribDef.sUniqueID, dataParent);
+					pTDIChild->SetCustomAttributeValue(attribDef.sUniqueID, data);
+				}
 			}
 		}
-		break;
+		else
+		{
+			ASSERT(0);
+			return FALSE;
+		}
 	}
 
 	// and its children too
