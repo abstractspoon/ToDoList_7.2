@@ -48,6 +48,7 @@ IIMPORTEXPORT_RESULT CMLOExporter::Export(const ITaskList* pSrcTaskFile, LPCTSTR
 	}
 	
 	CXmlFile fileDest(_T("MyLifeOrganized-xml"));
+	fileDest.SetXmlHeader(DEFAULT_UTF8_HEADER);
 
 	// export tasks
 	CXmlItem* pXITasks = fileDest.AddItem(_T("TaskTree"));
@@ -67,8 +68,10 @@ IIMPORTEXPORT_RESULT CMLOExporter::Export(const ITaskList* pSrcTaskFile, LPCTSTR
 
 IIMPORTEXPORT_RESULT CMLOExporter::Export(const IMultiTaskList* pSrcTaskFile, LPCTSTR szDestFilePath, bool /*bSilent*/, IPreferences* /*pPrefs*/, LPCTSTR /*szKey*/)
 {
-	// export tasks
 	CXmlFile fileDest(_T("MyLifeOrganized-xml"));
+	fileDest.SetXmlHeader(DEFAULT_UTF8_HEADER);
+
+	// export tasks
 	CXmlItem* pXITasks = fileDest.AddItem(_T("TaskTree"));
 	
 	for (int nTaskList = 0; nTaskList < pSrcTaskFile->GetTaskListCount(); nTaskList++)
@@ -118,19 +121,16 @@ bool CMLOExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask
 	pXIDestItem->AddItem(_T("Importance"), nImportance);
 	
 	// dates
-	time64_t tDue = T64Utils::T64_NULL, tDone = T64Utils::T64_NULL;
+	time64_t tDate = T64Utils::T64_NULL;
 	
-	if (pSrcTaskFile->GetTaskDoneDate64(hTask, tDone))
-	{
-		COleDateTime dtDone = CDateHelper::GetDate(tDone);
-		pXIDestItem->AddItem(_T("CompletionDateTime"), CDateHelper::FormatDate(dtDone, DHFD_ISO));
-	}
+	if (pSrcTaskFile->GetTaskCreationDate64(hTask, tDate))
+		pXIDestItem->AddItem(_T("Created"), FormatDate(tDate));
 	
-	if (pSrcTaskFile->GetTaskDueDate64(hTask, false, tDue))
-	{
-		COleDateTime dtDue = CDateHelper::GetDate(tDue);
-		pXIDestItem->AddItem(_T("DueDateTime"), CDateHelper::FormatDate(dtDue, DHFD_ISO));
-	}
+	if (pSrcTaskFile->GetTaskDoneDate64(hTask, tDate))
+		pXIDestItem->AddItem(_T("CompletionDateTime"), FormatDate(tDate));
+
+	if (pSrcTaskFile->GetTaskDueDate64(hTask, false, tDate))
+		pXIDestItem->AddItem(_T("DueDateTime"), FormatDate(tDate));
 	
 	// time estimate
 	TDC_UNITS nUnits;
@@ -168,6 +168,13 @@ bool CMLOExporter::ExportTask(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask
 	}
 
 	return true;
+}
+
+CString CMLOExporter::FormatDate(time64_t tDate)
+{
+	COleDateTime date = CDateHelper::GetDate(tDate);
+
+	return CDateHelper::FormatDate(date, DHFD_ISO | DHFD_TIME, 'T');
 }
 
 void CMLOExporter::BuildPlacesMap(const ITASKLISTBASE* pSrcTaskFile, HTASKITEM hTask, 
