@@ -1492,7 +1492,8 @@ LRESULT CTDLTaskTreeCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 
 				// allow parent to handle any focus changes
 				// before we change our selection
-				m_tcTasks.SetFocus();
+				if (!bHadFocus)
+					m_tcTasks.SetFocus();
 
 				// don't change selection if user is expanding an item
 				UINT nHitFlags = 0;
