@@ -110,8 +110,6 @@ const DWORD IDD_TODOCTRL_DIALOG = (DWORD)(LPCTSTR)_T("IDD_TODOCTRL_DIALOG");
 
 /////////////////////////////////////////////////////////////////////////////
 
-//const LPCTSTR DEFAULT_UTF8_HEADER = _T("version=\"1.0\" encoding=\"UTF-8\"");
-const LPCTSTR DEFAULT_UNICODE_HEADER = _T("version=\"1.0\" encoding=\"UTF-16\"");
 const LPCTSTR ARCHIVE_ID = _T(".done");
 const LPCTSTR DICTIONARY_URL = _T("https://github.com/abstractspoon/ToDoList_Downloads/wiki/Dictionaries");
 

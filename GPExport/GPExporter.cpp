@@ -25,7 +25,6 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 
 const UINT ONEDAY = 24 * 60 * 60;
-const LPCTSTR UTF8_HEADER = _T("version=\"1.0\" encoding=\"UTF-8\"");
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -78,7 +77,7 @@ IIMPORTEXPORT_RESULT CGPExporter::Export(const ITaskList* pSrcTaskFile, LPCTSTR 
 		return IIER_CANCELLED;
 
 	CXmlFile fileDest(_T("project"));
-	fileDest.SetXmlHeader(UTF8_HEADER);
+	fileDest.SetXmlHeader(DEFAULT_UTF8_HEADER);
 
 	// export resource allocations
 	ExportResources(pTasks, fileDest.Root());
@@ -122,7 +121,7 @@ IIMPORTEXPORT_RESULT CGPExporter::Export(const IMultiTaskList* pSrcTaskFile, LPC
 		return IIER_CANCELLED;
 
 	CXmlFile fileDest(_T("project"));
-	fileDest.SetXmlHeader(UTF8_HEADER);
+	fileDest.SetXmlHeader(DEFAULT_UTF8_HEADER);
 
 	// placeholders for tasks
 	CXmlItem* pXITasks = fileDest.AddItem(_T("tasks"));
