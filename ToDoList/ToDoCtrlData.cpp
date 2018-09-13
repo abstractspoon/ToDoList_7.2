@@ -107,7 +107,8 @@ BOOL CToDoCtrlData::WantUpdateInheritedAttibute(TDC_ATTRIBUTE nAttrib) const
 {
 	if (m_bUpdateInheritAttrib)
 	{
-		if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib))
+		if (CTDCCustomAttributeHelper::IsCustomAttribute(nAttrib) && 
+			m_mapParentAttribs.Has(TDCA_CUSTOMATTRIB))
 		{
 			TDCCUSTOMATTRIBUTEDEFINITION attribDef;
 			VERIFY(CTDCCustomAttributeHelper::GetAttributeDef(nAttrib, m_aCustomAttribDefs, attribDef));
@@ -1215,21 +1216,24 @@ TDC_SET CToDoCtrlData::CopyTaskAttributes(TODOITEM* pToTDI, DWORD dwFromTaskID, 
 		}
 	}
 
-	// Copy any custom attributes that have the 'Inherit' feature enabled
-	for (int nDef = 0; nDef < m_aCustomAttribDefs.GetSize(); nDef++)
+	if (mapAttribs.Has(TDCA_CUSTOMATTRIB))
 	{
-		const TDCCUSTOMATTRIBUTEDEFINITION& attribDef = m_aCustomAttribDefs.GetData()[nDef];
-
-		if (attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES))
+		// Copy those custom attributes that have the 'Inherit' feature enabled
+		for (int nDef = 0; nDef < m_aCustomAttribDefs.GetSize(); nDef++)
 		{
-			TDCCADATA dataFrom, dataTo;
-			pFromTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
-			pToTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataTo);
+			const TDCCUSTOMATTRIBUTEDEFINITION& attribDef = m_aCustomAttribDefs.GetData()[nDef];
 
-			if (dataFrom != dataTo)
+			if (attribDef.HasFeature(TDCCAF_INHERITPARENTCHANGES))
 			{
-				pToTDI->SetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
-				nRes = SET_CHANGE;
+				TDCCADATA dataFrom, dataTo;
+				pFromTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
+				pToTDI->GetCustomAttributeValue(attribDef.sUniqueID, dataTo);
+
+				if (dataFrom != dataTo)
+				{
+					pToTDI->SetCustomAttributeValue(attribDef.sUniqueID, dataFrom);
+					nRes = SET_CHANGE;
+				}
 			}
 		}
 	}

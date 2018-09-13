@@ -50,6 +50,7 @@ CPreferencesTaskDef2Page::CPreferencesTaskDef2Page()
 	m_aAttribPrefs.Add(ATTRIBPREF(IDS_TDLBC_LOCK, TDCA_LOCK, -1)); 
 	m_aAttribPrefs.Add(ATTRIBPREF(IDS_TDLBC_EXTERNALID, TDCA_EXTERNALID, -1)); 
 	m_aAttribPrefs.Add(ATTRIBPREF(IDS_TDLBC_TAGS, TDCA_TAGS, -1)); 
+	m_aAttribPrefs.Add(ATTRIBPREF(IDS_TDLBC_CUSTOMATTRIBS, TDCA_CUSTOMATTRIB, -1)); 
 }
 
 CPreferencesTaskDef2Page::~CPreferencesTaskDef2Page()
@@ -99,6 +100,7 @@ BOOL CPreferencesTaskDef2Page::OnInitDialog()
 	m_mgrGroupLines.AddGroupLine(IDC_DROPLISTGROUP, *this);
 
 	GetDlgItem(IDC_INHERITATTRIBUTES)->EnableWindow(m_bInheritParentAttributes);
+	GetDlgItem(IDC_UPDATEINHERITATTRIB)->EnableWindow(m_bInheritParentAttributes);
 
 	int nItem = m_aAttribPrefs.GetSize();
 	
@@ -132,6 +134,7 @@ void CPreferencesTaskDef2Page::OnUseparentattrib()
 	UpdateData();
 
 	GetDlgItem(IDC_INHERITATTRIBUTES)->EnableWindow(m_bInheritParentAttributes);
+	GetDlgItem(IDC_UPDATEINHERITATTRIB)->EnableWindow(m_bInheritParentAttributes);
 
 	CPreferencesPageBase::OnControlChange();
 }
@@ -296,12 +299,13 @@ BOOL CPreferencesTaskDef2Page::HasCheckedAttributes() const
 	return FALSE;
 }
 
-int CPreferencesTaskDef2Page::GetInheritParentAttributes(CTDCAttributeMap& mapAttribs) const
+int CPreferencesTaskDef2Page::GetParentAttribsUsed(CTDCAttributeMap& mapAttribs, BOOL& bUpdateAttrib) const
 {
 	mapAttribs.RemoveAll();
 
 	if (m_bInheritParentAttributes)
 	{
+		bUpdateAttrib = m_bUpdateInheritAttributes;
 		int nIndex = (int)m_aAttribPrefs.GetSize();
 		
 		while (nIndex--)
@@ -310,12 +314,12 @@ int CPreferencesTaskDef2Page::GetInheritParentAttributes(CTDCAttributeMap& mapAt
 				mapAttribs.Add(m_aAttribPrefs[nIndex].nAttrib);
 		}
 	}
-
-	// Include 'custom attributes' regardless
-	mapAttribs.Add(TDCA_CUSTOMATTRIB);
+	else
+		bUpdateAttrib = FALSE;
 
 	return mapAttribs.GetCount();
 }
+
 
 void CPreferencesTaskDef2Page::LoadPreferences(const IPreferences* pPrefs, LPCTSTR szKey)
 {
