@@ -299,7 +299,7 @@ BOOL CPreferencesTaskDef2Page::HasCheckedAttributes() const
 	return FALSE;
 }
 
-int CPreferencesTaskDef2Page::GetParentAttribsUsed(CTDCAttributeMap& mapAttribs, BOOL& bUpdateAttrib) const
+int CPreferencesTaskDef2Page::GetInheritParentAttributes(CTDCAttributeMap& mapAttribs, BOOL& bUpdateAttrib) const
 {
 	mapAttribs.RemoveAll();
 
