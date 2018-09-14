@@ -39,7 +39,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 
 const int LV_COLPADDING			= 3;
-const int CLIENTCOLWIDTH		= 1000;
+const int CLIENTCOLWIDTH		= GraphicsMisc::ScaleByDPIFactor(1000);
 const UINT TIMER_EDITLABEL		= 42; // List ctrl's internal timer ID for label edits
 
 const COLORREF COMMENTSCOLOR	= RGB(98, 98, 98);
