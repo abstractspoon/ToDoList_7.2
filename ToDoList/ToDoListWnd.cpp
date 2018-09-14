@@ -12543,7 +12543,12 @@ void CToDoListWnd::OnViewCycleTaskViews()
 	CFilteredToDoCtrl& tdc = GetToDoCtrl();
 
 	tdc.SetNextTaskView();
-	tdc.SetFocusToTasks();
+
+	// Don't set the focus to the tasks because:
+	// a) the user may be in the middle of editing comments 
+	// and just want a quick look at the other view
+	// b) causes a nasty flicker
+	//tdc.SetFocusToTasks();
 }
 
 void CToDoListWnd::OnUpdateViewCycleTaskViews(CCmdUI* pCmdUI) 
@@ -12569,7 +12574,12 @@ void CToDoListWnd::OnViewToggleTreeandList()
 	}
 
 	tdc.SetTaskView(nView);
-	tdc.SetFocusToTasks();
+
+	// Don't set the focus to the tasks because:
+	// a) the user may be in the middle of editing comments 
+	// and just want a quick look at the other view
+	// b) causes a nasty flicker
+	//tdc.SetFocusToTasks();
 }
 
 void CToDoListWnd::OnUpdateViewToggleTreeandList(CCmdUI* pCmdUI) 
