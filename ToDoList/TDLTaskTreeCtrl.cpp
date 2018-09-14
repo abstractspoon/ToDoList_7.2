@@ -1280,16 +1280,9 @@ LRESULT CTDLTaskTreeCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		switch (msg)
 		{
 #ifdef _DEBUG
-/*
 		case WM_PAINT:
-			{
-				DWORD dwTick = GetTickCount();
-				LRESULT lr = CTDLTaskCtrlBase::ScWindowProc(hRealWnd, msg, wp, lp);
-				TRACE(_T("WM_PAINT(TaskTree - Client Column) took %d ms)\n"), (GetTickCount() - dwTick));
-				return lr;
-			}
+			TRACE(_T("CTDLTaskTreeCtrl::ScWindowProc(WM_PAINT) Tree %s has focus\n"), HasFocus() ? _T("") : _T("not"));
 			break;
-*/
 #endif
 
 		case WM_NOTIFY:
