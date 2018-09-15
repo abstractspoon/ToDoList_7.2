@@ -5073,7 +5073,7 @@ HTREEITEM CToDoCtrl::InsertNewTask(const CString& sText, HTREEITEM htiParent, HT
 
 		SelectItem(htiNew);
 		SetModified(TRUE, TDCA_NEWTASK, dwTaskID); 
-		
+
 		m_taskTree.InvalidateAll();
 
 		if (bEdit)
@@ -5390,6 +5390,8 @@ BOOL CToDoCtrl::EditSelectedTaskTitle(BOOL bTaskIsNew)
 	m_eTaskName.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
 	// and show
+	TRACE(_T("CToDoCtrl::EditSelectedTaskTitle(End @ %ld)\n"), GetTickCount());
+
 	m_eTaskName.Show(rPos);
 
 	return TRUE;
@@ -8975,10 +8977,11 @@ void CToDoCtrl::SelectItem(HTREEITEM hti)
 		// The problem is that the auto droplists (category, status, alloc to/by)
 		// rely on focus changes to get them to update, and if any of the
 		// Goto..Task() methods are called there is no change of focus.
-		HWND hFocus = ::GetFocus();
+		CWnd* pFocus = GetFocus();
+		BOOL bAutoCombo = (pFocus && (pFocus->GetParent() == this) && pFocus->IsKindOf(RUNTIME_CLASS(CAutoComboBox)));
 
-		if (IsChildOrSame(GetSafeHwnd(), hFocus))
-			::SendMessage(hFocus, WM_KILLFOCUS, 0, 0);
+ 		if (bAutoCombo)
+ 			pFocus->SendMessage(WM_KILLFOCUS, 0, 0);
 
 		if (!m_taskTree.SelectItem(hti))
 			UpdateControls(); // disable controls
@@ -8987,8 +8990,8 @@ void CToDoCtrl::SelectItem(HTREEITEM hti)
 		
 		m_treeDragDrop.EnableDragDrop(!IsReadOnly());
 
-		if (IsChildOrSame(GetSafeHwnd(), hFocus))
-			::SendMessage(hFocus, WM_SETFOCUS, 0, 0);
+		if (bAutoCombo)
+			pFocus->SendMessage(WM_SETFOCUS, 0, 0);
 
 		// notify parent
 		GetParent()->PostMessage(WM_TDCN_SELECTIONCHANGE);
