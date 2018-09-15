@@ -1281,7 +1281,6 @@ LRESULT CTDLTaskTreeCtrl::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARA
 		{
 #ifdef _DEBUG
 		case WM_PAINT:
-			TRACE(_T("CTDLTaskTreeCtrl::ScWindowProc(WM_PAINT) Tree %s has focus\n"), HasFocus() ? _T("") : _T("not"));
 			break;
 #endif
 
