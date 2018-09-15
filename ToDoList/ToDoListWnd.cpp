@@ -12540,15 +12540,7 @@ void CToDoListWnd::OnUpdateEditUndoRedo(CCmdUI* pCmdUI, BOOL bUndo)
 
 void CToDoListWnd::OnViewCycleTaskViews() 
 {
-	CFilteredToDoCtrl& tdc = GetToDoCtrl();
-
-	tdc.SetNextTaskView();
-
-	// Don't set the focus to the tasks because:
-	// a) the user may be in the middle of editing comments 
-	// and just want a quick look at the other view
-	// b) causes a nasty flicker
-	//tdc.SetFocusToTasks();
+	GetToDoCtrl().SetNextTaskView();
 }
 
 void CToDoListWnd::OnUpdateViewCycleTaskViews(CCmdUI* pCmdUI) 
@@ -12559,27 +12551,18 @@ void CToDoListWnd::OnUpdateViewCycleTaskViews(CCmdUI* pCmdUI)
 void CToDoListWnd::OnViewToggleTreeandList() 
 {
 	CFilteredToDoCtrl& tdc = GetToDoCtrl();
-	FTC_VIEW nView = tdc.GetTaskView();
 
-	switch (nView)
+	switch (tdc.GetTaskView())
 	{
 	case FTCV_TASKTREE:
-		nView = FTCV_TASKLIST;
+		tdc.SetTaskView(FTCV_TASKLIST);
 		break;
 
 	case FTCV_TASKLIST:
 	default:
-		nView = FTCV_TASKTREE;
+		tdc.SetTaskView(FTCV_TASKTREE);
 		break;
 	}
-
-	tdc.SetTaskView(nView);
-
-	// Don't set the focus to the tasks because:
-	// a) the user may be in the middle of editing comments 
-	// and just want a quick look at the other view
-	// b) causes a nasty flicker
-	//tdc.SetFocusToTasks();
 }
 
 void CToDoListWnd::OnUpdateViewToggleTreeandList(CCmdUI* pCmdUI) 
