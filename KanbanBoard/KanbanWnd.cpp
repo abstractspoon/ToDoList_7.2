@@ -736,8 +736,6 @@ void CKanbanWnd::SendParentSelectionUpdate()
 
 void CKanbanWnd::OnSetFocus(CWnd* pOldWnd) 
 {
-	// DON'T call dialog base class because
-	// it will forcibly set focus to first list ctrl
 	m_ctrlKanban.SetFocus();
 }
 

@@ -522,9 +522,5 @@ void CTDLCommentsCtrl::SetPreferencesFilePath(LPCTSTR szFilePath)
 
 void CTDLCommentsCtrl::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	// Don't call base class because its focus handling
-	// messes up our focus handling
-	//CRuntimeDlg::OnSetFocus(pOldWnd);
-
 	m_ctrlComments.SetFocus();
 }

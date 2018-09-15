@@ -972,10 +972,8 @@ void CGanttChartWnd::OnBeginEditTreeLabel(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	GetParent()->SendMessage(WM_IUI_EDITSELECTEDTASKTITLE);
 }
 
-void CGanttChartWnd::OnSetFocus(CWnd* pOldWnd) 
+void CGanttChartWnd::OnSetFocus(CWnd* /*pOldWnd*/) 
 {
-	CDialog::OnSetFocus(pOldWnd);
-	
 	m_tree.SetFocus();
 }
 
