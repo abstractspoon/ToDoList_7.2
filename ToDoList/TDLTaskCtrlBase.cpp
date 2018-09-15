@@ -750,9 +750,6 @@ void CTDLTaskCtrlBase::UpdateAttributePaneVisibility()
 	while (nItem-- && !bShow)
 	{		
 		TDC_COLUMN nColID = (TDC_COLUMN)m_hdrColumns.GetItemData(nItem);
-		
-		// Ignore custom columns because they are always
-		// visible and so we handled it above
 		bShow = IsColumnShowing(nColID);
 	}
 	
@@ -5779,7 +5776,7 @@ BOOL CTDLTaskCtrlBase::GetSelectedTaskCustomAttributeData(const CString& sAttrib
 		// Multi-selection check lists need special handling
 		if (attribDef.IsMultiList())
 		{
-			CMap<CString, LPCTSTR, int, int> mapCounts;
+			CMap<CString, LPCTSTR, int, int&> mapCounts;
 			POSITION pos = GetFirstSelectedTaskPos();
 
 			while (pos)
@@ -5954,7 +5951,7 @@ int CTDLTaskCtrlBase::GetSelectedTaskArray(TDC_ATTRIBUTE nAttrib, CStringArray& 
 int CTDLTaskCtrlBase::GetSelectedTaskArray(TDC_ATTRIBUTE nAttrib, CStringArray& aMatched, CStringArray& aMixed) const
 {
 	int nSelCount = GetSelectedCount();
-	CMap<CString, LPCTSTR, int, int> mapCounts;
+	CMap<CString, LPCTSTR, int, int&> mapCounts;
 
 	POSITION pos = GetFirstSelectedTaskPos();
 
@@ -5977,7 +5974,7 @@ int CTDLTaskCtrlBase::GetSelectedTaskArray(TDC_ATTRIBUTE nAttrib, CStringArray& 
 	return SplitSelectedTaskArrayMatchCounts(mapCounts, nSelCount, aMatched, aMixed);
 }
 
-int CTDLTaskCtrlBase::SplitSelectedTaskArrayMatchCounts(const CMap<CString, LPCTSTR, int, int>& mapCounts, int nNumTasks, CStringArray& aMatched, CStringArray& aMixed)
+int CTDLTaskCtrlBase::SplitSelectedTaskArrayMatchCounts(const CMap<CString, LPCTSTR, int, int&>& mapCounts, int nNumTasks, CStringArray& aMatched, CStringArray& aMixed)
 {
 	aMatched.RemoveAll();
 	aMixed.RemoveAll();
