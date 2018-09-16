@@ -5073,7 +5073,7 @@ HTREEITEM CToDoCtrl::InsertNewTask(const CString& sText, HTREEITEM htiParent, HT
 
 		SelectItem(htiNew);
 		SetModified(TRUE, TDCA_NEWTASK, dwTaskID); 
-
+		
 		m_taskTree.InvalidateAll();
 
 		if (bEdit)
@@ -5390,8 +5390,6 @@ BOOL CToDoCtrl::EditSelectedTaskTitle(BOOL bTaskIsNew)
 	m_eTaskName.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
 	// and show
-	TRACE(_T("CToDoCtrl::EditSelectedTaskTitle(End @ %ld)\n"), GetTickCount());
-
 	m_eTaskName.Show(rPos);
 
 	return TRUE;
@@ -6129,8 +6127,9 @@ void CToDoCtrl::BuildTasksForSave(CTaskFile& tasks, BOOL bFirstSave)
 	if (IsEncrypted() && HasStyle(TDCS_DISABLEPASSWORDPROMPTING))
 		tasks.SetDisablePasswordPrompting();
 	
-	// encrypt prior to setting checkout status and file info (so these are visible without decryption)
-	// this simply fails if password is empty
+	// encrypt prior to setting checkout status and file info 
+	// so these are visible without decryption
+	// this quietly  fails if password is empty
 	tasks.Encrypt(m_sPassword, SFEF_UTF16);
 
 	// then append header info
@@ -8150,15 +8149,12 @@ BOOL CToDoCtrl::CopySelectedTask() const
 
 BOOL CToDoCtrl::CutSelectedTask()
 {
-	if (m_taskTree.SelectionHasUnlocked())
+	if (m_taskTree.SelectionHasUnlocked() && CopyCurrentSelection())
 	{
-		if (CopyCurrentSelection())
-		{
-			IMPLEMENT_DATA_UNDO(m_data, TDCUAT_DELETE);
+		IMPLEMENT_DATA_UNDO(m_data, TDCUAT_DELETE);
 			
-			DeleteSelectedTask(FALSE, TRUE);
-			return TRUE;
-		}
+		DeleteSelectedTask(FALSE, TRUE);
+		return TRUE;
 	}
 	
 	return FALSE;
