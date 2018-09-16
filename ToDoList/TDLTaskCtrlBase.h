@@ -516,16 +516,16 @@ protected:
 	static BOOL PtInClientRect(POINT point, HWND hWnd, BOOL bScreenCoords);
 	static int GetUniqueToolTipID(DWORD dwTaskID, TDC_COLUMN nColID, int nIndex = 0);
 	static int CalcRequiredIconColumnWidth(int nNumImage);
-	static int SplitSelectedTaskArrayMatchCounts(const CMap<CString, LPCTSTR, int, int>& mapCounts, int nNumTasks, 
+	static int SplitSelectedTaskArrayMatchCounts(const CMap<CString, LPCTSTR, int, int&>& mapCounts, int nNumTasks, 
 												CStringArray& aMatched, CStringArray& aMixed);
 
 	static int CALLBACK SortFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); 
 	static int CALLBACK SortFuncMulti(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); 
 	static int CompareTasks(LPARAM lParam1, 
-						LPARAM lParam2, 
-						const CTDLTaskCtrlBase& base, 
-						const TDSORTCOLUMN& sort, 
-						const TDSORTFLAGS& flags);
+							LPARAM lParam2, 
+							const CTDLTaskCtrlBase& base, 
+							const TDSORTCOLUMN& sort, 
+							const TDSORTFLAGS& flags);
 	
 #ifdef _DEBUG
 	virtual LPCTSTR GetDebugName() const = 0;
