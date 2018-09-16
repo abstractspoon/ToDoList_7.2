@@ -3550,10 +3550,16 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 
 	case TDCC_COMMENTSSIZE:
 		{
-			DWORD dwByteSize = pTDI->GetCommentsSize();
+			float fSize = pTDI->GetCommentsSizeInKB();
 
-			if (dwByteSize > 1024)
-				sTaskColText = Misc::Format(dwByteSize / 1024);
+			if (fSize >= 1)
+			{
+				sTaskColText = Misc::Format(max(1, (int)fSize));
+			}
+			else if (fSize > 0)
+			{
+				sTaskColText = _T(">0");
+			}
 		}
 		break;
 
@@ -4952,10 +4958,10 @@ int CTDLTaskCtrlBase::RecalcColumnWidth(int nCol, CDC* pDC, BOOL bVisibleOnly) c
 
 	case TDCC_COMMENTSSIZE:
 		{
-			DWORD dwByteSize = m_find.GetLargestCommentsSize();
+			float fSize = m_find.GetLargestCommentsSizeInKB();
 
-			if (dwByteSize > 1024)
-				nColWidth = (1 + (int)log10(dwByteSize / 1024.0));
+			if (fSize > 0)
+				nColWidth = (1 + (int)log10(fSize));
 		}
 		break;
 

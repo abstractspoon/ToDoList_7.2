@@ -3209,6 +3209,7 @@ BEGIN
         MENUITEM "&Allocated By",               ID_SORTBY_ALLOCBY
         MENUITEM "&Allocated To",               ID_SORTBY_ALLOCTO
         MENUITEM "&Category",                   ID_SORTBY_CATEGORY
+        MENUITEM "Comments Si&ze",              ID_SORTBY_COMMENTSSIZE
         MENUITEM "C&ompleted Date",             ID_SORTBY_DONEDATE
         MENUITEM "C&ompleted Status",           ID_SORTBY_DONE
         MENUITEM "&Cost",                       ID_SORTBY_COST
@@ -5417,7 +5418,7 @@ BEGIN
     IDS_TDLBC_COMMENTSSIZE  "Comments Size"
     IDS_TDC_COLUMN_COMMENTSSIZE "KB"
     IDS_SAVETASKVIEWTOIMAGE_TITLE "Save Task View to Image"
-    IDS_TDLBC_CUSTOMATTRIBS  "Custom Attributes"
+    IDS_TDLBC_CUSTOMATTRIBS "Custom Attributes"
 END
 
 #endif    // English (Australia) resources

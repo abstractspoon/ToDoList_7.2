@@ -6528,9 +6528,7 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 			
 			// redo last sort
 			if (IsSorting())
-			{
-				Resort(FALSE); // FALSE means 'Don't Toggle'
-			}
+				Resort();
 		}
 
 		// scroll to first visible item
@@ -9199,6 +9197,10 @@ void CToDoCtrl::HandleUnsavedComments()
 		SetSelectedTaskComments(m_sTextComments, m_customComments, TRUE); // TRUE == internal call
 
 		m_nCommentsState = CS_CHANGED;
+
+		// Update sort if required
+		if (m_visColEdit.IsColumnVisible(TDCC_COMMENTSSIZE) && IsSortingBy(TDCC_COMMENTSSIZE))
+			Resort();
 	}
 }
 
