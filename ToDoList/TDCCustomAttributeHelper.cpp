@@ -96,7 +96,7 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 			break;
 
 		case TDCCA_TIMEPERIOD:
-			pControl = new CTimeEdit();
+			pControl = new CTimeEdit;
 			szClass = WC_EDIT;
 			dwStyle |= (ES_LEFT | ES_AUTOHSCROLL);
 			break;
@@ -1174,6 +1174,8 @@ void CTDCCustomAttributeHelper::UpdateControl(const CWnd* pParent, const CUSTOMA
 				{
 					pDTC->SetTime(date);
 				}
+				pDTC->SetMonthCalStyle(MCS_WEEKNUMBERS);
+
 
 				if (ctrl.HasBuddy() && CDateHelper::DateHasTime(date))
 				{
