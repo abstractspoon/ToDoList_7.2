@@ -470,25 +470,31 @@ void CTDCFilter::AddNonDateFilterQueryRules(const TDCFILTER& filter, const CTDCC
 void CTDCFilter::AppendArrayRule(const CStringArray& aValues, TDC_ATTRIBUTE nAttrib, CSearchParamArray& aRules, 
 								DWORD dwFlags, DWORD dwIncludeMask)
 {
+
 	if (aValues.GetSize())
 	{
 		CString sMatchBy = Misc::FormatArray(aValues);
+		int nRule = -1;
 
 		if ((aValues.GetSize() == 1) && sMatchBy.IsEmpty())
 		{
-			aRules.Add(SEARCHPARAM(nAttrib, FOP_NOT_SET));
+			nRule = aRules.Add(SEARCHPARAM(nAttrib, FOP_NOT_SET));
 		}
 		else if (dwFlags && dwIncludeMask)
 		{
 			if (dwFlags & dwIncludeMask)
-				aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sMatchBy));
+				nRule = aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sMatchBy));
 			else
-				aRules.Add(SEARCHPARAM(nAttrib, FOP_EQUALS, sMatchBy));
+				nRule = aRules.Add(SEARCHPARAM(nAttrib, FOP_EQUALS, sMatchBy));
 		}
 		else // includes
 		{
-			aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sMatchBy));
+			nRule = aRules.Add(SEARCHPARAM(nAttrib, FOP_INCLUDES, sMatchBy));
 		}
+
+		// Always apply 'match whole word' because filter combos are read-only
+		if (nRule != -1)
+			aRules[nRule].SetMatchWholeWord(TRUE);
 	}
 }
 

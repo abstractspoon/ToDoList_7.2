@@ -262,7 +262,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 		return FALSE;
 	
 	BOOL bMatches = TRUE;
-	BOOL bCaseSensitive = query.bCaseSensitive, bWholeWord = query.bMatchWholeWord;
+	BOOL bCaseSensitive = query.bCaseSensitive;
 
 	int nNumRules = query.aRules.GetSize();
 	
@@ -270,16 +270,18 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 	{
 		SEARCHRESULT resTask;
 		const SEARCHPARAM& rule = query.aRules[nRule];
+
 		BOOL bMatch = TRUE, bLastRule = (nRule == nNumRules - 1);
+		//BOOL bWholeWord = rule.GetExtra().bWholeWord;
 		
 		switch (rule.GetAttribute())
 		{
 		case TDCA_TASKNAME:
-			bMatch = ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_TASKNAMEORCOMMENTS:
-			bMatch = ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive, bWholeWord) ||
+			bMatch = ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive) ||
 					ValueMatches(pTDI->sComments, pTDI->customComments, rule, resTask);
 			break;
 			
@@ -288,11 +290,11 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_ALLOCTO:
-			bMatch = ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_ALLOCBY:
-			bMatch = ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive, TRUE);
+			bMatch = ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_PATH:
@@ -306,28 +308,28 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 					FileMisc::TerminatePath(sPath, FileMisc::IsPathTerminated(rule.ValueAsString()));
 				}
 				
-				bMatch = ValueMatches(sPath, rule, resTask, FALSE, FALSE);
+				bMatch = ValueMatches(sPath, rule, resTask, FALSE/*, FALSE*/);
 			}
 			break;
 			
 		case TDCA_CREATEDBY:
-			bMatch = ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive, FALSE);
+			bMatch = ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive/*, FALSE*/);
 			break;
 			
 		case TDCA_STATUS:
-			bMatch = ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive, TRUE);
+			bMatch = ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive/*, TRUE*/);
 			break;
 			
 		case TDCA_CATEGORY:
-			bMatch = ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_TAGS:
-			bMatch = ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_EXTERNALID:
-			bMatch = ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive, FALSE);
+			bMatch = ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive/*, FALSE*/);
 			break;
 
 		case TDCA_RECENTMODIFIED:
@@ -407,7 +409,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_LASTMODBY:
-			bMatch = ValueMatches(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive, bWholeWord);
+			bMatch = ValueMatches(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_PRIORITY:
@@ -487,19 +489,19 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_VERSION:
-			bMatch = ValueMatchesAsArray(pTDI->sVersion, rule, resTask, FALSE, TRUE);
+			bMatch = ValueMatchesAsArray(pTDI->sVersion, rule, resTask, FALSE/*, TRUE*/);
 			break;
 			
 		case TDCA_ICON:
-			bMatch = ValueMatches(pTDI->sIcon, rule, resTask, FALSE, FALSE);
+			bMatch = ValueMatches(pTDI->sIcon, rule, resTask, FALSE/*, FALSE*/);
 			break;
 
 		case TDCA_FILEREF:
-			bMatch = ArrayMatches(pTDI->aFileLinks, rule, resTask, FALSE, FALSE);
+			bMatch = ArrayMatches(pTDI->aFileLinks, rule, resTask, FALSE/*, FALSE*/);
 			break;
 
 		case TDCA_DEPENDENCY:
-			bMatch = ArrayMatches(pTDI->aDependencies, rule, resTask, FALSE, FALSE);
+			bMatch = ArrayMatches(pTDI->aDependencies, rule, resTask, FALSE/*, FALSE*/);
 			break;
 
 		case TDCA_POSITION:
@@ -515,18 +517,18 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			
 		case TDCA_ANYTEXTATTRIBUTE:
 			// Much looser search (FALSE -> partial matches okay)
-			bMatch = (ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive, bWholeWord) ||
-						ValueMatches(pTDI->sComments, rule, resTask, bCaseSensitive, FALSE) ||
-						ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive, FALSE) ||
-						ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive, FALSE) ||
-						ArrayMatches(pTDI->aFileLinks, rule, resTask, bCaseSensitive, FALSE) ||
-						ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive, FALSE) ||
-						ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive, FALSE) || 
-						ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive, FALSE) || 
-						ValueMatchesAsArray(pTDI->sVersion, rule, resTask, bCaseSensitive, FALSE) || 
-						ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive, FALSE) ||
-						ValueMatchesAsArray(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive, FALSE) ||
-						ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive, FALSE));
+			bMatch = (ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive) ||
+						ValueMatches(pTDI->sComments, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ArrayMatches(pTDI->aFileLinks, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive/*, FALSE*/) || 
+						ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive/*, FALSE*/) || 
+						ValueMatchesAsArray(pTDI->sVersion, rule, resTask, bCaseSensitive/*, FALSE*/) || 
+						ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ValueMatchesAsArray(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive/*, FALSE*/) ||
+						ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive/*, FALSE*/));
 
 			if (!bMatch)
 			{
@@ -543,7 +545,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 						TDCCADATA data;
 						pTDI->GetCustomAttributeValue(attribDef.sUniqueID, data);
 
-						bMatch = ValueMatches(data, dwAttribType, rule, resTask, bCaseSensitive, bWholeWord);
+						bMatch = ValueMatches(data, dwAttribType, rule, resTask, bCaseSensitive);
 					}
 				}
 			}
@@ -566,7 +568,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 					TDCCADATA data;
 					pTDI->GetCustomAttributeValue(attribDef.sUniqueID, data);
 
-					bMatch = ValueMatches(data, attribDef.GetAttributeType(), rule, resTask, bCaseSensitive, bWholeWord);
+					bMatch = ValueMatches(data, attribDef.GetAttributeType(), rule, resTask, bCaseSensitive);
 				}
 				else
 				{
@@ -588,7 +590,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 		bMatches &= bMatch;
 		
 		// are we at the end of this group?
-		if ((rule.GetAnd() == FALSE) || bLastRule) // == 'OR' or end of aRules
+		if (rule.GetOr() || bLastRule) // == 'OR' or end of aRules
 		{
 			// if the group result is a match then we're done because
 			// whatever may come after this is 'ORed' and so cannot change 
@@ -609,10 +611,10 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			
 			while (nNext < nNumRules)
 			{
-				const SEARCHPARAM& spNext = query.aRules[nNext];
+				const SEARCHPARAM& ruleNext = query.aRules[nNext];
 				bLastRule = (nNext == nNumRules - 1);
 				
-				if ((spNext.GetAnd() == FALSE) && !bLastRule)
+				if (ruleNext.GetOr() && !bLastRule)
 				{
 					nRule = nNext; // start of next group
 					bMatches = TRUE;
@@ -653,7 +655,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 BOOL CTDCTaskMatcher::ValueMatches(const CString& sComments, const CBinaryData& customComments, 
 									const SEARCHPARAM& rule, SEARCHRESULT& result) const
 {
-	BOOL bMatch = ValueMatches(sComments, rule, result, FALSE, FALSE);
+	BOOL bMatch = ValueMatches(sComments, rule, result, FALSE/*, FALSE*/);
 				
 	// handle custom comments for 'SET' and 'NOT SET'
 	if (!bMatch)
@@ -780,7 +782,7 @@ CString CTDCTaskMatcher::FormatResultDate(const COleDateTime& date) const
 }
 
 BOOL CTDCTaskMatcher::ValueMatches(const CString& sText, const SEARCHPARAM& rule, SEARCHRESULT& result, 
-									BOOL bCaseSensitive, BOOL bWholeWord) const
+									BOOL bCaseSensitive) const
 {
 	BOOL bMatch = FALSE;
 	
@@ -806,7 +808,7 @@ BOOL CTDCTaskMatcher::ValueMatches(const CString& sText, const SEARCHPARAM& rule
 			for (int nWord = 0; nWord < aWords.GetSize() && !bMatch; nWord++)
 			{
 				CString sWord = aWords.GetAt(nWord);
-				bMatch = (Misc::Find(sWord, sText, bCaseSensitive, bWholeWord) != -1);
+				bMatch = (Misc::Find(sWord, sText, bCaseSensitive, rule.GetMatchWholeWord()) != -1);
 			}
 			
 			// handle !=
@@ -831,7 +833,7 @@ BOOL CTDCTaskMatcher::ValueMatches(const CString& sText, const SEARCHPARAM& rule
 }
 
 BOOL CTDCTaskMatcher::ValueMatchesAsArray(const CString& sText, const SEARCHPARAM& rule, SEARCHRESULT& result, 
-										BOOL bCaseSensitive, BOOL bWholeWord) const
+										BOOL bCaseSensitive) const
 {
 	// special case: search param may hold multiple delimited items
 	if (!sText.IsEmpty() || rule.HasString())
@@ -839,18 +841,18 @@ BOOL CTDCTaskMatcher::ValueMatchesAsArray(const CString& sText, const SEARCHPARA
 		CStringArray aText;
 		Misc::Split(sText, aText);
 
-		return ArrayMatches(aText, rule, result, bCaseSensitive, bWholeWord);
+		return ArrayMatches(aText, rule, result, bCaseSensitive);
 	}
 
 	// else	normal text search
-	return ValueMatches(sText, rule, result, bCaseSensitive, bWholeWord);
+	return ValueMatches(sText, rule, result, bCaseSensitive);
 }
 
-BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM& sp, SEARCHRESULT& result, 
-									BOOL bCaseSensitive, BOOL bWholeWord) const
+BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM& rule, SEARCHRESULT& result, 
+									BOOL bCaseSensitive) const
 {
 	// special cases
-	if (sp.OperatorIs(FOP_SET) && aItems.GetSize())
+	if (rule.OperatorIs(FOP_SET) && aItems.GetSize())
 	{
 		int nItem = aItems.GetSize();
 		
@@ -859,17 +861,17 @@ BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM
 		
 		return TRUE;
 	}
-	else if (sp.OperatorIs(FOP_NOT_SET) && !aItems.GetSize())
+	else if (rule.OperatorIs(FOP_NOT_SET) && !aItems.GetSize())
 	{
 		return TRUE;
 	}
 	
 	// general case
 	BOOL bMatch = FALSE;
-	BOOL bMatchAll = (sp.OperatorIs(FOP_EQUALS) || sp.OperatorIs(FOP_NOT_EQUALS));
+	BOOL bMatchAll = (rule.OperatorIs(FOP_EQUALS) || rule.OperatorIs(FOP_NOT_EQUALS));
 	
 	CStringArray aSearchItems;
-	Misc::Split(sp.ValueAsString(), aSearchItems, EMPTY_STR, TRUE);
+	Misc::Split(rule.ValueAsString(), aSearchItems, EMPTY_STR, TRUE);
 	
 	if (bMatchAll)
 	{
@@ -879,7 +881,7 @@ BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM
 	{
 		if (aItems.GetSize())
 		{
-			bMatch = Misc::MatchAny(aSearchItems, aItems, bCaseSensitive, bWholeWord);
+			bMatch = Misc::MatchAny(aSearchItems, aItems, bCaseSensitive, rule.GetMatchWholeWord());
 		}
 		else
 		{
@@ -889,7 +891,7 @@ BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM
 	}
 	
 	// handle !=
-	if (sp.OperatorIs(FOP_NOT_EQUALS) || sp.OperatorIs(FOP_NOT_INCLUDES))
+	if (rule.OperatorIs(FOP_NOT_EQUALS) || rule.OperatorIs(FOP_NOT_INCLUDES))
 		bMatch = !bMatch;
 	
 	if (bMatch)
@@ -899,7 +901,7 @@ BOOL CTDCTaskMatcher::ArrayMatches(const CStringArray& aItems, const SEARCHPARAM
 }
 
 BOOL CTDCTaskMatcher::ValueMatches(const TDCCADATA& data, DWORD dwAttribType, const SEARCHPARAM& rule, SEARCHRESULT& result, 
-									BOOL bCaseSensitive, BOOL bWholeWord) const
+									BOOL bCaseSensitive) const
 {
 	DWORD dwdataType = (dwAttribType & TDCCA_DATAMASK);
 	BOOL bIsList = (dwAttribType & TDCCA_LISTMASK);
@@ -910,7 +912,7 @@ BOOL CTDCTaskMatcher::ValueMatches(const TDCCADATA& data, DWORD dwAttribType, co
 		CStringArray aData;
 		data.AsArray(aData);
 		
-		bMatch = ArrayMatches(aData, rule, result, bCaseSensitive, bWholeWord);
+		bMatch = ArrayMatches(aData, rule, result, bCaseSensitive);
 	}
 	else
 	{
@@ -921,7 +923,7 @@ BOOL CTDCTaskMatcher::ValueMatches(const TDCCADATA& data, DWORD dwAttribType, co
 		switch (dwdataType)
 		{
 		case TDCCA_STRING:	
-			bMatch = ValueMatches(data.AsString(), rule, result, bCaseSensitive, bWholeWord);
+			bMatch = ValueMatches(data.AsString(), rule, result, bCaseSensitive);
 			break;
 			
 		case TDCCA_INTEGER:	
@@ -957,7 +959,7 @@ BOOL CTDCTaskMatcher::ValueMatches(double dValue, const SEARCHPARAM& rule, SEARC
 	
 	if (bTime)
 	{
-		TH_UNITS nTHUints = TDC::MapUnitsToTHUnits((TDC_UNITS)rule.GetFlags());
+		TH_UNITS nTHUints = TDC::MapUnitsToTHUnits(rule.GetTimeUnits());
 		dSearchVal = CTimeHelper().GetTime(dSearchVal, nTHUints, THU_HOURS);
 	}
 	

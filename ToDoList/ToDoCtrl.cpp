@@ -10971,12 +10971,12 @@ BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect)
 BOOL CToDoCtrl::SelectTask(const CString& sPart, TDC_SELECTTASK nSelect, TDC_ATTRIBUTE nAttrib, 
 							BOOL bCaseSensitive, BOOL bWholeWord, BOOL /*bFindReplace*/)
 {
-	SEARCHPARAMS params;
 	SEARCHPARAM rule(nAttrib, FOP_INCLUDES, sPart);
+	rule.SetMatchWholeWord(bWholeWord);
 
+	SEARCHPARAMS params;
 	params.aRules.Add(rule);
 	params.bCaseSensitive = bCaseSensitive;
-	params.bMatchWholeWord = bWholeWord;
 
 	HTREEITEM htiStart = NULL; // first item
 	BOOL bForwards = TRUE;

@@ -1405,7 +1405,9 @@ BOOL CTDCCustomAttributeHelper::AppendFilterRules(const CTDCCustomAttributeDataM
 			if (data.AsArray(aValues))
 			{
 				SEARCHPARAM rule;
+
 				rule.SetCustomAttribute(attribDef.GetAttributeID(), sAttribID, FT_STRING);
+				rule.SetMatchWholeWord(TRUE); // because lists are read-only
 
 				CString sMatchBy = Misc::FormatArray(aValues);
 

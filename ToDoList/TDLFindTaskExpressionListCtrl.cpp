@@ -1064,6 +1064,8 @@ void CTDLFindTaskExpressionListCtrl::OnListValuesEditOK()
 	m_cbListValues.GetChecked(aSel);
 
 	m_aSearchParams[nRow].SetValue(Misc::FormatArray(aSel));
+	m_aSearchParams[nRow].SetMatchWholeWord(TRUE); // because lists are read-only
+
 	UpdateValueColumnText(nRow);
 }
 
