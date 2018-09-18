@@ -3683,8 +3683,12 @@ LRESULT CToDoListWnd::OnToDoCtrlNotifyMod(WPARAM wp, LPARAM lp)
 		break;
 
 	case TDCA_TASKNAME:
-	case TDCA_NEWTASK:
 		UpdateTimeTrackerTasks(tdc, FALSE);
+		break;
+
+	case TDCA_NEWTASK:
+		if (!tdc.IsTaskLabelEditing())
+			UpdateTimeTrackerTasks(tdc, FALSE);
 		break;
 
 	case TDCA_CUSTOMATTRIBDEFS:

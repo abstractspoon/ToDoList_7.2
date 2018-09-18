@@ -5483,24 +5483,21 @@ LRESULT CToDoCtrl::OnEditCancel(WPARAM /*wParam*/, LPARAM lParam)
 
 		// set selection to previous task and if that fails then next task
 		if (!GotoNextTask(TDCG_PREV) && !GotoNextTask(TDCG_NEXT))
+		{
 			TSH().RemoveAll();
+		}
 		
 		// then delete and remove from undo
 		{
 			CHoldRedraw hr(m_taskTree);
-
 			m_taskTree.DeleteItem(hti);
+
 			m_data.DeleteTask(m_dwLastAddedID);
 			m_data.DeleteLastUndoAction();
-
-			SetModified(TRUE, TDCA_DELETE, m_dwLastAddedID);
 		}
 
-		// resync fields for selected task
+		SetModified(TRUE, TDCA_DELETE, m_dwLastAddedID);
 		UpdateControls();
-		
-		// notify parent of deletion
-		GetParent()->SendMessage(WM_TDCN_MODIFY, (WPARAM)GetSafeHwnd(), (LPARAM)TDCA_DELETE); 
 	}
 
 	SetFocusToTasks();
@@ -7016,7 +7013,7 @@ void CToDoCtrl::SetModified(BOOL bMod, TDC_ATTRIBUTE nAttrib, DWORD /*dwModTaskI
 			}
 		}
 
-		GetParent()->SendMessage(WM_TDCN_MODIFY, (WPARAM)GetSafeHwnd(), (LPARAM)nAttrib);
+		GetParent()->PostMessage(WM_TDCN_MODIFY, (WPARAM)GetSafeHwnd(), (LPARAM)nAttrib);
 
 		// special cases: 
 		switch (nAttrib)
