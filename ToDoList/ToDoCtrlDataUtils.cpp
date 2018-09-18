@@ -272,7 +272,6 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 		const SEARCHPARAM& rule = query.aRules[nRule];
 
 		BOOL bMatch = TRUE, bLastRule = (nRule == nNumRules - 1);
-		//BOOL bWholeWord = rule.GetExtra().bWholeWord;
 		
 		switch (rule.GetAttribute())
 		{
@@ -308,16 +307,16 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 					FileMisc::TerminatePath(sPath, FileMisc::IsPathTerminated(rule.ValueAsString()));
 				}
 				
-				bMatch = ValueMatches(sPath, rule, resTask, FALSE/*, FALSE*/);
+				bMatch = ValueMatches(sPath, rule, resTask, FALSE);
 			}
 			break;
 			
 		case TDCA_CREATEDBY:
-			bMatch = ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive/*, FALSE*/);
+			bMatch = ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_STATUS:
-			bMatch = ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive/*, TRUE*/);
+			bMatch = ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive);
 			break;
 			
 		case TDCA_CATEGORY:
@@ -329,7 +328,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_EXTERNALID:
-			bMatch = ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive/*, FALSE*/);
+			bMatch = ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive);
 			break;
 
 		case TDCA_RECENTMODIFIED:
@@ -489,23 +488,23 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_VERSION:
-			bMatch = ValueMatchesAsArray(pTDI->sVersion, rule, resTask, FALSE/*, TRUE*/);
+			bMatch = ValueMatchesAsArray(pTDI->sVersion, rule, resTask, FALSE); // Ignore case
 			break;
 			
 		case TDCA_ICON:
-			bMatch = ValueMatches(pTDI->sIcon, rule, resTask, FALSE/*, FALSE*/);
+			bMatch = ValueMatches(pTDI->sIcon, rule, resTask, FALSE); // Ignore case
 			break;
 
 		case TDCA_FILEREF:
-			bMatch = ArrayMatches(pTDI->aFileLinks, rule, resTask, FALSE/*, FALSE*/);
+			bMatch = ArrayMatches(pTDI->aFileLinks, rule, resTask, FALSE); // Ignore case
 			break;
 
 		case TDCA_DEPENDENCY:
-			bMatch = ArrayMatches(pTDI->aDependencies, rule, resTask, FALSE/*, FALSE*/);
+			bMatch = ArrayMatches(pTDI->aDependencies, rule, resTask, FALSE); // Ignore case
 			break;
 
 		case TDCA_POSITION:
-			// Position is 1-based in the UI, but 0-based 'here' 
+			// Position is 1-based in the UI, but 0-based internally
 			bMatch = ValueMatches((pTDS->GetPosition() + 1), rule, resTask);
 
 			if (bMatch)
@@ -516,19 +515,18 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			break;
 			
 		case TDCA_ANYTEXTATTRIBUTE:
-			// Much looser search (FALSE -> partial matches okay)
 			bMatch = (ValueMatches(pTDI->sTitle, rule, resTask, bCaseSensitive) ||
-						ValueMatches(pTDI->sComments, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ArrayMatches(pTDI->aFileLinks, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive/*, FALSE*/) || 
-						ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive/*, FALSE*/) || 
-						ValueMatchesAsArray(pTDI->sVersion, rule, resTask, bCaseSensitive/*, FALSE*/) || 
-						ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ValueMatchesAsArray(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive/*, FALSE*/) ||
-						ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive/*, FALSE*/));
+						ValueMatches(pTDI->sComments, rule, resTask, bCaseSensitive) ||
+						ArrayMatches(pTDI->aAllocTo, rule, resTask, bCaseSensitive) ||
+						ArrayMatches(pTDI->aCategories, rule, resTask, bCaseSensitive) ||
+						ArrayMatches(pTDI->aFileLinks, rule, resTask, bCaseSensitive) ||
+						ArrayMatches(pTDI->aTags, rule, resTask, bCaseSensitive) ||
+						ValueMatchesAsArray(pTDI->sAllocBy, rule, resTask, bCaseSensitive) || 
+						ValueMatchesAsArray(pTDI->sStatus, rule, resTask, bCaseSensitive) || 
+						ValueMatchesAsArray(pTDI->sVersion, rule, resTask, bCaseSensitive) || 
+						ValueMatchesAsArray(pTDI->sExternalID, rule, resTask, bCaseSensitive) ||
+						ValueMatchesAsArray(m_calculator.GetTaskLastModifiedBy(pTDI, pTDS), rule, resTask, bCaseSensitive) ||
+						ValueMatchesAsArray(pTDI->sCreatedBy, rule, resTask, bCaseSensitive));
 
 			if (!bMatch)
 			{
@@ -655,7 +653,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 BOOL CTDCTaskMatcher::ValueMatches(const CString& sComments, const CBinaryData& customComments, 
 									const SEARCHPARAM& rule, SEARCHRESULT& result) const
 {
-	BOOL bMatch = ValueMatches(sComments, rule, result, FALSE/*, FALSE*/);
+	BOOL bMatch = ValueMatches(sComments, rule, result, FALSE);
 				
 	// handle custom comments for 'SET' and 'NOT SET'
 	if (!bMatch)

@@ -1089,13 +1089,13 @@ struct SEARCHPARAM
 	friend struct SEARCHPARAMS;
 
 	SEARCHPARAM(TDC_ATTRIBUTE a = TDCA_NONE, FIND_OPERATOR o = FOP_NONE) : 
-		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), bAnd(TRUE), nType(FT_NONE) 
+		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), dwFlags(0), bAnd(TRUE), nType(FT_NONE) 
 	{
 		SetAttribute(a);
 	}
 	
 	SEARCHPARAM(TDC_ATTRIBUTE a, FIND_OPERATOR o, CString s, BOOL and = TRUE, FIND_ATTRIBTYPE ft = FT_NONE) : 
-		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), bAnd(and), nType(ft)  
+		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), dwFlags(0), bAnd(and), nType(ft)  
 	{
 		SetAttribute(a);
 
@@ -1104,7 +1104,7 @@ struct SEARCHPARAM
 	}
 	
 	SEARCHPARAM(TDC_ATTRIBUTE a, FIND_OPERATOR o, double d, BOOL and = TRUE) : 
-		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), bAnd(and), nType(FT_NONE)  
+		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), dwFlags(0), bAnd(and), nType(FT_NONE)  
 	{
 		SetAttribute(a);
 
@@ -1115,7 +1115,7 @@ struct SEARCHPARAM
 	}
 	
 	SEARCHPARAM(TDC_ATTRIBUTE a, FIND_OPERATOR o, int n, BOOL and = TRUE) : 
-		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), bAnd(and), nType(FT_NONE)  
+		attrib(TDCA_NONE), op(o), dValue(0), nValue(0), dwFlags(0), bAnd(and), nType(FT_NONE)  
 	{
 		SetAttribute(a);
 
@@ -1244,9 +1244,6 @@ struct SEARCHPARAM
 	BOOL GetAnd() const { return bAnd; }
 	BOOL GetOr() const { return !bAnd; }
 	BOOL IsCustomAttribute() const { return IsCustomAttribute(attrib); }
-
-// 	const SEARCHPARAMEXTRA& GetExtra() const { return paramExtra; }
-// 	SEARCHPARAMEXTRA& GetExtra() { return paramExtra; }
 
 	BOOL IsRelativeDate() const
 	{
