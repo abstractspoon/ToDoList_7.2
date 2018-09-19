@@ -97,8 +97,9 @@ void CTDLDialog::OnDestroy()
 		GetWindowRect(rWindow);
 
 		CPreferences prefs;
-		prefs.WriteProfileInt(m_sPrefsKey, _T("Width"), rWindow.Width());
-		prefs.WriteProfileInt(m_sPrefsKey, _T("Height"), rWindow.Height());
+
+		prefs.WriteProfileInt(m_sPrefsKey, _T("Width"), m_sizePrev.cx);
+		prefs.WriteProfileInt(m_sPrefsKey, _T("Height"), m_sizePrev.cy);
 	}
 }
 
@@ -122,7 +123,7 @@ void CTDLDialog::OnSize(UINT nType, int cx, int cy)
 	CDialog::OnSize(nType, cx, cy);
 
 	// move the controls required
-	if (IsResizable())
+	if (IsResizable() && !IsIconic())
 	{
 		if (m_btnHelp.GetSafeHwnd() && (m_sizePrev.cx > 0 || m_sizePrev.cy > 0))
 		{
