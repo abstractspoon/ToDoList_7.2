@@ -65,7 +65,7 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 		case TDCCA_DATE:
 			if (bBuddy)
 			{
-				pControl = new CTimeComboBox(TCB_HALFHOURS | TCB_NOTIME);
+				pControl = new CTimeComboBox(TCB_HALFHOURS | TCB_NOTIME | TCB_HOURSINDAY);
 				szClass = WC_COMBOBOX;
 				dwStyle |= (CBS_DROPDOWN | WS_VSCROLL | CBS_AUTOHSCROLL);
 			}
