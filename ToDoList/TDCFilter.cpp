@@ -470,7 +470,6 @@ void CTDCFilter::AddNonDateFilterQueryRules(const TDCFILTER& filter, const CTDCC
 void CTDCFilter::AppendArrayRule(const CStringArray& aValues, TDC_ATTRIBUTE nAttrib, CSearchParamArray& aRules, 
 								DWORD dwFlags, DWORD dwIncludeMask)
 {
-
 	if (aValues.GetSize())
 	{
 		CString sMatchBy = Misc::FormatArray(aValues);
