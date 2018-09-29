@@ -5144,7 +5144,6 @@ BEGIN
     IDS_LOG_STARTTIME       "Start Time"
     IDS_LOG_TIMESPENT       "Time Spent (Hrs)"
     IDS_STICKIES_TITLE      "ToDoList Reminder"
-    IDS_CLEANINGDICTPROGRESS "Cleaning language file..."
     IDS_FINDINCLUDE_PARENTS "Parent Tasks"
     IDS_FINDINCLUDE_FILTEREDOUT "Filtered-out tasks"
 END
@@ -5375,7 +5374,7 @@ BEGIN
     IDS_CMDLINE_IMPORT      "-m <filepath>\tImports the specified file"
     IDS_CMDLINE_COMMANDID   "-cmd <id>\tSends the specified command to ToDoList's main window"
     IDS_CMDLINE_STARTEMPTY  "-e\tStarts ToDoList without reloading any previously open tasklists"
-    IDS_CMDLINE_TASKLINK    "-l <task link>"
+    IDS_CMDLINE_TASKLINK    "-l <task link>\tOpens the specified tasklist and selects the specified task"
     IDS_CMDLINE_SAVEUIVISINTASKLIST 
                             "-z\tStores attribute visibility settings within each tasklist"
     IDS_CMDLINE_NEWTASK     "-nt <title>\tCreates a new task in the active tasklist with the specified title"
