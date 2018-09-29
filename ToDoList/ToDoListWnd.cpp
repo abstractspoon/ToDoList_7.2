@@ -793,7 +793,12 @@ BOOL CToDoListWnd::Create(const CTDCStartupOptions& startup)
 
 BOOL CToDoListWnd::EnableLogging(BOOL bEnable)
 {
-	return FileMisc::EnableLogging(bEnable, _T("Abstractspoon"));
+	BOOL bRes = FileMisc::EnableLogging(bEnable, _T("Abstractspoon"));
+
+	if (bRes && bEnable)
+		FileMisc::LogAppModuleState(FBM_SORTBY_FILENAME);
+
+	return FALSE;
 }
 
 int CToDoListWnd::MessageBox(UINT nIDText, UINT nIDCaption, UINT nType, LPCTSTR szData)
