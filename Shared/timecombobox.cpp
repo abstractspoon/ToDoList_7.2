@@ -173,12 +173,11 @@ double CTimeComboBox::Get24HourTime() const
 
 double CTimeComboBox::Get24HourTime(int nItem) const
 {
-	// since the items in the combo are ordered from 1am to 11pm
-	// we can use the selection index as a direct link to the hour
 	if (nItem < 0) // 'no time'
 		return 0.0;
 
-	// else
+	// since the items in the combo are ordered from 1am to 11pm
+	// we can use the selection index as a direct link to the hour
 	if (m_dwStyle & TCB_HALFHOURS)
 		return min(24.0, (nItem * 0.5));
 
@@ -265,7 +264,7 @@ void CTimeComboBox::ScrollListBox()
 
 	double dCurTime = Get24HourTime();
 
-	if ((dCurTime < 0) || (dCurTime > STARTOFWORKDAY))
+	if ((dCurTime == 0.0) || (dCurTime > STARTOFWORKDAY))
 	{
 		int nCurScrollPos = ::GetScrollPos(m_hwndListBox, SB_VERT);
 		int nMinScrollPos = STARTOFWORKDAY; 
