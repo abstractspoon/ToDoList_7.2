@@ -85,10 +85,9 @@ void CTimeComboBox::BuildCombo(BOOL bReset)
 	{
 		CString sTime;
 		
-		if (!(m_dwStyle & TCB_NOTIME) || (nHour >  0))
+		if (!(m_dwStyle & TCB_NOTIME) || (nHour > 0))
 			sTime = CTimeHelper::FormatClockTime(nHour, 0, 0, FALSE, (m_dwStyle & TCB_ISO));
 		
-		// add empty string representing 'no time'
 		AddString(sTime);
 		
 		if (m_dwStyle & TCB_HALFHOURS)
@@ -297,8 +296,9 @@ void CTimeComboBox::GetItemColors(int nItem, UINT nItemState, DWORD dwItemData,
 		double dTime = Get24HourTime(nItem);
 		CTimeHelper th;
 
-		if ((dTime < th.GetStartOfWorkday(FALSE)) ||
-			(dTime > th.GetEndOfWorkday(FALSE)))
+		if ((dTime > 0) &&
+			((dTime < th.GetStartOfWorkday(FALSE)) ||
+			(dTime > th.GetEndOfWorkday(FALSE))))
 		{
 			crBack = GetSysColor(COLOR_3DFACE);
 			crText = GetSysColor(COLOR_3DSHADOW);
