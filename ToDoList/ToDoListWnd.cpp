@@ -798,7 +798,7 @@ BOOL CToDoListWnd::EnableLogging(BOOL bEnable)
 	if (bRes && bEnable)
 		FileMisc::LogAppModuleState(FBM_SORTBY_FILENAME);
 
-	return FALSE;
+	return bRes;
 }
 
 int CToDoListWnd::MessageBox(UINT nIDText, UINT nIDCaption, UINT nType, LPCTSTR szData)
