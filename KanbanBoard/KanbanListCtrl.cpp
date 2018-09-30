@@ -1996,7 +1996,7 @@ int CALLBACK CKanbanListCtrl::SortProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 			break;
 			
 		case IUI_CREATIONDATE:
-			nCompare = CDateHelper::Compare(pKI1->dtCreate, pKI2->dtCreate);
+			nCompare = CDateHelper::Compare(pKI1->dtCreate, pKI2->dtCreate, DHC_COMPARETIME);
 			break;
 			
 		case IUI_CREATEDBY:
@@ -2004,11 +2004,11 @@ int CALLBACK CKanbanListCtrl::SortProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 			break;
 			
 		case IUI_DONEDATE:
-			nCompare = CDateHelper::Compare(pKI1->dtDone, pKI2->dtDone);
+			nCompare = CDateHelper::Compare(pKI1->dtDone, pKI2->dtDone, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
 			break;
 			
 		case IUI_DUEDATE:
-			nCompare = CDateHelper::Compare(pKI1->dtDue, pKI2->dtDue);
+			nCompare = CDateHelper::Compare(pKI1->dtDue, pKI2->dtDue, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
 			break;
 			
 		case IUI_EXTERNALID:
@@ -2031,7 +2031,7 @@ int CALLBACK CKanbanListCtrl::SortProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 			break;
 			
 		case IUI_LASTMOD:
-			nCompare = CDateHelper::Compare(pKI1->dtLastMod, pKI2->dtLastMod);
+			nCompare = CDateHelper::Compare(pKI1->dtLastMod, pKI2->dtLastMod, DHC_COMPARETIME);
 			break;
 			
 		case IUI_PERCENT:
@@ -2043,7 +2043,7 @@ int CALLBACK CKanbanListCtrl::SortProc(LPARAM lParam1, LPARAM lParam2, LPARAM lP
 			break;
 			
 		case IUI_STARTDATE:
-			nCompare = CDateHelper::Compare(pKI1->dtStart, pKI2->dtStart);
+			nCompare = CDateHelper::Compare(pKI1->dtStart, pKI2->dtStart, DHC_COMPARETIME);
 			break;
 			
 		case IUI_TIMEEST:

@@ -6034,15 +6034,15 @@ int CGanttTreeListCtrl::CompareTasks(DWORD dwTaskID1, DWORD dwTaskID2, const GAN
 			break;
 
 		case GTLCC_STARTDATE:
-			nCompare = CDateHelper::Compare(pGI1->dtStart, pGI2->dtStart, TRUE, FALSE);
+			nCompare = CDateHelper::Compare(pGI1->dtStart, pGI2->dtStart, DHC_COMPARETIME);
 			break;
 
 		case GTLCC_DUEDATE:
-			nCompare = CDateHelper::Compare(pGI1->dtDue, pGI2->dtDue, TRUE, TRUE);
+			nCompare = CDateHelper::Compare(pGI1->dtDue, pGI2->dtDue, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
 			break;
 
 		case GTLCC_DONEDATE:
-			nCompare = CDateHelper::Compare(pGI1->dtDone, pGI2->dtDone, TRUE, TRUE);
+			nCompare = CDateHelper::Compare(pGI1->dtDone, pGI2->dtDone, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
 			break;
 
 		case GTLCC_ALLOCTO:
@@ -6071,13 +6071,11 @@ int CGanttTreeListCtrl::CompareTasks(DWORD dwTaskID1, DWORD dwTaskID2, const GAN
 				// If Task2 is dependent on Task1 then Task1 comes first
 				if (m_data.IsItemDependentOn(pGI2, dwTaskID1))
 				{
-//					TRACE(_T("Sort(Task %d depends on Task %d. Task %d sorts higher\n"), dwTaskID2, dwTaskID1, dwTaskID1);
 					nCompare = -1;
 				}
 				// else if Task1 is dependent on Task2 then Task2 comes first
 				else if (m_data.IsItemDependentOn(pGI1, dwTaskID2))
 				{
-//					TRACE(_T("Sort(Task %d depends on Task %d. Task %d sorts higher\n"), dwTaskID1, dwTaskID2, dwTaskID2);
 					nCompare = 1;
 				}
 			}
