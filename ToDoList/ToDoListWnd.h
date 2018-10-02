@@ -183,6 +183,8 @@ protected:
 	afx_msg void OnUpdateViewToggleAllTaskExpanded(CCmdUI* pCmdUI);
 	afx_msg void OnEditFindReplaceInTaskTitles();
 	afx_msg void OnUpdateEditFindReplaceInTaskTitles(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowRemindersWindow();
+	afx_msg void OnUpdateViewShowRemindersWindow(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	afx_msg void OnViewShowTimeTracker();
 	afx_msg BOOL OnQueryOpen();

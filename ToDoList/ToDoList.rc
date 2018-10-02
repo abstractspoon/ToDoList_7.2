@@ -206,7 +206,7 @@ END
 
 IDD_PREFGEN_PAGE DIALOGEX 0, 0, 400, 438
 STYLE WS_CHILD
-FONT 8, "Tahoma"
+FONT 8, "Tahoma", 0, 0, 0x1
 BEGIN
     LTEXT           "&Display Language:",IDC_STATIC,7,10,376,10
     CONTROL         "",IDC_LANGUAGE,"ComboBoxEx32",CBS_DROPDOWNLIST | 
@@ -3131,6 +3131,7 @@ BEGIN
         MENUITEM "&Refresh Filter",             ID_VIEW_REFRESHFILTER
         MENUITEM SEPARATOR
         MENUITEM "Show Time Trac&ker",          ID_VIEW_SHOWTIMETRACKER
+        MENUITEM "Show Reminder &Notification Window", ID_VIEW_SHOWREMINDERS
         MENUITEM SEPARATOR
         POPUP "Task View &Visibility"
         BEGIN

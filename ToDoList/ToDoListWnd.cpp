@@ -244,6 +244,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOGGLEALLTASKEXPANDED, OnUpdateViewToggleAllTaskExpanded)
 	ON_COMMAND(ID_EDIT_FINDREPLACEINTASKTITLES, OnEditFindReplaceInTaskTitles)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_FINDREPLACEINTASKTITLES, OnUpdateEditFindReplaceInTaskTitles)
+	ON_COMMAND(ID_VIEW_SHOWREMINDERS, OnViewShowRemindersWindow)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWREMINDERS, OnUpdateViewShowRemindersWindow)
 	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_VIEW_SHOWTIMETRACKER, OnViewShowTimeTracker)
 	ON_WM_NCLBUTTONDBLCLK()
@@ -13269,4 +13271,14 @@ void CToDoListWnd::OnEditFindReplaceInTaskTitles()
 void CToDoListWnd::OnUpdateEditFindReplaceInTaskTitles(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(GetToDoCtrl().CanDoFindReplace(TDCA_TASKNAME));
+}
+
+void CToDoListWnd::OnViewShowRemindersWindow() 
+{
+	m_reminders.ShowWindow();
+}
+
+void CToDoListWnd::OnUpdateViewShowRemindersWindow(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(TRUE);
 }
