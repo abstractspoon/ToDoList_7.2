@@ -185,6 +185,8 @@ protected:
 	afx_msg void OnUpdateEditFindReplaceInTaskTitles(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowRemindersWindow();
 	afx_msg void OnUpdateViewShowRemindersWindow(CCmdUI* pCmdUI);
+	afx_msg void OnNewDependentTaskBeforeSelectedTask();
+	afx_msg void OnUpdateNewDependentTaskBeforeSelectedTask(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	afx_msg void OnViewShowTimeTracker();
 	afx_msg BOOL OnQueryOpen();
@@ -457,7 +459,7 @@ protected:
 	afx_msg void OnNewsubtaskAtbottom();
 	afx_msg void OnNewsubtaskAttop();
 	afx_msg void OnNewtaskAfterselectedtask();
-	afx_msg void OnNewDependenttaskAfterselectedtask();
+	afx_msg void OnNewDependentTaskAfterSelectedTask();
 	afx_msg void OnNewtaskAtbottom();
 	afx_msg void OnNewtaskAtbottomSelected();
 	afx_msg void OnNewtaskAttop();
@@ -529,7 +531,7 @@ protected:
 	afx_msg void OnUpdateNewsubtaskAttop(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNewtask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNewtaskAfterselectedtask(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewDependenttaskAfterselectedtask(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateNewDependentTaskAfterSelectedTask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNewtaskAtbottom(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNewtaskAtbottomSelected(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNewtaskAttop(CCmdUI* pCmdUI);
@@ -646,7 +648,7 @@ protected:
 
 	BOOL CreateNewTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit = TRUE, DWORD dwDependency = 0);
 	BOOL CanCreateNewTask(TDC_INSERTWHERE nInsertWhere, BOOL bDependent = FALSE) const;
-	BOOL CreateNewDependentTaskBelowSelectedTask(const CString& sTitle, BOOL bEdit = TRUE);
+	BOOL CreateNewDependentTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit = TRUE);
 	BOOL CanPasteTasks(TDC_PASTE nWhere, BOOL bAsRef) const;
 	BOOL CanImportPasteFromClipboard() const;
 

@@ -246,6 +246,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_FINDREPLACEINTASKTITLES, OnUpdateEditFindReplaceInTaskTitles)
 	ON_COMMAND(ID_VIEW_SHOWREMINDERS, OnViewShowRemindersWindow)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWREMINDERS, OnUpdateViewShowRemindersWindow)
+	ON_COMMAND(ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK, OnNewDependentTaskBeforeSelectedTask)
+	ON_UPDATE_COMMAND_UI(ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK, OnUpdateNewDependentTaskBeforeSelectedTask)
 	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_VIEW_SHOWTIMETRACKER, OnViewShowTimeTracker)
 	ON_WM_NCLBUTTONDBLCLK()
@@ -336,7 +338,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_COMMAND(ID_NEWSUBTASK_ATTOP, OnNewsubtaskAttop)
 	ON_COMMAND(ID_NEWTASK, OnNewtask)
 	ON_COMMAND(ID_NEWTASK_AFTERSELECTEDTASK, OnNewtaskAfterselectedtask)
-	ON_COMMAND(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnNewDependenttaskAfterselectedtask)
+	ON_COMMAND(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnNewDependentTaskAfterSelectedTask)
 	ON_COMMAND(ID_NEWTASK_ATBOTTOM, OnNewtaskAtbottom)
 	ON_COMMAND(ID_NEWTASK_ATBOTTOMSELECTED, OnNewtaskAtbottomSelected)
 	ON_COMMAND(ID_NEWTASK_ATTOP, OnNewtaskAttop)
@@ -551,7 +553,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_NEWSUBTASK_ATTOP, OnUpdateNewsubtaskAttop)
 	ON_UPDATE_COMMAND_UI(ID_NEWTASK, OnUpdateNewtask)
 	ON_UPDATE_COMMAND_UI(ID_NEWTASK_AFTERSELECTEDTASK, OnUpdateNewtaskAfterselectedtask)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnUpdateNewDependenttaskAfterselectedtask)
+	ON_UPDATE_COMMAND_UI(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnUpdateNewDependentTaskAfterSelectedTask)
 	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATBOTTOM, OnUpdateNewtaskAtbottom)
 	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATBOTTOMSELECTED, OnUpdateNewtaskAtbottomSelected)
 	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATTOP, OnUpdateNewtaskAttop)
@@ -3137,9 +3139,14 @@ void CToDoListWnd::OnNewtaskAfterselectedtask()
 	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTAFTERSELTASK));
 }
 
-void CToDoListWnd::OnNewDependenttaskAfterselectedtask() 
+void CToDoListWnd::OnNewDependentTaskBeforeSelectedTask() 
 {
-	VERIFY (CreateNewDependentTaskBelowSelectedTask(CEnString(IDS_TASK)));
+	VERIFY (CreateNewDependentTask(CEnString(IDS_TASK), TDC_INSERTBEFORESELTASK));
+}
+
+void CToDoListWnd::OnNewDependentTaskAfterSelectedTask() 
+{
+	VERIFY (CreateNewDependentTask(CEnString(IDS_TASK), TDC_INSERTAFTERSELTASK));
 }
 
 void CToDoListWnd::OnNewtaskBeforeselectedtask() 
@@ -3187,11 +3194,11 @@ BOOL CToDoListWnd::CreateNewTask(const CString& sTitle, TDC_INSERTWHERE nInsertW
 	return TRUE;
 }
 
-BOOL CToDoListWnd::CreateNewDependentTaskBelowSelectedTask(const CString& sTitle, BOOL bEdit)
+BOOL CToDoListWnd::CreateNewDependentTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit)
 {
 	DWORD dwDependency = GetToDoCtrl().GetSelectedTaskID();
 	
-	return CreateNewTask(sTitle, TDC_INSERTAFTERSELTASK, bEdit, dwDependency);
+	return CreateNewTask(sTitle, nInsertWhere, bEdit, dwDependency);
 }
 
 void CToDoListWnd::CheckCreateDefaultReminder(const CFilteredToDoCtrl& tdc, DWORD dwTaskID)
@@ -6034,7 +6041,12 @@ void CToDoListWnd::OnUpdateNewtaskAfterselectedtask(CCmdUI* pCmdUI)
 	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK));
 }
 
-void CToDoListWnd::OnUpdateNewDependenttaskAfterselectedtask(CCmdUI* pCmdUI) 
+void CToDoListWnd::OnUpdateNewDependentTaskBeforeSelectedTask(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTBEFORESELTASK, TRUE));
+}
+
+void CToDoListWnd::OnUpdateNewDependentTaskAfterSelectedTask(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK, TRUE));
 }
