@@ -35,6 +35,7 @@
 #include "..\3rdparty\xmlnodewrapper.h"
 #include "..\3rdparty\ini.h"
 #include "..\3rdparty\base64coder.h"
+#include "..\3rdparty\LimitSingleInstance.h"
 
 #include <afxpriv.h>
 
@@ -46,6 +47,12 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+
+CLimitSingleInstance g_SingleInstanceObj(_T("{3A4EFC98-9BA9-473D-A3CF-6B0FE644470D}")); 
+
+/////////////////////////////////////////////////////////////////////////////
 
 LPCTSTR REGKEY				= _T("AbstractSpoon");
 LPCTSTR APPREGKEY			= _T("Software\\AbstractSpoon\\ToDoList");
@@ -209,14 +216,28 @@ BOOL CToDoListApp::InitInstance()
 
 BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnCommandLineInfo& cmdInfo)
 {
-	// see if another instance can better handle this than us
-	HWND hwndOtherInst = NULL;
-
+	// See if another instance can better handle this than us
 	TDCFINDWND find;
 	int nNumWnds = FindToDoListWnds(find);
 
+	// It may be that another instance is just starting up
+	// so we hang around for a bit to see if that is the case
 	if (!nNumWnds)
-		return FALSE;
+	{
+		if (g_SingleInstanceObj.IsAnotherInstanceRunning()) 
+		{
+			int nTry = 5;
+
+			while (nTry-- && !nNumWnds)
+			{
+				Sleep(1000);
+				nNumWnds = FindToDoListWnds(find);
+			}
+		}
+
+		if (!nNumWnds)
+			return FALSE;
+	}
 
 	// Under multi-instance, having a non-empty commandline without
 	// a file path or task link is always treated as an error
@@ -233,6 +254,8 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 	// if there IS a tasklist on the commandline and
 	// we are NOT importing it, see if any other instance 
 	// already has it loaded 
+	HWND hwndOtherInst = NULL;
+
 	if (bHasFilePath && !startup.HasFlag(TLD_IMPORTFILE))
 	{
 		for (int nWnd = 0; nWnd < nNumWnds; nWnd++)
