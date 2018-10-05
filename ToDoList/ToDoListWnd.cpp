@@ -246,8 +246,6 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_FINDREPLACEINTASKTITLES, OnUpdateEditFindReplaceInTaskTitles)
 	ON_COMMAND(ID_VIEW_SHOWREMINDERS, OnViewShowRemindersWindow)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWREMINDERS, OnUpdateViewShowRemindersWindow)
-	ON_COMMAND(ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK, OnNewDependentTaskBeforeSelectedTask)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK, OnUpdateNewDependentTaskBeforeSelectedTask)
 	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_VIEW_SHOWTIMETRACKER, OnViewShowTimeTracker)
 	ON_WM_NCLBUTTONDBLCLK()
@@ -332,18 +330,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_COMMAND(ID_MOVETASKUP, OnMovetaskup)
 	ON_COMMAND(ID_MOVE_SELECTTASKDEPENDENCIES, OnMoveSelectTaskDependencies)
 	ON_COMMAND(ID_MOVE_SELECTTASKDEPENDENTS, OnMoveSelectTaskDependents)
-	ON_COMMAND(ID_NEW, OnNew)
-	ON_COMMAND(ID_NEWSUBTASK, OnNewsubtask)
-	ON_COMMAND(ID_NEWSUBTASK_ATBOTTOM, OnNewsubtaskAtbottom)
-	ON_COMMAND(ID_NEWSUBTASK_ATTOP, OnNewsubtaskAttop)
-	ON_COMMAND(ID_NEWTASK, OnNewtask)
-	ON_COMMAND(ID_NEWTASK_AFTERSELECTEDTASK, OnNewtaskAfterselectedtask)
-	ON_COMMAND(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnNewDependentTaskAfterSelectedTask)
-	ON_COMMAND(ID_NEWTASK_ATBOTTOM, OnNewtaskAtbottom)
-	ON_COMMAND(ID_NEWTASK_ATBOTTOMSELECTED, OnNewtaskAtbottomSelected)
-	ON_COMMAND(ID_NEWTASK_ATTOP, OnNewtaskAttop)
-	ON_COMMAND(ID_NEWTASK_ATTOPSELECTED, OnNewtaskAttopSelected)
-	ON_COMMAND(ID_NEWTASK_BEFORESELECTEDTASK, OnNewtaskBeforeselectedtask)
+	ON_COMMAND(ID_NEW, OnNewTasklist)
 	ON_COMMAND(ID_NEXTTASK, OnGotoNexttask)
 	ON_COMMAND(ID_NEXTTOPLEVELTASK, OnNexttopleveltask)
 	ON_COMMAND(ID_OPEN_RELOAD, OnReload)
@@ -412,7 +399,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_COMMAND_RANGE(ID_EDIT_SETPRIORITYNONE, ID_EDIT_SETPRIORITY10, OnSetPriority)
 	ON_COMMAND_RANGE(ID_FILE_OPEN_USERSTORAGE1, ID_FILE_OPEN_USERSTORAGE16, OnFileOpenFromUserStorage)
 	ON_COMMAND_RANGE(ID_FILE_SAVE_USERSTORAGE1, ID_FILE_SAVE_USERSTORAGE16, OnFileSaveToUserStorage)
-	ON_COMMAND_RANGE(ID_NEWTASK_SPLITTASKINTO_TWO, ID_NEWTASK_SPLITTASKINTO_FIVE, OnSplitTaskIntoPieces)
+	ON_COMMAND_RANGE(ID_NEWTASK_FIRST, ID_NEWTASK_LAST, OnNewTask)
+	ON_COMMAND_RANGE(ID_SPLITTASKINTO_TWO, ID_SPLITTASKINTO_FIVE, OnSplitTask)
 	ON_COMMAND_RANGE(ID_SHOWVIEW_TASKTREE, ID_SHOWVIEW_UIEXTENSION16, OnShowTaskView)
 	ON_COMMAND_RANGE(ID_SORTBY_ALLCOLUMNS_FIRST, ID_SORTBY_ALLCOLUMNS_LAST, OnSortBy)
 	ON_COMMAND_RANGE(ID_TOOLS_SHOWTASKS_DUETODAY, ID_TOOLS_SHOWTASKS_DUEENDNEXTMONTH, OnToolsShowtasksDue)
@@ -547,18 +535,7 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_MOVETASKLEFT, OnUpdateMovetaskleft)
 	ON_UPDATE_COMMAND_UI(ID_MOVETASKRIGHT, OnUpdateMovetaskright)
 	ON_UPDATE_COMMAND_UI(ID_MOVETASKUP, OnUpdateMovetaskup)
-	ON_UPDATE_COMMAND_UI(ID_NEW, OnUpdateNew)
-	ON_UPDATE_COMMAND_UI(ID_NEWSUBTASK, OnUpdateNewsubtask)
-	ON_UPDATE_COMMAND_UI(ID_NEWSUBTASK_ATBOTTOM, OnUpdateNewsubtaskAtBottom)
-	ON_UPDATE_COMMAND_UI(ID_NEWSUBTASK_ATTOP, OnUpdateNewsubtaskAttop)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK, OnUpdateNewtask)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_AFTERSELECTEDTASK, OnUpdateNewtaskAfterselectedtask)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK, OnUpdateNewDependentTaskAfterSelectedTask)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATBOTTOM, OnUpdateNewtaskAtbottom)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATBOTTOMSELECTED, OnUpdateNewtaskAtbottomSelected)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATTOP, OnUpdateNewtaskAttop)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_ATTOPSELECTED, OnUpdateNewtaskAttopSelected)
-	ON_UPDATE_COMMAND_UI(ID_NEWTASK_BEFORESELECTEDTASK, OnUpdateNewtaskBeforeselectedtask)
+	ON_UPDATE_COMMAND_UI(ID_NEW, OnUpdateNewTasklist)
 	ON_UPDATE_COMMAND_UI(ID_NEXTTASK, OnUpdateGotoNexttask)
 	ON_UPDATE_COMMAND_UI(ID_NEXTTOPLEVELTASK, OnUpdateNexttopleveltask)
 	ON_UPDATE_COMMAND_UI(ID_OPEN_RELOAD, OnUpdateReload)
@@ -619,7 +596,8 @@ BEGIN_MESSAGE_MAP(CToDoListWnd, CFrameWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OFFSETDATES_BACKWARDSBY_ONEDAY, ID_OFFSETDATES_BACKWARDSBY_ONEYEAR, OnUpdateEditOffsetDatesBackwards)	
 	ON_UPDATE_COMMAND_UI_RANGE(ID_OFFSETDATES_FORWARDSBY_ONEDAY, ID_OFFSETDATES_FORWARDSBY_ONEYEAR, OnUpdateEditOffsetDatesForwards)	
 	ON_UPDATE_COMMAND_UI_RANGE(ID_EDIT_SETPRIORITYNONE, ID_EDIT_SETPRIORITY10, OnUpdateSetPriority)	
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NEWTASK_SPLITTASKINTO_TWO, ID_NEWTASK_SPLITTASKINTO_FIVE, OnUpdateSplitTaskIntoPieces)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NEWTASK_FIRST, ID_NEWTASK_LAST, OnUpdateNewTask)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_SPLITTASKINTO_TWO, ID_SPLITTASKINTO_FIVE, OnUpdateSplitTask)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SHOWVIEW_TASKTREE, ID_SHOWVIEW_UIEXTENSION16, OnUpdateShowTaskView)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORTBY_ALLCOLUMNS_FIRST, ID_SORTBY_ALLCOLUMNS_LAST, OnUpdateSortBy)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TOOLS_USERTOOL1, ID_TOOLS_USERTOOL50, OnUpdateUserTool)
@@ -2886,7 +2864,7 @@ void CToDoListWnd::RestorePosition()
 	}
 }
 
-void CToDoListWnd::OnNew() 
+void CToDoListWnd::OnNewTasklist() 
 {
 	CreateNewTaskList(FALSE);
 	RefreshTabOrder();
@@ -2963,7 +2941,7 @@ void CToDoListWnd::OnUpdateSave(CCmdUI* pCmdUI)
 	pCmdUI->Enable(GetTDCCount() && tdc.IsModified() && !tdc.IsReadOnly());	
 }
 
-void CToDoListWnd::OnUpdateNew(CCmdUI* pCmdUI)  
+void CToDoListWnd::OnUpdateNewTasklist(CCmdUI* pCmdUI)  
 {
 	pCmdUI->Enable(TRUE);	
 }
@@ -3122,56 +3100,6 @@ void CToDoListWnd::OnUpdateSortBy(CCmdUI* pCmdUI)
 		if (nSelCmdID != 0)
 			pCmdUI->m_pMenu->CheckMenuRadioItem(ID_SORTBY_ALLCOLUMNS_FIRST, ID_SORTBY_ALLCOLUMNS_LAST, nSelCmdID, MF_BYCOMMAND);
 	}
-}
-
-void CToDoListWnd::OnNewtaskAttopSelected() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATTOPOFSELTASKPARENT));
-}
-
-void CToDoListWnd::OnNewtaskAtbottomSelected() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATBOTTOMOFSELTASKPARENT));
-}
-
-void CToDoListWnd::OnNewtaskAfterselectedtask() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTAFTERSELTASK));
-}
-
-void CToDoListWnd::OnNewDependentTaskBeforeSelectedTask() 
-{
-	VERIFY (CreateNewDependentTask(CEnString(IDS_TASK), TDC_INSERTBEFORESELTASK));
-}
-
-void CToDoListWnd::OnNewDependentTaskAfterSelectedTask() 
-{
-	VERIFY (CreateNewDependentTask(CEnString(IDS_TASK), TDC_INSERTAFTERSELTASK));
-}
-
-void CToDoListWnd::OnNewtaskBeforeselectedtask() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTBEFORESELTASK));
-}
-
-void CToDoListWnd::OnNewsubtaskAtbottom() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATBOTTOMOFSELTASK));
-}
-
-void CToDoListWnd::OnNewsubtaskAttop() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATTOPOFSELTASK));
-}
-
-void CToDoListWnd::OnNewtaskAttop() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATTOP));
-}
-
-void CToDoListWnd::OnNewtaskAtbottom() 
-{
-	VERIFY (CreateNewTask(CEnString(IDS_TASK), TDC_INSERTATBOTTOM));
 }
 
 BOOL CToDoListWnd::CreateNewTask(const CString& sTitle, TDC_INSERTWHERE nInsertWhere, BOOL bEdit, DWORD dwDependency)
@@ -6005,75 +5933,6 @@ void CToDoListWnd::CopySelectedTasksToClipboard(TDC_TASKS2CLIPBOARD nAsFormat)
 void CToDoListWnd::OnUpdateEditCopy(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(GetToDoCtrl().GetSelectedCount() > 0);
-}
-
-BOOL CToDoListWnd::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere, BOOL bDependent) const
-{
-	const CFilteredToDoCtrl& tdc = GetToDoCtrl();
-
-	if (tdc.CanCreateNewTask(nInsertWhere))
-		return TRUE;
-
-	// Special case
-	if ((tdc.GetTaskCount() == 0) && !bDependent)
-	{
-		UINT nNewTaskID = GetNewTaskCmdID();
-		
-		if (TDC::MapInsertIDToInsertWhere(nNewTaskID) == nInsertWhere)
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-void CToDoListWnd::OnUpdateNewtaskAttopSelected(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATTOPOFSELTASKPARENT));
-}
-
-void CToDoListWnd::OnUpdateNewtaskAtbottomSelected(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATBOTTOMOFSELTASKPARENT));
-}
-
-void CToDoListWnd::OnUpdateNewtaskAfterselectedtask(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK));
-}
-
-void CToDoListWnd::OnUpdateNewDependentTaskBeforeSelectedTask(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTBEFORESELTASK, TRUE));
-}
-
-void CToDoListWnd::OnUpdateNewDependentTaskAfterSelectedTask(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTAFTERSELTASK, TRUE));
-}
-
-void CToDoListWnd::OnUpdateNewtaskBeforeselectedtask(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTBEFORESELTASK));
-}
-
-void CToDoListWnd::OnUpdateNewsubtaskAttop(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATTOPOFSELTASK));
-}
-
-void CToDoListWnd::OnUpdateNewsubtaskAtBottom(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATBOTTOMOFSELTASK));
-}
-
-void CToDoListWnd::OnUpdateNewtaskAttop(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATTOP));
-}
-
-void CToDoListWnd::OnUpdateNewtaskAtbottom(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(CanCreateNewTask(TDC_INSERTATBOTTOM));
 }
 
 void CToDoListWnd::OnMaximizeTasklist() 
@@ -9585,7 +9444,7 @@ void CToDoListWnd::OnUpdateImport(CCmdUI* pCmdUI)
 	pCmdUI->Enable(TRUE);
 }
 
-UINT CToDoListWnd::MapNewTaskPos(int nPos, BOOL bSubtask)
+UINT CToDoListWnd::MapNewTaskPos(PUIP_NEWTASKPOS nPos, BOOL bSubtask)
 {
 	if (!bSubtask) // task
 	{
@@ -9618,59 +9477,137 @@ UINT CToDoListWnd::GetNewSubtaskCmdID() const
 	return MapNewTaskPos(Prefs().GetNewSubtaskPos(), TRUE);
 }
 
-void CToDoListWnd::OnNewtask() 
+void CToDoListWnd::OnNewTask(UINT nCmdID) 
 {
-	// convert to users choice
-	SendMessage(WM_COMMAND, GetNewTaskCmdID());
-}
+	DWORD dwDependencyID = 0;
 
-void CToDoListWnd::OnUpdateNewtask(CCmdUI* pCmdUI) 
-{
-	switch (GetNewTaskCmdID())
+	switch (nCmdID)
 	{
-	case ID_NEWTASK_ATTOPSELECTED:
-		OnUpdateNewtaskAttopSelected(pCmdUI);
+	case ID_NEWTASK: 
+		nCmdID = GetNewTaskCmdID();
 		break;
 
-	case ID_NEWTASK_ATBOTTOMSELECTED:	
-		OnUpdateNewtaskAtbottomSelected(pCmdUI);
-		break;
-	
-	case ID_NEWTASK_AFTERSELECTEDTASK:
-		OnUpdateNewtaskAfterselectedtask(pCmdUI);
-		break;
-
-	case ID_NEWTASK_BEFORESELECTEDTASK:
-		OnUpdateNewtaskBeforeselectedtask(pCmdUI);
+	case ID_NEWSUBTASK:
+		nCmdID = GetNewSubtaskCmdID();
 		break;
 
 	case ID_NEWTASK_ATTOP:
-		OnUpdateNewtaskAttop(pCmdUI);
+	case ID_NEWTASK_ATBOTTOM:
+	case ID_NEWTASK_AFTERSELECTEDTASK:
+	case ID_NEWTASK_BEFORESELECTEDTASK:
+	case ID_NEWTASK_ATTOPSELECTED:
+	case ID_NEWTASK_ATBOTTOMSELECTED:
+	case ID_NEWSUBTASK_ATTOP:
+	case ID_NEWSUBTASK_ATBOTTOM:
 		break;
 
-	case ID_NEWTASK_ATBOTTOM:
-		OnUpdateNewtaskAtbottom(pCmdUI);
+	case ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK:
+	case ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK:
+		dwDependencyID = GetToDoCtrl().GetSelectedTaskID();
 		break;
+
+	default:
+		ASSERT(0);
+		return;
+	}
+
+	TDC_INSERTWHERE nInsert = TDC::MapInsertIDToInsertWhere(nCmdID);
+
+	VERIFY (CreateNewTask(CEnString(IDS_TASK), nInsert, TRUE, dwDependencyID));
+}
+
+void CToDoListWnd::OnUpdateNewTask(CCmdUI* pCmdUI) 
+{
+	UINT nCmdID = pCmdUI->m_nID;
+	BOOL bDependent = FALSE;
+
+	switch (nCmdID)
+	{
+	case ID_NEWTASK: 
+		nCmdID = GetNewTaskCmdID();
+		break;
+
+	case ID_NEWSUBTASK:
+		nCmdID = GetNewSubtaskCmdID();
+		break;
+
+	case ID_NEWTASK_ATTOP:
+	case ID_NEWTASK_ATBOTTOM:
+	case ID_NEWTASK_AFTERSELECTEDTASK:
+	case ID_NEWTASK_BEFORESELECTEDTASK:
+	case ID_NEWTASK_ATTOPSELECTED:
+	case ID_NEWTASK_ATBOTTOMSELECTED:
+	case ID_NEWSUBTASK_ATTOP:
+	case ID_NEWSUBTASK_ATBOTTOM:
+		break;
+
+	case ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK:
+	case ID_NEWTASK_DEPENDENTBEFORESELECTEDTASK:
+		bDependent = TRUE;
+		break;
+
+	default:
+		ASSERT(0);
+		return;
+	}
+
+	TDC_INSERTWHERE nInsert = TDC::MapInsertIDToInsertWhere(nCmdID);
+
+	pCmdUI->Enable(CanCreateNewTask(nInsert, bDependent));
+}
+
+BOOL CToDoListWnd::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere, BOOL bDependent) const
+{
+	const CFilteredToDoCtrl& tdc = GetToDoCtrl();
+
+	if (tdc.CanCreateNewTask(nInsertWhere))
+		return TRUE;
+
+	// Special case: Map to the default position
+	if ((tdc.GetTaskCount() == 0) && !bDependent)
+	{
+		UINT nNewTaskID = GetNewTaskCmdID();
+		
+		if (TDC::MapInsertIDToInsertWhere(nNewTaskID) == nInsertWhere)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CToDoListWnd::OnSplitTask(UINT nCmdID) 
+{
+	switch (nCmdID)
+	{
+	case ID_SPLITTASKINTO_TWO:
+	case ID_SPLITTASKINTO_THREE:
+	case ID_SPLITTASKINTO_FOUR:
+	case ID_SPLITTASKINTO_FIVE:
+		{
+			int nNumPieces = (2 + (nCmdID - ID_SPLITTASKINTO_TWO));
+
+			VERIFY(GetToDoCtrl().SplitSelectedTask(nNumPieces));
+		}
+		break;
+
+	default:
+		ASSERT(0);
 	}
 }
 
-void CToDoListWnd::OnNewsubtask() 
+void CToDoListWnd::OnUpdateSplitTask(CCmdUI* pCmdUI) 
 {
-	// convert to users choice
-	SendMessage(WM_COMMAND, GetNewSubtaskCmdID());
-}
-
-void CToDoListWnd::OnUpdateNewsubtask(CCmdUI* pCmdUI) 
-{
-	switch (GetNewSubtaskCmdID())
+	switch (pCmdUI->m_nID)
 	{
-	case ID_NEWSUBTASK_ATTOP:
-		OnUpdateNewsubtaskAttop(pCmdUI);
+	case ID_SPLITTASKINTO_TWO:
+	case ID_SPLITTASKINTO_THREE:
+	case ID_SPLITTASKINTO_FOUR:
+	case ID_SPLITTASKINTO_FIVE:
+		pCmdUI->Enable(GetToDoCtrl().CanSplitSelectedTask());
 		break;
 
-	case ID_NEWSUBTASK_ATBOTTOM:
-		OnUpdateNewsubtaskAtBottom(pCmdUI);
-		break;
+	default:
+		ASSERT(0);
 	}
 }
 
@@ -10928,18 +10865,6 @@ void CToDoListWnd::OnViewPrevSel()
 void CToDoListWnd::OnUpdateViewPrevSel(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(GetToDoCtrl().CanSelectTasksInHistory(FALSE));
-}
-
-void CToDoListWnd::OnSplitTaskIntoPieces(UINT nCmdID) 
-{
-	int nNumPieces = (2 + (nCmdID - ID_NEWTASK_SPLITTASKINTO_TWO));
-	
-	GetToDoCtrl().SplitSelectedTask(nNumPieces);
-}
-
-void CToDoListWnd::OnUpdateSplitTaskIntoPieces(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(GetToDoCtrl().CanSplitSelectedTask());
 }
 
 void CToDoListWnd::OnViewExpandtask() 

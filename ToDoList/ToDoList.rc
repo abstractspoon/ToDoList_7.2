@@ -2905,16 +2905,16 @@ BEGIN
                                                 ID_NEWSUBTASK_ATBOTTOM
         MENUITEM SEPARATOR
         MENUITEM "S&plit Selected Task into Two (2) Equal Subtasks", 
-                                                ID_NEWTASK_SPLITTASKINTO_TWO
+                                                ID_SPLITTASKINTO_TWO
         POPUP "Split Selected Tas&k into"
         BEGIN
-            MENUITEM "&Two (2) Equal Subtasks",     ID_NEWTASK_SPLITTASKINTO_TWO
+            MENUITEM "&Two (2) Equal Subtasks",     ID_SPLITTASKINTO_TWO
 
-            MENUITEM "T&hree (3) Equal Subtasks",   ID_NEWTASK_SPLITTASKINTO_THREE
+            MENUITEM "T&hree (3) Equal Subtasks",   ID_SPLITTASKINTO_THREE
 
-            MENUITEM "&Four (4) Equal Subtasks",    ID_NEWTASK_SPLITTASKINTO_FOUR
+            MENUITEM "&Four (4) Equal Subtasks",    ID_SPLITTASKINTO_FOUR
 
-            MENUITEM "Fi&ve (5) Equal Subtasks",    ID_NEWTASK_SPLITTASKINTO_FIVE
+            MENUITEM "Fi&ve (5) Equal Subtasks",    ID_SPLITTASKINTO_FIVE
 
         END
     END
@@ -3518,16 +3518,16 @@ BEGIN
 
         MENUITEM SEPARATOR
         MENUITEM "Split Task(s) into Two (2) Subtasks", 
-                                                ID_NEWTASK_SPLITTASKINTO_TWO
+                                                ID_SPLITTASKINTO_TWO
         POPUP "Split Task(s) into"
         BEGIN
-            MENUITEM "Two (2) Subtasks",            ID_NEWTASK_SPLITTASKINTO_TWO
+            MENUITEM "Two (2) Subtasks",            ID_SPLITTASKINTO_TWO
 
-            MENUITEM "Three (3) Subtasks",          ID_NEWTASK_SPLITTASKINTO_THREE
+            MENUITEM "Three (3) Subtasks",          ID_SPLITTASKINTO_THREE
 
-            MENUITEM "Four (4) Subtasks",           ID_NEWTASK_SPLITTASKINTO_FOUR
+            MENUITEM "Four (4) Subtasks",           ID_SPLITTASKINTO_FOUR
 
-            MENUITEM "Five (5) Subtasks",           ID_NEWTASK_SPLITTASKINTO_FIVE
+            MENUITEM "Five (5) Subtasks",           ID_SPLITTASKINTO_FIVE
 
         END
         MENUITEM SEPARATOR

@@ -185,8 +185,6 @@ protected:
 	afx_msg void OnUpdateEditFindReplaceInTaskTitles(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowRemindersWindow();
 	afx_msg void OnUpdateViewShowRemindersWindow(CCmdUI* pCmdUI);
-	afx_msg void OnNewDependentTaskBeforeSelectedTask();
-	afx_msg void OnUpdateNewDependentTaskBeforeSelectedTask(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	afx_msg void OnViewShowTimeTracker();
 	afx_msg BOOL OnQueryOpen();
@@ -226,8 +224,6 @@ protected:
 	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	afx_msg void OnMoveSelectTaskDependencies();
 	afx_msg void OnMoveSelectTaskDependents();
-	afx_msg void OnNewsubtask();
-	afx_msg void OnNewtask();
 	afx_msg void OnPrintpreview();
 	afx_msg void OnQuickFind();
 	afx_msg void OnQuickFindNext();
@@ -277,7 +273,6 @@ protected:
 	afx_msg void OnUpdateGotoPrevtask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateMoveSelectTaskDependencies(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateMoveSelectTaskDependents(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewsubtask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateQuickFind(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateQuickFindNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateQuickFindPrev(CCmdUI* pCmdUI);
@@ -455,16 +450,9 @@ protected:
 	afx_msg void OnMovetaskup();
 	afx_msg void OnNcLButtonDblClk(UINT nHitTest, CPoint point);
 	afx_msg void OnNeedTooltipText(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNew();
-	afx_msg void OnNewsubtaskAtbottom();
-	afx_msg void OnNewsubtaskAttop();
-	afx_msg void OnNewtaskAfterselectedtask();
-	afx_msg void OnNewDependentTaskAfterSelectedTask();
-	afx_msg void OnNewtaskAtbottom();
-	afx_msg void OnNewtaskAtbottomSelected();
-	afx_msg void OnNewtaskAttop();
-	afx_msg void OnNewtaskAttopSelected();
-	afx_msg void OnNewtaskBeforeselectedtask();
+	afx_msg void OnNewTasklist();
+	afx_msg void OnNewTask(UINT nCmdID);
+	afx_msg void OnSplitTask(UINT nCmdID);
 	afx_msg void OnNexttopleveltask();
 	afx_msg void OnPreferences();
 	afx_msg void OnPrevtopleveltask();
@@ -489,7 +477,6 @@ protected:
 	afx_msg void OnSpellcheckTasklist();
 	afx_msg void OnSpellcheckcomments();
 	afx_msg void OnSpellchecktitle();
-	afx_msg void OnSplitTaskIntoPieces(UINT nCmdID);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnToolsCheckin();
@@ -526,17 +513,9 @@ protected:
 	afx_msg void OnUpdateMovetaskleft(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateMovetaskright(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateMovetaskup(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNew(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewsubtaskAtBottom(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewsubtaskAttop(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtask(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskAfterselectedtask(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewDependentTaskAfterSelectedTask(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskAtbottom(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskAtbottomSelected(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskAttop(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskAttopSelected(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateNewtaskBeforeselectedtask(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateNewTasklist(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateNewTask(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateSplitTask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNexttopleveltask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdatePrevtopleveltask(CCmdUI* pCmdUI);
 	afx_msg void OnUpdatePrint(CCmdUI* pCmdUI);
@@ -555,7 +534,6 @@ protected:
 	afx_msg void OnUpdateSpellcheckTasklist(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateSpellcheckcomments(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateSpellchecktitle(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateSplitTaskIntoPieces(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateTaskcolor(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateEditTaskdone(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateToolsCheckin(CCmdUI* pCmdUI);
@@ -778,7 +756,7 @@ protected:
 	UINT GetNewTaskCmdID() const;
 	UINT GetNewSubtaskCmdID() const;
 
-	static UINT MapNewTaskPos(int nPos, BOOL bSubtask);
+	static UINT MapNewTaskPos(PUIP_NEWTASKPOS nPos, BOOL bSubtask);
 	static void HandleImportTasklistError(IIMPORTEXPORT_RESULT nErr, const CString& sImportPath, BOOL bFromClipboard, BOOL bAnyTasksSucceeded);
 	static void HandleExportTasklistError(IIMPORTEXPORT_RESULT nErr);
 	static void HandleLoadTasklistError(TDC_FILE& nErr, LPCTSTR szTasklist);
