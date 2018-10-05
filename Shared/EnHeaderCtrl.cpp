@@ -152,50 +152,49 @@ BOOL CEnHeaderCtrl::OnEndDragHeader(NMHDR* pNMHDR, LRESULT* pResult)
 
 	int nItem = pNMH->iItem;
 
-	// return TRUE to prevent drag
 	if ((nItem == -1) || !IsItemDraggable(nItem))
 	{
-		*pResult = 1;
+		*pResult = 1; // Prevent drag
 	}
 	else // don't allow non-draggable items to move
 	{
-		CPoint ptCursor(GetMessagePos());
-		ScreenToClient(&ptCursor);
-		ptCursor.y = 6;
+		ASSERT(pNMH->pitem && (pNMH->pitem->mask & HDI_ORDER));
 
-		// where are we inserting this item
-		int nInsert = HitTest(ptCursor);
-		ASSERT(nInsert != -1);
-
-		// inserting before or after this item
-		CRect rItem;
-		GetItemRect(nInsert, rItem);
-
-		if (ptCursor.x >= rItem.CenterPoint().x)
-			nInsert++;
-
-		// don't allow item to cross a non-draggable item
-		if (nItem < nInsert)
+		int nInsert = (pNMH->pitem ? pNMH->pitem->iOrder : -1);
+		
+		if (nInsert != -1)
 		{
-			for (nItem++; nItem < nInsert; nItem++)
+			// inserting before or after this item
+			CRect rItem;
+			GetItemRect(nInsert, rItem);
+
+			// don't allow item to cross a non-draggable item
+			if (nItem < nInsert)
 			{
-				if (!IsItemDraggable(nItem))
+				for (nItem++; nItem < nInsert; nItem++)
 				{
-					*pResult = 1; // prevent
-					break;
+					if (!IsItemDraggable(nItem))
+					{
+						*pResult = 1; // Prevent drag
+						break;
+					}
+				}
+			}
+			else if (nItem > nInsert)
+			{
+				while (--nItem >= nInsert)
+				{
+					if (!IsItemDraggable(nItem))
+					{
+						*pResult = 1; // Prevent drag
+						break;
+					}
 				}
 			}
 		}
-		else if (nItem > nInsert)
+		else
 		{
-			while (--nItem >= nInsert)
-			{
-				if (!IsItemDraggable(nItem))
-				{
-					*pResult = 1; // prevent
-					break;
-				}
-			}
+			*pResult = 1; // Prevent drag
 		}
 	}
 
