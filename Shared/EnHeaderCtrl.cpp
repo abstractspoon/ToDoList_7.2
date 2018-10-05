@@ -134,7 +134,7 @@ void CEnHeaderCtrl::OnBeginTrackHeader(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pNMH = (LPNMHEADER)pNMHDR;
 
 	// return TRUE to disable tracking
-	*pResult = ((pNMH->iItem == -1) || !IsItemTrackable(pNMH->iItem));
+	*pResult = (((pNMH->iItem == -1) || !IsItemTrackable(pNMH->iItem)) ? 1 : 0);
 }
 
 void CEnHeaderCtrl::OnBeginDragHeader(NMHDR* pNMHDR, LRESULT* pResult) 
@@ -142,7 +142,7 @@ void CEnHeaderCtrl::OnBeginDragHeader(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pNMH = (LPNMHEADER)pNMHDR;
 
 	// Note: Dragging can only be prevented by rejecting from OnEndDragHeader
-	*pResult = (pNMH->iItem == -1);
+	*pResult = ((pNMH->iItem == -1) ? 1 : 0);
 }
 
 BOOL CEnHeaderCtrl::OnEndDragHeader(NMHDR* pNMHDR, LRESULT* pResult) 
@@ -152,7 +152,7 @@ BOOL CEnHeaderCtrl::OnEndDragHeader(NMHDR* pNMHDR, LRESULT* pResult)
 
 	int nItem = pNMH->iItem;
 
-	// return TRUE to revert drag
+	// return TRUE to prevent drag
 	if ((nItem == -1) || !IsItemDraggable(nItem))
 	{
 		*pResult = 1;
@@ -161,6 +161,7 @@ BOOL CEnHeaderCtrl::OnEndDragHeader(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		CPoint ptCursor(GetMessagePos());
 		ScreenToClient(&ptCursor);
+		ptCursor.y = 6;
 
 		// where are we inserting this item
 		int nInsert = HitTest(ptCursor);
@@ -198,7 +199,7 @@ BOOL CEnHeaderCtrl::OnEndDragHeader(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 	}
 
-	return FALSE; // continue routing
+	return *pResult;
 }
 
 int CEnHeaderCtrl::HitTest(CPoint ptClient, UINT* pFlags) const
