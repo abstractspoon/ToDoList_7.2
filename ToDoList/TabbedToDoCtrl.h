@@ -29,6 +29,7 @@ struct VIEWDATA
 		pExtension(NULL),
 		bNeedFullTaskUpdate(TRUE),
 		bNeedFontUpdate(TRUE),
+		bNeedColumnVisUpdate(FALSE),
 		bCanPrepareNewTask(-1)
 	{
 	}
@@ -43,6 +44,7 @@ struct VIEWDATA
 	BOOL bNeedResort;
 	BOOL bNeedFullTaskUpdate;
 	BOOL bNeedFontUpdate;
+	BOOL bNeedColumnVisUpdate;
 	BOOL bCanPrepareNewTask;
 };
 
