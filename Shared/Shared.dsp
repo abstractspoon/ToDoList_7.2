@@ -1025,10 +1025,6 @@ SOURCE=.\LightBox.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\LimitSingleInstance.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Localizer.h
 # End Source File
 # Begin Source File
