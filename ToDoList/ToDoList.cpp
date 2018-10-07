@@ -220,24 +220,26 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 	TDCFINDWND find;
 	int nNumWnds = FindToDoListWnds(find);
 
-	// It may be that another instance is just starting up
-	// so we hang around for a bit to see if that is the case
-	if (!nNumWnds)
+	// If another instance is just starting up or closing down
+	// ie. has no window handle or is blocking we hang around 
+	// for a bit to see what happens
+	if (!nNumWnds && g_SingleInstanceObj.IsAnotherInstanceRunning(TRUE)) 
 	{
-		if (g_SingleInstanceObj.IsAnotherInstanceRunning()) 
+		int nTry = 5;
+		
+		while (nTry-- && !nNumWnds)
 		{
-			int nTry = 5;
+			Sleep(1000);
 
-			while (nTry-- && !nNumWnds)
-			{
-				Sleep(1000);
-				nNumWnds = FindToDoListWnds(find);
-			}
+			if (!g_SingleInstanceObj.IsAnotherInstanceRunning(TRUE))
+				break; // we're now the only instance
+
+			nNumWnds = FindToDoListWnds(find);
 		}
-
-		if (!nNumWnds)
-			return FALSE;
 	}
+
+	if (!nNumWnds)
+		return FALSE;
 
 	// Under multi-instance, having a non-empty commandline without
 	// a file path or task link is always treated as an error
