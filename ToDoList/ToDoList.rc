@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,1,1000,8
+ FILEVERSION 7,1,1000,9
  PRODUCTVERSION 1,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "AbstractSpoon Software\0"
             VALUE "FileDescription", "ToDoList\0"
-            VALUE "FileVersion", "7, 1, 1000, 8\0"
+            VALUE "FileVersion", "7, 1, 1000, 9\0"
             VALUE "InternalName", "ToDoList\0"
             VALUE "LegalCopyright", "Copyright (c) AbstractSpoon 2003-18\0"
             VALUE "LegalTrademarks", "\0"
@@ -2909,13 +2909,9 @@ BEGIN
         POPUP "Split Selected Tas&k into"
         BEGIN
             MENUITEM "&Two (2) Equal Subtasks",     ID_SPLITTASKINTO_TWO
-
             MENUITEM "T&hree (3) Equal Subtasks",   ID_SPLITTASKINTO_THREE
-
             MENUITEM "&Four (4) Equal Subtasks",    ID_SPLITTASKINTO_FOUR
-
             MENUITEM "Fi&ve (5) Equal Subtasks",    ID_SPLITTASKINTO_FIVE
-
         END
     END
     POPUP "&Edit"
@@ -3517,18 +3513,13 @@ BEGIN
                                                 ID_NEWTASK_DEPENDENTAFTERSELECTEDTASK
 
         MENUITEM SEPARATOR
-        MENUITEM "Split Task(s) into Two (2) Subtasks", 
-                                                ID_SPLITTASKINTO_TWO
+        MENUITEM "Split Task(s) into Two (2) Subtasks", ID_SPLITTASKINTO_TWO
         POPUP "Split Task(s) into"
         BEGIN
             MENUITEM "Two (2) Subtasks",            ID_SPLITTASKINTO_TWO
-
             MENUITEM "Three (3) Subtasks",          ID_SPLITTASKINTO_THREE
-
             MENUITEM "Four (4) Subtasks",           ID_SPLITTASKINTO_FOUR
-
             MENUITEM "Five (5) Subtasks",           ID_SPLITTASKINTO_FIVE
-
         END
         MENUITEM SEPARATOR
         MENUITEM "&Toggle Task Expanded State", ID_VIEW_TOGGLETASKEXPANDED
