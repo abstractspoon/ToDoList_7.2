@@ -5896,7 +5896,7 @@ void CToDoCtrl::UpdateVisibleColumns()
 void CToDoCtrl::SetColumnFieldVisibility(const TDCCOLEDITVISIBILITY& vis)
 {
 	BOOL bColumnChange, bEditChange;
-	BOOL bChange = m_visColEdit.CheckForDiff(vis, bColumnChange, bEditChange);
+	BOOL bChange = m_visColEdit.HasDifferences(vis, bColumnChange, bEditChange);
 
 	m_visColEdit = vis;
 
