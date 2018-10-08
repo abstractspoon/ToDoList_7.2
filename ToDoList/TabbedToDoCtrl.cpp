@@ -3098,9 +3098,10 @@ int CTabbedToDoCtrl::GetExtensionViewAttributes(IUIExtensionWindow* pExtWnd, CTD
 				mapAttrib.Add((TDC_ATTRIBUTE)nAttrib);
 		}
 
-		// Always
-		mapAttrib.Add(TDCA_CUSTOMATTRIB);
-		mapAttrib.Add(TDCA_LOCK);
+		if (pExtWnd->WantTaskUpdate(IUI_CUSTOMATTRIB))
+			mapAttrib.Add(TDCA_CUSTOMATTRIB_ALL);
+
+		mapAttrib.Add(TDCA_LOCK); // Always
 
 		// Include 'position' if extension supports 'unsorted'
 		CTDCUIExtensionAppCmdData data(IUI_NONE);

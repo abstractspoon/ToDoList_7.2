@@ -691,6 +691,7 @@ namespace TDC
 
 		// specials
 		case TDCA_CUSTOMATTRIBDEFS:	return IUI_CUSTOMATTRIB;
+		case TDCA_CUSTOMATTRIB_ALL:	return IUI_CUSTOMATTRIB;
 
 		case TDCA_NEWTASK:			return IUI_NONE;
 		case TDCA_PROJECTNAME:		return IUI_NONE;
