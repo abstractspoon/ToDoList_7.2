@@ -3183,7 +3183,7 @@ struct TDCCOLEDITFILTERVISIBILITY : public TDCCOLEDITVISIBILITY
 						BOOL& bColumnChange, BOOL& bEditChange, BOOL& bFilterChange) const
 	{
 		TDCCOLEDITVISIBILITY::HasDifferences(vis, bColumnChange, bEditChange);
-		bFilterChange = !mapVisibleEdits.MatchAll(vis.mapVisibleEdits);
+		bFilterChange = !mapVisibleFilters.MatchAll(vis.mapVisibleFilters);
 
 		return (bEditChange || bColumnChange || bFilterChange);
 	}
