@@ -110,11 +110,15 @@ enum TDC_THREADEDEXPORTPURPOSE
 	TDCTEP_EXPORTAFTERSAVE,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_TITLERECT 
 { 
 	TDCTR_LABEL, 
 	TDCTR_EDIT,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_INSERTWHERE
 {
@@ -128,6 +132,8 @@ enum TDC_INSERTWHERE
 	TDC_INSERTATBOTTOMOFSELTASK, // subtask
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_SORTDIR
 {
 	TDC_SORTUP   = -1,
@@ -135,12 +141,16 @@ enum TDC_SORTDIR
 	TDC_SORTDOWN =  1,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_ARCHIVE
 {
 	TDC_REMOVENONE,
 	TDC_REMOVEALL,
 	TDC_REMOVEIFSIBLINGSANDSUBTASKSCOMPLETE,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_STYLE
 {
@@ -236,12 +246,16 @@ enum TDC_STYLE
     TDCS_LAST
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_UILOCATION
 {
 	TDCUIL_BOTTOM,
 	TDCUIL_RIGHT,
 	TDCUIL_LEFT,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_COLUMN
 {
@@ -293,7 +307,7 @@ enum TDC_COLUMN
 	TDCC_CREATIONTIME,	// pseudo
 	TDCC_LOCK,
 	TDCC_LASTMODBY,
-	TDCC_COMMENTSSIZE,	// pseudo
+	TDCC_COMMENTSSIZE,
 //	TDCC_,
 
 	TDCC_COUNT,
@@ -302,10 +316,10 @@ enum TDC_COLUMN
 	TDCC_NONE		= 0xFFFE,
 	TDCC_CLIENT		= 0xFFFF, 
 }; 
+
 const int NUM_CUST_COLUMNS = (TDCC_CUSTOMCOLUMN_LAST - TDCC_CUSTOMCOLUMN_FIRST + 1);
 
-// typedef CArray<TDC_COLUMN, TDC_COLUMN> CTDCColumnIDArray;
-// typedef CMap<TDC_COLUMN, TDC_COLUMN, BOOL, BOOL&> CTDCColumnIDMap;
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_GOTO
 {
@@ -313,12 +327,16 @@ enum TDC_GOTO
 	TDCG_PREV,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_FILEFMT
 {
     TDCFF_OLDER,
     TDCFF_SAME,
     TDCFF_NEWER
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_FILE
 {
@@ -340,6 +358,8 @@ enum TDC_FILE
 	TDCF_OTHER, // always the last value
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum // TDL_SAVETASKLIST
 {
 	TDLS_INCLUDEUNSAVED		= 0x01, 
@@ -349,6 +369,8 @@ enum // TDL_SAVETASKLIST
 	TDLS_AUTOSAVE			= 0x10,
 };
  
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_GETTASKS
 {
 	TDCGT_NONE,			// not very useful except to assist coding
@@ -362,6 +384,8 @@ enum TDC_GETTASKS
 	TDCGT_DONE,
 	TDCGT_NOTDONE,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_RESETIDS
 {
@@ -369,6 +393,8 @@ enum TDC_RESETIDS
 	TDCR_NO,
 	TDCR_CHECK
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_PASTE
 {
@@ -376,6 +402,8 @@ enum TDC_PASTE
 	TDCP_BELOWSELTASK,
 	TDCP_ATBOTTOM,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_MOVETASK	
 {
@@ -384,6 +412,8 @@ enum TDC_MOVETASK
 	TDCM_LEFT,
 	TDCM_RIGHT,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum // CToDoCtrl::GetTasks()
 {
@@ -404,6 +434,8 @@ enum // CToDoCtrl::GetSelectedTasks()
 	TDCGSTF_NOTSUBTASKS				= 0x0004,
 	TDCGSTF_RESOLVEREFERENCES		= 0x0008,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_DATE
 {
@@ -421,6 +453,8 @@ enum TDC_DATE
 	TDCD_LASTMOD,
 	TDCD_CUSTOM,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 // control ids
 enum 
@@ -507,12 +541,16 @@ enum
 		
 	IDC_LAST,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum // Filter Bar
 {
 	IDC_FIRST_CUSTOMFILTERFIELD = 4000,
 	IDC_LAST_CUSTOMFILTERFIELD = IDC_FIRST_CUSTOMFILTERFIELD + 256,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_ATTRIBUTE
 {
@@ -603,10 +641,10 @@ enum TDC_ATTRIBUTE
 
 	TDCA_ALL = 0xfffffff0,
 };
-const int NUM_CUST_ATTRIB = (TDCA_CUSTOMATTRIB_LAST - TDCA_CUSTOMATTRIB_FIRST + 1);
 
-//typedef CArray<TDC_ATTRIBUTE, TDC_ATTRIBUTE> CTDCAttributeArray;
-//typedef CMap<TDC_ATTRIBUTE, TDC_ATTRIBUTE, BOOL, BOOL> CTDCAttributeMap;
+const int NUM_CUST_ATTRIB = (TDCA_CUSTOMATTRIB_LAST - TDCA_CUSTOMATTRIB_FIRST + 1);
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum FIND_OPERATOR
 {
@@ -639,6 +677,8 @@ enum FIND_ATTRIBTYPE
 	FT_DATERELATIVE,
 	FT_ICON,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_OFFSET
 {
@@ -649,6 +689,8 @@ enum TDC_OFFSET
 	TDCO_MONTHS,
 	TDCO_YEARS,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDI_REGULARITY
 {
@@ -684,6 +726,8 @@ enum TDI_REGULARITY
 
 	// ADD NEW OPTIONS HERE ONLY!
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum 
 {
@@ -692,6 +736,8 @@ enum
 	TDCCHECKCHILDREN	= 0x2,
 	TDCCHECKALL			= 0x3,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_SET
 { 
@@ -699,6 +745,8 @@ enum TDC_SET
 	SET_FAILED		= 0, 
 	SET_CHANGE		= 1 
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum
 {
@@ -707,6 +755,8 @@ enum
 	MAX_TDRISK = 10,
 	MIN_TDRISK = 0,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_EXPANDCOLLAPSE
 {
@@ -715,6 +765,8 @@ enum TDC_EXPANDCOLLAPSE
 	TDCEC_DUE,
 	TDCEC_STARTED,
 };
+ 
+/////////////////////////////////////////////////////////////////////////////
 
 enum FILTER_SHOW
 {
@@ -746,15 +798,6 @@ enum FILTER_DATE
 	FD_YESTERDAY,
 };
 
-enum // RESULT_FLAGS
-{
-	RF_DONE			= 0x0001,
-	RF_PARENT		= 0x0002,
-	RF_REFERENCE	= 0x0004,
-	RF_TOPMOST		= 0x0008, // no parent
-	RF_GOODASDONE	= 0x0010,
-};
-
 enum // FILTER_OPTIONS
 {
 	FO_ANYCATEGORY	= 0x0001,
@@ -783,6 +826,19 @@ enum FILTER_TITLE
 	FT_FILTERONANYTEXT,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
+enum // RESULT_FLAGS
+{
+	RF_DONE			= 0x0001,
+	RF_PARENT		= 0x0002,
+	RF_REFERENCE	= 0x0004,
+	RF_TOPMOST		= 0x0008, // no parent
+	RF_GOODASDONE	= 0x0010,
+};
+
+/////////////////////////////////////////////////////////////////////////////
+
 enum 
 { 
 	FB_MULTISELCAT		= 0x01, 
@@ -793,12 +849,16 @@ enum
 	FB_MULTISELTAGS		= 0x20,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_SETTASKDONE
 {
 	TDC_SETDONE,
 	TDC_SETUNDONE,
 	TDC_SETLEAVE,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_HITTEST
 {
@@ -808,6 +868,8 @@ enum TDC_HITTEST
 	TDCHT_TASK,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_SELECTTASK
 {
 	TDC_SELECTFIRST,
@@ -816,6 +878,8 @@ enum TDC_SELECTTASK
 	TDC_SELECTPREV,
 	TDC_SELECTLAST,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum FTC_VIEW
 {
@@ -843,13 +907,17 @@ enum FTC_VIEW
 	FTCV_LASTUIEXTENSION = FTCV_UIEXTENSION16,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_REMINDER
 {
 	TDCR_STARTDATE,
 	TDCR_DUEDATE,
 };
 
-enum TDCUNDOELMOP
+/////////////////////////////////////////////////////////////////////////////
+
+enum TDC_UNDOELMOP
 {
 	TDCUEO_EDIT,
 	TDCUEO_ADD,
@@ -857,7 +925,7 @@ enum TDCUNDOELMOP
 	TDCUEO_MOVE,
 };
 
-enum TDCUNDOACTIONTYPE
+enum TDC_UNDOACTIONTYPE
 {
 	TDCUAT_NONE = -1,
 	TDCUAT_EDIT,
@@ -869,12 +937,16 @@ enum TDCUNDOACTIONTYPE
 	TDCUAT_ARCHIVE,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_MAXSTATE
 {
 	TDCMS_NORMAL,
 	TDCMS_MAXTASKLIST,
 	TDCMS_MAXCOMMENTS,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDI_RECURREUSEOPTION
 {
@@ -883,12 +955,16 @@ enum TDI_RECURREUSEOPTION
 	TDIRO_ASK,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDI_RECURFROMOPTION
 {
 	TDIRO_DONEDATE,
 	TDIRO_DUEDATE,
 	TDIRO_STARTDATE,
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum // custom attribute data types
 {
@@ -927,12 +1003,16 @@ enum // custom attribute features
 	TDCCAF_INHERITPARENTCHANGES	= 0x0080, 
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum TDC_PREPAREPATH 
 { 
 	TDCPP_NONE,
 	TDCPP_FILE, 
 	TDCPP_STORAGE, 
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum TDC_TASKS2CLIPBOARD
 { 

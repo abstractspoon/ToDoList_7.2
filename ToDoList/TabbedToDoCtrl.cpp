@@ -488,19 +488,11 @@ void CTabbedToDoCtrl::OnDestroy()
 	CToDoCtrl::OnDestroy();
 }
 
-void CTabbedToDoCtrl::UpdateVisibleColumns()
+void CTabbedToDoCtrl::UpdateVisibleColumns(const CTDCColumnIDMap& mapChanges)
 {
-	CToDoCtrl::UpdateVisibleColumns();
+	CToDoCtrl::UpdateVisibleColumns(mapChanges);
 
-	if (InListView())
-	{
-		m_taskList.OnColumnVisibilityChange();
-		GetViewData(FTCV_TASKLIST)->bNeedColumnVisUpdate = FALSE;
-	}
-	else
-	{
-		GetViewData(FTCV_TASKLIST)->bNeedColumnVisUpdate = TRUE;
-	}
+	m_taskList.OnColumnVisibilityChange(mapChanges);
 }
 
 IUIExtensionWindow* CTabbedToDoCtrl::GetExtensionWnd(FTC_VIEW nView) const
@@ -702,14 +694,7 @@ LRESULT CTabbedToDoCtrl::OnPreTabViewChange(WPARAM nOldTab, LPARAM nNewTab)
 			if (pLVData->bNeedFontUpdate)
 			{
 				pLVData->bNeedFontUpdate = FALSE;
-				pLVData->bNeedColumnVisUpdate = FALSE;
-
 				m_taskList.SetFont(m_taskTree.GetFont());
-			}
-			else if (pLVData->bNeedColumnVisUpdate)
-			{
-				pLVData->bNeedColumnVisUpdate = FALSE;
-				m_taskList.OnColumnVisibilityChange();
 			}
 		}
 		break;

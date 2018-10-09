@@ -29,7 +29,6 @@ struct VIEWDATA
 		pExtension(NULL),
 		bNeedFullTaskUpdate(TRUE),
 		bNeedFontUpdate(TRUE),
-		bNeedColumnVisUpdate(FALSE),
 		bCanPrepareNewTask(-1)
 	{
 	}
@@ -44,7 +43,6 @@ struct VIEWDATA
 	BOOL bNeedResort;
 	BOOL bNeedFullTaskUpdate;
 	BOOL bNeedFontUpdate;
-	BOOL bNeedColumnVisUpdate;
 	BOOL bCanPrepareNewTask;
 };
 
@@ -226,7 +224,7 @@ protected:
 	virtual void ReposTaskTree(CDeferWndMove* pDWM, const CRect& rPos);
 	virtual BOOL SetStyle(TDC_STYLE nStyle, BOOL bOn, BOOL bWantUpdate); // one style at a time only 
 	virtual void UpdateTasklistVisibility();
-	virtual void UpdateVisibleColumns();
+	virtual void UpdateVisibleColumns(const CTDCColumnIDMap& mapChanges);
 	virtual void EndTimeTracking(BOOL bAllowConfirm, BOOL bNotify);
 	virtual BOOL BeginTimeTracking(DWORD dwTaskID, BOOL bNotify);
 	virtual BOOL SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue);

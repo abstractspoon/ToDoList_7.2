@@ -5424,7 +5424,7 @@ LRESULT CToDoCtrl::OnEditEnd(WPARAM /*wParam*/, LPARAM lParam)
 
 		// Special handling: For new tasks we extend the previous undo
 		BOOL bNewTask = (m_dwEditTitleTaskID == m_dwLastAddedID);
-		TDCUNDOACTIONTYPE nAction = (bNewTask ? TDCUAT_ADD : TDCUAT_EDIT);
+		TDC_UNDOACTIONTYPE nAction = (bNewTask ? TDCUAT_ADD : TDCUAT_EDIT);
 
 		IMPLEMENT_DATA_UNDO_EXTEND(m_data, nAction, bNewTask);
 		
@@ -5879,18 +5879,9 @@ BOOL CToDoCtrl::SetCustomAttributeDefs(const CTDCCustomAttribDefinitionArray& aA
 	return FALSE;
 }
 
-void CToDoCtrl::UpdateVisibleColumns()
+void CToDoCtrl::UpdateVisibleColumns(const CTDCColumnIDMap& mapChanges)
 {
-	m_taskTree.OnColumnVisibilityChange();
-	
-	// hide/show controls which may have been affected
-	if (m_visColEdit.GetShowFields() == TDLSA_ASCOLUMN)
-	{
-		UpdateControls(FALSE); // don't update comments
-		
-		// re-align controls
-		Resize();
-	}
+	m_taskTree.OnColumnVisibilityChange(mapChanges);
 }
 
 void CToDoCtrl::SetColumnFieldVisibility(const TDCCOLEDITVISIBILITY& vis)
@@ -5898,16 +5889,23 @@ void CToDoCtrl::SetColumnFieldVisibility(const TDCCOLEDITVISIBILITY& vis)
 	BOOL bColumnChange, bEditChange;
 	BOOL bChange = m_visColEdit.HasDifferences(vis, bColumnChange, bEditChange);
 
+	if (!bChange)
+		return;
+
+	TDCCOLEDITVISIBILITY visPrev = m_visColEdit;
 	m_visColEdit = vis;
 
 	if (bColumnChange)
-		UpdateVisibleColumns();
+	{
+		CTDCColumnIDMap mapChanges;
+		VERIFY(visPrev.GetVisibleColumns().GetDifferences(vis.GetVisibleColumns(), mapChanges));
+
+		UpdateVisibleColumns(mapChanges);
+	}
 		
+	// hide/show controls which may have been affected
 	if (bEditChange)
 	{		
-		if (!bColumnChange)
-			m_taskTree.RecalcColumnWidths();
-
 		Resize();
 		UpdateControls(FALSE); // don't update comments
 	}
@@ -12323,7 +12321,7 @@ BOOL CToDoCtrl::UndoLastAction(BOOL bUndo)
 
 		// get the list of the task IDs that will be undone/redone
 		CDWordArray aTaskIDs;
-		TDCUNDOACTIONTYPE nUndoType = m_data.GetLastUndoActionType(bUndo);
+		TDC_UNDOACTIONTYPE nUndoType = m_data.GetLastUndoActionType(bUndo);
 
 		// but not if the result is that the items in question were deleted
 		if (!(nUndoType == TDCUAT_DELETE && !bUndo) && 
