@@ -5904,7 +5904,7 @@ void CToDoCtrl::SetColumnFieldVisibility(const TDCCOLEDITVISIBILITY& vis)
 	}
 		
 	// hide/show controls which may have been affected
-	if (bEditChange)
+	if (bEditChange || (bColumnChange && (vis.GetShowFields() == TDLSA_ASCOLUMN)))
 	{		
 		Resize();
 		UpdateControls(FALSE); // don't update comments
