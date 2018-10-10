@@ -148,9 +148,18 @@ DWORD CTreeSelectionHelper::GetNextItemData(POSITION& pos) const
 	return (hti == NULL ? 0 : m_tree.GetItemData(hti));
 }
 
+int CTreeSelectionHelper::GetCount() const 
+{ 
+	if (m_tree.GetCount())
+		return m_lstSelection.GetCount(); 
+
+	// else
+	return NULL;
+}
+
 BOOL CTreeSelectionHelper::IsItemSelected(HTREEITEM hti, BOOL bCheckParents) const
 {
-	if (!hti || hti == TVI_ROOT)
+	if (!hti || (hti == TVI_ROOT) || !GetCount())
 		return FALSE;
 
 	BOOL bSel = HasItem(hti);
@@ -161,7 +170,6 @@ BOOL CTreeSelectionHelper::IsItemSelected(HTREEITEM hti, BOOL bCheckParents) con
 	// else
 	return IsItemSelected(m_tree.GetParentItem(hti), TRUE);
 }
-
 
 BOOL CTreeSelectionHelper::SetItems(HTREEITEM htiFrom, HTREEITEM htiTo, TSH_SELECT nState, BOOL bRedraw)
 {

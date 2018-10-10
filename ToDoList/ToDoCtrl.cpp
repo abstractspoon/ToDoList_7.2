@@ -1637,7 +1637,7 @@ void CToDoCtrl::EnableDisableControl(const CTRLITEM& ctrl, DWORD dwTaskID, BOOL 
 	case IDC_TIMESPENT:
 		if (bEnable)
 		{
-			if (!bEditTime || m_timeTracking.IsTrackingTask(dwTaskID))
+			if (!bEditTime || (dwTaskID && m_timeTracking.IsTrackingTask(dwTaskID)))
 				nCtrlState = RTCS_READONLY;
 		}
 		break;

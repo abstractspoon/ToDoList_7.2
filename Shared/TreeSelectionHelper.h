@@ -87,13 +87,13 @@ public:
 
 	inline HTREEITEM GetFirstItem() const { return GetCount() ? m_lstSelection.GetHead() : NULL; }
 	inline HTREEITEM GetLastItem() const { return GetCount() ? m_lstSelection.GetTail() : NULL; }
-	inline POSITION GetFirstItemPos() const { return m_lstSelection.GetHeadPosition(); }
+	inline POSITION GetFirstItemPos() const { return GetCount() ? m_lstSelection.GetHeadPosition() : NULL; }
 	inline HTREEITEM GetNextItem(POSITION& pos) const { return m_lstSelection.GetNext(pos); }
 
-	inline int GetCount() const { return m_lstSelection.GetCount(); }
 	inline BOOL HasSingleSelection() const { return (GetCount() == 1); }
-	inline BOOL HasItem(HTREEITEM hti) const { return (m_lstSelection.Find(hti) != NULL); }
+	inline BOOL HasItem(HTREEITEM hti) const { return (GetCount() && (m_lstSelection.Find(hti) != NULL)); }
 	BOOL IsItemSelected(HTREEITEM hti, BOOL bCheckParents) const;
+	int GetCount() const;
 
 	DWORD GetFirstItemData() const;
 	DWORD GetLastItemData() const;
