@@ -179,8 +179,6 @@ protected:
 	afx_msg void OnUpdateToolsCleanupIniPreferences(CCmdUI* pCmdUI);
 	afx_msg void OnToolsToggleLogging();
 	afx_msg void OnUpdateToolsToggleLogging(CCmdUI* pCmdUI);
-	afx_msg void OnViewToggleAllTaskExpanded();
-	afx_msg void OnUpdateViewToggleAllTaskExpanded(CCmdUI* pCmdUI);
 	afx_msg void OnEditFindReplaceInTaskTitles();
 	afx_msg void OnUpdateEditFindReplaceInTaskTitles(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowRemindersWindow();
@@ -292,7 +290,6 @@ protected:
 	afx_msg void OnUpdateViewCycleTaskViews(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewToggleTreeandList(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewTogglefilter(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateViewToggletaskexpanded(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewToggletasksandcomments(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateWindow(CCmdUI* pCmdUI);
 	afx_msg void OnViewClearfilter();
@@ -307,7 +304,6 @@ protected:
 	afx_msg void OnViewCycleTaskViews();
 	afx_msg void OnViewToggleTreeandList();
 	afx_msg void OnViewTogglefilter();
-	afx_msg void OnViewToggletaskexpanded();
 	afx_msg void OnViewToggletasksandcomments();
 	afx_msg void OnTasklistCustomColumns();
 	afx_msg void OnEditGotoDependency();
