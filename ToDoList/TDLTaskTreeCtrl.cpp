@@ -289,11 +289,12 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 	CTLSHoldResync hr3(*this);
 
 	int nNumExpanded = aExpanded.GetSize();
-	HTREEITEM hti = NULL;
 	
 	for (int nItem = 0; nItem < nNumExpanded; nItem++)
 	{
-		if (m_mapHTItems.Lookup(aExpanded[nItem], hti) && hti)
+		HTREEITEM hti = GetItem(aExpanded[nItem]);
+		
+		if (hti)
 			ExpandItemRaw(hti, TRUE, FALSE, FALSE);
 	}
 	
@@ -320,6 +321,7 @@ void CTDLTaskTreeCtrl::RefreshTreeItemMap()
 
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
 {
+//	return m_find.GetItem(dwTaskID);
 	HTREEITEM hti = NULL;
 	m_mapHTItems.Lookup(dwTaskID, hti);
 
@@ -2151,7 +2153,7 @@ BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 			int nID = cache.aBreadcrumbs.GetSize();
 			
 			while (nID-- && !htiFocus)
-				htiFocus = m_mapHTItems.GetItem(cache.aBreadcrumbs[nID]);
+				htiFocus = GetItem(cache.aBreadcrumbs[nID]);
 		}
 
 		if (SelectTasks(cache.aSelTaskIDs) || htiFocus)
@@ -2167,7 +2169,7 @@ BOOL CTDLTaskTreeCtrl::RestoreSelection(const TDCSELECTIONCACHE& cache)
 			HTREEITEM htiFirstVis = NULL;
 
 			if (cache.dwFirstVisibleTaskID)
-				htiFirstVis = m_mapHTItems.GetItem(cache.dwFirstVisibleTaskID);
+				htiFirstVis = GetItem(cache.dwFirstVisibleTaskID);
 
 			if (htiFirstVis == NULL)
 				htiFirstVis = m_tcTasks.GetChildItem(NULL);
@@ -2275,11 +2277,12 @@ BOOL CTDLTaskTreeCtrl::SelectTasks(const CDWordArray& aTaskIDs, BOOL bTrue)
 	// select tasks in one hit
 	int nTask = aTrueTaskIDs.GetSize();
 	BOOL bSel = FALSE;
-	HTREEITEM hti = NULL;
 	
 	while (nTask--)
 	{
-		if (m_mapHTItems.Lookup(aTrueTaskIDs[nTask], hti) && hti)
+		HTREEITEM hti = GetItem(aTrueTaskIDs[nTask]);
+
+		if (hti)
 			bSel |= TSH().SetItem(hti, TSHS_SELECT, FALSE);
 	}
 	
