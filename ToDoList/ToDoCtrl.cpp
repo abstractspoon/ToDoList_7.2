@@ -12377,6 +12377,7 @@ BOOL CToDoCtrl::UndoLastActionItems(const CArrayUndoElements& aElms)
 			// note: DeleteTask on the Parent will already have disposed of the children
 			// so we can expect hti to be NULL on occasion. ie don't ASSERT it
 			HTREEITEM hti = m_taskTree.GetItem(elm.dwTaskID);
+			ASSERT(hti);
 			
 			if (hti)
 			{
@@ -12390,7 +12391,10 @@ BOOL CToDoCtrl::UndoLastActionItems(const CArrayUndoElements& aElms)
 		{
 			// find parent item and restore task
 			HTREEITEM htiParent = m_taskTree.GetItem(elm.dwParentID);
+			ASSERT(htiParent || !elm.dwParentID);
+
 			HTREEITEM htiPrevSibling = m_taskTree.GetItem(elm.dwPrevSiblingID);
+			ASSERT(htiPrevSibling || !elm.dwPrevSiblingID);
 			
 			if ((elm.dwParentID && htiParent) || (!elm.dwParentID && !htiParent))
 			{
@@ -12405,9 +12409,14 @@ BOOL CToDoCtrl::UndoLastActionItems(const CArrayUndoElements& aElms)
 		{
 			// move the task back to it original location
 			HTREEITEM hti = m_taskTree.GetItem(elm.dwTaskID); // current tree item
-			HTREEITEM htiDestParent = m_taskTree.GetItem(elm.dwParentID); // original owner
-			HTREEITEM htiDestPrevSibling = m_taskTree.GetItem(elm.dwPrevSiblingID); // original previous sibling
+			ASSERT(hti);
 
+			HTREEITEM htiDestParent = m_taskTree.GetItem(elm.dwParentID); // original owner
+			ASSERT(htiDestParent || !elm.dwParentID);
+
+			HTREEITEM htiDestPrevSibling = m_taskTree.GetItem(elm.dwPrevSiblingID); // original previous sibling
+			ASSERT(htiDestPrevSibling || !elm.dwPrevSiblingID);
+			
 			if ((elm.dwParentID && htiDestParent) || (!elm.dwParentID && !htiDestParent))
 			{
 				// undo the move
