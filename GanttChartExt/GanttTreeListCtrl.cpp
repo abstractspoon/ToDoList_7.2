@@ -1080,7 +1080,7 @@ void CGanttTreeListCtrl::RebuildTree(const ITASKLISTBASE* pTasks)
 
 void CGanttTreeListCtrl::RefreshTreeItemMap()
 {
-	TCH().BuildHTIMap(m_mapHTItems);
+	TCH().BuildTreeItemMap(m_mapHTItems);
 }
 
 void CGanttTreeListCtrl::RecalcDateRange()

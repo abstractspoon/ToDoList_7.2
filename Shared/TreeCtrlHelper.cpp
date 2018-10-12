@@ -996,7 +996,7 @@ HTREEITEM CTreeCtrlHelper::FindItem(DWORD dwID, HTREEITEM htiStart) const
 	return htiFound;
 }
 
-int CTreeCtrlHelper::BuildHTIMap(CHTIMap& mapHTI, BOOL bVisibleOnly) const
+int CTreeCtrlHelper::BuildTreeItemMap(CHTIMap& mapHTI, BOOL bVisibleOnly) const
 {
 	mapHTI.RemoveAll();
 

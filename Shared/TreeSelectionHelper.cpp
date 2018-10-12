@@ -833,7 +833,7 @@ int CTreeSelectionHelper::Convert(const CIDArray& aFrom, CHTIList& lstTo) const
     lstTo.RemoveAll();
 
     CHTIMap mapHTI;
-    m_tch.BuildHTIMap(mapHTI);
+    m_tch.BuildTreeItemMap(mapHTI);
 
     for (int nID = 0; nID < aFrom.GetSize(); nID++)
     {
