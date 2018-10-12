@@ -284,8 +284,7 @@ int CTDLTaskTreeCtrl::GetExpandedTasks(CDWordArray& aExpanded, HTREEITEM hti) co
 
 void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 {
-	CHoldRedraw hr(m_tcTasks);
-	CHoldRedraw hr2(m_lcColumns);
+	CHoldRedraw hr(*this);
 	CTLSHoldResync hr3(*this);
 
 	int nNumExpanded = aExpanded.GetSize();
@@ -421,8 +420,7 @@ void CTDLTaskTreeCtrl::ExpandItem(HTREEITEM hti, BOOL bExpand, BOOL bAndChildren
 	
 	// scope redraw holding else EnsureVisible doesn't work
 	{
-		CHoldRedraw hr(m_lcColumns);
-		CHoldRedraw hr2(m_tcTasks);
+		CHoldRedraw hr(*this);
 		CTLSHoldResync hr3(*this);
 		
 		ExpandItemRaw(hti, bExpand, bAndChildren);
@@ -1882,10 +1880,8 @@ void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestP
 
 	{
 		CAutoFlag af(m_bMovingItem, TRUE);
+		CHoldRedraw hr(*this);
 
-		CLockUpdates lu(m_tcTasks);
-		CHoldRedraw hr1(m_tcTasks), hr2(m_lcColumns);
-		
 		TDCSELECTIONCACHE cache;
 		CacheSelection(cache);
 		

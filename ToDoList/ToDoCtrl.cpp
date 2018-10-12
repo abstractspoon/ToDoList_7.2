@@ -7334,6 +7334,8 @@ LRESULT CToDoCtrl::OnTreeDragDrop(WPARAM /*wParam*/, LPARAM lParam)
 
 BOOL CToDoCtrl::DropSelectedTasks(TDC_DROPOPERATION nDrop, HTREEITEM htiDropTarget, HTREEITEM htiDropAfter)
 {
+	CLockUpdates lu(*this);
+
 	switch (nDrop)
 	{
 	case TDC_DROPCOPY:
@@ -7375,6 +7377,7 @@ BOOL CToDoCtrl::DropSelectedTasks(TDC_DROPOPERATION nDrop, HTREEITEM htiDropTarg
 	case TDC_DROPMOVE:
 		{
 			IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
+			HOLD_REDRAW(*this, m_taskTree);
 
 			DWORD dwDestParentID = m_taskTree.GetTaskID(htiDropTarget);
 			DWORD dwDestPrevSiblingID = m_taskTree.GetTaskID(htiDropAfter);
@@ -7746,6 +7749,9 @@ BOOL CToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	if (!m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
 		return FALSE;
 
+	CLockUpdates lu(*this);
+	HOLD_REDRAW(*this, m_taskTree);
+	
 	m_taskTree.MoveSelection(nDirection);
 
 	// refresh parent states if moving to the right (adding subtasks)
@@ -12311,8 +12317,9 @@ BOOL CToDoCtrl::UndoLastAction(BOOL bUndo)
 	if (m_data.CanUndoLastAction(bUndo))
 	{
  		CWaitCursor cursor;
- 		CHoldRedraw hr(m_taskTree);
- 		
+		CLockUpdates lu(*this);
+		HOLD_REDRAW(*this, m_taskTree);
+		
 		TDCSELECTIONCACHE cache;
 		CacheTreeSelection(cache);
 
