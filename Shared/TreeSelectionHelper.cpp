@@ -16,7 +16,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 
 CTreeSelectionHelper::CTreeSelectionHelper(CTreeCtrl& tree) : 
-	m_tree(tree), m_nCurSelection(0), m_htiAnchor(NULL), m_tch(tree)
+m_tree(tree), m_nCurSelection(0), m_htiAnchor(NULL), m_tch(tree)
 {
 
 }
@@ -74,38 +74,38 @@ BOOL CTreeSelectionHelper::SetItem(HTREEITEM hti, TSH_SELECT nState, BOOL bRedra
 
 void CTreeSelectionHelper::ClearHistory()
 {
-   m_aHistory.RemoveAll();
-   m_nCurSelection = 0;
+	m_aHistory.RemoveAll();
+	m_nCurSelection = 0;
 }
 
 void CTreeSelectionHelper::RemoveItemFromHistory(HTREEITEM hti)
 {
-    DWORD dwID = m_tree.GetItemData(hti);
-    ASSERT (dwID);
+	DWORD dwID = m_tree.GetItemData(hti);
+	ASSERT (dwID);
 
-    int nHistory = m_aHistory.GetSize();
+	int nHistory = m_aHistory.GetSize();
 
-    while (nHistory--)
-    {
-        CIDArray& aIDs = m_aHistory[nHistory];
-        int nID = aIDs.GetSize();
+	while (nHistory--)
+	{
+		CIDArray& aIDs = m_aHistory[nHistory];
+		int nID = aIDs.GetSize();
 
-        while (nID--)
-        {
-            if (aIDs[nID] == dwID)
-                aIDs.RemoveAt(nID);
-        }
+		while (nID--)
+		{
+			if (aIDs[nID] == dwID)
+				aIDs.RemoveAt(nID);
+		}
 
-        // if the selection list is empty remove it too
-        if (aIDs.GetSize() == 0)
-        {
-            m_aHistory.RemoveAt(nHistory);
+		// if the selection list is empty remove it too
+		if (aIDs.GetSize() == 0)
+		{
+			m_aHistory.RemoveAt(nHistory);
 
-            // make sure m_nCurSelection remains valid
-            if (nHistory <= m_nCurSelection)
-                m_nCurSelection = max(0, m_nCurSelection - 1);
-        }
-    }
+			// make sure m_nCurSelection remains valid
+			if (nHistory <= m_nCurSelection)
+				m_nCurSelection = max(0, m_nCurSelection - 1);
+		}
+	}
 }
 
 void CTreeSelectionHelper::InvalidateItem(HTREEITEM hti)
@@ -131,7 +131,7 @@ BOOL CTreeSelectionHelper::HasItem(DWORD dwItemData) const
 		if (GetNextItemData(pos) == dwItemData)
 			return TRUE;
 	}
-	
+
 	// not found
 	return FALSE;
 }
@@ -229,13 +229,13 @@ BOOL CTreeSelectionHelper::SetItems(const CHTIList& lstHTI, TSH_SELECT nState, B
 	BOOL bItemRedraw = (bRedraw && (lstHTI.GetCount() < 10));
 
 	POSITION pos = lstHTI.GetHeadPosition();
-	
+
 	while (pos) 
 		bRes |= SetItem(lstHTI.GetNext(pos), nState, bItemRedraw);
 
 	if (bRedraw && !bItemRedraw)
 		m_tree.Invalidate(FALSE);
-	
+
 	return bRes;
 }
 
@@ -251,10 +251,10 @@ BOOL CTreeSelectionHelper::ToggleItems(HTREEITEM htiFrom, HTREEITEM htiTo, BOOL 
 
 BOOL CTreeSelectionHelper::RemoveItem(HTREEITEM hti, BOOL bRemoveFromHistory, BOOL bRedraw) 
 { 
-   if (bRemoveFromHistory)
-      RemoveItemFromHistory(hti);
-   
-   return SetItem(hti, TSHS_DESELECT, bRedraw); 
+	if (bRemoveFromHistory)
+		RemoveItemFromHistory(hti);
+
+	return SetItem(hti, TSHS_DESELECT, bRedraw); 
 }
 
 BOOL CTreeSelectionHelper::AddAll(BOOL bRedraw)
@@ -306,7 +306,7 @@ BOOL CTreeSelectionHelper::RemoveAll(BOOL bRemoveFromHistory, BOOL bRedraw)
 
 				// remove from elsewhere in history
 				POSITION pos = GetFirstItemPos();
-			
+
 				while (pos)
 					RemoveItemFromHistory(GetNextItem(pos));
 			}
@@ -321,29 +321,29 @@ BOOL CTreeSelectionHelper::RemoveAll(BOOL bRemoveFromHistory, BOOL bRedraw)
 			else // add the current selection to the history
 			{
 				CIDArray aIDs;
-				
+
 				Convert(m_lstSelection, aIDs);
 				m_aHistory.Add(aIDs);
 			}
-			
+
 			// update the current selection
 			m_nCurSelection++;
 		}
-				
+
 		// invalidate just the deselected tree items
 		if (bRedraw)
 		{
 			POSITION pos = GetFirstItemPos();
-			
+
 			while (pos)
 			{
 				HTREEITEM hti = GetNextItem(pos);
 				InvalidateItem(hti);
 			}
-			
+
 			//InvalidateAll(FALSE);
 		}
-		
+
 		m_lstSelection.RemoveAll(); 
 		return TRUE;
 	}
@@ -538,17 +538,17 @@ void CTreeSelectionHelper::SortIfAllSiblings(BOOL bAscending)
 int CTreeSelectionHelper::BuildSortArray(CSortArray& aItems)
 {
 	aItems.SetSize(GetCount());
-	
+
 	POSITION pos = GetFirstItemPos();
 	int nItem = 0;
-	
+
 	while (pos)
 	{
 		HTREEITEM hti = GetNextItem(pos);
 
 		int nPos = GetItemPos(hti);
 		SORTITEM si = { hti, nPos };
-		
+
 		aItems.SetAt(nItem, si);
 		nItem++;
 	}
@@ -629,16 +629,16 @@ BOOL CTreeSelectionHelper::HasSelectedParent(HTREEITEM hti) const
 BOOL CTreeSelectionHelper::HasSelectedParent(HTREEITEM hti, const CHTIList& selection) const
 {
 	HTREEITEM htiParent = m_tree.GetParentItem(hti);
-	
+
 	while (htiParent)
 	{
 		if (selection.Find(htiParent))
 			return TRUE;
-		
+
 		// else
 		htiParent = m_tree.GetParentItem(htiParent);
 	}
-	
+
 	return FALSE; // not found
 }
 
@@ -699,9 +699,9 @@ int CTreeSelectionHelper::FindNextValidSelection() const
 
 BOOL CTreeSelectionHelper::NextSelection(BOOL bRedraw)
 {
-    if (HasNextSelection())
-    {
- 		// can we find a valid next selection?
+	if (HasNextSelection())
+	{
+		// can we find a valid next selection?
 		int nNext = FindNextValidSelection();
 
 		if (nNext == -1) // no
@@ -711,7 +711,7 @@ BOOL CTreeSelectionHelper::NextSelection(BOOL bRedraw)
 		}
 		else // yes
 		{
-		   // invalidate current selection
+			// invalidate current selection
 			if (bRedraw)
 				InvalidateAll(FALSE);
 
@@ -737,9 +737,9 @@ BOOL CTreeSelectionHelper::NextSelection(BOOL bRedraw)
 
 			return TRUE;
 		}
-    }
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 BOOL CTreeSelectionHelper::HasPrevSelection() const
@@ -763,8 +763,8 @@ int CTreeSelectionHelper::FindPrevValidSelection() const
 
 BOOL CTreeSelectionHelper::PrevSelection(BOOL bRedraw)
 {
-    if (HasPrevSelection())
-    {
+	if (HasPrevSelection())
+	{
 		// can we find a valid previous selection?
 		int nPrev = FindPrevValidSelection();
 
@@ -806,44 +806,44 @@ BOOL CTreeSelectionHelper::PrevSelection(BOOL bRedraw)
 
 			return TRUE;
 		}
-    }
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 int CTreeSelectionHelper::Convert(const CHTIList& lstFrom, CIDArray& aTo) const
 {
-    aTo.RemoveAll();
-    POSITION pos = lstFrom.GetHeadPosition();
+	aTo.RemoveAll();
+	POSITION pos = lstFrom.GetHeadPosition();
 
-    while (pos)
-    {
-        HTREEITEM hti = lstFrom.GetNext(pos);
-        DWORD dwID = m_tree.GetItemData(hti);
+	while (pos)
+	{
+		HTREEITEM hti = lstFrom.GetNext(pos);
+		DWORD dwID = m_tree.GetItemData(hti);
 
-        if (dwID)
-            aTo.Add(dwID);
-    }
+		if (dwID)
+			aTo.Add(dwID);
+	}
 
-    return aTo.GetSize();
+	return aTo.GetSize();
 }
 
 int CTreeSelectionHelper::Convert(const CIDArray& aFrom, CHTIList& lstTo) const
 {
-    lstTo.RemoveAll();
+	lstTo.RemoveAll();
 
-    CHTIMap mapHTI;
-    m_tch.BuildTreeItemMap(mapHTI);
+	CHTIMap mapHTI;
+	m_tch.BuildTreeItemMap(mapHTI);
 
-    for (int nID = 0; nID < aFrom.GetSize(); nID++)
-    {
-        HTREEITEM hti = mapHTI.GetItem(aFrom[nID]);
+	for (int nID = 0; nID < aFrom.GetSize(); nID++)
+	{
+		HTREEITEM hti = mapHTI.GetItem(aFrom[nID]);
 
-        if (hti)
-            lstTo.AddTail(hti);
-    }
+		if (hti)
+			lstTo.AddTail(hti);
+	}
 
-    return lstTo.GetCount();
+	return lstTo.GetCount();
 }
 
 void CTreeSelectionHelper::GetAnchorSel(HTREEITEM& htiAnchor, HTREEITEM& htiTreeSel) const
@@ -853,11 +853,11 @@ void CTreeSelectionHelper::GetAnchorSel(HTREEITEM& htiAnchor, HTREEITEM& htiTree
 }
 
 void CTreeSelectionHelper::UpdateAnchorSel(HTREEITEM htiPrev, HTREEITEM htiNew, 
-										  HTREEITEM& htiAnchor, HTREEITEM& htiTreeSel) const
+	HTREEITEM& htiAnchor, HTREEITEM& htiTreeSel) const
 {
 	if (htiTreeSel == htiPrev)
 		htiTreeSel = htiNew;
-	
+
 	if (htiAnchor == htiPrev)
 		htiAnchor = htiNew;
 }
@@ -897,118 +897,92 @@ BOOL CTreeSelectionHelper::FixupTreeSelection()
 	}
 
 	// fixup anchor
- 	if (!m_htiAnchor)
- 		m_htiAnchor = m_tree.GetSelectedItem();
+	if (!m_htiAnchor)
+		m_htiAnchor = m_tree.GetSelectedItem();
 
 	return bTreeSelChanged;
 }
 
-void CTreeSelectionHelper::OrderItems()
+void CTreeSelectionHelper::OrderItems(BOOL bVisibleOnly)
 {
-   OrderItems(m_lstSelection);
+	OrderItems(m_lstSelection, bVisibleOnly);
 }
 
-void CTreeSelectionHelper::OrderItems(CHTIList& selection) const
+void CTreeSelectionHelper::OrderItems(CHTIList& selection, BOOL bVisibleOnly) const
 {
-   CHTIList lstOrdered;
+#ifdef _DEBUG
+	DWORD dwTick = GetTickCount();
+#endif
 
-   BuildOrderedSelection(selection, m_tree.GetChildItem(NULL), lstOrdered);
+	if (selection.GetCount() > 1)
+	{
+		CHTIList lstOrdered;
+		VERIFY(BuildOrderedItems(selection, m_tree.GetChildItem(NULL), bVisibleOnly, lstOrdered));
 
-   selection.Copy(lstOrdered);
+		selection.Copy(lstOrdered);
+	}
+
+#ifdef _DEBUG
+	TRACE(_T("CTreeSelectionHelper::OrderItems took %ld ms\n"), (GetTickCount() - dwTick));
+#endif
 }
 
-void CTreeSelectionHelper::BuildOrderedSelection(const CHTIList& selection, 
-                                                 HTREEITEM hti, CHTIList& lstOrdered) const
+BOOL CTreeSelectionHelper::BuildOrderedItems(const CHTIList& selection, 
+	HTREEITEM hti, BOOL bVisibleOnly, CHTIList& lstOrdered) const
 {
-   if (!hti)
-      return;
+	if (hti)
+	{
+		if (selection.Find(hti) != NULL)
+		{
+			lstOrdered.AddTail(hti);
 
-   if (selection.Find(hti) != NULL)
-      lstOrdered.AddTail(hti);
+			// Can stop when ordered list has same length as input
+			if (lstOrdered.GetCount() == selection.GetCount())
+				return TRUE;
+		}
 
-   // children
-   BuildOrderedSelection(selection, m_tree.GetChildItem(hti), lstOrdered);
+		// children
+		if (!bVisibleOnly || (m_tree.GetItemState(hti, TVIS_EXPANDED) & TVIS_EXPANDED))
+		{
+			if (BuildOrderedItems(selection, m_tree.GetChildItem(hti), bVisibleOnly, lstOrdered))
+				return TRUE;
+		}
 
-   // siblings
-   BuildOrderedSelection(selection, m_tree.GetNextItem(hti, TVGN_NEXT), lstOrdered);
+		// siblings
+		if (BuildOrderedItems(selection, m_tree.GetNextItem(hti, TVGN_NEXT), bVisibleOnly, lstOrdered))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 int CTreeSelectionHelper::GetItemTitles(const CHTIList& selection, CStringArray& aTitles) const
 {
 	aTitles.RemoveAll();
 
-    POSITION pos = selection.GetHeadPosition();
-	
-    while (pos)
-    {
-        HTREEITEM hti = selection.GetNext(pos);
+	POSITION pos = selection.GetHeadPosition();
+
+	while (pos)
+	{
+		HTREEITEM hti = selection.GetNext(pos);
 		aTitles.Add(m_tree.GetItemText(hti));
-    }
-	
-    return aTitles.GetSize();
-}
-
-/*
-BOOL CTreeSelectionHelper::HasUncheckedChildren() const
-{
-	POSITION pos = GetFirstItemPos();
-	
-	while (pos)
-	{
-		HTREEITEM hti = GetNextItem(pos);
-		
-		if (ItemHasUncheckedChildren(hti))
-			return TRUE;
-	}
-	
-	return FALSE;
-}
-
-BOOL CTreeSelectionHelper::ItemHasUncheckedChildren(HTREEITEM hti) const
-{
-	HTREEITEM htiChild = m_tree.GetChildItem(hti);
-	
-	while (htiChild)
-	{
-		if ((m_tch.GetItemCheckState(htiChild) != TCHC_CHECKED) || ItemHasUncheckedChildren(htiChild))
-			return TRUE;
-		
-		htiChild = m_tree.GetNextItem(htiChild, TVGN_NEXT);
-	}
-	
-	return FALSE;
-}
-
-BOOL CTreeSelectionHelper::AllItemsHaveParent(HTREEITEM htiParent) const
-{
-	// look for first item NOT having this parent/grandparent, etc
-	POSITION pos = GetFirstItemPos();
-
-	while (pos)
-	{
-		HTREEITEM hti = GetNextItem(pos);
-
-		if (!m_tch.ItemHasParent(hti, htiParent))
-			return FALSE;
 	}
 
-	// else
-	return TRUE;
+	return aTitles.GetSize();
 }
-*/
 
 BOOL CTreeSelectionHelper::HasUncheckedItems() const
 {
 	// look for first incomplete task
 	POSITION pos = GetFirstItemPos();
-	
+
 	while (pos)
 	{
 		HTREEITEM hti = GetNextItem(pos);
-		
+
 		if (m_tch.GetItemCheckState(hti) != TCHC_CHECKED)
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }

@@ -146,8 +146,8 @@ public:
 	BOOL FixupTreeSelection(); // returns TRUE if the tree selection changed
 	BOOL GetBoundingRect(CRect& rSelection) const;
  
-	void OrderItems();
-	void OrderItems(CHTIList& selection) const;
+	void OrderItems(BOOL bVisibleOnly = TRUE);
+	void OrderItems(CHTIList& selection, BOOL bVisibleOnly = TRUE) const;
 
 	int GetItemTitles(const CHTIList& selection, CStringArray& aTitles) const; 
 	BOOL HasUncheckedItems() const;
@@ -196,12 +196,7 @@ protected:
 	int FindPrevValidSelection() const;
 	int FindNextValidSelection() const;
 
-	void BuildOrderedSelection(const CHTIList& selection, HTREEITEM hti, CHTIList& lstOrdered) const;
-
-	// CURRENTLY UNUSED ----------------------------------------
-	//	BOOL ItemHasUncheckedChildren(HTREEITEM hti) const;
-	//	BOOL HasUncheckedChildren() const;
-	//	BOOL AllItemsHaveParent(HTREEITEM htiParent) const;
+	BOOL BuildOrderedItems(const CHTIList& selection, HTREEITEM hti, BOOL bVisibleOnly, CHTIList& lstOrdered) const;
 };
 
 #endif // !defined(AFX_TREESELECTIONHELPER_H__098294B4_8B41_4369_8522_FE1637BA7EA1__INCLUDED_)

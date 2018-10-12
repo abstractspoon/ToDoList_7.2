@@ -1927,9 +1927,9 @@ BOOL CTDLTaskTreeCtrl::CanMoveSelection(TDC_MOVETASK nDirection) const
 	if (IsReadOnly() || SelectionHasLocked(FALSE))
 		return FALSE;
 	
-	// get selected tasks ordered, and without duplicate subtasks
+	// get selected tasks without duplicate subtasks
 	CHTIList selection;
-	TSH().CopySelection(selection, TRUE, TRUE);
+	TSH().CopySelection(selection, TRUE);
 	
 	if (!selection.GetCount() || !TSH().ItemsAreAllSiblings(selection))
 		return FALSE;
@@ -2197,9 +2197,9 @@ int CTDLTaskTreeCtrl::GetSelectedTaskIDs(CDWordArray& aTaskIDs, DWORD& dwFocused
 
 	if (GetSelectedCount())
 	{
-		// get selected tasks with/out duplicate subtasks
+		// get selected tasks ordered with/out duplicate subtasks
 		CHTIList selection;
-		TSH().CopySelection(selection, bRemoveChildDupes);
+		TSH().CopySelection(selection, bRemoveChildDupes, TRUE);
 
 		TDCGETTASKS filter(TDCGT_ALL, 0);
 		POSITION pos = selection.GetHeadPosition();
