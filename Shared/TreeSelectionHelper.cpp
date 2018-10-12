@@ -837,9 +837,9 @@ int CTreeSelectionHelper::Convert(const CIDArray& aFrom, CHTIList& lstTo) const
 
     for (int nID = 0; nID < aFrom.GetSize(); nID++)
     {
-        HTREEITEM hti = NULL;
+        HTREEITEM hti = mapHTI.GetItem(aFrom[nID]);
 
-        if (mapHTI.Lookup(aFrom[nID], hti) && hti)
+        if (hti)
             lstTo.AddTail(hti);
     }
 

@@ -321,11 +321,7 @@ void CTDLTaskTreeCtrl::RefreshTreeItemMap()
 
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
 {
-//	return m_find.GetItem(dwTaskID);
-	HTREEITEM hti = NULL;
-	m_mapHTItems.Lookup(dwTaskID, hti);
-
-	return hti;
+	return m_mapHTItems.GetItem(dwTaskID);
 }
 
 void CTDLTaskTreeCtrl::OnEndRebuild()

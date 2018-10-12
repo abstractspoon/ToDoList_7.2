@@ -4504,10 +4504,7 @@ DWORD CGanttTreeListCtrl::ListDependsHitTest(const CPoint& ptClient, DWORD& dwTo
 
 HTREEITEM CGanttTreeListCtrl::GetTreeItem(DWORD dwTaskID) const
 {
-	HTREEITEM hti = NULL;
-	m_mapHTItems.Lookup(dwTaskID, hti);
-	
-	return hti;
+	return m_mapHTItems.GetItem(dwTaskID);
 }
 
 int CGanttTreeListCtrl::GetListItem(DWORD dwTaskID) const
