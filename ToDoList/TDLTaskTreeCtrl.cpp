@@ -307,16 +307,7 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 
 void CTDLTaskTreeCtrl::RefreshTreeItemMap()
 {
-#ifdef _DEBUG
-	int nPrevCount = m_mapHTItems.GetCount();
-#endif
-
-	TCH().BuildHTIMap(m_mapHTItems);
-
-#ifdef _DEBUG
-	int nNewCount = m_mapHTItems.GetCount();
-	TRACE(_T("CTDLTaskTreeCtrl::RefreshTreeItemMap(%d -> %d)\n"), nPrevCount, nNewCount);
-#endif
+	TCH().BuildTreeItemMap(m_mapHTItems);
 }
 
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
@@ -328,19 +319,8 @@ void CTDLTaskTreeCtrl::OnEndRebuild()
 {
 	CTDLTaskCtrlBase::OnEndRebuild();
 
-	// No need to refresh tree item map because 
-	// InsertTreeItem handles it
-	// RefreshTreeItemMap();
-	
 	ExpandList();
 	RecalcColumnWidths();
-}
-
-void CTDLTaskTreeCtrl::OnUndoRedo(BOOL bUndo)
-{
-	CTDLTaskCtrlBase::OnUndoRedo(bUndo);
-
-	RefreshTreeItemMap();
 }
 
 BOOL CTDLTaskTreeCtrl::EnsureSelectionVisible()
@@ -1853,17 +1833,17 @@ HTREEITEM CTDLTaskTreeCtrl::MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTR
 
 	// prevent list updating until we have finished
 	CWaitCursor wait;
-	{
-		CAutoFlag af(m_bMovingItem, TRUE);
+	CAutoFlag af(m_bMovingItem, TRUE);
 
-		// make sure the destination parent is expanded so that the new items 
-		// get automatically handled by CTreeListSyncer
-		if (htiDestParent)
-			m_tcTasks.SetItemState(htiDestParent, TVIS_EXPANDED, TVIS_EXPANDED);
+	// make sure the destination parent is expanded so that the new items 
+	// get automatically handled by CTreeListSyncer
+	if (htiDestParent)
+		m_tcTasks.SetItemState(htiDestParent, TVIS_EXPANDED, TVIS_EXPANDED);
 		
-		// do the move and return the new tree item
-		hti = TCH().MoveTree(hti, htiDestParent, htiDestPrevSibling, TRUE, TRUE);
-	}
+	// do the move and return the new tree item
+	hti = TCH().MoveTree(hti, htiDestParent, htiDestPrevSibling, TRUE, TRUE);
+
+	RefreshTreeItemMap(); // always
 
 	return hti;
 }
@@ -1932,7 +1912,6 @@ void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestP
 				htiFirst = htiAfter;
 		}
 		
-		RefreshTreeItemMap();
 		RestoreSelection(cache);
 	}
 		
