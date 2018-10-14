@@ -332,8 +332,7 @@ void CGanttChartWnd::LoadPreferences(const IPreferences* pPrefs, LPCTSTR szKey, 
 
 		m_dlgPrefs.LoadPreferences(pPrefs, sKey);
 		UpdateGanttCtrlPreferences();
-
-
+		
 		// column order
 		CIntArray aTreeOrder, aTreeWidths, aListWidths, aTreeTracked, aListTracked;
 

@@ -15,8 +15,9 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CTreeSelectionHelper::CTreeSelectionHelper(CTreeCtrl& tree) : 
-m_tree(tree), m_nCurSelection(0), m_htiAnchor(NULL), m_tch(tree)
+CTreeSelectionHelper::CTreeSelectionHelper(CTreeCtrl& tree) 
+	: 
+	m_tree(tree), m_nCurSelection(0), m_htiAnchor(NULL), m_tch(tree)
 {
 
 }
