@@ -6227,30 +6227,40 @@ void CToDoCtrl::RebuildCustomAttributeUI()
 BOOL CToDoCtrl::CheckRestoreBackupFile(const CString& sFilePath)
 {
 	// check for the existence of a backup file
-	CString sBackup = CFileBackup::BuildBackupPath(sFilePath, FBS_OVERWRITE);
+	CString sBackupPath = CFileBackup::BuildBackupPath(sFilePath, FBS_OVERWRITE);
 	
-	if (FileMisc::FileExists(sBackup))
+	if (FileMisc::FileExists(sBackupPath))
 	{
-		double dBackupSize = FileMisc::GetFileSize(sBackup);
+		FileMisc::LogText(_T("Backup file found: %s"), sBackupPath);
+
+		double dBackupSize = FileMisc::GetFileSize(sBackupPath);
 		
 		// Check for valid backup
 		if (dBackupSize > 0.0)
 		{
+			FileMisc::LogText(_T("  Backup file has non-zero length"));
+
 			double dSize = FileMisc::GetFileSize(sFilePath);
 		
 			if (dSize == 0.0) // definitely a bad save -> copy over backup
 			{
+				FileMisc::LogText(_T("    Taskfile '%s' has zero length, replacing with backup"));
+
 				FileMisc::DeleteFile(sFilePath, TRUE);
-				FileMisc::MoveFile(sBackup, sFilePath);
+				FileMisc::MoveFile(sBackupPath, sFilePath);
 			}
 			else
 			{
+				FileMisc::LogText(_T("    Taskfile has non-zero length"));
+
 				time64_t tMod = FileMisc::GetFileLastModified(sFilePath);
-				time64_t tBackupMod = FileMisc::GetFileLastModified(sBackup);
+				time64_t tBackupMod = FileMisc::GetFileLastModified(sBackupPath);
 
 				if (tMod >= tBackupMod) // file is newer than backup
 				{
-					::DeleteFile(sBackup);
+					FileMisc::LogText(_T("      Taskfile is newer than backup, deleting backup"));
+
+					FileMisc::DeleteFile(sBackupPath, TRUE);
 				}
 				else // Different sizes and dates -> prompt
 				{
@@ -6260,14 +6270,18 @@ BOOL CToDoCtrl::CheckRestoreBackupFile(const CString& sFilePath)
 					switch (nRet)
 					{
 					case IDYES:
+						FileMisc::LogText(_T("      User confirmed to replace taskfile with backup"));
+
 						FileMisc::DeleteFile(sFilePath, TRUE);
-						FileMisc::MoveFile(sBackup, sFilePath);
+						FileMisc::MoveFile(sBackupPath, sFilePath, TRUE, TRUE);
 						break;
 				
 					case IDNO: // keep the backup just in case
 						{
-							CString sRename = CFileBackup::BuildBackupPath(sBackup);
-							::MoveFile(sBackup, sRename);
+							FileMisc::LogText(_T("      User confirmed to keep taskfile, renaming backup"));
+
+							CString sRename = CFileBackup::BuildBackupPath(sBackupPath);
+							FileMisc::MoveFile(sBackupPath, sRename, TRUE, TRUE);
 						}
 						break;
 				
@@ -6279,8 +6293,9 @@ BOOL CToDoCtrl::CheckRestoreBackupFile(const CString& sFilePath)
 		}
 		else
 		{
-			// Nothing we can do except delete it
-			FileMisc::DeleteFile(sFilePath, TRUE);
+			FileMisc::LogText(_T("  Backup file has zero length, deleting backup"));
+
+			FileMisc::DeleteFile(sBackupPath, TRUE);
 		}
 	}
 	
