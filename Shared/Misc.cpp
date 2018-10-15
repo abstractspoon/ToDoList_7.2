@@ -609,6 +609,7 @@ int Misc::Find(const CString& sSearchFor, const CString& sSearchIn, BOOL bCaseSe
 
 	if (nFind == -1)
 	{
+		// Case-insensitive
 		if (!bCaseSensitive)
 		{
 			MakeUpper(sWord);
@@ -621,11 +622,12 @@ int Misc::Find(const CString& sSearchFor, const CString& sSearchIn, BOOL bCaseSe
 			return -1;
 	}
 
+	// else
 	if (bWholeWord) // test whole word
 	{
 		const CString DELIMS("()-\\/{}[]:;,. ?\"'");
 
-		// prior and next chars must be delimeters
+		// prior and next chars must be delimiters
 		TCHAR cPrevChar = ' ', cNextChar = ' ';
 
 		// prev
@@ -1048,7 +1050,20 @@ int Misc::Find(LPCTSTR szItem, const CStringArray& array, BOOL bCaseSensitive, B
 			if (sArrItem.IsEmpty())
 				return nItem;
 		}
-		else if (Find(szItem, sArrItem, bCaseSensitive, bWholeWord) != -1)
+		else if (bWholeWord)
+		{
+			if (bCaseSensitive)
+			{
+				if (sArrItem.Compare(szItem) == 0)
+					return nItem;
+			}
+			else
+			{
+				if (sArrItem.CompareNoCase(szItem) == 0)
+					return nItem;
+			}
+		}
+		else if (Find(szItem, sArrItem, bCaseSensitive, FALSE) != -1)
 		{
 			return nItem;
 		}
