@@ -998,28 +998,32 @@ HTREEITEM CTreeCtrlHelper::FindItem(DWORD dwID, HTREEITEM htiStart) const
 
 int CTreeCtrlHelper::BuildTreeItemMap(CHTIMap& mapHTI, BOOL bVisibleOnly) const
 {
+#ifdef _DEBUG
+	DWORD dwTick = GetTickCount();
+#endif
+
 	mapHTI.RemoveAll();
 
-	int nTreeCount = m_tree.GetCount();
-
-	if (nTreeCount)
+	if (m_tree.GetCount())
 	{
-		mapHTI.InitHashTable(nTreeCount);
-		
 		// traverse top-level items
 		HTREEITEM hti = m_tree.GetChildItem(NULL);
 		
 		while (hti)
 		{
-			UpdateHTIMapEntry(mapHTI, hti, bVisibleOnly);
+			BuildTreeItemMap(mapHTI, hti, bVisibleOnly);
 			hti = m_tree.GetNextItem(hti, TVGN_NEXT);
 		}
 	}
 
+#ifdef _DEBUG
+	TRACE(_T("CTreeCtrlHelper::BuildTreeItemMap took %ld ms\n"), GetTickCount() - dwTick);
+#endif
+
 	return mapHTI.GetCount();
 }
 
-void CTreeCtrlHelper::UpdateHTIMapEntry(CHTIMap& mapHTI, HTREEITEM hti, BOOL bVisibleOnly) const
+void CTreeCtrlHelper::BuildTreeItemMap(CHTIMap& mapHTI, HTREEITEM hti, BOOL bVisibleOnly) const
 {
 	// update our own mapping
 	mapHTI[m_tree.GetItemData(hti)] = hti;
@@ -1031,7 +1035,7 @@ void CTreeCtrlHelper::UpdateHTIMapEntry(CHTIMap& mapHTI, HTREEITEM hti, BOOL bVi
 		
 		while (htiChild)
 		{
-			UpdateHTIMapEntry(mapHTI, htiChild, bVisibleOnly);
+			BuildTreeItemMap(mapHTI, htiChild, bVisibleOnly);
 			htiChild = m_tree.GetNextItem(htiChild, TVGN_NEXT);
 		}
 	}

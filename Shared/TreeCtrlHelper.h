@@ -265,7 +265,7 @@ protected:
 
 protected:
 	void AddVisibleItemToIndex(HTREEITEM hti) const;
-	void UpdateHTIMapEntry(CHTIMap& mapHTI, HTREEITEM hti, BOOL bVisibleOnly) const;
+	void BuildTreeItemMap(CHTIMap& mapHTI, HTREEITEM hti, BOOL bVisibleOnly) const;
 	HTREEITEM FindDeepestItem(HTREEITEM htiParent, int& nDepth, BOOL bExpandedOnly) const;
 	HTREEITEM FindWidestItem(HTREEITEM htiParent, int& nWidth, BOOL bExpandedOnly, CDC* pDC) const;
 
