@@ -2664,8 +2664,12 @@ void CTDLTaskTreeCtrl::SetModified(TDC_ATTRIBUTE nAttrib)
 		break;
 
 	case TDCA_PASTE:
-	case TDCA_POSITION: // == move
 		RefreshTreeItemMap();
+		RefreshItemBoldState();
+		break;
+
+	case TDCA_POSITION: // == move
+		// Tree item map already refreshed
 		RefreshItemBoldState();
 		break;
 
