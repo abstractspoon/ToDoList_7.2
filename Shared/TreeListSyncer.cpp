@@ -2059,7 +2059,7 @@ LRESULT CTreeListSyncer::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARAM
 				if (nItem != -1)
 					ListView_DeleteItem(hwndList, nItem);
 				
-				// finally we fall thru to delete the tree item
+				// finally we fall thru to delete the tree item at the bottom
 			}
 		}
 		break;
