@@ -304,14 +304,19 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 	}
 }
 
-void CTDLTaskTreeCtrl::RefreshTreeItemMap()
-{
-	TCH().BuildTreeItemMap(m_mapHTItems);
-}
-
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
 {
-	return m_mapHTItems.GetItem(dwTaskID);
+	HTREEITEM hti = m_mapHTItems.GetItem(dwTaskID);
+	ASSERT(hti || !dwTaskID);
+
+	return hti;
+}
+
+void CTDLTaskTreeCtrl::OnBeginRebuild()
+{
+	CTDLTaskCtrlBase::OnBeginRebuild();
+
+	m_mapHTItems.RemoveAll();
 }
 
 void CTDLTaskTreeCtrl::OnEndRebuild()
@@ -1837,12 +1842,17 @@ HTREEITEM CTDLTaskTreeCtrl::MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTR
 	// get automatically handled by CTreeListSyncer
 	if (htiDestParent)
 		m_tcTasks.SetItemState(htiDestParent, TVIS_EXPANDED, TVIS_EXPANDED);
-		
-	// do the move and return the new tree item
+	
+	// Remove the existing task and its children from the map
+	m_mapHTItems.RemoveItem(m_tcTasks, hti);
+
+	// do the move
 	hti = TCH().MoveTree(hti, htiDestParent, htiDestPrevSibling, TRUE, TRUE);
 
-	RefreshTreeItemMap(); // always
+	// Add the 'new' task and its children to the map
+	m_mapHTItems.AddItem(m_tcTasks, hti);
 
+	// return the new tree item
 	return hti;
 }
 
@@ -1872,6 +1882,10 @@ BOOL CTDLTaskTreeCtrl::MoveSelection(TDC_MOVETASK nDirection)
 
 void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling)
 {
+#ifdef _DEBUG
+	DWORD dwTick = GetTickCount();
+#endif
+
 	HTREEITEM htiFirst = NULL;
 
 	// expand the destination ahead of the move
@@ -1916,6 +1930,10 @@ void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestP
 	m_tcTasks.EnsureVisible(htiFirst);
 
 	UpdateAll();
+
+#ifdef _DEBUG
+	TRACE(_T("CTDLTaskTreeCtrl::MoveSelection took %ld ms\n"), GetTickCount() - dwTick);
+#endif
 }
 
 BOOL CTDLTaskTreeCtrl::CanMoveSelection(TDC_MOVETASK nDirection) const
@@ -2650,32 +2668,31 @@ void CTDLTaskTreeCtrl::RefreshItemBoldState(HTREEITEM hti, BOOL bAndChildren)
 
 void CTDLTaskTreeCtrl::SetModified(TDC_ATTRIBUTE nAttrib)
 {
+	// Note: Tree item map should already be up to date
+	// so we just assert on it
+
 	// Update bold-states
 	switch (nAttrib)
 	{
-	case TDCA_UNDO:
-		// Already handled in OnUndoRedo
-		ASSERT(m_mapHTItems.GetCount() == m_data.GetTaskCount());
-		break;
-
 	case TDCA_NEWTASK:
 		// Already handled in InsertTreeItem
-		ASSERT(m_mapHTItems.GetCount() == m_data.GetTaskCount());
+		ASSERT(m_mapHTItems.GetCount() == (int)m_tcTasks.GetCount());
 		break;
 
+	case TDCA_UNDO:
 	case TDCA_PASTE:
-		RefreshTreeItemMap();
-		RefreshItemBoldState();
-		break;
-
 	case TDCA_POSITION: // == move
-		// Tree item map already refreshed
 		RefreshItemBoldState();
+		ASSERT(m_mapHTItems.GetCount() == (int)m_tcTasks.GetCount());
 		break;
 
 	case TDCA_DELETE:
 	case TDCA_ARCHIVE:
-		RefreshTreeItemMap();
+		// No bold change
+
+		// Note: we don't both to remove items because 
+		// Task IDs cannot be reused
+		ASSERT(m_mapHTItems.GetCount() >= (int)m_tcTasks.GetCount());
 		break;
 	}
 
