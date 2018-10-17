@@ -306,10 +306,7 @@ void CTDLTaskTreeCtrl::SetExpandedTasks(const CDWordArray& aExpanded)
 
 HTREEITEM CTDLTaskTreeCtrl::GetItem(DWORD dwTaskID) const
 {
-	HTREEITEM hti = m_mapHTItems.GetItem(dwTaskID);
-	ASSERT(hti || !dwTaskID);
-
-	return hti;
+	return m_mapHTItems.GetItem(dwTaskID);
 }
 
 void CTDLTaskTreeCtrl::OnBeginRebuild()
@@ -325,6 +322,13 @@ void CTDLTaskTreeCtrl::OnEndRebuild()
 
 	ExpandList();
 	RecalcColumnWidths();
+}
+
+void CTDLTaskTreeCtrl::OnUndoRedo(BOOL bUndo)
+{
+	CTDLTaskCtrlBase::OnUndoRedo(bUndo);
+
+	m_mapHTItems.BuildMap(m_tcTasks);
 }
 
 BOOL CTDLTaskTreeCtrl::EnsureSelectionVisible()
@@ -731,56 +735,10 @@ void CTDLTaskTreeCtrl::SyncColumnSelectionToTasks(BOOL bUpdateWindow)
 		}
 	}
 
+	m_lcColumns.Invalidate(FALSE);
+
 	if (bUpdateWindow)
 	 	m_lcColumns.UpdateWindow();
-/*
-	// build a list of the current list selection
-	CArray<int, int> aItemSel;
-	POSITION pos = m_lcColumns.GetFirstSelectedItemPosition();
-	
-	while (pos)
-		aItemSel.Add(m_lcColumns.GetNextSelectedItem(pos));
-	
-	// deselect any current list items not in the tree selection
-	int nSel = aItemSel.GetSize();
-	
-	while (nSel--)
-	{
-		int nItem = aItemSel[nSel];
-		HTREEITEM hti = (HTREEITEM)m_lcColumns.GetItemData(nItem);
-
-#ifdef _DEBUG
-		CString sTask = m_data.GetTaskTitle(GetTaskID(hti));
-#endif
-
-		POSITION found = lstHTI.Find(hti);
-		
-		if (found)
-			lstHTI.RemoveAt(found);
-		else
-			m_lcColumns.SetItemState(nItem, 0, (LVIS_SELECTED | LVIS_FOCUSED));
-	}
-	
-	// select in the list the remaining items from the tree
-	HTREEITEM htiSel = TSH().GetAnchor();
-	pos = lstHTI.GetHeadPosition();
-	
-	while (pos)
-	{
-		HTREEITEM hti = lstHTI.GetNext(pos);
-		int nItem = GetListItem(hti);
-		
-		m_lcColumns.SetItemState(nItem, LVIS_SELECTED, LVIS_SELECTED);
-		
-		if (hti == htiSel)
-		{
-			m_lcColumns.SetItemState(nItem, LVIS_FOCUSED, LVIS_FOCUSED);
-			m_lcColumns.SetSelectionMark(nItem);
-		}
-	}
-
-	m_lcColumns.Invalidate(FALSE);
-*/
 }
 
 void CTDLTaskTreeCtrl::NotifyParentSelChange(SELCHANGE_ACTION nAction)

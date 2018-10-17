@@ -145,6 +145,7 @@ public:
 	void OnStylesUpdated();
 	void OnBeginRebuild();
 	void OnEndRebuild();
+	void OnUndoRedo(BOOL bUndo);
 	
 #ifdef _DEBUG
 	void Trace(LPCTSTR szComment);
