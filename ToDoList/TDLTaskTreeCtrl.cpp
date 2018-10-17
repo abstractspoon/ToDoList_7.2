@@ -1882,10 +1882,6 @@ BOOL CTDLTaskTreeCtrl::MoveSelection(TDC_MOVETASK nDirection)
 
 void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling)
 {
-#ifdef _DEBUG
-	DWORD dwTick = GetTickCount();
-#endif
-
 	HTREEITEM htiFirst = NULL;
 
 	// expand the destination ahead of the move
@@ -1930,10 +1926,6 @@ void CTDLTaskTreeCtrl::MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestP
 	m_tcTasks.EnsureVisible(htiFirst);
 
 	UpdateAll();
-
-#ifdef _DEBUG
-	TRACE(_T("CTDLTaskTreeCtrl::MoveSelection took %ld ms\n"), GetTickCount() - dwTick);
-#endif
 }
 
 BOOL CTDLTaskTreeCtrl::CanMoveSelection(TDC_MOVETASK nDirection) const

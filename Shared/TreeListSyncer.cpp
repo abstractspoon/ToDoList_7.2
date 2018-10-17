@@ -425,11 +425,6 @@ BOOL CTreeListSyncer::ResyncScrollPos(HWND hwnd, HWND hwndTo)
 		// are these different?
 		if (htiTreeFirstVis != htiListFirstVis)
 		{
-// #ifdef _DEBUG
-// 			CTreeCtrl* pTree = (CTreeCtrl*)CWnd::FromHandle(hwnd);
-// 			TRACE (_T("CTreeListSyncer::ResyncScrollPos(tree first vis = %s, list first vis = %s)\n"),
-// 						pTree->GetItemText(htiTreeFirstVis), pTree->GetItemText(htiListFirstVis));
-// #endif
 			// if so, then scroll and move the selection
 			// to the corresponding list item and update the current
 			// tree selection
@@ -495,13 +490,7 @@ BOOL CTreeListSyncer::ResyncScrollPos(HWND hwnd, HWND hwndTo)
 	}
 	
 	if (bSynced)
-	{
-#ifdef _DEBUG
-		//TraceResync(hwnd, hwndTo);
-#endif
-
 		UpdateAll();
-	}
 
 	return bSynced;
 }
@@ -601,13 +590,7 @@ BOOL CTreeListSyncer::ResyncSelection(HWND hwnd, HWND hwndTo, BOOL bClearTreeSel
 	}
 	
 	if (bSynced)
-	{
-#ifdef _DEBUG
-		//TraceResync(hwnd, hwndTo);
-#endif
-
 		UpdateAll();
-	}
 
 	return bSynced;
 }
@@ -2417,6 +2400,17 @@ BOOL CTreeListSyncer::ConvertNonClientToClientMouseMsg(HWND hWnd, UINT& nMsg, WP
 
 BOOL CTreeListSyncer::ShowVScrollBar(HWND hwnd, BOOL bShow, BOOL bRefreshSize)
 {
+	BOOL bHasVScroll = HasVScrollBar(hwnd);
+
+	if ((bHasVScroll && bShow) || (!bHasVScroll && !bShow))
+		return FALSE;
+
+	::ShowScrollBar(hwnd, SB_VERT, bShow);
+ 		
+	if (bRefreshSize)
+		RefreshSize();
+
+/*
 	// see if there's anything to do first
 	DWORD dwStyle = GetStyle(hwnd, FALSE), dwNewStyle(0);
 	
@@ -2427,13 +2421,13 @@ BOOL CTreeListSyncer::ShowVScrollBar(HWND hwnd, BOOL bShow, BOOL bRefreshSize)
 	
 	if (dwNewStyle != dwStyle)
 	{
-		::SetWindowLong(hwnd, GWL_STYLE, dwNewStyle);
-		::ShowScrollBar(hwnd, SB_VERT, bShow);
+ 		::SetWindowLong(hwnd, GWL_STYLE, dwNewStyle);
+ 		::ShowScrollBar(hwnd, SB_VERT, bShow);
 		
 		if (bRefreshSize)
 			RefreshSize();
 	}
-	
+*/
 	return TRUE;
 }
 
