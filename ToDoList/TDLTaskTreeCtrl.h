@@ -105,7 +105,9 @@ public:
 	BOOL GetInsertLocation(TDC_INSERTWHERE nWhere, HTREEITEM& htiDest, HTREEITEM& htiDestAfter) const;
 	BOOL GetInsertLocation(TDC_MOVETASK nDirection, HTREEITEM& htiDest, HTREEITEM& htiDestAfter) const;
 	BOOL GetInsertLocation(TDC_MOVETASK nDirection, DWORD& dwDest, DWORD& dwDestAfter) const;
+	
 	HTREEITEM InsertItem(DWORD dwTaskID, HTREEITEM htiParent, HTREEITEM htiAfter);
+	BOOL DeleteItem(HTREEITEM hti);
 
 	HTREEITEM MoveItem(HTREEITEM hti, HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling);
 	void MoveSelection(HTREEITEM htiDestParent, HTREEITEM htiDestPrevSibling);
@@ -118,11 +120,11 @@ public:
 	inline int GetVisibleItemCount() const { return m_tcTasks.GetVisibleCount(); }
 	inline BOOL ItemHasChildren(HTREEITEM hti) const { return m_tcTasks.ItemHasChildren(hti); }
 	inline BOOL ItemHasParent(HTREEITEM hti) const { return (GetParentItem(hti) != NULL); }
-	inline BOOL DeleteItem(HTREEITEM hti) { return m_tcTasks.DeleteItem(hti); }
 	inline HTREEITEM GetChildItem(HTREEITEM htiParent = NULL) const { return m_tcTasks.GetChildItem(htiParent); }
 	inline HTREEITEM GetNextItem(HTREEITEM hti, BOOL bNext = TRUE) const { return m_tcTasks.GetNextItem(hti, (bNext ? TVGN_NEXT : TVGN_PREVIOUS)); }
 	inline HTREEITEM GetParentItem(HTREEITEM hti) const { return m_tcTasks.GetParentItem(hti); }
 	inline HTREEITEM HitTestItem(POINT point, UINT* pFlags = NULL) const { return m_tcTasks.HitTest(point, pFlags); }
+
 
 	void GetWindowRect(CRect& rWindow) const { CWnd::GetWindowRect(rWindow); }
 	BOOL GetSelectionBoundingRect(CRect& rSelection) const;
@@ -145,7 +147,6 @@ public:
 	void OnStylesUpdated();
 	void OnBeginRebuild();
 	void OnEndRebuild();
-	void OnUndoRedo(BOOL bUndo);
 	
 #ifdef _DEBUG
 	void Trace(LPCTSTR szComment);

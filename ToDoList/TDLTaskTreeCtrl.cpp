@@ -324,13 +324,6 @@ void CTDLTaskTreeCtrl::OnEndRebuild()
 	RecalcColumnWidths();
 }
 
-void CTDLTaskTreeCtrl::OnUndoRedo(BOOL bUndo)
-{
-	CTDLTaskCtrlBase::OnUndoRedo(bUndo);
-
-	m_mapHTItems.BuildMap(m_tcTasks);
-}
-
 BOOL CTDLTaskTreeCtrl::EnsureSelectionVisible()
 {
 	if (GetSelectedCount())
@@ -2288,7 +2281,7 @@ DWORD CTDLTaskTreeCtrl::GetTaskParentID(HTREEITEM hti) const
 	return GetTaskID(m_tcTasks.GetParentItem(hti));
 }
 
-HTREEITEM  CTDLTaskTreeCtrl::InsertItem(DWORD dwTaskID, HTREEITEM htiParent, HTREEITEM htiAfter)
+HTREEITEM CTDLTaskTreeCtrl::InsertItem(DWORD dwTaskID, HTREEITEM htiParent, HTREEITEM htiAfter)
 {
 	HTREEITEM htiNew = TCH().InsertItem(LPSTR_TEXTCALLBACK, 
 										I_IMAGECALLBACK, 
@@ -2302,6 +2295,13 @@ HTREEITEM  CTDLTaskTreeCtrl::InsertItem(DWORD dwTaskID, HTREEITEM htiParent, HTR
 	m_mapHTItems[dwTaskID] = htiNew;
 
 	return htiNew;
+}
+
+BOOL CTDLTaskTreeCtrl::DeleteItem(HTREEITEM hti) 
+{ 
+	m_mapHTItems.RemoveItem(m_tcTasks, hti);
+
+	return m_tcTasks.DeleteItem(hti); 
 }
 
 BOOL CTDLTaskTreeCtrl::GetInsertLocation(TDC_MOVETASK nDirection, DWORD& dwDest, DWORD& dwDestAfter) const

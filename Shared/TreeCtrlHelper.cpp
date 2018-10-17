@@ -70,7 +70,7 @@ void CHTIMap::AddItem(const CTreeCtrl& tree, HTREEITEM hti, BOOL bVisibleChildre
 void CHTIMap::RemoveItem(const CTreeCtrl& tree, HTREEITEM hti)
 {
 	// update our own mapping
-	RemoveKey(tree.GetItemData(hti));
+	VERIFY(RemoveKey(tree.GetItemData(hti)));
 
 	// then our children
 	HTREEITEM htiChild = tree.GetChildItem(hti);
