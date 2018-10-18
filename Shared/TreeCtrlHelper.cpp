@@ -558,11 +558,7 @@ BOOL CTreeCtrlHelper::IsAnyItemCollapsed() const
 	
 	while (hti)
 	{
-#ifdef _DEBUG
-		CString sItem = m_tree.GetItemText(hti);
-#endif
-
-		if (!IsItemExpanded(hti, TRUE))
+		if (!IsItemExpanded(hti))
 			return TRUE;
 		
 		hti = TreeView_GetNextItem(m_tree, hti, TVGN_NEXT); // constness

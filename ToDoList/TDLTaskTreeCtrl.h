@@ -125,7 +125,6 @@ public:
 	inline HTREEITEM GetParentItem(HTREEITEM hti) const { return m_tcTasks.GetParentItem(hti); }
 	inline HTREEITEM HitTestItem(POINT point, UINT* pFlags = NULL) const { return m_tcTasks.HitTest(point, pFlags); }
 
-
 	void GetWindowRect(CRect& rWindow) const { CWnd::GetWindowRect(rWindow); }
 	BOOL GetSelectionBoundingRect(CRect& rSelection) const;
 	BOOL GetLabelEditRect(CRect& rLabel) const;
