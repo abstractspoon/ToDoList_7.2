@@ -66,7 +66,7 @@ BOOL CComboListboxPositioner::OnCallWndRetProc(const MSG& msg, LRESULT lr)
 
 void CComboListboxPositioner::FixupListBoxPosition(HWND hwndListbox, const WINDOWPOS& wpos)
 {
-	CRect rMonitor, rNewPos(wpos.x, wpos.y, (wpos.x + wpos.cx), (wpos.y + wpos.cy));
+	CRect rMonitor, rNewPos(CPoint(wpos.x, wpos.y), CSize(wpos.cx, wpos.cy));
 	GraphicsMisc::GetAvailableScreenSpace(rNewPos, rMonitor);
 
 	// Make sure at least some part of the listbox is visible
