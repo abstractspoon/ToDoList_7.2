@@ -40,7 +40,6 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CEnCheckComboBox)
 protected:
-	virtual void PreSubclassWindow();
 	//}}AFX_VIRTUAL
 	
 	// Implementation
