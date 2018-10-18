@@ -7668,11 +7668,11 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 													m_mgrContent, 
 													m_tdiDefault.sCommentsTypeID, 
 													vis);
-	
-	// create somewhere out in space but with a meaningful size
-	CRect rCtrl(0, 0, 4000, 1000);
+	// Give it a meaningful maximum size
+	CRect rCtrl;
+	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
 
-	//CalcToDoCtrlRect(rCtrl);
+	// and somewhere out in space
 	rCtrl.OffsetRect(-30000, -30000);
 	
 	if (pTDC && pTDC->Create(rCtrl, this, IDC_TODOLIST, bVisible, bEnabled))
