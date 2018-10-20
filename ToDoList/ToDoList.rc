@@ -1487,7 +1487,7 @@ BEGIN
     CONTROL         "&Also add time to task's time spent",
                     IDC_ADDTIMETOTIMESPENT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,73,86,159,10
-    LTEXT           "&Comment:",IDC_STATIC,7,103,65,8
+    LTEXT           "&Comment:",IDC_COMMENTLABEL,7,103,65,8
 END
 
 IDD_CSVIMPORTEXPORT_DIALOG DIALOG DISCARDABLE  0, 0, 400, 270
