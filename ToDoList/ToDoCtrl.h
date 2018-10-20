@@ -609,14 +609,6 @@ protected:
 	afx_msg LRESULT OnTreeDragDrop(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnTreeDragOver(WPARAM wParam, LPARAM lParam);
 
-	afx_msg LRESULT OnColumnEditClick(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnCommentsChange(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnCommentsDoHelp(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnCommentsKillFocus(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnApplyAddLoggedTime(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCGetTaskReminder(WPARAM wp, LPARAM lp);
-	afx_msg LRESULT OnCommentsGetTooltip(WPARAM wParam, LPARAM lParam);
-
 	afx_msg void OnChangePriority();
 	afx_msg void OnChangePercent();
 	afx_msg void OnChangeTimeEstimate();
@@ -649,6 +641,13 @@ protected:
 	afx_msg void OnSelChangeCommentsType();
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 
+	afx_msg LRESULT OnTDCHasClipboard(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCGetClipboard(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCTaskIsDone(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCDoTaskLink(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCFailedLink(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCGetTaskReminder(WPARAM wp, LPARAM lp);
+
  	afx_msg LRESULT OnGutterNotifyScroll(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnEEBtnClick(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCustomUrl(WPARAM wParam, LPARAM lParam);
@@ -657,11 +656,6 @@ protected:
 	afx_msg LRESULT OnCanDropObject(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFileEditWantIcon(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFileEditDisplayFile(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCHasClipboard(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCGetClipboard(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCTaskIsDone(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCDoTaskLink(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnTDCFailedLink(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnAutoComboAddDelete(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnGetFont(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCommentsWantSpellCheck(WPARAM wParam, LPARAM lParam);
@@ -672,6 +666,12 @@ protected:
 	afx_msg LRESULT OnEditCancel(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnRecreateRecurringTask(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFindReplaceMsg(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTDCColumnEditClick(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnCommentsChange(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnCommentsDoHelp(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnCommentsKillFocus(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnApplyAddLoggedTime(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnCommentsGetTooltip(WPARAM wParam, LPARAM lParam);
 
 	// custom data notifications
 	afx_msg void OnCustomAttributeChange(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
