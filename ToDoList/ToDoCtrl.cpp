@@ -95,8 +95,9 @@ const unsigned short MINNONCOMMENTWIDTH		= 350; // what's to the left of the com
 
 /////////////////////////////////////////////////////////////////////////////
 
-const COLORREF BLACK = RGB(0, 0, 0);
-const COLORREF WHITE = RGB(240, 240, 240);
+const COLORREF BLACK	= RGB(0, 0, 0);
+const COLORREF WHITE	= RGB(240, 240, 240);
+const COLORREF MAGENTA	= RGB(255, 0, 255);
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -463,6 +464,7 @@ BEGIN_MESSAGE_MAP(CToDoCtrl, CRuntimeDlg)
 	ON_REGISTERED_MESSAGE(WM_TLDT_CANDROP, OnCanDropObject)
  	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnEEBtnClick)
 	ON_REGISTERED_MESSAGE(WM_FINDREPLACE, OnFindReplaceMsg)
+	ON_REGISTERED_MESSAGE(WM_TDCTI_RELOADICONS, OnTaskIconDlgReloadIcons)
 
 	ON_NOTIFY_RANGE(DTN_DATETIMECHANGE, IDC_FIRST_CUSTOMEDITFIELD, IDC_LAST_CUSTOMEDITFIELD, OnCustomAttributeChange)
 	ON_CONTROL_RANGE(EN_CHANGE, IDC_FIRST_CUSTOMEDITFIELD, IDC_LAST_CUSTOMEDITFIELD, OnCustomAttributeChange)
@@ -662,8 +664,6 @@ BOOL CToDoCtrl::OnInitDialog()
 
 void CToDoCtrl::LoadTaskIcons()
 {
-	const COLORREF MAGENTA = RGB(255, 0, 255);
-
 	VERIFY(m_ilTaskIcons.LoadImages(m_sLastSavePath, MAGENTA, HasStyle(TDCS_SHOWDEFAULTTASKICONS)));
 
 	OnTaskIconsChanged();
@@ -2604,12 +2604,24 @@ BOOL CToDoCtrl::EditSelectedTaskIcon()
 	if (!CanEditSelectedTask())
 		return FALSE;
 
-	CTDLTaskIconDlg dialog(m_ilTaskIcons, GetSelectedTaskIcon());
+	CTDLTaskIconDlg dialog(m_ilTaskIcons, GetSelectedTaskIcon(), TRUE, this);
 
 	if (dialog.DoModal() != IDOK)
 		return FALSE;
 
 	return SetSelectedTaskIcon(dialog.GetIconName());
+}
+
+LRESULT CToDoCtrl::OnTaskIconDlgReloadIcons(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (m_ilTaskIcons.LoadImages(m_sLastSavePath, MAGENTA, HasStyle(TDCS_SHOWDEFAULTTASKICONS)))
+	{
+		OnTaskIconsChanged();
+		return TRUE;
+	}
+
+	// else 
+	return FALSE;
 }
 
 BOOL CToDoCtrl::ClearSelectedTaskIcon()
@@ -8647,7 +8659,7 @@ BOOL CToDoCtrl::HandleCustomColumnClick(TDC_COLUMN nColID)
 
 		case TDCCA_NOTALIST:
 			{
-				CTDLTaskIconDlg dialog(m_ilTaskIcons, data.AsString());
+				CTDLTaskIconDlg dialog(m_ilTaskIcons, data.AsString(), TRUE, this);
 				
 				if (dialog.DoModal() == IDOK)
 				{

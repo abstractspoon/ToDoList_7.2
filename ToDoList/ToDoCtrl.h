@@ -672,6 +672,8 @@ protected:
 	afx_msg LRESULT OnCommentsKillFocus(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnApplyAddLoggedTime(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCommentsGetTooltip(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnTaskIconDlgReloadIcons(WPARAM wParam, LPARAM lParam);
+
 
 	// custom data notifications
 	afx_msg void OnCustomAttributeChange(UINT nCtrlID, NMHDR* pNMHDR, LRESULT* pResult);
