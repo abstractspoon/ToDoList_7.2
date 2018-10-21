@@ -11694,7 +11694,9 @@ void CToDoListWnd::OnToolsAnalyseLoggedTime()
 				{
 					// query the user to view the results
 					if (MessageBox(IDS_LOGANALYSIS_QUERYOPEN, 0, MB_YESNO) == IDYES)
+					{
 						FileMisc::Run(*this, dialog.GetOutputFilepath());
+					}
 
 					return;
 				}
