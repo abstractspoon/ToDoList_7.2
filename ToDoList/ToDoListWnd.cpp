@@ -6066,7 +6066,9 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 	
 	// ensure m_cbQuickFind is positioned correctly
-	if (m_toolbarMain.GetSafeHwnd())
+	BOOL bVisible = ((m_bVisible > 0) && (nType != SIZE_MINIMIZED));
+
+	if (bVisible && m_toolbarMain.GetSafeHwnd())
 	{
 		int nPos = m_toolbarMain.CommandToIndex(ID_EDIT_FINDTASKS) + 2;
 
@@ -6090,9 +6092,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 
 		// topmost?
 		BOOL bMaximized = (nType == SIZE_MAXIMIZED);
-		
-		if (nType != SIZE_MINIMIZED)
-			Resize(cx, cy, bMaximized);
+		Resize(cx, cy, bMaximized);
 		
 		// if not maximized then set topmost if that's the preference
 		// do nothing if no change
@@ -6175,6 +6175,10 @@ BOOL CToDoListWnd::CalcToDoCtrlRect(CRect& rect, int cx, int cy, BOOL bMaximized
 
 void CToDoListWnd::Resize(int cx, int cy, BOOL bMaximized)
 {
+	// Don't resize if hidden in any way
+	if ((m_bVisible <= 0) || IsIconic())
+		return;
+
 	static int nLastCx = 0, nLastCy = 0;
 
 	if (!cx && !cy)

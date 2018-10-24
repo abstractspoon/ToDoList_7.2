@@ -596,7 +596,7 @@ BOOL CToDoCtrl::Create(const CRect& rect, CWnd* pParentWnd, UINT nID, BOOL bVisi
 BOOL CToDoCtrl::OnInitDialog() 
 {
 	// create the tree-list before anything else
-	CRect rect(0, 0, 0, 0);
+	CRect rect(0, 0, 4000, 2000);
 	VERIFY(m_taskTree.Create(this, rect, IDC_TASKTREELIST));
 
 	// create rest of controls

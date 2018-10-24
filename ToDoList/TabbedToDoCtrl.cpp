@@ -149,8 +149,8 @@ BOOL CTabbedToDoCtrl::OnInitDialog()
 	CToDoCtrl::OnInitDialog();
 
 	// create the list-list before anything else
-	CRect rect(0, 0, 0, 0);
-	VERIFY(m_taskList.Create(this, rect, IDC_FTC_TASKLISTLIST));
+	CRect rect(0, 0, 4000, 2000);
+	VERIFY(m_taskList.Create(this, rect, IDC_FTC_TASKLISTLIST, FALSE));
 	
 	// list initialisation
 	m_dtList.Register(&m_taskList.List(), this);

@@ -188,6 +188,8 @@ int CTDLTaskCtrlBase::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Column List ---------------------------------------------------------------------
+	rect.OffsetRect(rect.Width(), 0);
+
 	if (!m_lcColumns.Create((dwStyle | WS_TABSTOP),	rect, this, IDC_TASKTREECOLUMNS))
 	{
 		return FALSE;
@@ -472,6 +474,8 @@ void CTDLTaskCtrlBase::OnSize(UINT nType, int cx, int cy)
 	
 	if (cx && cy)
 	{
+		TRACE(_T("%s::OnSize(%d, %d), splitpos = %d\n"), GetDebugName(), cx, cy, GetSplitPos());
+
 		CRect rect(0, 0, cx, cy);
 		CTreeListSyncer::Resize(rect);
 	}
