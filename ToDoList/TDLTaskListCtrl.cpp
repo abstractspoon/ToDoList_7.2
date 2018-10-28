@@ -1207,7 +1207,7 @@ BOOL CTDLTaskListCtrl::IsTaskSelected(DWORD dwTaskID, BOOL bSingly) const
 
 DWORD CTDLTaskListCtrl::GetTaskID(int nItem) const 
 { 
-	if ((nItem == -1) || (m_lcTasks.GetItemCount() == 0))
+	if ((nItem == -1) || (nItem >= m_lcTasks.GetItemCount()))
 		return 0;
 
 	return m_lcTasks.GetItemData(nItem); 

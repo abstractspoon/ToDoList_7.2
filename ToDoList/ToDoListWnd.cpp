@@ -2583,9 +2583,6 @@ void CToDoListWnd::LoadSettings()
 	m_bShowTasklistBar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowTasklistBar"), TRUE);
 	m_bShowTreeListBar = prefs.GetProfileInt(SETTINGS_KEY, _T("ShowTreeListBar"), TRUE);
 
-	// pos
-	RestorePosition();
-
 	// user preferences
 	const CPreferencesDlg& userPrefs = Prefs();
 	
@@ -2770,6 +2767,8 @@ void CToDoListWnd::RestoreVisibility()
 	
 	if (m_bVisible)
 	{
+		RestorePosition();
+
 		int nShowCmd = (bMaximized ? SW_SHOWMAXIMIZED : 
 						(bMinimized ? SW_SHOWMINIMIZED : SW_SHOW));
 		
@@ -2814,7 +2813,7 @@ void CToDoListWnd::RestorePosition()
 	rect.right = prefs.GetProfileInt(_T("Pos"), _T("Right"), -1);
 	rect.bottom = prefs.GetProfileInt(_T("Pos"), _T("Bottom"), -1);
 	
-	if (rect.Width() > 0 && rect.Height() > 0)
+	if (!rect.IsRectEmpty())
 	{
 		CRect rScreen;
 
@@ -2830,7 +2829,8 @@ void CToDoListWnd::RestorePosition()
 			wp.ptMaxPosition.y = -1;
 			wp.ptMinPosition.x = -1;
 			wp.ptMinPosition.y = -1;
-
+			
+			TRACE(_T("CToDoListWnd::SetWindowPlacement(%d, %d)\n"), rect.Width(), rect.Height());
 			SetWindowPlacement(&wp);
 		}
 		else
@@ -3952,7 +3952,10 @@ void CToDoListWnd::Show(BOOL bAllowToggle)
 {
 	if (GetSelToDoCtrl() == -1)
 		return;
-	
+
+	if (m_bStartHidden)
+		RestorePosition();
+
 	if (!m_bVisible || !IsWindowVisible()) // restore from the tray
 	{
 		SetForegroundWindow();
@@ -6066,10 +6069,12 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 	
 	// ensure m_cbQuickFind is positioned correctly
-	BOOL bVisible = ((m_bVisible > 0) && (nType != SIZE_MINIMIZED));
+	BOOL bVisible = ((m_bVisible > 0) && (nType != SIZE_MINIMIZED) && !m_bStartHidden);
 
 	if (bVisible && m_toolbarMain.GetSafeHwnd())
 	{
+		TRACE(_T("CToDoListWnd::OnSize(%d, %d)\n"), cx, cy);
+
 		int nPos = m_toolbarMain.CommandToIndex(ID_EDIT_FINDTASKS) + 2;
 
 		CRect rNewPos;
