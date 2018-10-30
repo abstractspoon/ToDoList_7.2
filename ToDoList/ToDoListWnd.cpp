@@ -5381,7 +5381,7 @@ BOOL CToDoListWnd::ProcessStartupOptions(const CTDCStartupOptions& startup, BOOL
 	}
 	else if (startup.GetTaskID())
 	{
-		SelectTask(tdc, startup.GetTaskID());
+		bRes = SelectTask(tdc, startup.GetTaskID());
 	}
 	else if (!startup.IsEmpty(TRUE))
 	{
