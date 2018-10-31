@@ -1200,14 +1200,8 @@ BOOL CTDLFindTasksDlg::LoadSearch(LPCTSTR szName, CSearchParamArray& params, BOO
 				break; // invalid attribute
 			}
 
-			// else try with all available custom attributes
-			if (!CTDCSearchParamHelper::LoadRule(prefs, sRule, m_aAllTDCAttribDefs, rule))
-			{
-				if (!rule.IsCustomAttribute())
-				{
-					break; // invalid attribute
-				}
-			}
+			// retry with all available custom attributes
+			CTDCSearchParamHelper::LoadRule(prefs, sRule, m_aAllTDCAttribDefs, rule);
 		}
 		
 		params.Add(rule);

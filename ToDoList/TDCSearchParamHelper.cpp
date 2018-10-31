@@ -62,8 +62,12 @@ BOOL CTDCSearchParamHelper::LoadRule(const CPreferences& prefs, const CString& s
 
 		return TRUE;
 	}
+	else if (!sCustAttribID.IsEmpty())
+	{
+		// let caller know it was a custom attribute
+		rule.Set(TDCA_CUSTOMATTRIB, sCustAttribID, FT_STRING, FOP_EQUALS, _T(""));
+	}
 
-	// else
 	return FALSE;
 }
 
