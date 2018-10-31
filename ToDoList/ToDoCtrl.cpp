@@ -596,8 +596,10 @@ BOOL CToDoCtrl::Create(const CRect& rect, CWnd* pParentWnd, UINT nID, BOOL bVisi
 BOOL CToDoCtrl::OnInitDialog() 
 {
 	// create the tree-list before anything else
-	CRect rect(0, 0, 4000, 2000);
-	VERIFY(m_taskTree.Create(this, rect, IDC_TASKTREELIST));
+	CRect rCtrl;
+	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
+
+	VERIFY(m_taskTree.Create(this, rCtrl, IDC_TASKTREELIST));
 
 	// create rest of controls
 	CRuntimeDlg::OnInitDialog();
@@ -813,11 +815,22 @@ void CToDoCtrl::Resize(int cx, int cy, BOOL bSplitting)
 	{
 		if (!cx && !cy)
 		{
-			CRect rClient;
-			GetClientRect(rClient);
-			
-			cx = rClient.right;
-			cy = rClient.bottom;
+			// Ignore resizes until we receive the first proper one
+			if (!HasInitialSize())
+			{
+				CRect rClient;
+				GetClientRect(rClient);
+
+				cx = rClient.right;
+				cy = rClient.bottom;
+
+				TRACE(_T("CToDoCtrl::OnSize[client](%d, %d)\n"), cx, cy);
+			}
+		}
+		else
+		{
+			ClearInitialSize();
+			TRACE(_T("CToDoCtrl::OnSize(%d, %d)\n"), cx, cy);
 		}
 
 		// hide unused controls
@@ -11126,6 +11139,11 @@ void CToDoCtrl::ValidateCommentsSize()
 
 	int nCommentSize = ((HasStyle(TDCS_SHAREDCOMMENTSHEIGHT) ? s_nCommentsSize : m_nCommentsSize));
 	int nValidCommentSize = max(nMinComments, min(nMaxComments, nCommentSize));
+
+#ifdef _DEBUG
+	if (nCommentSize != nValidCommentSize)
+		TRACE(_T("CToDoCtrl::ValidateCommentsSize(%d -> %d)\n"), nCommentSize, nValidCommentSize);
+#endif
 
 	s_nCommentsSize = m_nCommentsSize = nValidCommentSize;
 }
