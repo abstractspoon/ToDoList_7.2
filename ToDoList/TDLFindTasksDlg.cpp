@@ -1488,16 +1488,13 @@ HBRUSH CTDLFindTasksDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 	
-	if (CThemed::IsAppThemed())
+	if ((nCtlColor == CTLCOLOR_STATIC) && CThemed::IsAppThemed())
 	{
 		ASSERT (m_brBkgnd.GetSafeHandle());
 
-		if (nCtlColor == CTLCOLOR_STATIC)
-		{
-			pDC->SetTextColor(m_theme.crAppText);
-			pDC->SetBkMode(TRANSPARENT);
-			hbr = m_brBkgnd;
-		}
+		pDC->SetTextColor(m_theme.crAppText);
+		pDC->SetBkMode(TRANSPARENT);
+		hbr = m_brBkgnd;
 	}
 	
 	return hbr;
