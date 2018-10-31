@@ -1294,6 +1294,8 @@ int CTDLFindTasksDlg::LoadSearches()
 		m_sActiveSearch.Empty();
 	}
 
+	RefreshMaxDropWidth(m_cbSearches);
+
 	return m_cbSearches.GetCount();
 }
 
