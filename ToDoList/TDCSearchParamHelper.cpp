@@ -148,12 +148,15 @@ BOOL CTDCSearchParamHelper::DecodeAttribute(const CString& sAttrib, DWORD dwFlag
 			if (nAttrib == TDCA_NONE)
 			{
 				nAttrib = TDCA_CUSTOMATTRIB;
+				nFindType = FT_STRING;
 			}
-
-			ASSERT(SEARCHPARAM::IsCustomAttribute(nAttrib));
+			else
+			{
+				ASSERT(SEARCHPARAM::IsCustomAttribute(nAttrib));
 			
-			nFindType = CTDCCustomAttributeHelper::GetAttributeFindType(sUniqueID, dwFlags, aCustAttribDefs);
-			ASSERT(nFindType != FT_NONE);
+				nFindType = CTDCCustomAttributeHelper::GetAttributeFindType(sUniqueID, dwFlags, aCustAttribDefs);
+				ASSERT(nFindType != FT_NONE);
+			}
 		}
 		break;
 		
