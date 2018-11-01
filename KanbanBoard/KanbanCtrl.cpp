@@ -331,30 +331,6 @@ BOOL CKanbanCtrl::SelectTask(DWORD dwTaskID)
 	aTaskIDs.Add(dwTaskID);
 
 	return SelectTasks(aTaskIDs);
-/*
-	// Check for 'no change'
-	CDWordArray aSelTaskIDs;
-	GetSelectedTaskIDs(aSelTaskIDs);
-
-	if ((aSelTaskIDs.GetSize() == 1) && (aSelTaskIDs[0] == dwTaskID))
-		return TRUE;
-	
-	int nItem = -1;
-	CKanbanListCtrl* pList = LocateTask(dwTaskID, nItem, TRUE);
-
-	if (pList && (nItem != -1))
-	{
-		m_pSelectedList = pList;
-		pList->SelectItem(nItem, TRUE);
-
-		FixupFocus();
-
-		ScrollToSelectedTask();
-		ClearOtherListSelections(pList);
-	}
-
-	return (pList != NULL);
-*/
 }
 
 BOOL CKanbanCtrl::SelectTask(IUI_APPCOMMAND nCmd, const IUISELECTTASK& select)
