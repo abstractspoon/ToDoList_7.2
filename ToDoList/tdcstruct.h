@@ -393,6 +393,7 @@ struct TDCSELECTIONCACHE
 		}
 
 		// else
+		ASSERT(!dwFocusedTaskID);
 		return TRUE;
 	}
 
