@@ -49,8 +49,8 @@ public:
 	BOOL GetTaskLabelRect(DWORD dwTaskID, CRect& rLabel) const;
 
 	BOOL GetSelectedTaskDates(COleDateTime& dtStart, COleDateTime& dtDue) const;
-	DWORD GetSelectedTaskID() const { return m_dwSelectedTaskID; }
-	BOOL SelectTask(DWORD dwTaskID);
+	DWORD GetSelectedTaskID() const;
+	BOOL SelectTask(DWORD dwTaskID, BOOL bScroll);
 	void ScrollToSelectedTask();
 	void ScrollToTask(DWORD dwTaskID);
 	BOOL SortBy(IUI_ATTRIBUTE nSortBy, BOOL bAscending);
@@ -176,10 +176,11 @@ protected:
 	BOOL IsDragging() const;
 	BOOL GetValidDragDate(const CPoint& ptCursor, COleDateTime& dtDrag) const;
 	double CalcDateDragTolerance() const;
-	BOOL SelectTask(DWORD dwTaskID, BOOL bNotify);
+	BOOL SelectTask(DWORD dwTaskID, BOOL bScroll, BOOL bNotify);
 	void RecalcTaskDates();
 	void GetAllowableDragLimits(CRect& rLimits) const;
 	double GetSnapIncrement() const;
+	void FixupSelection(BOOL bScrollToTask);
 
 	BOOL NotifyParentDateChange(TCC_HITTEST nHit);
 	void NotifyParentDragChange();
@@ -194,6 +195,7 @@ protected:
 	// helpers
 	static int CompareTCItems(const void* pV1, const void* pV2);
 	static void BuildTaskMap(const ITASKLISTBASE* pTasks, HTASKITEM hTask, CSet<DWORD>& mapIDs, BOOL bAndSiblings);
+	static BOOL HasSameDateDisplayOptions(DWORD dwOld, DWORD dwNew);
 
 };
 

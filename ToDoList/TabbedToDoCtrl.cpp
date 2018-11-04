@@ -342,9 +342,11 @@ BOOL CTabbedToDoCtrl::LoadTasks(const CTaskFile& tasks)
 				
 				if (!GetExtensionWnd(nView, pExtWnd, pVData))
 					return FALSE;
+
+				pVData->bNeedFullTaskUpdate = FALSE;
 				
 				UpdateExtensionView(pExtWnd, tasks, IUI_ALL, pVData->mapWantedAttrib);
-				ResyncExtensionSelection(nView);
+				SyncExtensionSelectionToTree(nView);
 
 				// mark rest of extensions needing update
 				SetExtensionsNeedTaskUpdate(TRUE, nView);
@@ -797,7 +799,7 @@ LRESULT CTabbedToDoCtrl::OnPostTabViewChange(WPARAM nOldView, LPARAM nNewView)
 		break;
 
 	case FTCV_TASKLIST:
-		ResyncListSelection();
+		SyncListSelectionToTree();
 		m_taskList.EnsureSelectionVisible();
 		break;
 		
@@ -822,14 +824,14 @@ LRESULT CTabbedToDoCtrl::OnPostTabViewChange(WPARAM nOldView, LPARAM nNewView)
 			GetParent()->SendMessage(WM_TDCM_LENGTHYOPERATION, FALSE);
 			
 			// resync selection
-			ResyncExtensionSelection((FTC_VIEW)nNewView);
+			SyncExtensionSelectionToTree((FTC_VIEW)nNewView);
 		}
 		break;
 	}
 	
-	// If we are switching to/from a view supporting selection 
-	// from/to a view not support selection then update controls
-	if (ViewSupportsTaskSelection((FTC_VIEW)nNewView) != ViewSupportsTaskSelection((FTC_VIEW)nOldView))
+	// If we are switching to/from a view with selection 
+	// from/to a view without selection then update controls
+	if (ViewHasTaskSelection((FTC_VIEW)nNewView) != ViewHasTaskSelection((FTC_VIEW)nOldView))
 		UpdateControls();
 	
 	// notify parent
@@ -1200,7 +1202,6 @@ LRESULT CTabbedToDoCtrl::OnUIExtSelectTask(WPARAM wParam, LPARAM lParam)
 
 		if (wParam == 0)
 		{
-			// check there's an actual change
 			aTaskIDs.Add(lParam);
 		}
 		else
@@ -1211,28 +1212,46 @@ LRESULT CTabbedToDoCtrl::OnUIExtSelectTask(WPARAM wParam, LPARAM lParam)
 				aTaskIDs.Add(pIDs[nID]);
 		}
 		
+		VIEWDATA* pVData = GetActiveViewData();
+		BOOL bHadSelectedTask = pVData->bHasSelectedTask;
+
 		if (aTaskIDs.GetSize() == 1)
 		{
 			DWORD dwTaskID = aTaskIDs[0];
+			pVData->bHasSelectedTask = (dwTaskID != 0);
 
-			if (dwTaskID == 0)
+			if (dwTaskID)
 			{
-				m_taskTree.DeselectAll();
-				UpdateControls(TRUE);
+				if (HasSingleSelectionChanged(dwTaskID))
+				{
+					// Call base class directly so that we don't end
+					// up calling back into extension this came from
+					VERIFY(CToDoCtrl::SelectTask(dwTaskID, FALSE));	
+				}
+				else
+				{
+					// Update if the extension previously did NOT have a selection
+					if (!bHadSelectedTask)
+						UpdateControls();
+				}
 			}
-			else if (HasSingleSelectionChanged(dwTaskID))
+			else
 			{
-				// Call base class directly so that we don't end
-				// up calling back into extension this came from
-				return CToDoCtrl::SelectTask(dwTaskID, FALSE);	
+				// Update if the extension previously had a selection
+				if (bHadSelectedTask)
+					UpdateControls();
 			}
 		}
 		else
 		{
+			pVData->bHasSelectedTask = TRUE;
+
 			// Call base class directly so that we don't end
 			// up calling back into extension this came from
-			return CToDoCtrl::SelectTasks(aTaskIDs, FALSE);
+			VERIFY(CToDoCtrl::SelectTasks(aTaskIDs, FALSE));
 		}
+
+		return pVData->bHasSelectedTask;
 	}
 
 	// else
@@ -1944,13 +1963,16 @@ void CTabbedToDoCtrl::SetMaximizeState(TDC_MAXSTATE nState)
 
 BOOL CTabbedToDoCtrl::WantTaskContextMenu() const
 {
-	return ViewSupportsTaskSelection(GetTaskView());
+	return ViewHasTaskSelection(GetTaskView());
 }
 
 BOOL CTabbedToDoCtrl::GetSelectionBoundingRect(CRect& rSelection) const
 {
 	rSelection.SetRectEmpty();
 	FTC_VIEW nView = GetTaskView();
+
+	if (!ViewHasTaskSelection(nView))
+		return FALSE;
 
 	switch (nView)
 	{
@@ -2344,11 +2366,12 @@ void CTabbedToDoCtrl::NotifyEndPreferencesUpdate(BOOL bFirst)
 						mapAttribs.Add(TDCA_COLOR);
 						
 						CTaskFile tasks;
-
+						
 						if (GetAllTasksForExtensionViewUpdate(tasks, mapAttribs))
+						{
+							pVData->bNeedFullTaskUpdate = FALSE;
 							UpdateExtensionView(pExtWnd, tasks, IUI_EDIT, mapAttribs);
-
-						pVData->bNeedFullTaskUpdate = FALSE;
+						}
 					}
 					else // mark for update
 					{
@@ -2749,12 +2772,10 @@ void CTabbedToDoCtrl::RebuildList(const void* pContext)
 	// cache current selection
 	TDCSELECTIONCACHE cache;
 
-	if (GetTaskView() == FTCV_TASKLIST)
+	if (InListView())
 		CacheListSelection(cache);
-	else
-		CacheTreeSelection(cache, FALSE);
 
-	// note: the call to RestoreListSelection at the bottom fails if the 
+	// note: the call to m_taskList.RestoreSelection at the bottom fails if the 
 	// list has redraw disabled so it must happen outside the scope of hr2
 	{
 		CHoldRedraw hr(GetSafeHwnd());
@@ -2783,12 +2804,18 @@ void CTabbedToDoCtrl::RebuildList(const void* pContext)
 	}
 	
 	// restore selection
-	RestoreListSelection(cache);
-	UpdateTreeSelection();
+	if (InListView())
+	{
+		// Make sure something is selected
+		m_taskList.RestoreSelection(cache, TRUE);
+		OnListSelChanged();
+	}
 	
 	// don't update controls if only one item is selected and it did not
-	// change as a result of the filter
-	if (!(GetSelectedCount() == 1 && 
+	// change as a result of the filter and we haven't already done
+	// and update in OnListSelChanged() above
+	if (!InListView() &&
+		!((GetSelectedCount() == 1) && 
 		(cache.aSelTaskIDs.GetSize() == 1) &&
 		(GetTaskID(GetSelectedItem()) == cache.aSelTaskIDs[0])))
 	{
@@ -2995,7 +3022,7 @@ void CTabbedToDoCtrl::UpdateListView(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID)
 			CacheTreeSelection(cache);
 
 			RebuildList(NULL);
-			RestoreListSelection(cache);
+			m_taskList.RestoreSelection(cache, TRUE);
 		}
 		else
 		{
@@ -3167,19 +3194,10 @@ void CTabbedToDoCtrl::UpdateExtensionViews(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID
 		// Special case: if dwTaskID is set then it's a single task
 		// so we treat it like an edit
 		if (dwTaskID)
-		{
 			UpdateExtensionViewsSelection(nAttrib);
-
-			if (IsExtensionView(nCurView))
-			{
-				IUIExtensionWindow* pExtWnd = GetExtensionWnd(nCurView);
-				
-				if (pExtWnd)
-					pExtWnd->SelectTask(dwTaskID);
-			}
-			break;
-		}
-		// else fall thru to update all tasks
+		else
+			UpdateExtensionViewsTasks(nAttrib);
+		break;
 
 	// These attributes require an entire refresh of the current view 
 	// (if it's an extension) and mark the others as needing updates
@@ -3248,10 +3266,10 @@ void CTabbedToDoCtrl::UpdateExtensionViewsTasks(TDC_ATTRIBUTE nAttrib)
 				BeginExtensionProgress(pVData);
 
 				// update all tasks
-				UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
 				pVData->bNeedFullTaskUpdate = FALSE;
+				UpdateExtensionView(pExtWnd, tasks, nUpdate, pVData->mapWantedAttrib);
 
-				ResyncExtensionSelection(nView);
+				SyncExtensionSelectionToTree(nView);
 				EndExtensionProgress();
 			}
 		}
@@ -3370,6 +3388,9 @@ void CTabbedToDoCtrl::UpdateExtensionViewsSelection(TDC_ATTRIBUTE nAttrib)
 			}
 			
 			UpdateExtensionView(pExtWnd, tasks, nUpdate, mapAttrib);
+
+			if (nExtView == GetTaskView())
+				SyncExtensionSelectionToTree(nExtView);
 		}
 		else if (pVData)
 		{
@@ -3801,14 +3822,6 @@ int CTabbedToDoCtrl::CacheListSelection(TDCSELECTIONCACHE& cache, BOOL bIncBread
 	return m_taskList.CacheSelection(cache, bIncBreadcrumbs);
 }
 
-void CTabbedToDoCtrl::RestoreListSelection(const TDCSELECTIONCACHE& cache)
-{
-	if (!cache.IsEmpty())
-		m_taskList.RestoreSelection(cache);
-	else
-		ResyncListSelection();
-}
-
 BOOL CTabbedToDoCtrl::SetTreeFont(HFONT hFont)
 {
 	if (CToDoCtrl::SetTreeFont(hFont))
@@ -3978,8 +3991,8 @@ void CTabbedToDoCtrl::OnTabCtrlRClick(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 LRESULT CTabbedToDoCtrl::OnTDCColumnEditClick(WPARAM wParam, LPARAM lParam)
 {
-	if (InListView())
-		UpdateTreeSelection();
+// 	if (InListView())
+// 		SyncTreeSelectionToList();
 
 	return CToDoCtrl::OnTDCColumnEditClick(wParam, lParam);
 }
@@ -3987,9 +4000,7 @@ LRESULT CTabbedToDoCtrl::OnTDCColumnEditClick(WPARAM wParam, LPARAM lParam)
 void CTabbedToDoCtrl::OnListSelChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	*pResult = 0;
-
-	if (!m_bDeletingTasks)
-		UpdateTreeSelection();
+	OnListSelChanged();
 }
 
 void CTabbedToDoCtrl::OnListClick(NMHDR* pNMHDR, LRESULT* pResult)
@@ -5080,11 +5091,50 @@ BOOL CTabbedToDoCtrl::ViewSupportsTaskSelection(FTC_VIEW nView) const
 	return FALSE;
 }
 
+BOOL CTabbedToDoCtrl::ViewHasTaskSelection(FTC_VIEW nView) const
+{
+	switch (nView)
+	{
+	case FTCV_TASKTREE:
+	case FTCV_UNSET:
+		return TRUE;
+
+	case FTCV_TASKLIST:
+	case FTCV_UIEXTENSION1:
+	case FTCV_UIEXTENSION2:
+	case FTCV_UIEXTENSION3:
+	case FTCV_UIEXTENSION4:
+	case FTCV_UIEXTENSION5:
+	case FTCV_UIEXTENSION6:
+	case FTCV_UIEXTENSION7:
+	case FTCV_UIEXTENSION8:
+	case FTCV_UIEXTENSION9:
+	case FTCV_UIEXTENSION10:
+	case FTCV_UIEXTENSION11:
+	case FTCV_UIEXTENSION12:
+	case FTCV_UIEXTENSION13:
+	case FTCV_UIEXTENSION14:
+	case FTCV_UIEXTENSION15:
+	case FTCV_UIEXTENSION16:
+		if (ViewSupportsTaskSelection(nView))
+		{
+			return (GetViewData(nView)->bHasSelectedTask ? TRUE : FALSE);
+		}
+		break;
+
+	default:
+		ASSERT(0);
+	}
+
+	// all else
+	return FALSE;
+}
+
 HTREEITEM CTabbedToDoCtrl::GetUpdateControlsItem() const
 {
 	HTREEITEM hti = CToDoCtrl::GetUpdateControlsItem();
 
-	if (!ViewSupportsTaskSelection(GetTaskView()))
+	if (!ViewHasTaskSelection(GetTaskView()))
 		hti = NULL;
 
 	return hti;
@@ -5110,9 +5160,7 @@ void CTabbedToDoCtrl::SetFocusToTasks()
 			m_taskList.SetFocus();
 		}
 			
-		// ensure the selected list item is visible
-		if (!m_taskList.EnsureSelectionVisible())
-			m_taskList.SelectItem(0);
+		m_taskList.EnsureSelectionVisible();
 		break;
 
 	case FTCV_UIEXTENSION1:
@@ -5417,7 +5465,7 @@ BOOL CTabbedToDoCtrl::SelectTasks(const CDWordArray& aTasks, BOOL bTrue)
 			break;
 
 		case FTCV_TASKLIST:
-			ResyncListSelection();
+			SyncListSelectionToTree();
 			break;
 
 		case FTCV_UIEXTENSION1:
@@ -5436,7 +5484,7 @@ BOOL CTabbedToDoCtrl::SelectTasks(const CDWordArray& aTasks, BOOL bTrue)
 		case FTCV_UIEXTENSION14:
 		case FTCV_UIEXTENSION15:
 		case FTCV_UIEXTENSION16:
-			ResyncExtensionSelection(nView);
+			SyncExtensionSelectionToTree(nView);
 			break;
 
 		default:
@@ -5447,47 +5495,57 @@ BOOL CTabbedToDoCtrl::SelectTasks(const CDWordArray& aTasks, BOOL bTrue)
 	return bRes;
 }
 
-void CTabbedToDoCtrl::ResyncListSelection()
+void CTabbedToDoCtrl::SyncListSelectionToTree()
 {
+	ASSERT(InListView());
+
+	BOOL bUpdateCtrls = FALSE;
+	
 	// optimisation when all items selected
 	if (TSH().GetCount() == m_taskTree.GetItemCount())
 	{
 		m_taskList.SelectAll();
+		bUpdateCtrls = (m_taskList.GetItemCount() != m_taskTree.GetItemCount());
 	}
 	else
 	{
 		// save current states
 		TDCSELECTIONCACHE cacheList, cacheTree;
-
-		CacheListSelection(cacheList);
-
-		// We only need the tree breadcrumbs is the list doesn't have any
-		CacheTreeSelection(cacheTree, !cacheList.aBreadcrumbs.GetSize());
+		CacheListSelection(cacheList, FALSE);
+		CacheTreeSelection(cacheTree, FALSE);
 
 		if (!cacheList.SelectionMatches(cacheTree))
 		{
-			// now update the list selection using the tree's selection
-			// but the list's breadcrumbs (if it has any), and save list 
-			// scroll pos before restoring
+			// save list scroll pos before restoring
 			cacheTree.dwFirstVisibleTaskID = GetTaskID(m_taskList.List().GetTopIndex());
 
-			if (cacheList.aBreadcrumbs.GetSize())
-				cacheTree.aBreadcrumbs.Copy(cacheList.aBreadcrumbs);
+			if (m_taskList.RestoreSelection(cacheTree, FALSE))
+			{
+				// now check that the tree is correctly synced with us
+				// but only if we have something selected
+				CacheListSelection(cacheList);
 
-			RestoreListSelection(cacheTree);
-			
-			// now check that the tree is correctly synced with us!
-			CacheListSelection(cacheList);
-
-			if (!cacheList.SelectionMatches(cacheTree))
-				RestoreTreeSelection(cacheList);
+				if (!cacheList.SelectionMatches(cacheTree))
+				{
+					RestoreTreeSelection(cacheList);
+					bUpdateCtrls = TRUE;
+				}
+			}
 		}
 	}
 
+	VIEWDATA* pLVData = GetViewData(FTCV_TASKLIST);
+	ASSERT(pLVData);
+
+	pLVData->bHasSelectedTask = m_taskList.GetSelectedCount();
+
 	m_taskList.UpdateSelectedTaskPath();
+
+	if (bUpdateCtrls)
+		UpdateControls(FALSE);
 }
 
-void CTabbedToDoCtrl::ResyncExtensionSelection(FTC_VIEW nView)
+void CTabbedToDoCtrl::SyncExtensionSelectionToTree(FTC_VIEW nView)
 {
 	if (!IsExtensionView(nView))
 	{
@@ -5499,78 +5557,41 @@ void CTabbedToDoCtrl::ResyncExtensionSelection(FTC_VIEW nView)
 		return;
 	}
 
-	IUIExtensionWindow* pExt = GetExtensionWnd(nView);
-	ASSERT(pExt);
+	VIEWDATA* pVData = NULL;
+	IUIExtensionWindow* pExt = NULL;
+	VERIFY(GetExtensionWnd(nView, pExt, pVData));
 
-	if (pExt == NULL)
-		return;
-
-	// Get tree selection
 	TDCSELECTIONCACHE cache;
+	CacheTreeSelection(cache);
 
-	// If nothing is selected, work backwards until we find something
-	BOOL bNeedUpdate = FALSE;
+	BOOL bUpdateCtrls = FALSE;
 
-	while (!CacheTreeSelection(cache))
-	{
-		if (!m_taskTree.SelectTasksInHistory(FALSE))
-			break;
-
-		bNeedUpdate = TRUE; // selection has changed
-	}
-
-	if (!cache.IsEmpty())
-	{
-		// If nothing can be selected, work backwards as before
-		while (!SelectExtensionTasks(pExt, cache.aSelTaskIDs, cache.dwFocusedTaskID))
-		{
-			cache.Clear();
-
-			if (!m_taskTree.SelectTasksInHistory(FALSE))
-				break;
-
-			CacheTreeSelection(cache);
-			bNeedUpdate = TRUE; // selection has changed
-		}
-	}
-
-	// fallback
 	if (cache.IsEmpty())
 	{
-		pExt->SelectTask(0);
-
-		m_taskTree.DeselectAll();
-		UpdateControls();
+		pVData->bHasSelectedTask = FALSE;
+		bUpdateCtrls = TRUE;
 	}
-	else if (bNeedUpdate)
+	else if ((cache.aSelTaskIDs.GetSize() > 1) && pExt->SelectTasks(cache.aSelTaskIDs.GetData(), cache.aSelTaskIDs.GetSize()))
 	{
-		UpdateControls();
+		// extension has same selection as tree so no need to update controls
+		pVData->bHasSelectedTask = TRUE;
+		bUpdateCtrls = FALSE;
 	}
-}
-
-BOOL CTabbedToDoCtrl::SelectExtensionTasks(IUIExtensionWindow* pExtWnd, const CDWordArray& aTaskIDs, DWORD dwFocusedTaskID)
-{
-	ASSERT(pExtWnd);
-
-	if (pExtWnd == NULL)
-		return FALSE;
-
-	if ((aTaskIDs.GetSize() == 0) || (dwFocusedTaskID == 0))
-		return FALSE;
-
-	if (pExtWnd->SelectTasks(aTaskIDs.GetData(), aTaskIDs.GetSize()))
-		return TRUE;
-
-	// Try single task
-	if (dwFocusedTaskID && pExtWnd->SelectTask(dwFocusedTaskID))
+	else
 	{
-		CToDoCtrl::SelectTask(dwFocusedTaskID, FALSE);
-		UpdateControls();
+		ASSERT(cache.aSelTaskIDs.GetSize() >= 1);
+		ASSERT(cache.dwFocusedTaskID == cache.aSelTaskIDs[0]);
 
-		return TRUE;
+		pVData->bHasSelectedTask = pExt->SelectTask(cache.dwFocusedTaskID);
+
+		if (pVData->bHasSelectedTask)
+			VERIFY(CToDoCtrl::SelectTask(cache.dwFocusedTaskID, FALSE));
+
+		bUpdateCtrls = TRUE;
 	}
 
-	return FALSE;
+	if (bUpdateCtrls)
+		UpdateControls();
 }
 
 void CTabbedToDoCtrl::SelectTasksInHistory(BOOL bForward)
@@ -5592,7 +5613,7 @@ void CTabbedToDoCtrl::SelectTasksInHistory(BOOL bForward)
 
 		case FTCV_TASKLIST:
 			// then update our own selection
-			ResyncListSelection();
+			SyncListSelectionToTree();
 			break;
 
 		case FTCV_UIEXTENSION1:
@@ -5611,7 +5632,7 @@ void CTabbedToDoCtrl::SelectTasksInHistory(BOOL bForward)
 		case FTCV_UIEXTENSION14:
 		case FTCV_UIEXTENSION15:
 		case FTCV_UIEXTENSION16:
-			ResyncExtensionSelection(nView);
+			SyncExtensionSelectionToTree(nView);
 			break;
 
 		default:
@@ -5658,13 +5679,19 @@ void CTabbedToDoCtrl::InvalidateItem(HTREEITEM hti, BOOL bUpdate)
 	}
 }
 
-void CTabbedToDoCtrl::UpdateTreeSelection()
+void CTabbedToDoCtrl::OnListSelChanged()
 {
-	ASSERT(!m_bDeletingTasks);
+	if (!InListView())
+	{
+		ASSERT(0);
+		return;
+	}
+	else if (m_bDeletingTasks)
+	{
+		return;
+	}
 
-	// update the tree selection as required
 	TDCSELECTIONCACHE cacheTree, cacheList;
-
 	CacheTreeSelection(cacheTree, FALSE);
 	CacheListSelection(cacheList, FALSE);
 	
@@ -5672,15 +5699,16 @@ void CTabbedToDoCtrl::UpdateTreeSelection()
 	{
 		if (cacheList.aSelTaskIDs.GetSize() == 0)
 		{
-			m_taskTree.DeselectAll();
-		}
-		else if (cacheList.aSelTaskIDs.GetSize() == m_taskTree.GetItemCount())
-		{
-			m_taskTree.SelectAll();
+			GetViewData(FTCV_TASKLIST)->bHasSelectedTask = FALSE;
 		}
 		else
 		{
-			m_taskTree.RestoreSelection(cacheList);
+			if (cacheList.aSelTaskIDs.GetSize() == m_taskTree.GetItemCount())
+				m_taskTree.SelectAll();
+			else
+				m_taskTree.RestoreSelection(cacheList);
+
+			GetViewData(FTCV_TASKLIST)->bHasSelectedTask = TRUE;
 		}
 
 		UpdateControls();
