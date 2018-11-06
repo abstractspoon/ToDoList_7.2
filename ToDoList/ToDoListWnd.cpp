@@ -1845,7 +1845,7 @@ BOOL CToDoListWnd::HandleSaveTasklistError(TDC_FILE& nErr, LPCTSTR szTasklist)
 	return FALSE; // not handled
 }
 
-TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, BOOL bAuto)
+TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, DWORD dwFlags)
 {
 	CAutoFlag af(m_bSaving, TRUE);
 	CPreferences prefs;
@@ -1853,7 +1853,9 @@ TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, BOOL bAuto)
 
 	// make sure we are up to date
 	CFilteredToDoCtrl& tdc = GetToDoCtrl(nTDC);
-	tdc.Flush();
+
+	if (Misc::HasFlag(dwFlags, TDLS_FLUSH))
+		tdc.Flush();
 
 	TDC_FILE nResult = TDCF_SUCCESS;
 	CTaskFile tasks;
@@ -1921,7 +1923,7 @@ TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, BOOL bAuto)
 				if (nResult != TDCF_SUCCESS)
 				{
 					// error handling if this is not an auto-save
-					if (!bAuto && HandleSaveTasklistError(nResult, sFilePath))
+					if (!Misc::HasFlag(dwFlags, TDLS_AUTOSAVE) && HandleSaveTasklistError(nResult, sFilePath))
 					{
 						// try again
 						sFilePath.Empty();
@@ -7785,9 +7787,6 @@ void CToDoListWnd::OnTabCtrlCloseTab(NMHDR* pNMHDR, LRESULT* pResult)
 	// check valid tab
 	if (pNMTCE->iTab >= 0)
 	{
-		CFilteredToDoCtrl& tdc = GetToDoCtrl(pNMTCE->iTab);
-		tdc.Flush();
-		
 		CloseToDoCtrl(pNMTCE->iTab);
 		
 		if (!GetTDCCount())
@@ -8056,6 +8055,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 {
 	BOOL bClosingWindows = Misc::HasFlag(dwFlags, TDLS_CLOSINGWINDOWS);
 	BOOL bClosingTaskList = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS) || bClosingWindows; // sanity check
+
 	TDC_FILE nSave = TDCF_SUCCESS;
 	
 	// save changes
@@ -8100,7 +8100,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 			{
 				// note: we omit the auto save parameter here because we want the user to
 				// be notified of any problems
-				nSave = SaveTaskList(nIndex);
+				nSave = SaveTaskList(nIndex, NULL, dwFlags);
 
 				// if the save failed (as opposed to cancelled) then we must
 				// propagate this upwards
@@ -8129,7 +8129,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 		}
 		else
 		{
-			nSave = SaveTaskList(nIndex, NULL, Misc::HasFlag(dwFlags, TDLS_AUTOSAVE));
+			nSave = SaveTaskList(nIndex, NULL, dwFlags);
 		}
 	}
 	
@@ -10806,9 +10806,6 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 				continue;
 			}
 			
-			if (Misc::HasFlag(dwFlags, TDLS_FLUSH))
-				tdc.Flush(bClosingAll);		
-
 			TDC_FILE nSave = ConfirmSaveTaskList(nCtrl, dwFlags);
 
 			if (nSave == TDCF_CANCELLED) // user cancelled
