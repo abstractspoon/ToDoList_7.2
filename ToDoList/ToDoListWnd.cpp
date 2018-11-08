@@ -3809,7 +3809,6 @@ void CToDoListWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 				point = rTab.CenterPoint();
 				m_tabCtrl.ClientToScreen(&point);
 				
-				// load popup menu
 				nMenuID = MM_TABCTRLCONTEXT;
 			}
 		}
@@ -3831,9 +3830,18 @@ void CToDoListWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 				
 				m_tabCtrl.SetFocus(); // give user feedback
 				
-				// load popup menu
 				nMenuID = MM_TABCTRLCONTEXT;
 			}
+		}
+	}
+	else if (pWnd == &m_statusBar)
+	{
+		m_statusBar.ScreenToClient(&point);
+
+		if (m_statusBar.HitTest(point) == 0)
+		{
+			m_statusBar.ClientToScreen(&point);
+			nMenuID = MM_TABCTRLCONTEXT;
 		}
 	}
 	else if (pWnd == (CWnd*)&tdc) // try active todoctrl
