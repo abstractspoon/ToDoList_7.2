@@ -1759,7 +1759,7 @@ void CToDoListWnd::OnSave()
 	SaveTaskList(GetSelToDoCtrl());
 }
 
-TDC_FILE CToDoListWnd::DoSaveWithBackupAndProgress(CFilteredToDoCtrl& tdc, int nIndex, CTaskFile& tasks, LPCTSTR szFilePath)
+TDC_FILE CToDoListWnd::DoSaveWithBackupAndProgress(CFilteredToDoCtrl& tdc, int nIndex, CTaskFile& tasks, LPCTSTR szFilePath, BOOL bFlush)
 {
 	DOPROGRESS(IDS_SAVINGPROGRESS);
 		
@@ -1767,7 +1767,7 @@ TDC_FILE CToDoListWnd::DoSaveWithBackupAndProgress(CFilteredToDoCtrl& tdc, int n
 	m_mgrToDoCtrls.DoBackup(nIndex);
 	
 	// do the save
-	return tdc.Save(tasks, szFilePath);
+	return tdc.Save(tasks, szFilePath, bFlush);
 }
 
 BOOL CToDoListWnd::HandleSaveTasklistError(TDC_FILE& nErr, LPCTSTR szTasklist)
@@ -1854,15 +1854,13 @@ TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, DWORD dwFlags)
 	// make sure we are up to date
 	CFilteredToDoCtrl& tdc = GetToDoCtrl(nTDC);
 
-	if (Misc::HasFlag(dwFlags, TDLS_FLUSH))
-		tdc.Flush();
-
 	TDC_FILE nResult = TDCF_SUCCESS;
 	CTaskFile tasks;
 
 	// we can reduce the amount of work required if saving to storage
 	TSM_TASKLISTINFO storageInfo;
 	BOOL bUsesStorage = m_mgrToDoCtrls.GetStorageDetails(nTDC, storageInfo);
+	BOOL bFlush = !Misc::HasFlag(dwFlags, TDLS_NOFLUSH);
 
 	if (bUsesStorage)
 	{
@@ -1872,7 +1870,7 @@ TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, DWORD dwFlags)
 		storageInfo.SetLocalFilePath(FileMisc::GetTempFilePath());
 
 		// save to file and then to storage
-		if (tdc.Save(tasks, storageInfo.szLocalFileName) == TDCF_SUCCESS)
+		if (tdc.Save(tasks, storageInfo.szLocalFileName, bFlush) == TDCF_SUCCESS)
 		{
 			if (!m_mgrStorage.StoreTasklist(storageInfo, tasks, -1, prefs))
 				nResult = TDCF_OTHER;
@@ -1918,7 +1916,7 @@ TDC_FILE CToDoListWnd::SaveTaskList(int nTDC, LPCTSTR szFilePath, DWORD dwFlags)
 				tdc.SetStyle(TDCS_CHECKOUTONLOAD, userPrefs.GetAutoCheckOut());
 
 				// do the save
-				nResult = DoSaveWithBackupAndProgress(tdc, nTDC, tasks, sFilePath);
+				nResult = DoSaveWithBackupAndProgress(tdc, nTDC, tasks, sFilePath, bFlush);
 
 				if (nResult != TDCF_SUCCESS)
 				{
@@ -3300,7 +3298,7 @@ void CToDoListWnd::MinimizeToTray()
 	if (Prefs().GetAutoSaveOnSwitchApp())
 	{
 		// save all
-		SaveAll(TDLS_FLUSH | TDLS_AUTOSAVE);
+		SaveAll(TDLS_AUTOSAVE);
 	}
 	
 	// hide main window
@@ -6931,9 +6929,8 @@ void CToDoListWnd::OnTimerAutoSave()
 {
 	AF_NOREENTRANT // macro helper
 		
-	// don't save if the user is editing a task label
-	if (!GetToDoCtrl().IsTaskLabelEditing())
-		SaveAll(TDLS_AUTOSAVE);
+	// don't flush because that can mess with focus
+	SaveAll(TDLS_AUTOSAVE | TDLS_NOFLUSH);
 }
 
 void CToDoListWnd::OnTimerAutoMinimize()
@@ -7138,7 +7135,7 @@ void CToDoListWnd::OnUserTool(UINT nCmdID)
 		// Save all tasklists before executing the user tool
 		if (prefs.GetAutoSaveOnRunTools())
 		{
-			if (SaveAll(TDLS_FLUSH) == TDCF_CANCELLED)
+			if (SaveAll(TDLS_AUTOSAVE) == TDCF_CANCELLED)
 				return;
 		}
 
@@ -8055,6 +8052,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 {
 	BOOL bClosingWindows = Misc::HasFlag(dwFlags, TDLS_CLOSINGWINDOWS);
 	BOOL bClosingTaskList = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS) || bClosingWindows; // sanity check
+	BOOL bFlush = !Misc::HasFlag(dwFlags, TDLS_NOFLUSH);
 
 	TDC_FILE nSave = TDCF_SUCCESS;
 	
@@ -8072,12 +8070,12 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 			// if it's a first time save we just save to a temp file
 			if (bFirstTimeSave)
 			{
-				tdc.Save(GetEndSessionFilePath());
+				tdc.Save(GetEndSessionFilePath(), bFlush);
 			}
 			else
 			{
 				m_mgrToDoCtrls.DoBackup(nIndex);
-				tdc.Save();
+				tdc.Save(_T(""), bFlush);
 			}
 
 			// always return success
@@ -8100,7 +8098,7 @@ TDC_FILE CToDoListWnd::ConfirmSaveTaskList(int nIndex, DWORD dwFlags)
 			{
 				// note: we omit the auto save parameter here because we want the user to
 				// be notified of any problems
-				nSave = SaveTaskList(nIndex, NULL, dwFlags);
+				nSave = SaveTaskList(nIndex, NULL, (dwFlags & ~TDLS_AUTOSAVE));
 
 				// if the save failed (as opposed to cancelled) then we must
 				// propagate this upwards
@@ -8144,8 +8142,6 @@ BOOL CToDoListWnd::CloseToDoCtrl(int nIndex)
 	CFilteredToDoCtrl& tdcSel = GetToDoCtrl();
 	CFilteredToDoCtrl& tdc = GetToDoCtrl(nIndex);
 
-	tdc.Flush(TRUE);
-	
 	if (ConfirmSaveTaskList(nIndex, TDLS_CLOSINGTASKLISTS) != TDCF_SUCCESS)
 		return FALSE;
 	
@@ -8418,7 +8414,7 @@ void CToDoListWnd::UpdateToDoCtrlPreferences(CFilteredToDoCtrl* pTDC, BOOL bFirs
 
 void CToDoListWnd::OnSaveall() 
 {
-	SaveAll(TDLS_INCLUDEUNSAVED | TDLS_FLUSH);
+	SaveAll(TDLS_INCLUDEUNSAVED);
 }
 
 void CToDoListWnd::OnUpdateSaveall(CCmdUI* pCmdUI) 
@@ -8429,7 +8425,7 @@ void CToDoListWnd::OnUpdateSaveall(CCmdUI* pCmdUI)
 void CToDoListWnd::OnCloseall() 
 {
 	// save first
-	TDC_FILE nSaveAll = SaveAll(TDLS_INCLUDEUNSAVED | TDLS_CLOSINGTASKLISTS | TDLS_FLUSH);
+	TDC_FILE nSaveAll = SaveAll(TDLS_INCLUDEUNSAVED | TDLS_CLOSINGTASKLISTS);
 
 	if (nSaveAll != TDCF_SUCCESS)
 		return;
@@ -8508,7 +8504,7 @@ BOOL CToDoListWnd::DoExit(BOOL bRestart, BOOL bClosingWindows)
 	ASSERT (!(bClosingWindows && bRestart));
 	
     // save all first to ensure new tasklists get reloaded on startup
-	DWORD dwSaveFlags = TDLS_INCLUDEUNSAVED | TDLS_CLOSINGTASKLISTS | TDLS_FLUSH;
+	DWORD dwSaveFlags = TDLS_INCLUDEUNSAVED | TDLS_CLOSINGTASKLISTS;
 
 	if (bClosingWindows)
 		dwSaveFlags |= TDLS_CLOSINGWINDOWS;
@@ -10786,7 +10782,7 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 
 	BOOL bIncUnsaved = Misc::HasFlag(dwFlags, TDLS_INCLUDEUNSAVED);
 	BOOL bClosingWindows = Misc::HasFlag(dwFlags, TDLS_CLOSINGWINDOWS);
-	BOOL bClosingAll = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS);		
+	BOOL bClosingTasklists = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS);
 
 	// scoped to end status bar progress
 	// before calling UpdateStatusbar
@@ -10795,10 +10791,11 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 
 		while (nCtrl--)
 		{
-			CFilteredToDoCtrl& tdc = GetToDoCtrl(nCtrl);
+			const CFilteredToDoCtrl& tdc = GetToDoCtrl(nCtrl);
 
-			// bypass unsaved tasklists unless closing Windows
+			// bypass unsaved unless closing Windows or tasklists
 			if (!bClosingWindows && 
+				!bClosingTasklists &&
 				!bIncUnsaved &&
 				!m_mgrToDoCtrls.UsesStorage(nCtrl) && 
 				!tdc.HasFilePath())
@@ -10815,7 +10812,8 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 			if (nSaveAll == TDCF_SUCCESS)
 				nSaveAll = nSave;
 
-			m_mgrToDoCtrls.UpdateTabItemText(nCtrl);
+			if (!bClosingWindows && !bClosingTasklists)
+				m_mgrToDoCtrls.UpdateTabItemText(nCtrl);
 		}
 	}
 	
@@ -11060,7 +11058,7 @@ void CToDoListWnd::OnActivateApp(BOOL bActive, HTASK hTask)
 
 		// save tasklists if required
 		if (Prefs().GetAutoSaveOnSwitchApp())
-			SaveAll(TDLS_FLUSH | TDLS_AUTOSAVE);
+			SaveAll(TDLS_AUTOSAVE);
 	}
 	else
 	{

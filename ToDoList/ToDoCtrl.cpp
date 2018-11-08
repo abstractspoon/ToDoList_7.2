@@ -5991,14 +5991,14 @@ BOOL CToDoCtrl::IsColumnOrEditFieldShowing(TDC_COLUMN nColumn, TDC_ATTRIBUTE nAt
 	return (IsColumnShowing(nColumn) || IsEditFieldShowing(nAttrib));
 }
 
-TDC_FILE CToDoCtrl::Save(const CString& sFilePath)
+TDC_FILE CToDoCtrl::Save(const CString& sFilePath, BOOL bFlush)
 {
 	CTaskFile tasks;
 
-	return Save(tasks, sFilePath);
+	return Save(tasks, sFilePath, bFlush);
 }
 
-TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath)
+TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath, BOOL bFlush)
 {
 	///////////////////////////////////////////////////////////////////////
 	// PERMANENT LOGGING
@@ -6035,6 +6035,9 @@ TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath)
 		else
 			sSavePath = m_sLastSavePath;
 	}
+
+	if (bFlush)
+		Flush();
 
 	// check for later changes if it's a network file
 	BOOL bCheckforLaterChanges = (CDriveInfo::IsRemotePath(sFilePath) > 0);
