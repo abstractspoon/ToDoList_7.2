@@ -473,7 +473,7 @@ void CTDLTaskCtrlBase::OnSize(UINT nType, int cx, int cy)
 	
 	if (cx && cy)
 	{
-		TRACE(_T("%s::OnSize(%d, %d), splitpos = %d\n"), GetDebugName(), cx, cy, GetSplitPos());
+		//TRACE(_T("%s::OnSize(%d, %d), splitpos = %d\n"), GetDebugName(), cx, cy, GetSplitPos());
 
 		CRect rect(0, 0, cx, cy);
 		CTreeListSyncer::Resize(rect);
