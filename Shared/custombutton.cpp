@@ -5,6 +5,8 @@
 #include "custombutton.h"
 #include "misc.h"
 
+#include "..\3rdParty\MemDC.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -60,43 +62,19 @@ void CCustomButton::SetWindowText(TCHAR nChar)
 void CCustomButton::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
+	CMemDC dcMem(&dc);
 
-	// create a temp dc to paint on
-	CDC dcTemp;
+	// default draw to temp dc
+	DefWindowProc(WM_PAINT, (WPARAM)(HDC)dcMem, 0);
 
-	if (dcTemp.CreateCompatibleDC(&dc))
-	{
-		CBitmap bmTemp;
-		CRect rClient;
+	// draw extra on top
+	CRect rClient;
+	GetClientRect(rClient);
 
-		GetClientRect(rClient);
+	CRect rExtra;
+	CalcExtraSpace(rClient, rExtra);
 
-		if (bmTemp.CreateCompatibleBitmap(&dc, rClient.right, rClient.bottom))
-		{
-			// draw extra on top
-			CRect rExtra;
-			CalcExtraSpace(rClient, rExtra);
-
-			CBitmap* pOld = dcTemp.SelectObject(&bmTemp);
-			
-			// default draw to temp dc
-			DefWindowProc(WM_PAINT, (WPARAM)(HDC)dcTemp, 0);
-			
-			// extra draw
-			DoExtraPaint(&dcTemp, rExtra);
-			
-			// blit to screen
-			dc.BitBlt(0, 0, rClient.right, rClient.bottom, &dcTemp, 0, 0, SRCCOPY);
-			
-			// cleanup
-			dcTemp.SelectObject(pOld);
-			
-			return;
-		}
-	}
-	
-	// else draw to default dc
-	DefWindowProc(WM_PAINT, (WPARAM)(HDC)dc, 0);
+	DoExtraPaint(&dcMem, rExtra);
 }
 
 void CCustomButton::CalcExtraSpace(const CRect& rClient, CRect& rExtra) const
