@@ -17,9 +17,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CTDLIconComboBox
 
-CTDLIconComboBox::CTDLIconComboBox(const CTDCImageList& ilImages, BOOL bMultiSel)
+CTDLIconComboBox::CTDLIconComboBox(const CTDCImageList& ilImages, BOOL bMultiSel, BOOL bFilter)
 	:
-	CEnCheckComboBox(bMultiSel),
+	CEnCheckComboBox(bMultiSel, (bFilter ? IDS_TDC_NONE : 0), (bFilter ? IDS_TDC_ANY : 0)),
 	m_ilImages(ilImages)
 {
 }
@@ -70,7 +70,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 	{
 		if (m_bMultiSel)
 		{
-			nNumImage = Misc::Split(m_sText, aImages);
+			nNumImage = Misc::Split(m_sText, aImages, _T(""), HasItemNone());
 		}
 		else if (!sItem.IsEmpty())
 		{
@@ -79,25 +79,51 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 		}
 	}
 
-	for (int nImg = 0; nImg < nNumImage; nImg++)
+	if (nNumImage > 0)
 	{
-		CString sImage, sName;
-		
-		if (TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aImages[nImg], sImage, sName))
+		for (int nImg = 0; nImg < nNumImage; nImg++)
 		{
-			// draw image
-			if (m_ilImages.GetSafeHandle() && !sImage.IsEmpty())
+			CString sImage, sName;
+
+			if (TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aImages[nImg], sImage, sName))
 			{
-				CPoint pt = rImage.TopLeft();
+				// draw image
+				if (m_ilImages.GetSafeHandle() && !sImage.IsEmpty())
+				{
+					CPoint pt = rImage.TopLeft();
 
-				m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
-				rImage.left += (nImageSize + 2);
+					m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
+					rImage.left += (nImageSize + 2);
+				}
+
+				// draw optional text
+				if (bList && !sName.IsEmpty())
+					CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, sName, bList, crText);
 			}
+			else if (aImages[nImg].IsEmpty())
+			{
+				if (bList)
+				{
+					// Draw none/any
+					CEnCheckComboBox::DrawItemText(dc, rect, nItem, nItemState, dwItemData, sItem, bList, crText);
+				}
+				else
+				{
+					ASSERT(nImg == 0);
+					ASSERT(HasItemNone());
 
-			// draw optional text
-			if (bList && !sName.IsEmpty())
-				COwnerdrawComboBoxBase::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, sName, bList, crText);
+					CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, m_sNone, bList, crText);
+					rImage.left += (dc.GetTextExtent(m_sNone).cx + 2);
+
+					if (nNumImage > 1)
+						rImage.left += (dc.GetTextExtent(Misc::GetListSeparator()).cx);
+				}
+			}
 		}
+	}
+	else if (!bList)
+	{
+		CEnCheckComboBox::DrawItemText(dc, rect, nItem, nItemState, dwItemData, sItem, bList, crText);
 	}
 }
 
@@ -141,6 +167,9 @@ int CTDLIconComboBox::GetChecked(CStringArray& aItems, CCB_CHECKSTATE nCheck) co
 
 		aItems.Add(sImage);
 	}
+
+	if (IsNoneChecked())
+		aItems.Add(_T(""));
 
 	return aItems.GetSize();
 }

@@ -115,7 +115,7 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 		switch (dwDataType)
 		{
 		case TDCCA_ICON:
-			pControl = new CTDLIconComboBox(ilImages, bMultiSelectionFilter);
+			pControl = new CTDLIconComboBox(ilImages, bMultiSelectionFilter, TRUE);
 			break;
 
 		default:
@@ -162,7 +162,7 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 				switch (dwDataType)
 				{
 				case TDCCA_ICON:
-					pControl = new CTDLIconComboBox(ilImages, FALSE);
+					pControl = new CTDLIconComboBox(ilImages, FALSE, FALSE);
 					break;
 				
 				default:
@@ -200,7 +200,7 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 				switch (dwDataType)
 				{
 				case TDCCA_ICON:
-					pControl = new CTDLIconComboBox(ilImages, TRUE);
+					pControl = new CTDLIconComboBox(ilImages, TRUE, FALSE);
 					break;
 				
 				default:
