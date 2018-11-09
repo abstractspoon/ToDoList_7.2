@@ -252,7 +252,10 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 				else
 				{
 					CDialogHelper::SetComboBoxItems(*pCB, aListData);
+				}
 
+				if (!bFilter)
+				{
 					// prepend empty items to single selection lists
 					switch (attribDef.GetListType())
 					{
