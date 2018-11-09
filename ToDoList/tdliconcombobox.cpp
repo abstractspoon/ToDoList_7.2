@@ -149,7 +149,6 @@ CString CTDLIconComboBox::GetSelectedImage() const
 		return sImage;
 	}
 
-	// else
 	return sItem; // empty
 }
 
@@ -168,9 +167,6 @@ int CTDLIconComboBox::GetChecked(CStringArray& aItems, CCB_CHECKSTATE nCheck) co
 		aItems.Add(sImage);
 	}
 
-	if (IsNoneChecked())
-		aItems.Add(_T(""));
-
 	return aItems.GetSize();
 }
 
@@ -184,17 +180,27 @@ BOOL CTDLIconComboBox::SetChecked(const CStringArray& aItems)
 
 	// assume that all the correct items have already 
 	// been added to the list
-	int nItem = aItems.GetSize();
+	int nItem = aItems.GetSize(), nIndex = CB_ERR;
 
 	while (nItem--)
 	{
-		CString sPartial = TDCCUSTOMATTRIBUTEDEFINITION::EncodeImageTag(aItems[nItem], _T(""));
-		int nIndex = FindString(-1, sPartial);
-
-		if (nIndex != CB_ERR)
-			SetCheck(nIndex, CCBC_CHECKED);
+		if (aItems[nItem].IsEmpty())
+		{
+			if (HasItemNone())
+				nIndex = GetNoneIndex();
+			else
+				return FALSE;
+		}
 		else
-			return FALSE;
+		{
+			CString sPartial = TDCCUSTOMATTRIBUTEDEFINITION::EncodeImageTag(aItems[nItem], _T(""));
+			nIndex = FindString(-1, sPartial);
+
+			if (nIndex == CB_ERR)
+				return FALSE;
+		}
+
+		SetCheck(nIndex, CCBC_CHECKED);
 	}
 
 	return TRUE;
