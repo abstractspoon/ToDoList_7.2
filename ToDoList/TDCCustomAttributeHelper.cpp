@@ -1369,6 +1369,24 @@ int CTDCCustomAttributeHelper::EnableMultiSelectionFilter(const CTDCCustomContro
 	return nNumFound;
 }
 
+void CTDCCustomAttributeHelper::ClearFilterCheckboxHistory(const CTDCCustomControlArray& aControls, CWnd* pParent)
+{
+	int nCtrl = aControls.GetSize();
+	
+	while (nCtrl--)
+	{
+		const CUSTOMATTRIBCTRLITEM& ctrl = aControls[nCtrl];
+		CWnd* pCtrl = pParent->GetDlgItem(ctrl.nCtrlID);
+
+		if (pCtrl->IsKindOf(RUNTIME_CLASS(CEnCheckComboBox)))
+		{
+			CEnCheckComboBox* pCombo = (CEnCheckComboBox*)pCtrl;
+
+			pCombo->CheckAll(CCBC_UNCHECKED);
+		}
+	}
+}
+
 BOOL CTDCCustomAttributeHelper::AppendFilterRules(const CTDCCustomAttributeDataMap& mapData, 
 												const CTDCCustomAttribDefinitionArray& aAttribDefs, 
 												CSearchParamArray& aRules)
