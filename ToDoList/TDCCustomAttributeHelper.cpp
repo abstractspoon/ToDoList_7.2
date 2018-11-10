@@ -246,7 +246,8 @@ CWnd* CTDCCustomAttributeHelper::CreateAttribute(const TDCCUSTOMATTRIBUTEDEFINIT
 				
 				if (pControl->IsKindOf(RUNTIME_CLASS(CEnCheckComboBox)))
 				{
-					ASSERT(bFilter || pControl->IsKindOf(RUNTIME_CLASS(CTDLIconComboBox)));
+					ASSERT(bFilter || (dwDataType == TDCCA_ICON));
+
 					((CEnCheckComboBox*)pCB)->SetStrings(aListData);
 				}
 				else

@@ -898,7 +898,12 @@ struct TDCCUSTOMATTRIBUTEDEFINITION
 	static CString EncodeImageTag(const CString& sImage, const CString& sName) 
 	{ 
 		CString sTag;
-		sTag.Format(_T("%s:%s"), sImage, sName);
+
+		if (Misc::Last(sImage) == ':')
+			sTag = (sImage + sName);
+		else
+			sTag.Format(_T("%s:%s"), sImage, sName);
+
 		return sTag;
 	}
 
@@ -923,8 +928,7 @@ struct TDCCUSTOMATTRIBUTEDEFINITION
 
 		return TRUE;
 	}
-
-
+	
 	///////////////////////////////////////////////////////////////////////////////
 	CString sUniqueID;
 	CString sColumnTitle;

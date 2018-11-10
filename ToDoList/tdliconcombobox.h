@@ -25,8 +25,12 @@ public:
 	int SelectImage(const CString& sImage);
 	CString GetSelectedImage() const;
 
+	int SetStrings(const CStringArray& aItems);
+	int GetItems(CStringArray& aItems) const; 
+
 	int GetChecked(CStringArray& aItems, CCB_CHECKSTATE nCheck = CCBC_CHECKED) const;
 	BOOL SetChecked(const CStringArray& aItems);
+	BOOL SetChecked(const CStringArray& aChecked, const CStringArray& aMixed);
 
 // Attributes
 protected:
@@ -56,6 +60,9 @@ protected:
 	virtual void DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT nItemState,
 								DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText);
 	virtual BOOL HasIcon() const { return TRUE; }
+
+	static int EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags);
+	static int DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags);
 };
 
 /////////////////////////////////////////////////////////////////////////////

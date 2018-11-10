@@ -155,53 +155,79 @@ CString CTDLIconComboBox::GetSelectedImage() const
 int CTDLIconComboBox::GetChecked(CStringArray& aItems, CCB_CHECKSTATE nCheck) const
 {
 	CStringArray aTemp;
-	int nNumItems = CEnCheckComboBox::GetChecked(aTemp, nCheck);
+	CEnCheckComboBox::GetChecked(aTemp, nCheck);
 
-	aItems.RemoveAll();
-
-	for (int nImg = 0; nImg < nNumItems; nImg++)
-	{
-		CString sImage, sName;
-		TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aTemp[nImg], sImage, sName);
-
-		aItems.Add(sImage);
-	}
-
-	return aItems.GetSize();
+	return DecodeImageTags(aTemp, aItems);
 }
 
 BOOL CTDLIconComboBox::SetChecked(const CStringArray& aItems)
 {
-	// clear existing checks first but don't update window
-	int nCount = GetCount();
-	
-	for (int i = 0; i < nCount; i++)
-		CCheckComboBox::SetCheck(i, CCBC_UNCHECKED, FALSE);
+	CStringArray aEncodedItems;
+	EncodeImageTags(aItems, aEncodedItems);
 
-	// assume that all the correct items have already 
-	// been added to the list
-	int nItem = aItems.GetSize(), nIndex = CB_ERR;
+	return CEnCheckComboBox::SetChecked(aEncodedItems);
+}
 
-	while (nItem--)
+BOOL CTDLIconComboBox::SetChecked(const CStringArray& aChecked, const CStringArray& aMixed)
+{
+	CStringArray aEncodedChecked, aEncodedMixed;
+
+	EncodeImageTags(aChecked, aEncodedChecked);
+	EncodeImageTags(aMixed, aEncodedMixed);
+
+	return CEnCheckComboBox::SetChecked(aEncodedChecked, aEncodedMixed);
+}
+
+int CTDLIconComboBox::SetStrings(const CStringArray& aItems)
+{
+	CStringArray aEncodedItems;
+	EncodeImageTags(aItems, aEncodedItems);
+
+	return CEnCheckComboBox::SetStrings(aEncodedItems);
+}
+
+int CTDLIconComboBox::GetItems(CStringArray& aItems) const
+{
+	CStringArray aTemp;
+	CEnCheckComboBox::GetItems(aTemp);
+
+	return DecodeImageTags(aTemp, aItems);
+}
+
+int CTDLIconComboBox::EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags)
+{
+	int nNumItems = aImages.GetSize();
+	aEncodedTags.RemoveAll();
+
+	for (int nImg = 0; nImg < nNumItems; nImg++)
 	{
-		if (aItems[nItem].IsEmpty())
-		{
-			if (HasItemNone())
-				nIndex = GetNoneIndex();
-			else
-				return FALSE;
-		}
-		else
-		{
-			CString sPartial = TDCCUSTOMATTRIBUTEDEFINITION::EncodeImageTag(aItems[nItem], _T(""));
-			nIndex = FindString(-1, sPartial);
+		CString sImage, sUnused;
 
-			if (nIndex == CB_ERR)
-				return FALSE;
-		}
+		if (!aImages[nImg].IsEmpty())
+			sImage = TDCCUSTOMATTRIBUTEDEFINITION::EncodeImageTag(aImages[nImg], _T(""));
 
-		SetCheck(nIndex, CCBC_CHECKED);
+		aEncodedTags.Add(sImage);
 	}
 
-	return TRUE;
+	ASSERT(aEncodedTags.GetSize() == aImages.GetSize());
+	return aEncodedTags.GetSize();
+}
+
+int CTDLIconComboBox::DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags)
+{
+	int nNumItems = aImages.GetSize();
+	aDecodedTags.RemoveAll();
+
+	for (int nImg = 0; nImg < nNumItems; nImg++)
+	{
+		CString sImage, sUnused;
+
+		if (!aImages[nImg].IsEmpty())
+			TDCCUSTOMATTRIBUTEDEFINITION::DecodeImageTag(aImages[nImg], sImage, sUnused);
+
+		aDecodedTags.Add(sImage);
+	}
+
+	ASSERT(aDecodedTags.GetSize() == aImages.GetSize());
+	return aDecodedTags.GetSize();
 }
