@@ -96,28 +96,30 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 					rImage.left += (nImageSize + 2);
 				}
 
-				// draw optional text
+				// draw optional text bypassing base class checkbox drawing
 				if (bList && !sName.IsEmpty())
-					CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, sName, bList, crText);
+				{
+					if (m_bMultiSel)
+						rImage.left += 2;
+
+					CAutoComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, sName, bList, crText);
+				}
 			}
-			else if (aImages[nImg].IsEmpty())
+			else if (bList)
 			{
-				if (bList)
-				{
-					// Draw none/any
-					CEnCheckComboBox::DrawItemText(dc, rect, nItem, nItemState, dwItemData, sItem, bList, crText);
-				}
-				else
-				{
-					ASSERT(nImg == 0);
-					ASSERT(HasItemNone());
+				// Draw none/any
+				CEnCheckComboBox::DrawItemText(dc, rect, nItem, nItemState, dwItemData, sItem, bList, crText);
+			}
+			else
+			{
+				ASSERT(nImg == 0);
+				ASSERT(HasItemNone());
 
-					CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, m_sNone, bList, crText);
-					rImage.left += (dc.GetTextExtent(m_sNone).cx + 2);
+				CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, m_sNone, bList, crText);
+				rImage.left += (dc.GetTextExtent(m_sNone).cx + 2);
 
-					if (nNumImage > 1)
-						rImage.left += (dc.GetTextExtent(Misc::GetListSeparator()).cx);
-				}
+				if (nNumImage > 1)
+					rImage.left += (dc.GetTextExtent(Misc::GetListSeparator()).cx);
 			}
 		}
 	}
@@ -163,7 +165,7 @@ int CTDLIconComboBox::GetChecked(CStringArray& aItems, CCB_CHECKSTATE nCheck) co
 BOOL CTDLIconComboBox::SetChecked(const CStringArray& aItems)
 {
 	CStringArray aEncodedItems;
-	EncodeImageTags(aItems, aEncodedItems);
+	EncodeImageTags(aItems, aEncodedItems, FALSE);
 
 	return CEnCheckComboBox::SetChecked(aEncodedItems);
 }
@@ -172,8 +174,8 @@ BOOL CTDLIconComboBox::SetChecked(const CStringArray& aChecked, const CStringArr
 {
 	CStringArray aEncodedChecked, aEncodedMixed;
 
-	EncodeImageTags(aChecked, aEncodedChecked);
-	EncodeImageTags(aMixed, aEncodedMixed);
+	EncodeImageTags(aChecked, aEncodedChecked, FALSE);
+	EncodeImageTags(aMixed, aEncodedMixed, FALSE);
 
 	return CEnCheckComboBox::SetChecked(aEncodedChecked, aEncodedMixed);
 }
@@ -181,7 +183,7 @@ BOOL CTDLIconComboBox::SetChecked(const CStringArray& aChecked, const CStringArr
 int CTDLIconComboBox::SetStrings(const CStringArray& aItems)
 {
 	CStringArray aEncodedItems;
-	EncodeImageTags(aItems, aEncodedItems);
+	EncodeImageTags(aItems, aEncodedItems, TRUE);
 
 	return CEnCheckComboBox::SetStrings(aEncodedItems);
 }
@@ -194,17 +196,41 @@ int CTDLIconComboBox::GetItems(CStringArray& aItems) const
 	return DecodeImageTags(aTemp, aItems);
 }
 
-int CTDLIconComboBox::EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags)
+int CTDLIconComboBox::EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags, BOOL bAdding) const
 {
 	int nNumItems = aImages.GetSize();
 	aEncodedTags.RemoveAll();
 
 	for (int nImg = 0; nImg < nNumItems; nImg++)
 	{
-		CString sImage, sUnused;
+		CString sImage;
 
 		if (!aImages[nImg].IsEmpty())
+		{
 			sImage = TDCCUSTOMATTRIBUTEDEFINITION::EncodeImageTag(aImages[nImg], _T(""));
+
+			if (!bAdding)
+			{
+				// Find the full string corresponding to this partial string
+				int nFull = FindString(-1, sImage);
+
+				if (nFull == -1)
+				{
+					ASSERT(0);
+					continue;
+				}
+
+				CString sFullImage = GetItemText(nFull);
+
+				if (sFullImage.Find(sImage) != 0)
+				{
+					ASSERT(0);
+					continue;
+				}
+
+				sImage = sFullImage;
+			}
+		}
 
 		aEncodedTags.Add(sImage);
 	}
@@ -213,7 +239,7 @@ int CTDLIconComboBox::EncodeImageTags(const CStringArray& aImages, CStringArray&
 	return aEncodedTags.GetSize();
 }
 
-int CTDLIconComboBox::DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags)
+int CTDLIconComboBox::DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags) const
 {
 	int nNumItems = aImages.GetSize();
 	aDecodedTags.RemoveAll();

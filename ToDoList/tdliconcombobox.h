@@ -61,8 +61,8 @@ protected:
 								DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText);
 	virtual BOOL HasIcon() const { return TRUE; }
 
-	static int EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags);
-	static int DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags);
+	int EncodeImageTags(const CStringArray& aImages, CStringArray& aEncodedTags, BOOL bAdding) const;
+	int DecodeImageTags(const CStringArray& aImages, CStringArray& aDecodedTags) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
