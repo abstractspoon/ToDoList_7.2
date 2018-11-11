@@ -156,7 +156,7 @@ int CCheckComboBox::CalcCheckBoxWidth(HDC hdc, HWND hwndRef)
 
 int CCheckComboBox::GetExtraListboxWidth() const
 {
-	return (CAutoComboBox::GetExtraListboxWidth() + CHECKBOX_WIDTH/*CalcCheckBoxWidth(NULL, *this)*/);
+	return (CAutoComboBox::GetExtraListboxWidth() + CHECKBOX_WIDTH);
 }
 
 LRESULT CCheckComboBox::OnGetTextLen(WPARAM wParam, LPARAM lParam)

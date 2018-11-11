@@ -15,6 +15,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+
+const int IMAGE_WIDTH = GraphicsMisc::ScaleByDPIFactor(16);
+
+/////////////////////////////////////////////////////////////////////////////
 // CTDLIconComboBox
 
 CTDLIconComboBox::CTDLIconComboBox(const CTDCImageList& ilImages, BOOL bMultiSel, BOOL bFilter)
@@ -47,8 +51,6 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 
 	GraphicsMisc::CentreRect(rImage, rect, FALSE, TRUE);
 
-	const int nImageSize = GetItemHeight(-1);
-
 	CStringArray aImages;
 	int nNumImage = 0;
 	
@@ -60,7 +62,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 			DrawCheckBox(dc, rect, nItem, nItemState, dwItemData, FALSE);
 
 			// update image rect
-			rImage.left += nImageSize;
+			rImage.left += IMAGE_WIDTH;
 		}
 
 		aImages.Add(sItem);
@@ -93,7 +95,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 					CPoint pt = rImage.TopLeft();
 
 					m_ilImages.Draw(&dc, sImage, pt, ILD_TRANSPARENT);
-					rImage.left += (nImageSize + 2);
+					rImage.left += (IMAGE_WIDTH + 2);
 				}
 
 				// draw optional text bypassing base class checkbox drawing
@@ -118,7 +120,10 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 				rImage.left += (dc.GetTextExtent(m_sNone).cx + 2);
 
 				if (nNumImage > 1)
+				{
+					CAutoComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, Misc::GetListSeparator(), bList, crText);
 					rImage.left += (dc.GetTextExtent(Misc::GetListSeparator()).cx);
+				}
 			}
 		}
 	}
