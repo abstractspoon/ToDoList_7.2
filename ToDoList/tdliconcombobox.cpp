@@ -99,8 +99,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 				// draw optional text bypassing base class checkbox drawing
 				if (bList && !sName.IsEmpty())
 				{
-					if (m_bMultiSel)
-						rImage.left += 2;
+					rImage.left += 2;
 
 					CAutoComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, sName, bList, crText);
 				}
@@ -115,7 +114,7 @@ void CTDLIconComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT 
 				ASSERT(nImg == 0);
 				ASSERT(HasItemNone());
 
-				CEnCheckComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, m_sNone, bList, crText);
+				CAutoComboBox::DrawItemText(dc, rImage, nItem, nItemState, dwItemData, m_sNone, bList, crText);
 				rImage.left += (dc.GetTextExtent(m_sNone).cx + 2);
 
 				if (nNumImage > 1)
