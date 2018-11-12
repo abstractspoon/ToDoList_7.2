@@ -311,7 +311,7 @@ BOOL CKanbanCtrl::SelectTasks(const CDWordArray& aTaskIDs)
 
 	// else
 	SelectListCtrl(m_aListCtrls[nList]);
-;	VERIFY(m_pSelectedList->SelectTasks(aTaskIDs));
+	VERIFY(m_pSelectedList->SelectTasks(aTaskIDs));
 
 	ScrollToSelectedTask();
 	
