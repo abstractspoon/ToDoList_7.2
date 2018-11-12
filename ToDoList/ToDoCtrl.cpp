@@ -2294,9 +2294,23 @@ void CToDoCtrl::OnCustomAttributeChange(UINT nCtrlID)
 
 	if (CTDCCustomAttributeHelper::GetControl(nCtrlID, m_aCustomControls, ctrl))
 	{
-		ASSERT(CTDCCustomAttributeHelper::IsCustomAttribute(ctrl.nAttrib));
-
 		UpdateTask(ctrl.nAttrib);
+	}
+}
+
+void CToDoCtrl::OnCustomAttributeCancel(UINT nCtrlID)
+{
+	ASSERT(CTDCCustomAttributeHelper::IsCustomEditControl(nCtrlID));
+
+	CUSTOMATTRIBCTRLITEM ctrl;
+
+	if (CTDCCustomAttributeHelper::GetControl(nCtrlID, m_aCustomControls, ctrl))
+	{
+		// Restore previous control values
+		TDCCADATA data;
+		m_mapCustomCtrlData.Lookup(ctrl.sAttribID, data);
+
+		CTDCCustomAttributeHelper::UpdateControl(this, ctrl, m_aCustomAttribDefs, data);
 	}
 }
 
