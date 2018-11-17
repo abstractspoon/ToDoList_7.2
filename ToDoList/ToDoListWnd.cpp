@@ -6118,7 +6118,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 		// if not maximized then set topmost if that's the preference
 		// do nothing if no change
 #ifndef _DEBUG
-		BOOL bTopMost = (Prefs().GetAlwaysOnTop() && !bMaximized) ? 1 : 0;
+		BOOL bTopMost = (Prefs().GetAlwaysOnTop() && (nType != SIZE_MAXIMIZED)) ? 1 : 0;
 		BOOL bIsTopMost = (GetExStyle() & WS_EX_TOPMOST) ? 1 : 0;
 		
 		if (bTopMost != bIsTopMost)
