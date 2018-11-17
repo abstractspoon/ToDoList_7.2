@@ -805,7 +805,6 @@ void CToDoCtrl::OnSize(UINT nType, int cx, int cy)
 	CRuntimeDlg::OnSize(nType, cx, cy);
 	
 	EndLabelEdit(TRUE);
-	ValidateCommentsSize();
 	Resize(cx, cy);
 }
 
@@ -832,6 +831,8 @@ void CToDoCtrl::Resize(int cx, int cy, BOOL bSplitting)
 			ClearInitialSize();
 			TRACE(_T("CToDoCtrl::OnSize(%d, %d)\n"), cx, cy);
 		}
+
+		ValidateCommentsSize();
 
 		// hide unused controls
 		ShowHideControls();
@@ -5840,7 +5841,6 @@ BOOL CToDoCtrl::SetStyles(const CTDCStylesMap& styles)
 	OnStylesUpdated();
 	
 	// misc
-	ValidateCommentsSize();
 	Resize();
 	Invalidate(TRUE);
 
@@ -5886,10 +5886,7 @@ void CToDoCtrl::SetLayoutPositions(TDC_UILOCATION nControlsPos, TDC_UILOCATION n
 	m_nCommentsPos = nCommentsPos;
 
 	if (bChanged && bResize)
-	{
-		ValidateCommentsSize();
 		Resize();
-	}
 }
 
 int CToDoCtrl::GetCustomAttributeDefs(CTDCCustomAttribDefinitionArray& aAttrib) const
