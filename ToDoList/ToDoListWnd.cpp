@@ -192,6 +192,7 @@ CToDoListWnd::CToDoListWnd()
 	m_bSettingAttribDefs(FALSE),
 	m_bReshowTimeTrackerOnEnable(FALSE),
 	m_bPromptLanguageChangeRestartOnActivate(FALSE),
+	m_bIgnoreNextResize(FALSE),
 	m_bAllowForcedCheckOut(FALSE)
 {
 	// must do this before initializing any controls
@@ -2767,12 +2768,13 @@ void CToDoListWnd::RestoreVisibility()
 	
 	if (m_bVisible)
 	{
-		RestorePosition();
-
-		int nShowCmd = (bMaximized ? SW_SHOWMAXIMIZED : 
-						(bMinimized ? SW_SHOWMINIMIZED : SW_SHOW));
+		{
+			CAutoFlag af(m_bIgnoreNextResize, bMaximized);
+			RestorePosition();
+		}
 		
- 		ShowWindow(nShowCmd);
+		int nCmdShow = (bMaximized ? SW_SHOWMAXIMIZED : (bMinimized ? SW_SHOWMINIMIZED : SW_SHOW));
+ 		ShowWindow(nCmdShow);
 
 		if (!bMinimized)
 		{
@@ -6075,6 +6077,14 @@ void CToDoListWnd::OnUpdateReload(CCmdUI* pCmdUI)
 void CToDoListWnd::OnSize(UINT nType, int cx, int cy) 
 {
 	CFrameWnd::OnSize(nType, cx, cy);
+
+	if (m_bIgnoreNextResize)
+	{
+		ASSERT(nType == SIZE_RESTORED);
+		TRACE(_T("CToDoListWnd::OnSize(Ignoring Resize)\n"));
+
+		return;
+	}
 	
 	// ensure m_cbQuickFind is positioned correctly
 	BOOL bVisible = ((m_bVisible > 0) && (nType != SIZE_MINIMIZED) && !m_bStartHidden);
@@ -6103,9 +6113,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 			m_cbQuickFind.MoveWindow(rNewPos);
 		}
 
-		// topmost?
-		BOOL bMaximized = (nType == SIZE_MAXIMIZED);
-		Resize(cx, cy, bMaximized);
+		Resize(cx, cy, (nType == SIZE_MAXIMIZED));
 		
 		// if not maximized then set topmost if that's the preference
 		// do nothing if no change
