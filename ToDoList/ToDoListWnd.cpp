@@ -10794,16 +10794,17 @@ void CToDoListWnd::OnUpdateSpellcheckTasklist(CCmdUI* pCmdUI)
 TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 {
 	TDC_FILE nSaveAll = TDCF_SUCCESS;
-	int nCtrl = GetTDCCount();
-
-	BOOL bIncUnsaved = Misc::HasFlag(dwFlags, TDLS_INCLUDEUNSAVED);
 	BOOL bClosingWindows = Misc::HasFlag(dwFlags, TDLS_CLOSINGWINDOWS);
-	BOOL bClosingTasklists = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS);
 
-	// scoped to end status bar progress
-	// before calling UpdateStatusbar
+	// scoped to end status bar progress before calling UpdateStatusbar
+	if (m_mgrToDoCtrls.AnyIsModified())
 	{
 		DOPROGRESS(IDS_SAVINGPROGRESS);
+
+		BOOL bIncUnsaved = Misc::HasFlag(dwFlags, TDLS_INCLUDEUNSAVED);
+		BOOL bClosingTasklists = Misc::HasFlag(dwFlags, TDLS_CLOSINGTASKLISTS);
+
+		int nCtrl = GetTDCCount();
 
 		while (nCtrl--)
 		{
@@ -10832,7 +10833,7 @@ TDC_FILE CToDoListWnd::SaveAll(DWORD dwFlags)
 				m_mgrToDoCtrls.UpdateTabItemText(nCtrl);
 		}
 	}
-	
+
 	if (!bClosingWindows)
 	{
 		UpdateCaption();
