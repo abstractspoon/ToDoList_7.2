@@ -7866,7 +7866,7 @@ void CToDoListWnd::OnTabCtrlSelchange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	int nCurSel = GetSelToDoCtrl();
 
 	// check password if necessary
-	if (m_nLastSelItem != -1 && !VerifyToDoCtrlPassword())
+	if ((m_nLastSelItem != -1) && !VerifyToDoCtrlPassword())
 	{
 		m_tabCtrl.SetCurSel(m_nLastSelItem);
 		return;
@@ -7895,6 +7895,12 @@ void CToDoListWnd::OnTabCtrlSelchange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		// update status bar
 		UpdateStatusbar();
 		UpdateCaption();
+
+		if (Prefs().GetShareCommentsSize() && (m_nLastSelItem != -1))
+		{
+			int nCommentsSize = GetToDoCtrl(m_nLastSelItem).GetCommentsSize();
+			tdcShow.SetCommentsSize(nCommentsSize);
+		}
 
 		// make sure size is right
 		CRect rTDC;

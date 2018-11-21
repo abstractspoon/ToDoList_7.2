@@ -153,11 +153,6 @@ protected:
 #define HOLD_REDRAW(tdc, tree) 	CHoldRedraw hr(tdc); CHoldRedraw hr2(tree);
 
 //////////////////////////////////////////////////////////////////////////////
-// static variables
-
-int	CToDoCtrl::s_nCommentsSize = -1; // unset
- 
-//////////////////////////////////////////////////////////////////////////////
 // private CToDoCtrl messages
 
 UINT CToDoCtrl::WM_TDC_FIXUPPOSTDROPSELECTION		= (WM_APP + 1);
@@ -1154,7 +1149,7 @@ void CToDoCtrl::ReposControls(CDeferWndMove* pDWM, CRect& rAvailable, BOOL bSpli
 		}
 
 		if (nNewCommentsSize > 0)
-			s_nCommentsSize = m_nCommentsSize = nNewCommentsSize;
+			m_nCommentsSize = nNewCommentsSize;
 	}
 	else if (!bStackCommentsAndControls) // adjust available area
 	{
@@ -1378,7 +1373,6 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 	else
 	{
 		BOOL bStackCommentsAndControls = (GetStackCommentsAndControls() && !GetVisibleEditFields().IsEmpty());
-		int nCommentSize = (HasStyle(TDCS_SHAREDCOMMENTSHEIGHT) ? s_nCommentsSize : m_nCommentsSize);
 	
 		if (bStackCommentsAndControls)
 		{
@@ -1403,7 +1397,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 							rComments.bottom -= 2;
 							rComments.top = rCtrls.bottom + SPLITSIZE;
 						}
-						rComments.left = rAvailable.right - nCommentSize;
+						rComments.left = rAvailable.right - m_nCommentsSize;
 						rComments.right = rCtrls.right;
 
 						rAvailable.right = rComments.left - SPLITSIZE;
@@ -1423,7 +1417,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 							rComments.top = rCtrls.bottom + SPLITSIZE;
 						}
 						rComments.left = rAvailable.left;
-						rComments.right = rAvailable.left + nCommentSize;
+						rComments.right = rAvailable.left + m_nCommentsSize;
 
 						rAvailable.left = rComments.right + SPLITSIZE;
 					}
@@ -1442,7 +1436,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 							rComments.left = rCtrls.right + SPLITSIZE;
 						}
 						rComments.top = rCtrls.top;
-						rComments.bottom = rCtrls.top + nCommentSize;
+						rComments.bottom = rCtrls.top + m_nCommentsSize;
 
 						rAvailable.bottom = rComments.top - SPLITSIZE;
 					}
@@ -1457,7 +1451,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 			case TDCUIL_RIGHT: // vertical
 				{
 					rComments.top += 2;
-					rComments.left = rAvailable.right - nCommentSize;
+					rComments.left = rAvailable.right - m_nCommentsSize;
 
 					rAvailable.right = rComments.left - SPLITSIZE;
 				}
@@ -1466,7 +1460,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 			case TDCUIL_LEFT:
 				{
 					rComments.top += 2;
-					rComments.right = rAvailable.left + nCommentSize;
+					rComments.right = rAvailable.left + m_nCommentsSize;
 
 					rAvailable.left = rComments.right + SPLITSIZE;
 				}
@@ -1475,7 +1469,7 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 			case TDCUIL_BOTTOM: // horizontal
 				{
 					rComments.left = rAvailable.left;
-					rComments.top = rAvailable.bottom - nCommentSize;
+					rComments.top = rAvailable.bottom - m_nCommentsSize;
 
 					rAvailable.bottom = rComments.top - SPLITSIZE;
 				}
@@ -5742,13 +5736,6 @@ BOOL CToDoCtrl::SetStyle(TDC_STYLE nStyle, BOOL bOn, BOOL bWantUpdate)
 			}
 			break;
 			
-		case TDCS_SHAREDCOMMENTSHEIGHT:
-			if (bOn)
-				LoadSplitPos(CPreferences());
-			else
-				m_nCommentsSize = s_nCommentsSize;
-			// fall thru
-			
 		case TDCS_SHOWCOMMENTSALWAYS:
 		case TDCS_AUTOREPOSCTRLS:
 		case TDCS_COLORTEXTBYPRIORITY:
@@ -7953,6 +7940,15 @@ CString CToDoCtrl::GetStylesheetPath() const
 
 	// not found
 	return _T("");
+}
+
+void CToDoCtrl::SetCommentsSize(int nSize)
+{
+	if (nSize != m_nCommentsSize)
+	{
+		m_nCommentsSize = nSize;
+		Resize();
+	}
 }
 
 void CToDoCtrl::OnContextMenu(CWnd* pWnd, CPoint point) 
@@ -10643,21 +10639,12 @@ void CToDoCtrl::SaveSplitPos(CPreferences& prefs) const
 	
 	CString sKey = GetPreferencesKey(); // no subkey
 	prefs.WriteProfileInt(sKey, _T("SplitPos"), m_nCommentsSize);
-
-	if (HasStyle(TDCS_SHAREDCOMMENTSHEIGHT))
-		prefs.WriteProfileInt(_T("FileStates"), _T("SharedSplitPos"), s_nCommentsSize);
 }
 
 void CToDoCtrl::LoadSplitPos(const CPreferences& prefs)
 {
-	s_nCommentsSize = prefs.GetProfileInt(_T("FileStates"), _T("SharedSplitPos"), DEFCOMMENTSIZE);
-
 	CString sKey = GetPreferencesKey(); // no subkey
-	
-	if (!HasStyle(TDCS_SHAREDCOMMENTSHEIGHT))
-		m_nCommentsSize = prefs.GetProfileInt(sKey, _T("SplitPos"), DEFCOMMENTSIZE);
-	else
-		m_nCommentsSize = s_nCommentsSize;
+	m_nCommentsSize = prefs.GetProfileInt(sKey, _T("SplitPos"), DEFCOMMENTSIZE);
 }
 
 void CToDoCtrl::SaveFindReplace(CPreferences& prefs) const
@@ -11147,39 +11134,36 @@ void CToDoCtrl::ValidateCommentsSize()
 
 	int nMaxComments = CalcMaxCommentSize();
 	int nMinComments = CalcMinCommentSize();
-
-	int nCommentSize = ((HasStyle(TDCS_SHAREDCOMMENTSHEIGHT) ? s_nCommentsSize : m_nCommentsSize));
-	int nValidCommentSize = max(nMinComments, min(nMaxComments, nCommentSize));
+	int nValidCommentSize = max(nMinComments, min(nMaxComments, m_nCommentsSize));
 
 #ifdef _DEBUG
-	if (nCommentSize != nValidCommentSize)
-		TRACE(_T("CToDoCtrl::ValidateCommentsSize(%d -> %d)\n"), nCommentSize, nValidCommentSize);
+	if (m_nCommentsSize != nValidCommentSize)
+		TRACE(_T("CToDoCtrl::ValidateCommentsSize(%d -> %d)\n"), m_nCommentsSize, nValidCommentSize);
 #endif
 
-	s_nCommentsSize = m_nCommentsSize = nValidCommentSize;
+	m_nCommentsSize = nValidCommentSize;
 }
 
 void CToDoCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_bSplitting)
 	{
-		int nNewSize = 0;
-		int nCommentsSize = ((HasStyle(TDCS_SHAREDCOMMENTSHEIGHT) ? s_nCommentsSize : m_nCommentsSize));
+		int nNewSize = 0, nPrevSize = m_nCommentsSize;
 		CRect rSplitter = GetSplitterRect();
 		
 		switch (m_nCommentsPos)
 		{
 		case TDCUIL_RIGHT: // vertical
-			nNewSize = (nCommentsSize - (point.x - rSplitter.left));
+			nNewSize = (m_nCommentsSize - (point.x - rSplitter.left));
 			break;
 			
 		case TDCUIL_LEFT: // vertical
-			nNewSize = (nCommentsSize + (point.x - rSplitter.right));
+			nNewSize = (m_nCommentsSize + (point.x - rSplitter.right));
 			break;
 			
 		case TDCUIL_BOTTOM: // horizontal
 		default:
-			nNewSize = (nCommentsSize - (point.y - rSplitter.top));
+			nNewSize = (m_nCommentsSize - (point.y - rSplitter.top));
 			break;
 		}
 
@@ -11189,7 +11173,7 @@ void CToDoCtrl::OnMouseMove(UINT nFlags, CPoint point)
 
 		nNewSize = min(max(nNewSize, nMinCommentSize), nMaxCommentSize);
 
-		if (nNewSize != nCommentsSize)
+		if (nNewSize != m_nCommentsSize)
 		{
 			// calc minimum control rect and only resize if the 
 			// controls require less space than we have available
@@ -11203,7 +11187,7 @@ void CToDoCtrl::OnMouseMove(UINT nFlags, CPoint point)
 			// available width/height.
 			// BUT if the drag fails we must remember to restore
 			// the previous split pos
-			m_nCommentsSize = s_nCommentsSize = nNewSize;
+			m_nCommentsSize = nNewSize;
 
 			CalcRequiredControlsRect(rClient, rCtrls, nCols, nRows, TRUE);
 			CRect rIntersect;
@@ -11218,7 +11202,7 @@ void CToDoCtrl::OnMouseMove(UINT nFlags, CPoint point)
 			}
 
 			// restore previous drag pos
-			m_nCommentsSize = s_nCommentsSize = nCommentsSize;
+			m_nCommentsSize = nPrevSize;
 		}
 	}
 	
@@ -11301,12 +11285,7 @@ BOOL CToDoCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void CToDoCtrl::OnCaptureChanged(CWnd *pWnd) 
 {
-	if (m_bSplitting)
-	{
-		// save latest split pos
-		s_nCommentsSize = m_nCommentsSize;
-		m_bSplitting = FALSE;
-	}
+	m_bSplitting = FALSE;
 	
 	CRuntimeDlg::OnCaptureChanged(pWnd);
 }
@@ -11317,12 +11296,7 @@ void CToDoCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 	
 	if (bShow)
 	{
-		// resize if we have shared splitter pos and its different
-		if (HasStyle(TDCS_SHAREDCOMMENTSHEIGHT) && (m_nCommentsSize != s_nCommentsSize))
-		{
-			m_nCommentsSize = s_nCommentsSize;
-			Resize();
-		}
+ 		//Resize();
 	}
 	else
 	{
