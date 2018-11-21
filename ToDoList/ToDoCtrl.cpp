@@ -6011,10 +6011,9 @@ TDC_FILE CToDoCtrl::Save(const CString& sFilePath, BOOL bFlush)
 
 TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath, BOOL bFlush)
 {
-	///////////////////////////////////////////////////////////////////////
-	// PERMANENT LOGGING
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	CScopedLogTime log(_T("CToDoCtrl::Save()"));
 	CString sFileName = FileMisc::GetFileNameFromPath(sFilePath);
-	DWORD dwTick = GetTickCount();
 	///////////////////////////////////////////////////////////////////////
 	
 	ASSERT (GetSafeHwnd());
@@ -6081,9 +6080,8 @@ TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath, BOOL
 	// prepare task file
 	BuildTasksForSave(tasks, bFirstSave);
 
-	///////////////////////////////////////////////////////////////////
-	// PERMANENT LOGGING
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::BuildTasksForSave(%s)"), sFileName);
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::BuildTasksForSave(%s)"), sFileName);
 	///////////////////////////////////////////////////////////////////
 
 	// backup the file if opening in read-write
@@ -6092,9 +6090,8 @@ TDC_FILE CToDoCtrl::Save(CTaskFile& tasks/*out*/, const CString& sFilePath, BOOL
 	// do the save
 	if (tasks.Save(sSavePath, SFEF_UTF16))
 	{
-		///////////////////////////////////////////////////////////////////
-		// PERMANENT LOGGING
-		FileMisc::LogTimeElapsed(dwTick, _T("CTaskFile::Save(%s)"), sFileName);
+		// PERMANENT LOGGING //////////////////////////////////////////////
+		log.LogTimeElapsed(_T("CTaskFile::Save(%s)"), sFileName);
 		///////////////////////////////////////////////////////////////////
 
 		SetFilePath(sSavePath);
@@ -6489,8 +6486,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 	if (!GetSafeHwnd())
 		return FALSE;
 
-	///////////////////////////////////////////////////////////////////
-	DWORD dwTick = GetTickCount();
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	CScopedLogTime log(_T("CToDoCtrl::LoadTasks()"));
 	///////////////////////////////////////////////////////////////////
 
 	// save visible state
@@ -6509,8 +6506,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 		SaveAttributeVisibility(prefs);
 		SaveFindReplace(prefs);
 
-		///////////////////////////////////////////////////////////////////
-		FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Save state)"));
+		// PERMANENT LOGGING //////////////////////////////////////////////
+		log.LogTimeElapsed(_T("CToDoCtrl::LoadTasks(Save state)"));
 		///////////////////////////////////////////////////////////////////
 	}	
 	
@@ -6549,8 +6546,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 	if (tasks.IsPasswordPromptingDisabled())
 		SetStyle(TDCS_DISABLEPASSWORDPROMPTING);
 	
-	///////////////////////////////////////////////////////////////////
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Process header)"));
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::LoadTasks(Process header)"));
 	///////////////////////////////////////////////////////////////////
 
 	if (tasks.GetTaskCount())
@@ -6561,8 +6558,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 		DWORD dwFirstVis = GetTaskID(m_taskTree.Tree().GetFirstVisibleItem());
 		HTREEITEM htiFirst = SetAllTasks(tasks);
 
-		///////////////////////////////////////////////////////////////////
-		FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Build tree)"));
+		// PERMANENT LOGGING //////////////////////////////////////////////
+		log.LogTimeElapsed(_T("CToDoCtrl::LoadTasks(Build tree)"));
 		///////////////////////////////////////////////////////////////////
 
 		if (m_taskTree.GetItemCount())
@@ -6570,8 +6567,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 			// restore last tree state
 			htiSel = LoadTasksState(prefs);
 
-			///////////////////////////////////////////////////////////////////
-			FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Restore state)"));
+			// PERMANENT LOGGING //////////////////////////////////////////////
+			log.LogTimeElapsed(_T("CToDoCtrl::LoadTasks(Restore state)"));
 			///////////////////////////////////////////////////////////////////
 			
 			// redo last sort
@@ -6616,8 +6613,8 @@ BOOL CToDoCtrl::LoadTasks(const CTaskFile& tasks)
 	else
 		Resize();
 
-	///////////////////////////////////////////////////////////////////
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::LoadTasks(Remaining)"));
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::LoadTasks(Remaining)"));
 	///////////////////////////////////////////////////////////////////
 
 	return TRUE;
@@ -9257,30 +9254,30 @@ void CToDoCtrl::HandleUnsavedComments()
 
 HTREEITEM CToDoCtrl::SetAllTasks(const CTaskFile& tasks)
 {
-	///////////////////////////////////////////////////////////////////
-	DWORD dwTick = GetTickCount();
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	CScopedLogTime log;
 	///////////////////////////////////////////////////////////////////
 
 	// Clear existing tree items
 	TSH().RemoveAll(FALSE);
 	m_taskTree.DeleteAll();
 
-	///////////////////////////////////////////////////////////////////
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::SetAllTasks(m_taskTree.DeleteAll)"));
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::SetAllTasks(m_taskTree.DeleteAll)"));
 	///////////////////////////////////////////////////////////////////
 
 	// Build data structure first 
 	m_data.BuildDataModel(tasks);
 
-	///////////////////////////////////////////////////////////////////
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::SetAllTasks(m_data.BuildDataModel)"));
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::SetAllTasks(m_data.BuildDataModel)"));
 	///////////////////////////////////////////////////////////////////
 
 	// Then tree structure
 	HTREEITEM hti = RebuildTree();
 
-	///////////////////////////////////////////////////////////////////
-	FileMisc::LogTimeElapsed(dwTick, _T("CToDoCtrl::SetAllTasks(RebuildTree)"));
+	// PERMANENT LOGGING //////////////////////////////////////////////
+	log.LogTimeElapsed(_T("CToDoCtrl::SetAllTasks(RebuildTree)"));
 	///////////////////////////////////////////////////////////////////
 
 	return hti;
