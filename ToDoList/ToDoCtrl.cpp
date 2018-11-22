@@ -3061,10 +3061,11 @@ BOOL CToDoCtrl::SetSelectedTaskDate(TDC_DATE nDate, const COleDateTime& date)
 BOOL CToDoCtrl::SetSelectedTaskDate(TDC_DATE nDate, const COleDateTime& date, BOOL bDateEdited)
 {
 	// if this is a start/due edit then it must be a component 
-	ASSERT (!bDateEdited || ((nDate != TDCD_DUE) && (nDate != TDCD_START)));
-
 	if (bDateEdited && ((nDate == TDCD_DUE) || (nDate == TDCD_START)))
+	{
+		ASSERT(0);
 		return FALSE;
+	}
 
 	// special case
 	if (nDate == TDCD_DONE)
