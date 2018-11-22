@@ -11207,7 +11207,7 @@ void CToDoListWnd::OnEditInctaskpercentdone()
 
 void CToDoListWnd::OnUpdateEditInctaskpercentdone(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(GetToDoCtrl().CanEditSelectedTask());	
+	pCmdUI->Enable(GetToDoCtrl().CanEditSelectedTaskPercent());	
 }
 
 void CToDoListWnd::OnEditDectaskpercentdone() 
@@ -11217,7 +11217,7 @@ void CToDoListWnd::OnEditDectaskpercentdone()
 
 void CToDoListWnd::OnUpdateEditDectaskpercentdone(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(GetToDoCtrl().CanEditSelectedTask());	
+	pCmdUI->Enable(GetToDoCtrl().CanEditSelectedTaskPercent());	
 }
 
 void CToDoListWnd::OnEditDectaskpriority() 

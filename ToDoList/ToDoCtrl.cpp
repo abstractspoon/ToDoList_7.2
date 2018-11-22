@@ -3905,7 +3905,7 @@ TDC_SET CToDoCtrl::SetTaskDone(DWORD dwTaskID, const COleDateTime& date,
 
 BOOL CToDoCtrl::SetSelectedTaskPercentDone(int nPercent)
 {
-	if (!CanEditSelectedTask())
+	if (!CanEditSelectedTaskPercent())
 		return FALSE;
 
 	Flush();
@@ -4065,7 +4065,7 @@ int CToDoCtrl::GetNextPercentDone(int nPercent, BOOL bUp)
 
 BOOL CToDoCtrl::IncrementSelectedTaskPercentDone(BOOL bUp)
 {
-	if (!CanEditSelectedTask())
+	if (!CanEditSelectedTaskPercent())
 		return FALSE;
 
 	Flush();
@@ -12673,6 +12673,20 @@ BOOL CToDoCtrl::CanEditSelectedTask(DWORD dwTaskID) const
 BOOL CToDoCtrl::CanEditSelectedTaskLock() const
 {
 	return (!IsReadOnly() && GetSelectedCount());
+}
+
+BOOL CToDoCtrl::CanEditSelectedTaskPercent() const
+{
+	if (!CanEditSelectedTask())
+		return FALSE;
+
+	if (HasStyle(TDCS_AUTOCALCPERCENTDONE))
+		return FALSE;
+
+	if (m_taskTree.SelectionHasSubtasks() && HasStyle(TDCS_AVERAGEPERCENTSUBCOMPLETION))
+		return FALSE;
+
+	return TRUE;
 }
 
 BOOL CToDoCtrl::CopySelectedTaskAttributeData(TDC_ATTRIBUTE nFromAttrib, TDC_ATTRIBUTE nToAttrib)

@@ -157,7 +157,7 @@ public:
 	BOOL SelectionHasReferences() const;
 	BOOL SelectionHasNonReferences() const;
 	BOOL SelectionHasDependents() const;
-	BOOL SelectionHasSubtasks() const;
+	BOOL SelectionHasSubtasks() const; // == SelectionHasParents
 	BOOL SelectionHasIcons() const;
 	BOOL SelectionHasUnlocked() const;
 	BOOL SelectionHasLocked() const;

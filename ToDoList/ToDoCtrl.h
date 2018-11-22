@@ -278,7 +278,9 @@ public:
 	double CalcSelectedTaskCost() const { return m_taskTree.CalcSelectedTaskCost(); }
 
 	BOOL CanEditSelectedTask(DWORD dwTaskID = 0) const;
+	BOOL CanEditSelectedTaskPercent() const;
 	BOOL CanEditSelectedTaskLock() const;
+
 	BOOL SetSelectedTaskColor(COLORREF color);
 	BOOL ClearSelectedTaskColor() { return SetSelectedTaskColor(CLR_NONE); }
 	BOOL SetSelectedTaskTitle(const CString& sTitle);
