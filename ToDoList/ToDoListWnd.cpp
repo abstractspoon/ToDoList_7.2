@@ -98,6 +98,7 @@ static char THIS_FILE[] = __FILE__;
 const int BEVEL = 3; // DON'T SCALE
 const int MAX_NUM_TOOLS = 50;
 const int BORDER = GraphicsMisc::ScaleByDPIFactor(3);
+const int MRU_MAX_ITEM_LEN = 128;
 
 const int QUICKFIND_HEIGHT = GraphicsMisc::ScaleByDPIFactor(200);
 const int QUICKFIND_VOFFSET = (GraphicsMisc::WantDPIScaling() ? (GraphicsMisc::ScaleByDPIFactor(2) - 1) : 0);
@@ -108,9 +109,9 @@ const UINT ONE_MINUTE = 10000;
 const UINT ONE_MINUTE = 60000;
 #endif
 
-const LPCTSTR SETTINGS_KEY	= _T("Settings");
-const LPCTSTR PREF_KEY		= _T("Preferences");
-const LPCTSTR ENDL			= _T("\n");
+const LPCTSTR SETTINGS_KEY		= _T("Settings");
+const LPCTSTR PREF_KEY			= _T("Preferences");
+const LPCTSTR ENDL				= _T("\n");
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -162,7 +163,7 @@ CToDoListWnd::CToDoListWnd()
 	: 
 	CFrameWnd(), 
 	m_bVisible(-1), 
-	m_mruList(0, _T("MRU"), _T("TaskList%d"), 16, AFX_ABBREV_FILENAME_LEN, CEnString(IDS_RECENTFILES)),
+	m_mruList(0, _T("MRU"), _T("TaskList%d"), 16, MRU_MAX_ITEM_LEN, CEnString(IDS_RECENTFILES)),
 	m_nLastSelItem(-1), 
 	m_nMaxState(TDCMS_NORMAL), 
 	m_nPrevMaxState(TDCMS_NORMAL),
