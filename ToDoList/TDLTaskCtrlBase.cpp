@@ -1164,9 +1164,7 @@ void CTDLTaskCtrlBase::LoadState(const CPreferences& prefs, const CString& sKey)
 	else
 		SetSplitPos(CalcSplitterPosToFitListColumns());
 
-	ASSERT(nSplitPos > 0);
 	SetSplitPos(nSplitPos);
-
 	RefreshSize();
 
 	m_sort.LoadState(prefs, sKey);

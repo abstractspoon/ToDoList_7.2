@@ -2888,8 +2888,8 @@ BOOL CToDoListWnd::CreateNewTaskList(BOOL bAddDefTask)
 			pNew->DeleteAllTasks();
 		}
 		
-		// clear modified flag
 		pNew->SetModified(FALSE);
+		pNew->AdjustSplitterToFitAttributeColumns();
 	}
 
 	return (pNew != NULL);
