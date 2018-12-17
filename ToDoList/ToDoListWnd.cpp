@@ -2110,6 +2110,8 @@ void CToDoListWnd::UpdateStatusbar()
 
 void CToDoListWnd::OnLoad() 
 {
+	ASSERT(IsWindowVisible());
+
 	CPreferences prefs;
 	CFileOpenDialog dialog(IDS_OPENTASKLIST_TITLE, 
 							GetDefaultFileExt(TRUE), 
@@ -7686,7 +7688,9 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 	}
 	
 	// else
+	CPreferences prefs;
 	TDCCOLEDITFILTERVISIBILITY vis;
+
 	Prefs().GetDefaultColumnEditFilterVisibility(vis);
 	
 	CFilteredToDoCtrl* pTDC = new CFilteredToDoCtrl(m_mgrUIExtensions, 
@@ -7695,7 +7699,31 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 													vis);
 	// Give it a meaningful maximum size
 	CRect rCtrl;
-	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
+	BOOL bMaximized = IsZoomed();
+
+	if (m_bReloading)
+	{
+		int nDefShowState = AfxGetApp()->m_nCmdShow;
+		bMaximized = ((nDefShowState == SW_SHOWMAXIMIZED) || prefs.GetProfileInt(_T("Pos"), _T("Maximized"), FALSE));
+
+		if (bMaximized)
+		{
+			GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
+		}
+		else
+		{
+			rCtrl.left = prefs.GetProfileInt(_T("Pos"), _T("Left"), -1);
+			rCtrl.top = prefs.GetProfileInt(_T("Pos"), _T("Top"), -1);
+			rCtrl.right = prefs.GetProfileInt(_T("Pos"), _T("Right"), -1);
+			rCtrl.bottom = prefs.GetProfileInt(_T("Pos"), _T("Bottom"), -1);
+		}
+	}
+	else
+	{
+		GetClientRect(rCtrl);
+	}
+
+	CalcToDoCtrlRect(rCtrl, rCtrl.Width(), rCtrl.Height(), bMaximized);
 
 	// and somewhere out in space
 	rCtrl.OffsetRect(-30000, -30000);
@@ -7720,8 +7748,6 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 		{
 			// Extensions are 'lazy' loaded so this is the first chance
 			// to allow them to load global preferences
-			CPreferences prefs;
-			
 			m_mgrUIExtensions.LoadPreferences(prefs, _T("UIExtensions"));
 			m_mgrContent.LoadPreferences(prefs, _T("ContentControls"), FALSE);
 		}
