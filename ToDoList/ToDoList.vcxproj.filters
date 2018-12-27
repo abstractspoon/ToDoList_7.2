@@ -867,6 +867,9 @@
     <ClInclude Include="PreferencesUICustomToolbarPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ToDoCtrlDataDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\abstractspoon.ico">
@@ -1062,6 +1065,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\outlooktypes.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\reset_elapsed.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

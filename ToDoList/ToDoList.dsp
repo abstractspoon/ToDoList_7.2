@@ -803,6 +803,10 @@ SOURCE=.\TDCAnonymizeTasklist.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\tdccustomattribdata.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDCCustomAttributeHelper.h
 # End Source File
 # Begin Source File
@@ -1196,6 +1200,10 @@ SOURCE=.\ToDoCtrl.h
 # Begin Source File
 
 SOURCE=.\ToDoCtrlData.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ToDoCtrlDataDefines.h
 # End Source File
 # Begin Source File
 
