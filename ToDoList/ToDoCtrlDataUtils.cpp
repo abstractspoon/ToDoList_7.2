@@ -1630,17 +1630,17 @@ BOOL CTDCTaskCalculator::GetTaskCustomAttributeData(DWORD dwTaskID, const TDCCUS
 	return FALSE;
 }
 
-double CTDCTaskCalculator::GetCalculationValue(const TDCCADATA& data, TDC_UNITS nUnits)
+double CTDCTaskCalculator::GetCalculationValue(const TDCCADATA& data, const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, TDC_UNITS nUnits)
 {
 	double dValue = DBL_NULL;
 
-	if (IsValidUnits(nUnits))
+	if (IsValidUnits(nUnits) && attribDef.IsDataType(TDCCA_TIMEPERIOD))
 	{
 		TDC_UNITS nTaskUnits;
 		dValue = data.AsTimePeriod(nTaskUnits);
 
 		// Convert to requested units
-		if ((dValue != 0.0) && nTaskUnits != nUnits)
+		if ((dValue != 0.0) && IsValidUnits(nTaskUnits) && (nTaskUnits != nUnits))
 		{
 			dValue = CTimeHelper().GetTime(dValue, 
 				TDC::MapUnitsToTHUnits(nTaskUnits), 
@@ -1673,7 +1673,7 @@ BOOL CTDCTaskCalculator::GetTaskCustomAttributeData(const TODOITEM* pTDI, const 
 		ASSERT(attribDef.SupportsFeature(TDCCAF_ACCUMULATE));
 
 		// our value
-		dCalcValue = GetCalculationValue(data, nUnits);
+		dCalcValue = GetCalculationValue(data, attribDef, nUnits);
 
 		// our children's values
 		for (int i = 0; i < pTDS->GetSubTaskCount(); i++)
@@ -1697,7 +1697,7 @@ BOOL CTDCTaskCalculator::GetTaskCustomAttributeData(const TODOITEM* pTDI, const 
 		if (data.IsEmpty())
 			dCalcValue = -DBL_MAX;
 		else
-			dCalcValue = GetCalculationValue(data, nUnits);
+			dCalcValue = GetCalculationValue(data, attribDef, nUnits);
 
 		// our children's values
 		for (int i = 0; i < pTDS->GetSubTaskCount(); i++)
@@ -1721,7 +1721,7 @@ BOOL CTDCTaskCalculator::GetTaskCustomAttributeData(const TODOITEM* pTDI, const 
 		if (data.IsEmpty())
 			dCalcValue = DBL_MAX;
 		else
-			dCalcValue = GetCalculationValue(data, nUnits);
+			dCalcValue = GetCalculationValue(data, attribDef, nUnits);
 
 		// our children's values
 		for (int i = 0; i < pTDS->GetSubTaskCount(); i++)
@@ -1739,7 +1739,7 @@ BOOL CTDCTaskCalculator::GetTaskCustomAttributeData(const TODOITEM* pTDI, const 
 	}
 	else
 	{
-		dCalcValue = GetCalculationValue(data, nUnits);
+		dCalcValue = GetCalculationValue(data, attribDef, nUnits);
 	}
 
 	if (dCalcValue == DBL_NULL)

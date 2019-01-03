@@ -102,7 +102,7 @@ protected:
 	const TODOITEM* GetLastModifiedTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 
 	static double GetBestDate(double dBest, double dDate, BOOL bEarliest);
-	static double GetCalculationValue(const TDCCADATA& data, TDC_UNITS nUnits);
+	static double GetCalculationValue(const TDCCADATA& data, const TDCCUSTOMATTRIBUTEDEFINITION& attribDef, TDC_UNITS nUnits);
 
 };
 
