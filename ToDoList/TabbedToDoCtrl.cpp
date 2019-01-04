@@ -150,7 +150,7 @@ BOOL CTabbedToDoCtrl::OnInitDialog()
 
 	// create the list-list before anything else
 	CRect rCtrl;
-	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
+	VERIFY(GraphicsMisc::GetPrimaryMonitorScreenSpace(rCtrl));
 
 	VERIFY(m_taskList.Create(this, rCtrl, IDC_FTC_TASKLISTLIST, FALSE)); // !visible
 	

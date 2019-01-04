@@ -2853,7 +2853,7 @@ void CToDoListWnd::RestorePosition()
 
 		// make sure it fits the screen
 		CRect rScreen;
-		VERIFY(GraphicsMisc::GetAvailableScreenSpace(rect, rScreen));
+		VERIFY(GraphicsMisc::GetAvailableScreenSpace(rect, rScreen, MONITOR_DEFAULTTOPRIMARY));
 
 		if (rect.Height() > rScreen.Height())
 			rect.bottom = rScreen.Height();
@@ -7706,24 +7706,21 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 		int nDefShowState = AfxGetApp()->m_nCmdShow;
 		bMaximized = ((nDefShowState == SW_SHOWMAXIMIZED) || prefs.GetProfileInt(_T("Pos"), _T("Maximized"), FALSE));
 
+		rCtrl.left = prefs.GetProfileInt(_T("Pos"), _T("Left"), -1);
+		rCtrl.top = prefs.GetProfileInt(_T("Pos"), _T("Top"), -1);
+		rCtrl.right = prefs.GetProfileInt(_T("Pos"), _T("Right"), -1);
+		rCtrl.bottom = prefs.GetProfileInt(_T("Pos"), _T("Bottom"), -1);
+
 		if (bMaximized)
-		{
-			GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
-		}
-		else
-		{
-			rCtrl.left = prefs.GetProfileInt(_T("Pos"), _T("Left"), -1);
-			rCtrl.top = prefs.GetProfileInt(_T("Pos"), _T("Top"), -1);
-			rCtrl.right = prefs.GetProfileInt(_T("Pos"), _T("Right"), -1);
-			rCtrl.bottom = prefs.GetProfileInt(_T("Pos"), _T("Bottom"), -1);
-		}
+			GraphicsMisc::GetAvailableScreenSpace(CRect(rCtrl), rCtrl);
 	}
 	else
 	{
 		GetClientRect(rCtrl);
 	}
 
-	CalcToDoCtrlRect(rCtrl, rCtrl.Width(), rCtrl.Height(), bMaximized);
+	if (rCtrl.IsRectEmpty() || !CalcToDoCtrlRect(rCtrl, rCtrl.Width(), rCtrl.Height(), bMaximized))
+		VERIFY(GraphicsMisc::GetPrimaryMonitorScreenSpace(rCtrl));
 
 	// and somewhere out in space
 	rCtrl.OffsetRect(-30000, -30000);

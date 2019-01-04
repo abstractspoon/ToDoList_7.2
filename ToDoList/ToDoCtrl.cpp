@@ -592,7 +592,7 @@ BOOL CToDoCtrl::OnInitDialog()
 {
 	// create the tree-list before anything else
 	CRect rCtrl;
-	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
+	VERIFY(GraphicsMisc::GetPrimaryMonitorScreenSpace(rCtrl));
 
 	VERIFY(m_taskTree.Create(this, rCtrl, IDC_TASKTREELIST));
 
