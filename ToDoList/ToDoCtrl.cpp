@@ -13119,12 +13119,3 @@ BOOL CToDoCtrl::SaveTaskViewToImage(CString& sFilePath)
 	return FALSE;
 }
 
-void CToDoCtrl::NotifyBeginPreferencesUpdate(BOOL /*bFirst*/)
-{
-}
-
-void CToDoCtrl::NotifyEndPreferencesUpdate(BOOL bFirst)
-{
-	if (bFirst)
-		m_taskTree.AdjustSplitterToFitAttributeColumns();
-}

@@ -333,6 +333,8 @@ LRESULT CTDLTaskListCtrl::OnListCustomDraw(NMLVCUSTOMDRAW* pLVCD)
 
 void CTDLTaskListCtrl::OnNotifySplitterChange(int nSplitPos)
 {
+	CTDLTaskCtrlBase::OnNotifySplitterChange(nSplitPos);
+
 	// if split width exceeds client column width
 	// extend column width to suit
 	if (IsRight(m_lcTasks))
@@ -351,8 +353,6 @@ void CTDLTaskListCtrl::OnNotifySplitterChange(int nSplitPos)
 	{
 		m_lcTasks.SetColumnWidth(0, CLIENTCOLWIDTH);
 	}
-
-	InvalidateAll(TRUE);
 }
 
 int CTDLTaskListCtrl::InsertItem(DWORD dwTaskID, int nPos)
