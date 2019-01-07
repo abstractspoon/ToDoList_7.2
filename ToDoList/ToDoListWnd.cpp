@@ -2891,7 +2891,6 @@ BOOL CToDoListWnd::CreateNewTaskList(BOOL bAddDefTask)
 		}
 		
 		pNew->SetModified(FALSE);
-		pNew->AdjustSplitterToFitAttributeColumns();
 	}
 
 	return (pNew != NULL);
@@ -3219,7 +3218,7 @@ LRESULT CToDoListWnd::OnToDoListRefreshPrefs(WPARAM /*wp*/, LPARAM /*lp*/)
 	m_mgrToDoCtrls.SetAllNeedPreferenceUpdate(TRUE);
 	
 	// then update active tasklist
-	UpdateActiveToDoCtrlPreferences();
+	CheckUpdateActiveToDoCtrlPreferences();
 
 	return 0;
 }
@@ -5011,7 +5010,7 @@ void CToDoListWnd::DoPreferences(int nInitPage)
 			m_findDlg.RefreshUserPreferences();
 		
 		// active tasklist userPrefs
-		UpdateActiveToDoCtrlPreferences();
+		CheckUpdateActiveToDoCtrlPreferences();
 		UpdateTimeTrackerPreferences();
 
 		// then refresh filter bar for any new default cats, statuses, etc
@@ -7739,7 +7738,7 @@ CFilteredToDoCtrl* CToDoListWnd::NewToDoCtrl(BOOL bVisible, BOOL bEnabled)
 		pTDC->SetUITheme(m_theme);
 		
 		// rest of runtime preferences
-		UpdateToDoCtrlPreferences(pTDC, TRUE);
+		UpdateToDoCtrlPreferences(pTDC);
 
 		if (bFirstTDC)
 		{
@@ -7911,7 +7910,7 @@ void CToDoListWnd::OnTabCtrlSelchange(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		}
 
 		CFilteredToDoCtrl& tdcShow = GetToDoCtrl(nCurSel);
-		UpdateToDoCtrlPreferences(&tdcShow, FALSE);
+		UpdateToDoCtrlPreferences(&tdcShow);
 
 		// update the filter selection
  		RefreshFilterBarControls();
@@ -8362,7 +8361,7 @@ BOOL CToDoListWnd::SelectToDoCtrl(int nIndex, BOOL bCheckPassword, int nNotifyDu
 	m_tabCtrl.UpdateWindow();
 	
 	if (!m_bClosing)
-		UpdateActiveToDoCtrlPreferences();
+		CheckUpdateActiveToDoCtrlPreferences();
 	
 	const CPreferencesDlg& userPrefs = Prefs();
 
@@ -8429,7 +8428,7 @@ void CToDoListWnd::UpdateAeroFeatures()
 		GraphicsMisc::ForceIconicRepresentation(*this, !bEnable);
 }
 
-void CToDoListWnd::UpdateActiveToDoCtrlPreferences()
+void CToDoListWnd::CheckUpdateActiveToDoCtrlPreferences()
 {
 	// check if this has already been done since the last userPrefs change
 	int nSel = GetSelToDoCtrl();
@@ -8438,7 +8437,7 @@ void CToDoListWnd::UpdateActiveToDoCtrlPreferences()
 	{
 		CFilteredToDoCtrl& tdc = GetToDoCtrl(nSel);
 
-		UpdateToDoCtrlPreferences(&tdc, FALSE);
+		UpdateToDoCtrlPreferences(&tdc);
 
 		// and filter bar relies on this tdc's visible columns
 		m_filterBar.SetVisibleFilters(tdc.GetVisibleFilterFields());
@@ -8448,14 +8447,14 @@ void CToDoListWnd::UpdateActiveToDoCtrlPreferences()
 	}
 }
 
-void CToDoListWnd::UpdateToDoCtrlPreferences(CFilteredToDoCtrl* pTDC, BOOL bFirst)
+void CToDoListWnd::UpdateToDoCtrlPreferences(CFilteredToDoCtrl* pTDC)
 {
 	const CPreferencesDlg& userPrefs = Prefs();
 	CFilteredToDoCtrl& tdc = *pTDC;
 
 	CTDCToDoCtrlPreferenceHelper::UpdateToDoCtrl(tdc, userPrefs, m_tdiDefault, 
 												m_bShowProjectName, m_bShowTreeListBar, 
-												m_fontMain, m_fontTree, m_fontComments, bFirst);
+												m_fontMain, m_fontTree, m_fontComments);
 }
 
 void CToDoListWnd::OnSaveall() 

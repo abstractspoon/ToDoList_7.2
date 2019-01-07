@@ -2305,28 +2305,10 @@ void CTabbedToDoCtrl::SetAlternateLineColor(COLORREF color)
 	CToDoCtrl::SetAlternateLineColor(color);
 }
 
-void CTabbedToDoCtrl::NotifyBeginPreferencesUpdate(BOOL bFirst)
+void CTabbedToDoCtrl::NotifyEndPreferencesUpdate()
 {
 	// base class
-	CToDoCtrl::NotifyBeginPreferencesUpdate(bFirst);
-
-	// nothing else for us to do
-}
-
-void CTabbedToDoCtrl::AdjustSplitterToFitAttributeColumns() 
-{ 
-	CToDoCtrl::AdjustSplitterToFitAttributeColumns();
-
-	m_taskList.AdjustSplitterToFitAttributeColumns();
-}
-
-void CTabbedToDoCtrl::NotifyEndPreferencesUpdate(BOOL bFirst)
-{
-	// base class
-	CToDoCtrl::NotifyEndPreferencesUpdate(bFirst);
-
-	if (bFirst)
-		m_taskList.AdjustSplitterToFitAttributeColumns();
+	CToDoCtrl::NotifyEndPreferencesUpdate();
 
 	// notify extension windows
 	if (HasAnyExtensionViews())
