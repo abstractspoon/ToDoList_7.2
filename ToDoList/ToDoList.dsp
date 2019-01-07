@@ -271,7 +271,7 @@ SOURCE=.\TDCImportExportMgr.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\TDCMergeToDoList.cpp
+SOURCE=.\TDCMergeTasklist.cpp
 # End Source File
 # Begin Source File
 

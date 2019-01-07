@@ -109,9 +109,6 @@
     <ClCompile Include="TDCImageList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TDCMergeToDoList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TDCSearchParamHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -401,6 +398,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TDLToolbarButtonListCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TDCMergeTasklist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
