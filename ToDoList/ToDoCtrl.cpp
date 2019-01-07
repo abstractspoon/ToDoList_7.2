@@ -592,7 +592,7 @@ BOOL CToDoCtrl::OnInitDialog()
 {
 	// create the tree-list before anything else
 	CRect rCtrl;
-	VERIFY(GraphicsMisc::GetPrimaryMonitorScreenSpace(rCtrl));
+	GraphicsMisc::GetAvailableScreenSpace(*this, rCtrl);
 
 	VERIFY(m_taskTree.Create(this, rCtrl, IDC_TASKTREELIST));
 
@@ -6831,6 +6831,8 @@ BOOL CToDoCtrl::ArchiveTasks(const CString& sArchivePath, const CTaskFile& tasks
 		tfh.sXmlHeader = m_sXmlHeader;
 		tfh.sXslHeader = m_sXslHeader;
 	}
+
+	SaveCustomAttributeDefinitions(file);
 	
 	file.Merge(tasks, TRUE, TRUE);
 	file.Encrypt();
