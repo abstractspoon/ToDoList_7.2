@@ -954,7 +954,7 @@ BOOL CTreeSelectionHelper::BuildOrderedItems(const CHTIList& selection,
 			return TRUE;
 	}
 
-	return FALSE;
+	return (hti == NULL);
 }
 
 int CTreeSelectionHelper::GetItemTitles(const CHTIList& selection, CStringArray& aTitles) const
