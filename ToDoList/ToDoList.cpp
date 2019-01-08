@@ -221,6 +221,16 @@ BOOL CToDoListApp::InitInstance()
 	
 	if (pTDL && pTDL->Create(startup))
 	{
+		// If we have just been upgraded we will have admin
+		// privileges which will stop single-instance and 
+		// Windows drag'n'drop from working because Windows 
+		// will prevent non-elevated apps from talking to us.
+		if (startup.HasFlag(TLD_UPGRADED))
+		{
+			GraphicsMisc::ChangeWindowMessageFilter(WM_COPYDATA, TRUE);
+			GraphicsMisc::ChangeWindowMessageFilter(WM_DROPFILES, TRUE);
+		}
+
 		m_pMainWnd = pTDL;
 		return TRUE;
 	}

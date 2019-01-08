@@ -929,6 +929,28 @@ BOOL GraphicsMisc::DwmGetWindowAttribute(HWND hWnd, DWORD dwAttrib, PVOID pData,
 	return FALSE;
 }
 
+BOOL GraphicsMisc::ChangeWindowMessageFilter(UINT nMessage, BOOL bOn)
+{
+#ifndef MSGFLT_ADD
+#	define MSGFLT_ADD 1
+#	define MSGFLT_REMOVE 2
+#endif
+
+	HMODULE hMod = ::LoadLibrary(_T("User32.dll"));
+	
+	if (hMod)
+	{
+		typedef BOOL (WINAPI *PFNCHANGEWINDOWMESSAGEFILTER)(UINT, DWORD);
+		PFNCHANGEWINDOWMESSAGEFILTER pFn = (PFNCHANGEWINDOWMESSAGEFILTER)::GetProcAddress(hMod, "ChangeWindowMessageFilter");
+		
+		if (pFn)
+			return pFn(nMessage, (bOn ? MSGFLT_ADD : MSGFLT_REMOVE));
+	}
+
+	// All else
+	return FALSE;
+}
+
 int GraphicsMisc::DrawAnsiSymbol(CDC* pDC, char cSymbol, const CRect& rText, UINT nFlags, CFont* pFont)
 {
 	if (cSymbol == 0)

@@ -204,6 +204,7 @@ namespace GraphicsMisc
 	BOOL EnableAeroPeek(HWND hWnd, BOOL bEnable = TRUE);
 	BOOL EnableFlip3D(HWND hWnd, BOOL bEnable = TRUE);
 	BOOL GetExtendedFrameBounds(HWND hWnd, CRect& rBounds);
+	BOOL ChangeWindowMessageFilter(UINT nMessage, BOOL bOn);
 
 	BOOL DwmSetWindowAttribute(HWND hWnd, DWORD dwAttrib, LPCVOID pData, DWORD dwDataSize);
 	BOOL DwmGetWindowAttribute(HWND hWnd, DWORD dwAttrib, PVOID pData, DWORD dwDataSize);
