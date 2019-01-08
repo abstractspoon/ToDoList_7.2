@@ -693,8 +693,10 @@ enum TDC_OFFSET
 
 enum TDI_REGULARITY
 {
+	TDIR_NONE = -1,	// error code
+
 	// original options
-	TDIR_ONCE,
+	TDIR_ONCE = 0,
 	TDIR_DAILY,
 	TDIR_WEEKLY,
 	TDIR_MONTHLY,
