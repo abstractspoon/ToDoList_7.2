@@ -515,6 +515,10 @@ SOURCE=.\TDLRecurringTaskEdit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TDLRegularityComboBox.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDLReminderPeriodComboBox.cpp
 # End Source File
 # Begin Source File
@@ -1092,6 +1096,10 @@ SOURCE=.\TDLQuickFindComboBox.h
 # Begin Source File
 
 SOURCE=.\TDLRecurringTaskEdit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TDLRegularityComboBox.h
 # End Source File
 # Begin Source File
 
