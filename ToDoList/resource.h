@@ -805,6 +805,8 @@
 #define IDC_SHOWFULLPATHINSTICKY        1518
 #define IDC_RELOADICONS                 1519
 #define IDC_COMMENTLABEL                1520
+#define IDC_TDLEXTENSIONHANDLER         1521
+#define IDC_TDLPROTOCOLHANDLER          1522
 #define IDC_TASKLIST                    2000
 #define IDD_IMPORT_OUTLOOK_DIALOG       2000
 #define IDI_OUTLOOK                     2001
@@ -2211,6 +2213,7 @@
 #define IDS_TDC_COLUMN_COMMENTSSIZE     58483
 #define IDS_SAVETASKVIEWTOIMAGE_TITLE   58484
 #define IDS_TDLBC_CUSTOMATTRIBS         58485
+#define IDS_HANDLERNOTINSTALLED         58486
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects
@@ -2219,7 +2222,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
 #define _APS_NEXT_COMMAND_VALUE         34617
-#define _APS_NEXT_CONTROL_VALUE         1521
+#define _APS_NEXT_CONTROL_VALUE         1522
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif
