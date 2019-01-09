@@ -263,6 +263,10 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 		}
 	}
 
+	// PERMANENT LOGGING ////////////////////////////////////////////
+	FileMisc::LogText(_T("CToDoListApp::ProcessStartupOptions found %d other instances"), nNumWnds);
+	/////////////////////////////////////////////////////////////////
+
 	if (!nNumWnds)
 		return FALSE;
 
@@ -291,6 +295,10 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 
 			if (SendStartupOptions(hWnd, startup, TDLCD_HASTASKFILE))
 			{
+				// PERMANENT LOGGING ////////////////////////////////////////////
+				FileMisc::LogText(_T("CToDoListApp::ProcessStartupOptions found instance with '%s' already loaded"), cmdInfo.m_strFileName);
+				/////////////////////////////////////////////////////////////////
+
 				SendStartupOptions(hWnd, startup, TDLCD_PROCESSSTARTUP);
 
 				// We don't worry if this fails because:
@@ -309,12 +317,20 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 
 	if ((hwndOtherInst == NULL) && !bMultiInstance)
 	{
+		// PERMANENT LOGGING ////////////////////////////////////////////
+		FileMisc::LogText(_T("CToDoListApp::ProcessStartupOptions found no other instance with '%s' already loaded"), cmdInfo.m_strFileName);
+		/////////////////////////////////////////////////////////////////
+
 		for (int nWnd = 0; nWnd < nNumWnds; nWnd++)
 		{
 			HWND hWnd = find.aResults[nWnd];
 
 			if (SendStartupOptions(hWnd, startup, TDLCD_PROCESSSTARTUP))
 			{
+				// PERMANENT LOGGING ////////////////////////////////////////////
+				FileMisc::LogText(_T("CToDoListApp::ProcessStartupOptions found other instance to handle '%s'"), cmdInfo.m_strFileName);
+				/////////////////////////////////////////////////////////////////
+
 				hwndOtherInst = hWnd;
 				bTasklistOpened = startup.HasFilePath();
 				break;
