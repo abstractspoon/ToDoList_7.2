@@ -1297,19 +1297,26 @@ BOOL CKanbanCtrl::UpdateTrackableTaskAttribute(KANBANITEM* pKI, const CString& s
 		// Remove any list item whose current value is not found in the new values
 		int nVal = aCurValues.GetSize();
 		
+		// Special case: Item needs removing from backlog
+		if (nVal == 0)
+		{
+			aCurValues.Add(_T(""));
+			nVal++;
+		}
+
 		while (nVal--)
 		{
 			if (!Misc::Contains(aCurValues[nVal], aNewValues))
 			{
 				CKanbanListCtrl* pCurList = GetListCtrl(aCurValues[nVal]);
 				ASSERT(pCurList);
-				
+
 				if (pCurList)
 				{
 					VERIFY(pCurList->DeleteTask(pKI->dwTaskID));
 					bChange |= (pCurList->GetItemCount() == 0);
 				}
-				
+
 				// Remove from list to speed up later searching
 				aCurValues.RemoveAt(nVal);
 			}
