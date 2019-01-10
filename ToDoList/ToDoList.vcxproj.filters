@@ -403,6 +403,9 @@
     <ClCompile Include="TDCMergeTasklist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TDLRegularityComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Interfaces\IContentControl.h">
@@ -868,6 +871,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToDoCtrlDataDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TDLRegularityComboBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
