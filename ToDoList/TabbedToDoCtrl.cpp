@@ -3327,7 +3327,8 @@ void CTabbedToDoCtrl::UpdateExtensionViewsSelection(TDC_ATTRIBUTE nAttrib)
 				dwFlags |= TDCGSTF_ALLPARENTS;
 
 			// DONT include subtasks UNLESS the completion date has changed
-			if (nAttrib != TDCA_DONEDATE)
+			// OR this is an inherited attribute
+			if ((nAttrib != TDCA_DONEDATE) && !m_data.WantUpdateInheritedAttibute(nAttrib))
 				dwFlags |= TDCGSTF_NOTSUBTASKS;
 		}
 	}
