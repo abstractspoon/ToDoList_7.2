@@ -318,7 +318,7 @@ protected:
 	void SetExtensionsNeedTaskUpdate(BOOL bUpdate, FTC_VIEW nIgnore = FTCV_UNSET);
 	void SetExtensionsNeedFontUpdate(BOOL bUpdate, FTC_VIEW nIgnore = FTCV_UNSET);
 	void SetListViewNeedFontUpdate(BOOL bUpdate);
-	BOOL ProcessUIExtensionMod(const IUITASKMOD& mod, BOOL& bDependChange, BOOL& bMoveTask);
+	DWORD ProcessUIExtensionMod(const IUITASKMOD& mod);
 	int GetAllExtensionViewsWantedAttributes(CTDCAttributeMap& mapAttrib) const;
 	CString GetExtensionPrefsSubKey(const IUIExtensionWindow* pExtWnd);
 	void UpdateExtensionViewsSelection(TDC_ATTRIBUTE nAttrib);
