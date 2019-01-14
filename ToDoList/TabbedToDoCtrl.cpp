@@ -1799,7 +1799,7 @@ LRESULT CTabbedToDoCtrl::OnUIExtModifySelectedTask(WPARAM wParam, LPARAM lParam)
 		// since we prevented changes being propagated back to the active view
 		// we may need to update more than the selected task as a consequence
 		// of dependency changes, task moves or inherited attributes
-		if (dwResults & (UIEXTMOD_DEPENDCHANGE | UIEXTMOD_INHERITATTRIB))
+		if (dwResults & UIEXTMOD_DEPENDCHANGE)
 		{
 			VIEWDATA* pVData = NULL;
 			IUIExtensionWindow* pExtWnd = NULL;
@@ -1817,6 +1817,10 @@ LRESULT CTabbedToDoCtrl::OnUIExtModifySelectedTask(WPARAM wParam, LPARAM lParam)
 		else if (dwResults & UIEXTMOD_OFFSETDATES)
 		{
 			UpdateExtensionViewsSelection(TDCA_DUEDATE);
+		}
+		else if (dwResults & UIEXTMOD_INHERITATTRIB)
+		{
+			UpdateExtensionViewsSelection(TDCA_ALL);
 		}
 	}
 	
