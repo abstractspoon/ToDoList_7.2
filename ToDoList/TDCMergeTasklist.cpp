@@ -300,11 +300,64 @@ BOOL CTDCMergeTasklist::MergeAttributes(const CXmlItem* pXISrc, CXmlItem* pXIDes
 		}
 		else if (pXISrcAttrib->GetSibling())
 		{
-			// May be more than one value in any order so for 
-			// now just delete the existing values and recopy
-			pXIDest->DeleteItem(pXIDestAttrib);
-			pXIDest->AddItem(*pXISrcAttrib, TRUE);
-			bChange = TRUE;
+			// May be more than one value in any order so check
+			// for differences and if found delete the existing values 
+			// and recopy
+			BOOL bMatch = (pXISrcAttrib->GetSiblingCount() == pXIDestAttrib->GetSiblingCount());
+
+			if (bMatch)
+			{
+				if (pXISrcAttrib->NameMatches(TDL_TASKCUSTOMATTRIBDATA))
+				{
+					ASSERT (pXISrcAttrib->GetItemCount() >= 2);
+
+					while (pXISrcAttrib)
+					{
+						LPCTSTR szCustomAttribID = pXISrcAttrib->GetItemValue(TDL_TASKCUSTOMATTRIBID);
+						CXmlItem* pXIDestAttribID = pXIDestAttrib->FindItem(TDL_TASKCUSTOMATTRIBID, szCustomAttribID);
+					
+						if (!pXIDestAttribID)
+						{
+							bMatch = FALSE;
+							break;
+						}
+
+						// else check value and update in place
+						pXIDestAttrib = pXIDestAttribID->GetParent();
+						ASSERT(pXIDestAttrib);
+
+						if (!pXIDestAttrib->ItemValueMatches(pXISrcAttrib, TDL_TASKCUSTOMATTRIBVALUE))
+						{
+							pXIDestAttrib->SetItemValue(TDL_TASKCUSTOMATTRIBVALUE, pXISrcAttrib->GetItemValue(TDL_TASKCUSTOMATTRIBVALUE));
+							bChange = TRUE;
+						}
+
+						pXISrcAttrib = pXISrcAttrib->GetSibling();
+					}
+				}
+				else // simple values, no children (eg. Category, Alloc To, etc)
+				{
+					ASSERT (pXISrcAttrib->GetItemCount() == 0);
+
+					while (pXISrcAttrib)
+					{
+						if (!pXIDestAttrib->FindItem(szAttrib, pXISrcAttrib->GetValue(), FALSE))
+						{
+							bMatch = FALSE;
+							break;
+						}
+
+						pXISrcAttrib = pXISrcAttrib->GetSibling();
+					}
+				}
+			}
+			
+			if (!bMatch)
+			{
+				pXIDest->DeleteItem(pXISrcAttrib->GetName()); // deletes siblings too
+				pXIDest->AddItem(*pXISrcAttrib, TRUE);
+				bChange = TRUE;
+			}
 		}
 		else // update value
 		{
