@@ -6843,6 +6843,7 @@ BOOL CToDoCtrl::ArchiveTasks(const CString& sArchivePath, const CTaskFile& tasks
 
 	// If the process took longer than 1 second we rename
 	// the archive so that next time it'll start afresh
+#ifndef _DEBUG
 	if ((GetTickCount() - dwStartTick) > 1000)
 	{
 		int nSuffix = 1;
@@ -6862,6 +6863,7 @@ BOOL CToDoCtrl::ArchiveTasks(const CString& sArchivePath, const CTaskFile& tasks
 		
 		FileMisc::MoveFile(sArchivePath, sNewPath);
 	}
+#endif
 
 	return TRUE;
 }

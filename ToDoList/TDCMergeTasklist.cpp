@@ -41,7 +41,19 @@ int CTDCMergeTasklist::Merge(const CXmlItem* pXISrc, CXmlItem* pXIDest)
 {
 	// all the external methods end up here
 	m_pXIDestRoot = pXIDest;
-	m_dwNextID = pXIDest->GetItemValueI(TDL_NEXTUNIQUEID);
+
+	if (pXIDest->HasItem(TDL_NEXTUNIQUEID))
+	{
+		m_dwNextID = pXIDest->GetItemValueI(TDL_NEXTUNIQUEID);
+	}
+	else if (pXISrc->HasItem(TDL_NEXTUNIQUEID))
+	{
+		m_dwNextID = pXISrc->GetItemValueI(TDL_NEXTUNIQUEID);
+	}
+	else
+	{
+		m_dwNextID = 1;
+	}
 
 	int nRes = MergeTasks(pXISrc, pXIDest);
 
@@ -244,9 +256,11 @@ int CTDCMergeTasklist::MergeTasksByTitle(const CXmlItem* pXISrc, CXmlItem* pXIDe
 
 BOOL CTDCMergeTasklist::MergeAttributes(const CXmlItem* pXISrc, CXmlItem* pXIDest)
 {
+	const CXmlItem* pXIDestMod = pXIDest->GetItem(TDL_TASKLASTMOD);
+
+#ifndef _DEBUG
 	// don't merge if the source is older than the dest
 	const CXmlItem* pXISrcMod = pXISrc->GetItem(TDL_TASKLASTMOD);
-	const CXmlItem* pXIDestMod = pXIDest->GetItem(TDL_TASKLASTMOD);
 
 	if (pXISrcMod && pXIDestMod)
 	{
@@ -254,10 +268,13 @@ BOOL CTDCMergeTasklist::MergeAttributes(const CXmlItem* pXISrc, CXmlItem* pXIDes
 			return FALSE;
 	}
 	else if (pXIDestMod)
+	{
 		return FALSE;
+	}
+#endif
 
 	BOOL bChange = FALSE;
-	POSITION pos = pXISrc->GetFirstItemPos();
+	POSITION pos = pXISrc->GetFirstItemPos(); // first child
 
 	while (pos)
 	{
@@ -278,13 +295,19 @@ BOOL CTDCMergeTasklist::MergeAttributes(const CXmlItem* pXISrc, CXmlItem* pXIDes
 		// if not then add it
 		if (!pXIDestAttrib)
 		{
-			pXIDest->AddItem(*pXISrcAttrib, FALSE);
+			pXIDest->AddItem(*pXISrcAttrib, TRUE);
 			bChange = TRUE;
 		}
-		// else update it
-		else
+		else if (pXISrcAttrib->GetSibling())
 		{
-			// update value
+			// May be more than one value in any order so for 
+			// now just delete the existing values and recopy
+			pXIDest->DeleteItem(pXIDestAttrib);
+			pXIDest->AddItem(*pXISrcAttrib, TRUE);
+			bChange = TRUE;
+		}
+		else // update value
+		{
 			if (!pXIDestAttrib->ValueMatches(pXISrcAttrib, FALSE))
 			{
 				pXIDestAttrib->SetValue(pXISrcAttrib->GetValue());
