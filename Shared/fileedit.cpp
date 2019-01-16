@@ -231,7 +231,7 @@ void CFileEdit::OnPaint()
 				
 				::FillRect(dc, rClient, hBkgnd);
 				
-				rClient.DeflateRect(4, 1, -2, 1);
+				rClient.DeflateRect(4, 1, 1, 1);
 				
 				dc.SetBkMode(TRANSPARENT);
 				
