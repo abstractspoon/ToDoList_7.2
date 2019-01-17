@@ -5118,7 +5118,7 @@ HTREEITEM CToDoCtrl::InsertNewTask(const CString& sText, HTREEITEM htiParent, HT
 	}
 	else // cleanup
 	{
-		m_data.DeleteTask(m_dwNextUniqueID);
+		m_data.DeleteTask(m_dwNextUniqueID, FALSE); // FALSE == no undo
 	}
 	
 	return htiNew;
@@ -5297,7 +5297,7 @@ BOOL CToDoCtrl::DeleteSelectedTask(BOOL bWarnUser, BOOL bResetSel)
 			DWORD dwTaskID = m_taskTree.GetTaskID(hti);
 
 			m_taskTree.DeleteItem(hti);
-			m_data.DeleteTask(dwTaskID);
+			m_data.DeleteTask(dwTaskID, TRUE); // TRUE == with undo
 		}
 		
 		// Note: CToDoCtrlData ought to have already cleaned up the data
@@ -5527,7 +5527,7 @@ LRESULT CToDoCtrl::OnEditCancel(WPARAM /*wParam*/, LPARAM lParam)
 			CHoldRedraw hr(m_taskTree);
 			m_taskTree.DeleteItem(hti);
 
-			m_data.DeleteTask(m_dwLastAddedID);
+			m_data.DeleteTask(m_dwLastAddedID, FALSE); // FALSE == no undo
 			m_data.DeleteLastUndoAction();
 		}
 
@@ -6727,7 +6727,7 @@ BOOL CToDoCtrl::RemoveArchivedTask(DWORD dwTaskID)
 		return FALSE;
 	
 	m_taskTree.DeleteItem(hti);
-	m_data.DeleteTask(dwTaskID);
+	m_data.DeleteTask(dwTaskID, TRUE); // TRUE == with undo
 
 	return TRUE;
 }
