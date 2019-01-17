@@ -6922,7 +6922,10 @@ HTREEITEM CToDoCtrl::PasteTaskToTree(const CTaskFile& tasks, HTASKITEM hTask, HT
 		
 		// add this item to data structure
 		m_data.AddTask(dwTaskID, pTDI, dwParentID, dwPrevTaskID);
-		
+
+		// And update inherited attributes
+		m_data.ApplyLastInheritedChangeFromParent(dwTaskID, TDCA_ALL);
+				
 		// add this item to tree
 		hti = InsertTreeItem(pTDI, dwTaskID, htiParent, htiAfter);
 	}
