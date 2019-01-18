@@ -109,9 +109,9 @@ const UINT ONE_MINUTE = 10000;
 const UINT ONE_MINUTE = 60000;
 #endif
 
-const LPCTSTR SETTINGS_KEY		= _T("Settings");
-const LPCTSTR PREF_KEY			= _T("Preferences");
-const LPCTSTR ENDL				= _T("\n");
+const LPCTSTR SETTINGS_KEY	= _T("Settings");
+const LPCTSTR PREF_KEY		= _T("Preferences");
+const LPCTSTR ENDL			= _T("\n");
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1834,6 +1834,7 @@ BOOL CToDoListWnd::HandleSaveTasklistError(TDC_FILE& nErr, LPCTSTR szTasklist)
 		break;
 		
 	default:
+		ASSERT(nErr >= TDCF_OTHER);
 		sMessage.Format(IDS_UNKNOWNSAVEERROR2, szTasklist, (nErr - (int)TDCF_OTHER));
 		break;
 	}

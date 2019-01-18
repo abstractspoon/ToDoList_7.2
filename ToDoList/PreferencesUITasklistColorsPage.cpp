@@ -246,11 +246,11 @@ BOOL CPreferencesUITasklistColorsPage::OnInitDialog()
 
 	// attribute colors
 	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_CATEGORY),	TDCA_CATEGORY);
-	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_STATUS),		TDCA_STATUS);
+	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_STATUS),	TDCA_STATUS);
 	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_ALLOCTO),	TDCA_ALLOCTO);
 	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_ALLOCBY),	TDCA_ALLOCBY);
 	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_VERSION),	TDCA_VERSION);
-	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_EXTERNALID),	TDCA_EXTERNALID);
+	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_EXTERNALID),TDCA_EXTERNALID);
 	AddString(m_cbColorByAttribute, CEnString(IDS_TDLBC_TAGS),		TDCA_TAGS);
 
 	int nColor = m_aAttribColors.GetSize();
@@ -323,7 +323,7 @@ void CPreferencesUITasklistColorsPage::OnColorPriority()
 
 	// if the text color option is COLOROPT_PRIORITY and 
 	// the user has turned off priority coloring then switch to default
-	if (!m_bColorPriority && m_nTextColorOption == COLOROPT_PRIORITY)
+	if (!m_bColorPriority && (m_nTextColorOption == COLOROPT_PRIORITY))
 	{
 		m_nTextColorOption = COLOROPT_DEFAULT;
 		UpdateData(FALSE);
@@ -887,6 +887,7 @@ void CPreferencesUITasklistColorsPage::LoadPreferences(const IPreferences* pPref
 	CString sColorKey(szKey);
 	sColorKey += _T("\\Colors");
 	
+	m_aPriorityColors.RemoveAll();
 	m_aPriorityColors.Add(pPrefs->GetProfileInt(sColorKey, _T("P0"), RGB(30, 225, 0)));
 	m_aPriorityColors.Add(pPrefs->GetProfileInt(sColorKey, _T("P1"), RGB(30, 225, 0)));
 	m_aPriorityColors.Add(pPrefs->GetProfileInt(sColorKey, _T("P2"), RGB(30, 225, 0)));
