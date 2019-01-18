@@ -506,7 +506,7 @@ BOOL CTDLTimeTrackerDlg::OnInitDialog()
 
 	GetWindowText(m_sOrgTitle);
 	
-	if (m_ilBtns.Create(32, 32, (ILC_COLOR24 | ILC_MASK), 0, 0))
+	if (m_ilBtns.Create(32, 32, (ILC_COLOR32 | ILC_MASK), 0, 0))
 	{
 		CBitmap bmp;
 		
