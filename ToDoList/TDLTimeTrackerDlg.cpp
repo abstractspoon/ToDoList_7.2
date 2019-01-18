@@ -1224,7 +1224,10 @@ BOOL CTDLTimeTrackerDlg::OnToolTipNotify(UINT /*id*/, NMHDR* pNMHDR, LRESULT* /*
 	}
 	
 	if (!sTooltip.IsEmpty())
+	{
+		Misc::Trim(sTooltip);
 		pTTT->lpszText = (LPTSTR)(LPCTSTR)sTooltip;
+	}
 
 	return TRUE;
 }
