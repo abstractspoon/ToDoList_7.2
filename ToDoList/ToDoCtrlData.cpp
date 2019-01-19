@@ -2076,12 +2076,26 @@ TDC_SET CToDoCtrlData::MoveTaskStartAndDueDates(DWORD dwTaskID, const COleDateTi
 	EDIT_GET_TDI(dwTaskID, pTDI);
 
 	// Sanity checks
-	if (!(pTDI->HasStart() && (pTDI->HasDue() || (pTDI->dTimeEstimate > 0.0))))
+	if (!pTDI->HasStart())
 	{
 		ASSERT(0);
 		return SET_FAILED;
 	}
-
+	else if (pTDI->HasDue())
+	{
+		if (pTDI->dateDue <= pTDI->dateStart)
+		{
+			ASSERT(0);
+			return SET_FAILED;
+		}
+	}
+	else if (pTDI->dTimeEstimate <= 0.0)
+	{
+		ASSERT(0);
+		return SET_FAILED;
+	}
+	
+	// check for no change
 	if (dtNewStart == pTDI->dateStart)
 	{
 		ASSERT(0);
@@ -2093,12 +2107,16 @@ TDC_SET CToDoCtrlData::MoveTaskStartAndDueDates(DWORD dwTaskID, const COleDateTi
 	if (pTDI->aDependencies.GetSize() && HasStyle(TDCS_AUTOADJUSTDEPENDENCYDATES))
 		return SET_NOCHANGE;
 	
-	// Cache current time estimate before doing anything
-	double dDuration = pTDI->dTimeEstimate;
+	// Calculate duration
+	double dDuration = 0.0;
 	
-	if (dDuration == 0.0)
+	if (pTDI->HasDue())
 		dDuration = CalcDuration(pTDI->dateStart, pTDI->dateDue, pTDI->nTimeEstUnits);
-
+	else
+		dDuration = pTDI->dTimeEstimate;
+	
+	ASSERT(dDuration > 0.0);
+	
 	// recalc due date
 	COleDateTime dtStart(dtNewStart);
 	COleDateTime dtNewDue = AddDuration(dtStart, dDuration, pTDI->nTimeEstUnits);
