@@ -1464,6 +1464,10 @@ void CToDoCtrlData::ApplyLastInheritedChangeToSubtasks(DWORD dwTaskID, TDC_ATTRI
 
 void CToDoCtrlData::ApplyLastInheritedChangeFromParent(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib)
 {
+	// Exclude references and undo operations
+	if (m_bUndoRedoing || IsTaskReference(dwTaskID))
+		return;
+
 	// special case: 
 	if (nAttrib == TDCA_ALL)
 	{
@@ -1503,7 +1507,8 @@ void CToDoCtrlData::ApplyLastInheritedChangeFromParent(DWORD dwTaskID, TDC_ATTRI
 
 BOOL CToDoCtrlData::ApplyLastChangeToSubtasks(DWORD dwTaskID, TDC_ATTRIBUTE nAttrib, BOOL bIncludeBlank)
 {
-	if (dwTaskID)
+	// Exclude references
+	if (dwTaskID && !IsTaskReference(dwTaskID))
 	{
 		const TODOITEM* pTDI = NULL;
 		const TODOSTRUCTURE* pTDS = NULL;
@@ -1521,10 +1526,12 @@ BOOL CToDoCtrlData::ApplyLastChangeToSubtasks(const TODOITEM* pTDI, const TODOST
 {
 	ASSERT(m_undo.IsActive());
 
-	ASSERT(pTDI && pTDS);
-	
-	if (!pTDI || !pTDS)
+	// Exclude references
+	if (!pTDI || pTDI->dwTaskRefID || !pTDS)
+	{
+		ASSERT(0);
 		return FALSE;
+	}
 	
 	for (int nSubTask = 0; nSubTask < pTDS->GetSubTaskCount(); nSubTask++)
 	{
@@ -1547,8 +1554,12 @@ BOOL CToDoCtrlData::ApplyLastChangeToSubtask(const TODOITEM* pTDIParent, const T
 	}
 
 	DWORD dwSubtaskID = pTDSParent->GetSubTaskID(nChildPos);
-	TODOITEM* pTDIChild = NULL;
 
+	// Exclude references
+	if (IsTaskReference(dwSubtaskID))
+		return FALSE;
+
+	TODOITEM* pTDIChild = NULL;
 	GET_TDI(dwSubtaskID, pTDIChild, FALSE);
 
 	// save undo data
@@ -2769,9 +2780,7 @@ int CToDoCtrlData::MoveTask(TODOSTRUCTURE* pTDSSrcParent, int nSrcPos, DWORD dwS
 		{
 			SetTaskModified(dwDestParentID);
 
-			// And update inherited attributes unless we are undoing
-			if (!m_bUndoRedoing)
-				ApplyLastInheritedChangeFromParent(dwTaskID, TDCA_ALL);
+			ApplyLastInheritedChangeFromParent(dwTaskID, TDCA_ALL);
 		}
 	}
 	
