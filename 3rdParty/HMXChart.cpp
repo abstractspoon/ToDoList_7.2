@@ -97,6 +97,7 @@ void CHMXChart::DoPaint(CDC& dc, BOOL bPaintBkgnd)
 	if (!m_penGrid.GetSafeHandle())
 		m_penGrid.CreatePen(PS_SOLID, 1, m_clrGrid);
 
+	dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 	DrawDatasets(dc);
 	DrawGrid(dc);
 	DrawTitle(dc);
