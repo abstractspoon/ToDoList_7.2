@@ -525,11 +525,6 @@ double CTimeHelper::GetWeekdaysInOneWeek(BOOL bStatic) const
 	return (bStatic ? WORKDAYS2WEEKS : m_dWorkdays2Weeks); 
 }
 
-BOOL CTimeHelper::IsWeekdays(TH_UNITS nUnits)
-{
-	return (nUnits == THU_WEEKDAYS);
-}
-
 double CTimeHelper::GetDaysToWeeksFactor(TH_UNITS nUnits) const
 {
 	// Give preference to days unless explicitly set to 'weekdays'

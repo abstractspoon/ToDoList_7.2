@@ -100,7 +100,6 @@ protected:
 	static BOOL Compare(TH_UNITS nFromUnits, TH_UNITS nToUnits); // 0=same, -1=nFrom < nTo else 1
 	static CString FormatTimeHMS(double dTime, TH_UNITS nUnits, TH_UNITS nLeftOverUnits, 
 								double dLeftOverMultiplier, BOOL bDecPlaces);
-	static BOOL IsWeekdays(TH_UNITS nUnits);
 	static BOOL IsValidUnit(TH_UNITS nUnits);
 	static BOOL RemovePM(CString& sTime);
 	static BOOL RemoveAM(CString& sTime);
