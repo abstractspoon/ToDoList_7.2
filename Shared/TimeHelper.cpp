@@ -123,6 +123,7 @@ double CTimeHelper::GetEndOfWorkdayLunch(BOOL bInDays) const
 	return (bInDays ? (dHours / 24) : dHours);
 }
 
+// Not currently used
 void CTimeHelper::CalculatePartWorkdays(const COleDateTime& dtStart, const COleDateTime& dtEnd,
 										double& dPartStartDay, double& dPartEndDay, BOOL bInDays) const
 {
