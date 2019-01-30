@@ -3300,19 +3300,20 @@ COleDateTime CToDoCtrlData::AddDuration(COleDateTime& dateStart, double dDuratio
 	
 	switch (nUnits)
 	{
+	case TDCU_DAYS:
 	case TDCU_WEEKS:
 	case TDCU_MONTHS:
 	case TDCU_YEARS:
 		{
-			CTimeHelper thAllDay(24.0, 7.0);
+			// work in days
+			if (nUnits != TDCU_DAYS)
+			{
+				dDuration = CTimeHelper(24.0, 7.0).GetTime(dDuration, TDC::MapUnitsToTHUnits(nUnits), THU_DAYS);
+				nUnits = TDCU_DAYS;
+			}
 
-			double dDays = thAllDay.GetTime(dDuration, TDC::MapUnitsToTHUnits(nUnits), THU_DAYS);
-			dateDue.m_dt += dDays;
+			dateDue.m_dt += dDuration;
 		}
-		break;
-
-	case TDCU_DAYS:
-		dateDue.m_dt += dDuration;
 		break;
 
 	case TDCU_MINS:

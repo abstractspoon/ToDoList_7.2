@@ -19,7 +19,6 @@ static char THIS_FILE[]=__FILE__;
 
 const double SECS2MINS	 	= 60;
 const double MINS2HOURS 	= 60;
-const double HOURS2DAYS 	= 24;
 const double DAYS2WEEKS 	= 7;
 const double WEEKS2MONTHS 	= 4.348; // 365.25 / (7 * 12)
 const double MONTHS2YEARS 	= 12;
@@ -230,12 +229,16 @@ double CTimeHelper::GetTime(double dTime, TH_UNITS nFromUnits, TH_UNITS nToUnits
 	else if ((nFromUnits == THU_DAYS) && (nToUnits == THU_WEEKDAYS))
 	{
 		if (m_dWorkdays2Weeks != DAYS2WEEKS)
+		{
 			dTime *= (m_dWorkdays2Weeks / DAYS2WEEKS);
+		}
 	}
 	else if ((nFromUnits == THU_WEEKDAYS) && (nToUnits == THU_DAYS))
 	{
 		if (m_dWorkdays2Weeks != DAYS2WEEKS)
+		{
 			dTime *= (DAYS2WEEKS / m_dWorkdays2Weeks);
+		}
 	}
 	else if (Compare(nFromUnits, nToUnits) > 0)
 	{
@@ -254,15 +257,11 @@ double CTimeHelper::GetTime(double dTime, TH_UNITS nFromUnits, TH_UNITS nToUnits
 				break;
 				
 			case THU_WEEKDAYS:
+			case THU_DAYS:
 				dTime *= m_dHours2Workdays;
 				nFromUnits = THU_HOURS;
 				break;
 
-			case THU_DAYS:
-				dTime *= HOURS2DAYS;
-				nFromUnits = THU_HOURS;
-				break;
-				
 			case THU_WEEKS:
 				dTime *= GetDaysToWeeksFactor(nToUnits);
 				nFromUnits = GetDaysToWeeksUnits(nToUnits);
@@ -297,20 +296,12 @@ double CTimeHelper::GetTime(double dTime, TH_UNITS nFromUnits, TH_UNITS nToUnits
 				break;
 				
 			case THU_HOURS:
-				if (IsWeekdays(nToUnits))
-					dTime /= m_dHours2Workdays;
-				else
-					dTime /= HOURS2DAYS;
-
+				dTime /= m_dHours2Workdays;
 				nFromUnits = GetDaysToWeeksUnits(nToUnits);
 				break;
 
 			case THU_WEEKDAYS:
-				if (IsWeekdays(nFromUnits))
-					dTime /= m_dWorkdays2Weeks;
-				else
-					dTime /= DAYS2WEEKS;
-
+				dTime /= m_dWorkdays2Weeks;
 				nFromUnits = THU_WEEKS;
 				break;
 
@@ -527,14 +518,14 @@ double CTimeHelper::GetWeekdaysInOneWeek(BOOL bStatic) const
 
 double CTimeHelper::GetDaysToWeeksFactor(TH_UNITS nUnits) const
 {
-	// Give preference to days unless explicitly set to 'weekdays'
-	return (IsWeekdays(nUnits) ? m_dWorkdays2Weeks : DAYS2WEEKS);
+	// Give preference to weekdays unless explicitly set to 'days'
+	return ((nUnits != THU_DAYS) ? m_dWorkdays2Weeks : DAYS2WEEKS);
 }
 
 TH_UNITS CTimeHelper::GetDaysToWeeksUnits(TH_UNITS nUnits) const
 {
-	// Give preference to days unless explicitly set to 'weekdays'
-	return (IsWeekdays(nUnits) ? THU_WEEKDAYS : THU_DAYS);
+	// Give preference to weekdays unless explicitly set to 'days'
+	return ((nUnits != THU_DAYS) ? THU_WEEKDAYS : THU_DAYS);
 }
 
 CString CTimeHelper::FormatTimeHMS(double dTime, TH_UNITS nUnitsFrom, DWORD dwFlags) const
