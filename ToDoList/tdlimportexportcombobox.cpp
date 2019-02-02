@@ -17,7 +17,6 @@ static char THIS_FILE[] = __FILE__;
 
 CTDLImportExportComboBox::CTDLImportExportComboBox(const CImportExportMgr& mgrImpExp, BOOL bImport, BOOL bFileBasedOnly)
 	: 
-	COwnerdrawComboBoxBase(11),
 	m_mgrImpExp(mgrImpExp), 
 	m_bImporting(bImport), 
 	m_bFileBasedOnly(bFileBasedOnly)

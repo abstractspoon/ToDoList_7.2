@@ -30,9 +30,9 @@ static char THIS_FILE[] = __FILE__;
 
 const int CTRLXSPACING = 6; // dlu
 const int CTRLYSPACING = 2; // dlu
-const int CTRLLABELLEN = 45;
 const int CTRLLEN = 75;
 const int CTRLHEIGHT = 13;
+const int LABELHEIGHT = 8;
 
 static CTRLITEM FILTERCTRLS[] = 
 {
@@ -698,8 +698,8 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 	// because embossed text looks 'wrong' over a colour
 	BOOL bNonGrayBkgnd = ((m_crUIBack != CLR_NONE) && !RGBX(m_crUIBack).IsGray());
 	
-	int nXPosDLU = 0, nYPosDLU = 0;
-	int nWidthDLU = dlu.FromPixelsX(nWidth), nCtrlHeightDLU = CTRLHEIGHT;
+	int nXPosDLU = 0, nYPosDLU = CTRLYSPACING;
+	int nWidthDLU = dlu.FromPixelsX(nWidth);
 
 	CTDCControlArray aControls;
 	int nNumCtrls = GetControls(aControls);
@@ -746,7 +746,7 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 				{
 					// move to next line
 					nXPosDLU = 0;
-					nYPosDLU += CTRLYSPACING + (2 * nCtrlHeightDLU);
+					nYPosDLU += (CTRLYSPACING + LABELHEIGHT + CTRLHEIGHT);
 				}
 			}
 			
@@ -754,7 +754,7 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 			rCtrlDLU.left = nXPosDLU;
 			rCtrlDLU.right = nXPosDLU + CTRLLEN;
 			rCtrlDLU.top = nYPosDLU;
-			rCtrlDLU.bottom = nYPosDLU + nCtrlHeightDLU;
+			rCtrlDLU.bottom = nYPosDLU + LABELHEIGHT;
 
 			rCtrl = rCtrlDLU;
 			dlu.ToPixels(rCtrl);
@@ -763,7 +763,8 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 				dwm.MoveWindow(GetDlgItem(fc.nLabelID), rCtrl);
 			
 			// update YPos for the ctrl
-			rCtrlDLU.OffsetRect(0, nCtrlHeightDLU);
+			rCtrlDLU.OffsetRect(0, LABELHEIGHT);
+			rCtrlDLU.bottom = (rCtrlDLU.top + CTRLHEIGHT);
 			
 			// move ctrl
 			rCtrl = rCtrlDLU;
@@ -824,7 +825,7 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 	}
 
 	// update bottom of filter bar
-	nYPosDLU += (2 * nCtrlHeightDLU) + 2;
+	nYPosDLU += (LABELHEIGHT + CTRLHEIGHT + CTRLYSPACING);
 
 	return dlu.ToPixelsY(nYPosDLU);
 }

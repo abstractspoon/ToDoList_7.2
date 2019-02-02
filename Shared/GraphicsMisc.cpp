@@ -438,7 +438,12 @@ HFONT GraphicsMisc::GetFont(HWND hWnd)
 {
 	ASSERT(hWnd);
 
-	return (HFONT)::SendMessage(hWnd, WM_GETFONT, 0, 0);
+	HFONT hFont = (HFONT)::SendMessage(hWnd, WM_GETFONT, 0, 0);
+
+	if (hFont == NULL)
+		hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+
+	return hFont;
 }
 
 BOOL GraphicsMisc::SameFont(HFONT hFont, LPCTSTR szFaceName, int nPoint)

@@ -209,7 +209,6 @@ CToDoListWnd::CToDoListWnd()
 	CFilteredToDoCtrl::EnableExtendedSelection(FALSE, TRUE);
 
 	m_bAutoMenuEnable = FALSE;
-	m_cbQuickFind.SetMinDLUHeight(8);
 	m_nFlags |= WF_STAYACTIVE;
 }
 
@@ -905,7 +904,10 @@ void CToDoListWnd::InitUIFont()
 	HFONT hFontUI = GraphicsMisc::CreateFont(_T("Tahoma"), 8);
 
 	if (m_fontMain.Attach(hFontUI))
+	{
 		CDialogHelper::SetFont(this, m_fontMain); // will update all child controls
+		m_cbQuickFind.SetFont(&m_fontMain);
+	}
 }
 
 void CToDoListWnd::InitShortcutManager()
@@ -1322,7 +1324,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 	}
 	
 	// resize the toolbar in one row so that our subsequent calculations work
-	m_toolbarMain.MoveWindow(0, 2, 1000, 32); 
+	m_toolbarMain.Resize(1000, CPoint(0, 2)); 
 	
 	// insert combobox for quick Find after Find Tasks button
 	int nPos = m_toolbarMain.CommandToIndex(ID_EDIT_FINDTASKS) + 1;
@@ -1335,7 +1337,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 	
 	TBBUTTONINFO tbi;
 	tbi.cbSize = sizeof( TBBUTTONINFO );
-	tbi.cx = 150;
+	tbi.cx = (WORD)GraphicsMisc::ScaleByDPIFactor(150);
 	tbi.dwMask = TBIF_SIZE;  // By index
 	
 	m_toolbarMain.GetToolBarCtrl().SetButtonInfo(nPos + 1, &tbi);
@@ -1347,7 +1349,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 	rect.bottom += QUICKFIND_HEIGHT;
 	
 	if (!m_cbQuickFind.Create(WS_CHILD | WS_VSCROLL | WS_VISIBLE | CBS_AUTOHSCROLL | 
-		CBS_DROPDOWN, rect, &m_toolbarMain, IDC_QUICKFIND))
+		CBS_DROPDOWN | CBS_OWNERDRAWFIXED, rect, &m_toolbarMain, IDC_QUICKFIND))
 	{
 		return FALSE;
 	}
@@ -1358,7 +1360,6 @@ BOOL CToDoListWnd::InitMainToolbar()
 	if (CPreferences().GetProfileArray(_T("QuickFind"), aItems))
 		m_cbQuickFind.AddUniqueItems(aItems);
 
-	m_cbQuickFind.SetFont(&m_fontMain);
 	m_mgrPrompts.SetComboEditPrompt(m_cbQuickFind, IDS_QUICKFIND);
 	
 	m_tbHelperMain.Initialize(&m_toolbarMain, this, &m_mgrShortcuts);
