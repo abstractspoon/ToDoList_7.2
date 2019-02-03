@@ -151,11 +151,17 @@ void COwnerdrawComboBoxBase::InitItemHeight()
 int COwnerdrawComboBoxBase::CalcMinItemHeight(BOOL bList) const
 {
 	int nMinHeight = GraphicsMisc::GetFontPixelSize(*this);
-
+	
 	if (bList)
 	{
+		int nMinDLUHeight = CDlgUnits(GetParent()).ToPixelsY(10);
+		nMinHeight = max(nMinHeight, nMinDLUHeight);
+
 		if (HasIcon())
-			nMinHeight = max(nMinHeight, GraphicsMisc::ScaleByDPIFactor(16));
+		{
+			int nMinDPIHeight = GraphicsMisc::ScaleByDPIFactor(16);
+			nMinHeight = max(nMinHeight, nMinDPIHeight);
+		}
 	}
 	else
 	{
