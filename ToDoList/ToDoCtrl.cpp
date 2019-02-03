@@ -79,7 +79,7 @@ const int CTRLHEIGHT		= 13;
 const int LABELHEIGHT		= 8; 
 const int CTRLHSPACING		= 6; 
 const int CTRLVSPACING		= 4; 
-const int CTRLLEN			= 70;
+const int CTRLLEN			= 75;
 const int COMMENTSTYPELEN	= 85;
 
 /////////////////////////////////////////////////////////////////////////////
