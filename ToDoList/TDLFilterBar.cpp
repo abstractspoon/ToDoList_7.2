@@ -702,8 +702,8 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 	int nWidthDLU = dlu.FromPixelsX(nWidth);
 	
 	// To handle DPI scaling better simply use the height of the category combo
-
-	const int CTRLHEIGHT = dlu.FromPixelsY(GetChildHeight(&m_cbCategoryFilter));
+	int nActualCtrlHeight = GetChildHeight(&m_cbCategoryFilter);
+	const int CTRLHEIGHT = dlu.FromPixelsY(nActualCtrlHeight);
 
 	CTDCControlArray aControls;
 	int nNumCtrls = GetControls(aControls);
@@ -762,13 +762,12 @@ int CTDLFilterBar::ReposControls(int nWidth, BOOL bCalcOnly)
 			if (fc.nLabelID && !bCalcOnly)
 				dwm.MoveWindow(GetDlgItem(fc.nLabelID), rCtrl);
 			
-			// update YPos for the ctrl
-			rCtrlDLU.top += LABELHEIGHT;
-			rCtrlDLU.bottom = (rCtrlDLU.top + CTRLHEIGHT);
-			
 			// move ctrl
+			rCtrlDLU.OffsetRect(0, LABELHEIGHT);
 			rCtrl = rCtrlDLU;
+			
 			dlu.ToPixels(rCtrl);
+			rCtrl.bottom = (rCtrl.top + nActualCtrlHeight);
 			
 			if (!bCalcOnly)
 			{

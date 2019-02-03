@@ -1186,7 +1186,8 @@ void CToDoCtrl::ReposControls(CDeferWndMove* pDWM, CRect& rAvailable, BOOL bSpli
 	int nWidthDLU = dlu.FromPixelsX(rCtrls.Width());
 
 	// To handle DPI scaling better simply use the height of the category combo
-	const int CTRLHEIGHT = dlu.FromPixelsY(GetDefaultControlHeight());
+	int nActualCtrlHeight = GetDefaultControlHeight();
+	const int CTRLHEIGHT = dlu.FromPixelsY(nActualCtrlHeight);
 
 	for (int nCtrl = 0; nCtrl < aControls.GetSize(); nCtrl++)
 	{
@@ -1214,16 +1215,14 @@ void CToDoCtrl::ReposControls(CDeferWndMove* pDWM, CRect& rAvailable, BOOL bSpli
 
 		pDWM->MoveWindow(GetDlgItem(ctrl.nLabelID), rCtrl);
 		
-		// update YPos for the ctrl
-		rCtrlDLU.top += LABELHEIGHT;
-		rCtrlDLU.bottom = (rCtrlDLU.top + CTRLHEIGHT);
-		
 		// move ctrl
+		rCtrlDLU.OffsetRect(0, LABELHEIGHT);
 		rCtrl = rCtrlDLU;
 		
 		dlu.ToPixels(rCtrl);
-		rCtrl.OffsetRect(rCtrls.TopLeft());
+		rCtrl.bottom = (rCtrl.top + nActualCtrlHeight);
 
+		rCtrl.OffsetRect(rCtrls.TopLeft());
 		ReposControl(ctrl, pDWM, rCtrl, rCtrls.right);
 		
 		// update XPos for the control

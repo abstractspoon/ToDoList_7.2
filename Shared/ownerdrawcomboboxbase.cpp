@@ -159,7 +159,7 @@ int COwnerdrawComboBoxBase::CalcMinItemHeight(BOOL bList) const
 	}
 	else
 	{
-		nMinHeight += (4 + (2*GetSystemMetrics(SM_CYEDGE)));
+		nMinHeight += (/*4 +*/ (2*GetSystemMetrics(SM_CYEDGE)));
 	}
 
 	return nMinHeight;
