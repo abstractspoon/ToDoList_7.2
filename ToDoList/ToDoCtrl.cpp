@@ -5986,8 +5986,8 @@ int CToDoCtrl::GetSortableColumns(CTDCColumnIDMap& mapColIDs) const
 
 BOOL CToDoCtrl::IsColumnShowing(TDC_COLUMN nColumn) const
 {
-	if (nColumn == TDCC_CLIENT || CTDCCustomAttributeHelper::IsCustomColumn(nColumn))
-		return TRUE; // always visible
+	if ((nColumn == TDCC_CLIENT) || CTDCCustomAttributeHelper::IsCustomColumn(nColumn))
+		return TRUE;
 
 	return m_visColEdit.IsColumnVisible(nColumn);
 }
