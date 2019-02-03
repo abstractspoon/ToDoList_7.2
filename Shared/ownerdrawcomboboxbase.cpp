@@ -159,7 +159,12 @@ int COwnerdrawComboBoxBase::CalcMinItemHeight(BOOL bList) const
 	}
 	else
 	{
-		nMinHeight += (/*4 +*/ (2*GetSystemMetrics(SM_CYEDGE)));
+		int nFudge = 0;
+
+		if (GraphicsMisc::WantDPIScaling())
+			nFudge = GraphicsMisc::ScaleByDPIFactor(2);
+
+		nMinHeight += (nFudge + (2*GetSystemMetrics(SM_CYEDGE)));
 	}
 
 	return nMinHeight;
@@ -218,7 +223,7 @@ void COwnerdrawComboBoxBase::RefreshDropWidth(BOOL bRecalc)
 		nWidth = min(nWidth, nMaxWidth);
 	
 	SetDroppedWidth(nWidth + GetExtraListboxWidth());
-	
+
 }
 
 BOOL COwnerdrawComboBoxBase::IsType(UINT nComboType) const

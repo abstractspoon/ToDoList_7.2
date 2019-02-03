@@ -6236,7 +6236,7 @@ void CToDoListWnd::Resize(int cx, int cy, BOOL bMaximized)
 
 		// For reasons I don't understand, the quick find combo
 		// does not take on the app font without this call
-		m_cbQuickFind.SetFont(&m_fontMain);
+		//m_cbQuickFind.SetFont(&m_fontMain);
 	}
 
 	// Attempt to put the custom toolbar on the same line
