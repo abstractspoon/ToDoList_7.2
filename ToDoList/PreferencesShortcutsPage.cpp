@@ -116,8 +116,8 @@ BOOL CPreferencesShortcutsPage::OnInitDialog()
 			}
 		}
 		
-		m_tcCommands.SetRedraw(TRUE);
 		m_tcCommands.ExpandAll();
+		m_tcCommands.SetRedraw(TRUE);
 
 		if (m_bShowCommandIDs)
 			AddCommandIDsToTree(TVI_ROOT, TRUE);
