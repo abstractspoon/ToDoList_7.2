@@ -360,8 +360,8 @@ void CToDoCtrl::UpdateComments(BOOL bSaveAndValidate)
 			m_ctrlComments.SetContent(m_sTextComments, m_customComments, !bCommentsFocused);
 		}
 
-      CEnString sComboPrompt((nSelCount > 1) ? IDS_TDC_EDITPROMPT_MULTIPLEFORMATS : IDS_TDC_EDITPROMPT_UNKNOWNFORMAT);
-      CEnString sCommentsPrompt((nSelCount > 1) ? IDS_TDC_EDITPROMPT_MULTIPLETASKS : IDS_TDC_EDITPROMPT_COMMENTS);
+		CEnString sComboPrompt((nSelCount > 1) ? IDS_TDC_EDITPROMPT_MULTIPLEFORMATS : IDS_TDC_EDITPROMPT_UNKNOWNFORMAT);
+		CEnString sCommentsPrompt((nSelCount > 1) ? IDS_TDC_EDITPROMPT_MULTIPLETASKS : IDS_TDC_EDITPROMPT_COMMENTS);
 
 		m_ctrlComments.SetWindowPrompts(sComboPrompt, sCommentsPrompt);
 	}
