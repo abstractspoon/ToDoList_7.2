@@ -120,7 +120,8 @@ CPreferencesDlg::CPreferencesDlg(CShortcutManager* pShortcutMgr,
 	m_pageTaskDef(pContentMgr), 
 	m_pageFile2(pExportMgr),
 	m_iconSearch(IDI_SEARCH_PREFS, 16),
-	m_bInitialisingDialog(FALSE)
+	m_bInitialisingDialog(FALSE),
+	m_bBuildingTree(FALSE)
 {
 	m_eSearchText.AddButton(1, m_iconSearch, CEnString(IDS_SEARCHPREFS_PROMPT));
 
@@ -289,11 +290,21 @@ BOOL CPreferencesDlg::PreTranslateMessage(MSG* pMsg)
 		return FALSE;
 
 	// F1 handling
-	if ((pMsg->message == WM_KEYDOWN) && 
-		(pMsg->wParam == VK_F1) &&
-		CDialogHelper::IsChildOrSame(::GetParent(*this), pMsg->hwnd))
+	if (((pMsg->message == WM_KEYDOWN) || (pMsg->message == WM_SYSKEYDOWN)) && 
+		CDialogHelper::IsChildOrSame(*this, pMsg->hwnd))
 	{
-		OnHelp();
+		switch (pMsg->wParam)
+		{
+			case VK_F1:
+				OnHelp();
+				break;
+
+			case 'F':
+			case 'f':
+				if (Misc::ModKeysArePressed(MKS_CTRL))
+					m_eSearchText.SetFocus();
+				break;
+		}
 	}
 	
 	return CPreferencesDlgBase::PreTranslateMessage(pMsg);
@@ -301,6 +312,8 @@ BOOL CPreferencesDlg::PreTranslateMessage(MSG* pMsg)
 
 void CPreferencesDlg::AddPagesToTree(BOOL bDoSearch)
 {
+	CAutoFlag af(m_bBuildingTree, TRUE);
+
 	m_tcPages.DeleteAllItems();
 	m_mapHTIToSection.RemoveAll();
 	m_mapPP2HTI.RemoveAll();
@@ -369,6 +382,8 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 		return FALSE;
 	}
 
+	CEnString sPath(nIDPath);
+
 	if (bDoSearch && !m_sSearchText.IsEmpty())
 	{
 		CStringArray aSearchTerms;
@@ -379,7 +394,6 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 	}
 
 	// else
-	CEnString sPath(nIDPath);
 	HTREEITEM htiParent = TVI_ROOT; // default
 	CString sParent(sPath);
 
@@ -438,6 +452,9 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 
 void CPreferencesDlg::OnSelchangedPages(NMHDR* /*pNMHDR*/, LRESULT* pResult) 
 {
+	if (m_bBuildingTree)
+		return;
+
 	HTREEITEM htiSel = m_tcPages.GetSelectedItem();
 	
 	// Get the section of the item FIRST
@@ -750,3 +767,4 @@ LRESULT CPreferencesDlg::OnUpdateSearch(WPARAM wParam, LPARAM lParam)
 
 	return 0L;
 }
+

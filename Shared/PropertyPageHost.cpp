@@ -295,8 +295,10 @@ BOOL CPropertyPageHost::SetActivePage(int nIndex, BOOL bAndFocus)
 			if (pCtrl)
 				pCtrl->SetFocus();
 		}
-		else
+		else if (pFocus)
+		{
 			pFocus->SetFocus();
+		}
 
 		m_nSelIndex = nIndex;
 	}
@@ -374,7 +376,7 @@ BOOL CPropertyPageHost::PreTranslateMessage(MSG* pMsg)
 		if (pActive->PreTranslateMessage(pMsg))
 			return TRUE;
 		
-		else if (pActive->IsDialogMessage(pMsg)) 
+		if (pActive->IsDialogMessage(pMsg)) 
 			return TRUE;
 	}
 	

@@ -334,7 +334,9 @@ protected:
 	CString m_sPageTitle;
 	CUIThemeFile m_theme;
 	TDCAUTOLISTDATA m_autoListData;
+
 	BOOL m_bInitialisingDialog;
+	BOOL m_bBuildingTree;
 
 	CPreferences m_prefs;
 	CMap<CPreferencesPageBase*, CPreferencesPageBase*, HTREEITEM, HTREEITEM&> m_mapPP2HTI;
@@ -378,7 +380,6 @@ protected:
 	virtual void LoadPreferences(const IPreferences* prefs, LPCTSTR szKey);
 
 	static void SetTitleThemeColors(CEnStatic& stTitle, const CUIThemeFile& theme);
-
 };
 
 //{{AFX_INSERT_LOCATION}}
