@@ -8,7 +8,6 @@
 //
 
 #include "..\shared\fileedit.h"
-#include "..\shared\groupline.h"
 #include "..\shared\preferencesbase.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,20 +75,21 @@ protected:
 	BOOL	m_bNotifyReadOnly;
 	BOOL	m_bRemoveArchivedTasks;
 	BOOL	m_bRemoveOnlyOnAbsoluteCompletion;
-	CGroupLineManager m_mgrGroupLines;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesFilePage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CPreferencesFilePage)
-	virtual BOOL OnInitDialog();
 	afx_msg void OnNotifyDueOnLoad();
 	afx_msg void OnDisplayduetasksinhtml();
 	afx_msg void OnUsestylesheetfordueitems();

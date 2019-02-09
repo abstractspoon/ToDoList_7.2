@@ -94,20 +94,19 @@ BEGIN
                     BS_AUTOCHECKBOX | BS_TOP | WS_TABSTOP,239,8,138,21
 END
 
-IDD_PREFERENCES DIALOG DISCARDABLE  0, 0, 547, 295
+IDD_PREFERENCES DIALOGEX 0, 0, 547, 295
 STYLE WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "ToDoList Preferences"
 FONT 8, "Tahoma"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,436,274,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,490,274,50,14
-    LTEXT           "&Categories",IDC_CATEGORY_TITLE,7,7,120,13,SS_NOTIFY | 
-                    SS_CENTERIMAGE | SS_SUNKEN,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_SEARCH,7,7,120,14,ES_AUTOHSCROLL
     CONTROL         "Tree1",IDC_PAGES,"SysTreeView32",TVS_DISABLEDRAGDROP | 
                     TVS_SHOWSELALWAYS | TVS_FULLROWSELECT | WS_BORDER | 
                     WS_TABSTOP,7,20,120,246
     CONTROL         "",IDC_HOSTFRAME,"Static",SS_GRAYFRAME,136,20,404,246,
                     WS_EX_TRANSPARENT
+    DEFPUSHBUTTON   "OK",IDOK,436,274,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,490,274,50,14
     PUSHBUTTON      "&Apply",IDC_APPLY,255,274,50,14,NOT WS_VISIBLE | 
                     WS_DISABLED
     LTEXT           "",IDC_PAGE_TITLE,136,7,404,13,SS_NOTIFY | 
@@ -2606,6 +2605,7 @@ IDI_TIMETRACK_STD       ICON    DISCARDABLE     "res\\app_timetrack.ico"
 IDI_STYLE_IMAGE         ICON    DISCARDABLE     "res\\style_image.ico"
 IDI_ADD_LOGGED_TIME     ICON    DISCARDABLE     "res\\plus.ico"
 IDI_RESET_ELAPSED       ICON    DISCARDABLE     "res\\reset_elapsed.ico"
+IDI_SEARCH_PREFS        ICON    DISCARDABLE     "res\\search_prefs.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -5423,6 +5423,7 @@ BEGIN
     IDS_SAVETASKVIEWTOIMAGE_TITLE "Save Task View to Image"
     IDS_TDLBC_CUSTOMATTRIBS "Custom Attributes"
     IDS_HANDLERNOTINSTALLED "(handler not installed)"
+    IDS_SEARCHPREFS_PROMPT  "Search Preferences"
 END
 
 #endif    // English (Australia) resources

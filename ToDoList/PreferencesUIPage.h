@@ -10,7 +10,6 @@
 #include "TDLTaskViewListBox.h"
 #include "tdlthemecombobox.h"
 
-#include "..\shared\groupline.h"
 #include "..\shared\preferencesbase.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -123,16 +122,17 @@ protected:
 	PUIP_LOCATION	m_nCtrlsPos;
 
 	const CUIExtensionMgr* m_pMgrUIExt;
-	CGroupLineManager m_mgrGroupLines;
 	CTDLThemeComboBox m_cbThemes;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesUIPage)
+	//}}AFX_VIRTUAL
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
 	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:

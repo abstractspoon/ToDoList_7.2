@@ -90,15 +90,20 @@ END_MESSAGE_MAP()
 BOOL CPreferencesExportPage::OnInitDialog() 
 {
 	CPreferencesPageBase::OnInitDialog();
-	
-	m_eTextIndent.EnableWindow(m_bUseSpaceIndents);
-	GetDlgItem(IDC_TEXTINDENTTRAIL)->EnableWindow(m_bUseSpaceIndents);
-	
-	m_eLineSpaces.EnableWindow(m_bExportSpaceForNotes);
-	GetDlgItem(IDC_NUMLINESPACETRAIL)->EnableWindow(m_bExportSpaceForNotes);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CPreferencesExportPage::OnFirstShow()
+{
+	CPreferencesPageBase::OnFirstShow();
+
+	m_eTextIndent.EnableWindow(m_bUseSpaceIndents);
+	GetDlgItem(IDC_TEXTINDENTTRAIL)->EnableWindow(m_bUseSpaceIndents);
+
+	m_eLineSpaces.EnableWindow(m_bExportSpaceForNotes);
+	GetDlgItem(IDC_NUMLINESPACETRAIL)->EnableWindow(m_bExportSpaceForNotes);
 }
 
 void CPreferencesExportPage::OnChangeTextIndentType() 

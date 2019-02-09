@@ -92,13 +92,21 @@ END_MESSAGE_MAP()
 BOOL CPreferencesUIPage::OnInitDialog() 
 {
 	CPreferencesPageBase::OnInitDialog();
+	
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
 
-	m_mgrGroupLines.AddGroupLine(IDC_TOOLBARGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_SORTGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_TABBARGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_COMMENTSGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_FILTERGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_TASKVIEWSGROUP, *this);
+void CPreferencesUIPage::OnFirstShow()
+{
+	CPreferencesPageBase::OnFirstShow();
+
+	AddGroupLine(IDC_TOOLBARGROUP);
+	AddGroupLine(IDC_SORTGROUP);
+	AddGroupLine(IDC_TABBARGROUP);
+	AddGroupLine(IDC_COMMENTSGROUP);
+	AddGroupLine(IDC_FILTERGROUP);
+	AddGroupLine(IDC_TASKVIEWSGROUP);
 
 	GetDlgItem(IDC_STACKCOMMENTSABOVEFIELDS)->EnableWindow(m_bStackEditFieldsAndComments);
 
@@ -115,9 +123,6 @@ BOOL CPreferencesUIPage::OnInitDialog()
 	}
 	
 	m_lbTaskViews.ModifyStyleEx(0, WS_EX_CLIENTEDGE);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CPreferencesUIPage::OnStackEditFieldsAndComments() 

@@ -137,8 +137,16 @@ BOOL CPreferencesFile2Page::OnInitDialog()
 {
 	CPreferencesPageBase::OnInitDialog();
 
-	m_mgrGroupLines.AddGroupLine(IDC_BACKUPGROUP, *this);
-	m_mgrGroupLines.AddGroupLine(IDC_SAVEGROUP, *this);
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CPreferencesFile2Page::OnFirstShow()
+{
+	CPreferencesPageBase::OnFirstShow();
+
+	AddGroupLine(IDC_BACKUPGROUP);
+	AddGroupLine(IDC_SAVEGROUP);
 	
 	GetDlgItem(IDC_BACKUPLOCATION)->EnableWindow(m_bBackupOnSave);
 	GetDlgItem(IDC_BACKUPLOCATIONLABEL)->EnableWindow(m_bBackupOnSave);
@@ -161,9 +169,6 @@ BOOL CPreferencesFile2Page::OnInitDialog()
 	GetDlgItem(IDC_EXPORTFILTERED)->EnableWindow(m_bAutoExport);
 
 	SelectItemByData(m_cbOtherExporters, m_nOtherExporter);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 LRESULT CPreferencesFile2Page::OnEEBtnClick(WPARAM wParam, LPARAM lParam)

@@ -7,7 +7,6 @@
 // PreferencesMultiUserPage.h : header file
 //
 
-#include "..\shared\groupline.h"
 #include "..\shared\preferencesbase.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -66,20 +65,21 @@ protected:
 	BOOL	m_bPromptReloadOnWritable;
 	BOOL	m_bPromptReloadOnTimestamp;
 	UINT    m_nCheckinNoEditTime;
-	CGroupLineManager m_mgrGroupLines;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesMultiUserPage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+ 
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CPreferencesMultiUserPage)
-	virtual BOOL OnInitDialog();
 	afx_msg void OnCheckinonnoedit();
 	afx_msg void OnUse3rdpartysourcectrl();
 	//}}AFX_MSG

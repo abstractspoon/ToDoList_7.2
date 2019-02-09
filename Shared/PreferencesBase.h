@@ -9,6 +9,7 @@
 #include "dialoghelper.h"
 #include "winhelpbutton.h"
 #include "icon.h"
+#include "Groupline.h"
 
 #include "..\Interfaces\IPreferences.h"
 
@@ -39,15 +40,19 @@ public:
 	void SetBackgroundColor(COLORREF color);
 	CWnd* GetDlgItem(UINT nID) const;
 	UINT GetHelpID() const { return m_nHelpID; }
+	BOOL ContainsUIText(LPCTSTR szText) const;
+	BOOL ContainsUIText(const CStringArray& aText, BOOL bFindOneOf = TRUE) const;
 
 protected:
 	HBRUSH m_brush;
 	COLORREF m_crback;
 	BOOL m_bFirstShow;
 	UINT m_nHelpID;
+	CGroupLineManager m_mgrGroupLines;
 
 protected:
 	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 	
 protected:
 	afx_msg void OnControlChange(UINT nID = -1);
@@ -56,6 +61,9 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	BOOL AddGroupLine(UINT nIDStatic);
 
 };
 

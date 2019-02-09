@@ -21,7 +21,6 @@
 #include "..\shared\timeedit.h"
 #include "..\shared\wndPrompt.h"
 #include "..\shared\autocombobox.h"
-#include "..\shared\groupline.h"
 #include "..\shared\maskedit.h"
 #include "..\Shared\checklistboxex.h"
 #include "..\Shared\iconbutton.h"
@@ -68,7 +67,6 @@ protected:
 	BOOL	m_bInheritParentAttributes;
 	int		m_nSelAttribUse;
 	CWndPromptManager m_mgrPrompts;
-	CGroupLineManager m_mgrGroupLines;
 
 	struct ATTRIBPREF
 	{
@@ -81,21 +79,21 @@ protected:
 	};
 	CArray<ATTRIBPREF, ATTRIBPREF&> m_aAttribPrefs;
 
-
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesTaskDef2Page)
-public:
-	virtual void OnOK();
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+
+protected:
+	virtual void OnOK();
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CPreferencesTaskDef2Page)
-	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	afx_msg void OnUseparentattrib();
 	afx_msg void OnAttribUseChange();

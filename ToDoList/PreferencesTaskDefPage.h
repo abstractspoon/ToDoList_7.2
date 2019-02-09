@@ -23,7 +23,6 @@
 #include "..\shared\timeedit.h"
 #include "..\shared\wndPrompt.h"
 #include "..\shared\autocombobox.h"
-#include "..\shared\groupline.h"
 #include "..\shared\maskedit.h"
 #include "..\Shared\iconbutton.h"
 #include "..\Shared\binarydata.h"
@@ -82,7 +81,6 @@ protected:
 	BOOL	m_bUseCreationTimeForDefStartDate;
 	BOOL	m_bUseCreationDateForDefDueDate;
 	CWndPromptManager m_mgrPrompts;
-	CGroupLineManager m_mgrGroupLines;
 	CTDCImageList m_ilTaskIcons;
 	UINT m_nDefReminderLeadin;
 
@@ -96,17 +94,18 @@ protected:
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesTaskDefPage)
-public:
-	virtual void OnOK();
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+
+protected:
+	virtual void OnOK();
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(CPreferencesTaskDefPage)
-	virtual BOOL OnInitDialog();
 	afx_msg void OnSetdefaulticon();
 	afx_msg void OnSelchangeReminder();
 	afx_msg void OnUseCreationDateForDefStartDate();

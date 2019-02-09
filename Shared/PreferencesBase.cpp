@@ -5,6 +5,7 @@
 #include "PreferencesBase.h"
 #include "graphicsmisc.h"
 #include "deferwndmove.h"
+#include "misc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -70,6 +71,58 @@ CWnd* CPreferencesPageBase::GetDlgItem(UINT nID) const
 	return &wnd;
 }
 
+BOOL CPreferencesPageBase::ContainsUIText(LPCTSTR szText) const
+{
+	ASSERT_VALID(this);
+	
+	if (Misc::IsEmpty(szText))
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	const CWnd* pChild = GetWindow(GW_CHILD);
+	int nChild = 0;
+
+	while (pChild)
+	{
+		CString sCtrlText = GetCtrlText(pChild);
+
+		if (Misc::Find(szText, sCtrlText, FALSE) != -1)
+			return TRUE;
+
+		pChild = pChild->GetNextWindow();
+		nChild++;
+	}
+
+	return FALSE;
+}
+
+BOOL CPreferencesPageBase::ContainsUIText(const CStringArray& aText, BOOL bFindOneOf) const
+{
+	if (aText.GetSize() == 0)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	for (int nItem = 0; nItem < aText.GetSize(); nItem++)
+	{
+		if (ContainsUIText(aText[nItem]))
+		{
+			if (bFindOneOf)
+				return TRUE;
+		}
+		else
+		{
+			if (!bFindOneOf)
+				return FALSE;
+		}
+	}
+
+	return FALSE;
+}
+
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {
 	if (m_brush == NULL)
@@ -87,12 +140,21 @@ void CPreferencesPageBase::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CPropertyPage::OnShowWindow(bShow, nStatus);
 
-	// resize controls to fit text
-	if (m_bFirstShow)
-	{
-		m_bFirstShow = FALSE;
-		ResizeButtonStaticTextFieldsToFit(this);
-	}
+   if (m_bFirstShow)
+   {
+      m_bFirstShow = FALSE;
+      OnFirstShow();
+   }
+}
+
+void CPreferencesPageBase::OnFirstShow()
+{
+   ResizeButtonStaticTextFieldsToFit(this);
+}
+
+BOOL CPreferencesPageBase::AddGroupLine(UINT nIDStatic)
+{
+	return m_mgrGroupLines.AddGroupLine(nIDStatic, GetSafeHwnd());
 }
 
 HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

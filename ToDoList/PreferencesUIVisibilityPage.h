@@ -10,7 +10,6 @@
 #include "tdlcolumnattribVisibilitylistctrl.h"
 
 #include "..\shared\preferencesbase.h"
-#include "..\shared\groupline.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CPreferencesUIVisibilityPage dialog
@@ -33,15 +32,16 @@ protected:
 	CTDLColumnAttribVisibilityListCtrl	m_lcVisibility;
 	//}}AFX_DATA
 	TDL_SHOWATTRIB m_nAttribShow;
-	CGroupLine m_groupLineList;
 
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesUIVisibilityPage)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
-	BOOL OnInitDialog();
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnFirstShow();
 
 // Implementation
 protected:

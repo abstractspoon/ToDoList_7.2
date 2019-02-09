@@ -125,7 +125,6 @@ protected:
 	COLORREF m_crAltLine;
 	COLORREF m_crDue, m_crDueToday;
 	COLORREF m_crStart, m_crStartToday;
-	CGroupLineManager m_mgrGroupLines;
 	COLORREF m_crFlagged;
 	COLORREF m_crReference;
 	TDC_ATTRIBUTE m_nColorAttribute;
@@ -135,10 +134,12 @@ protected:
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CPreferencesUITasklistColorsPage)
-	protected:
+	//}}AFX_VIRTUAL
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnInitDialog();
-	//}}AFX_VIRTUAL
+	virtual void OnFirstShow();
 
 // Implementation
 protected:

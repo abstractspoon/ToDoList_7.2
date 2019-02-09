@@ -161,6 +161,7 @@
 #define IDI_ADD_LOGGED_TIME             308
 #define IDB_OUTLOOKTYPES                309
 #define IDR_FINDTASKS                   310
+#define IDI_SEARCH_PREFS                313
 #define IDC_TB_FRAME                    1001
 #define IDC_DAYS                        1003
 #define IDC_WEEKS                       1004
@@ -807,6 +808,7 @@
 #define IDC_RELOADICONS                 1519
 #define IDC_COMMENTLABEL                1520
 #define IDC_TDLEXTENSIONHANDLER         1521
+#define IDC_SEARCH                      1521
 #define IDC_TDLPROTOCOLHANDLER          1522
 #define IDC_TASKLIST                    2000
 #define IDD_IMPORT_OUTLOOK_DIALOG       2000
@@ -2215,6 +2217,7 @@
 #define IDS_SAVETASKVIEWTOIMAGE_TITLE   58484
 #define IDS_TDLBC_CUSTOMATTRIBS         58485
 #define IDS_HANDLERNOTINSTALLED         58486
+#define IDS_SEARCHPREFS_PROMPT          58490
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects
