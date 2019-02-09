@@ -19,7 +19,7 @@ static char THIS_FILE[] = __FILE__;
 CPreferencesPageBase::CPreferencesPageBase(UINT nDlgTemplateID) 
 	: 
 	CPropertyPage(nDlgTemplateID), 
-	m_brush(NULL), 
+	m_brBack(NULL), 
 	m_crback(CLR_NONE), 
 	m_bFirstShow(TRUE), 
 	m_nHelpID(nDlgTemplateID)
@@ -28,7 +28,7 @@ CPreferencesPageBase::CPreferencesPageBase(UINT nDlgTemplateID)
 
 CPreferencesPageBase::~CPreferencesPageBase()
 {
-	GraphicsMisc::VerifyDeleteObject(m_brush);
+	GraphicsMisc::VerifyDeleteObject(m_brBack);
 }
 
 IMPLEMENT_DYNAMIC(CPreferencesPageBase, CPropertyPage);
@@ -101,7 +101,7 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CStringArray& aSearch) cons
 // static
 BOOL CPreferencesPageBase::UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch)
 {
-	ASSERT_VALID(pWnd);
+	ASSERT(pWnd && pWnd->GetSafeHwnd());
 
 	if (UITextContainsOneOf(GetCtrlText(pWnd), aSearch))
 		return TRUE;
@@ -143,10 +143,9 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CString& sUIText, const CSt
 	return FALSE;
 }
 
-
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {
-	if (m_brush == NULL)
+	if (m_brBack == NULL)
 		return CPropertyPage::OnEraseBkgnd(pDC);
 
 	// else
@@ -182,13 +181,71 @@ HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (nCtlColor == CTLCOLOR_STATIC && m_brush != NULL)
+	if (nCtlColor == CTLCOLOR_STATIC)
 	{
+		if (m_mapHighlightedCtrls.Has(pWnd->GetSafeHwnd()))
+		{
+			hbr = m_brHighlight;
+		}
+		else if (m_brBack != NULL)
+		{
+			hbr = m_brBack;
+		}
+
 		pDC->SetBkMode(TRANSPARENT);
-		hbr = m_brush;
 	}
 	
 	return hbr;
+}
+
+BOOL CPreferencesPageBase::HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight)
+{
+	if (aSearch.GetSize() == 0)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	ClearHighlights();
+
+	if (!FindMatchingCtrls(this, aSearch, m_mapHighlightedCtrls))
+		return FALSE;
+
+	m_brHighlight = ::CreateSolidBrush(crHighlight);
+	Invalidate(TRUE);
+
+	return TRUE;
+}
+
+int CPreferencesPageBase::FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CSet<HWND>& mapMatching)
+{
+	ASSERT(pWnd && pWnd->GetSafeHwnd());
+
+	if (UITextContainsOneOf(GetCtrlText(pWnd), aSearch))
+		mapMatching.Add(pWnd->GetSafeHwnd());
+
+	// Children
+	const CWnd* pChild = pWnd->GetWindow(GW_CHILD);
+
+	while (pChild)
+	{
+		FindMatchingCtrls(pChild, aSearch, mapMatching);
+
+		pChild = pChild->GetNextWindow();
+	}
+
+	return mapMatching.GetSize();
+}
+
+void CPreferencesPageBase::ClearHighlights()
+{
+	if (m_mapHighlightedCtrls.GetSize())
+	{
+		m_mapHighlightedCtrls.RemoveAll();
+		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
+
+		Invalidate(TRUE);
+	}
 }
 
 void CPreferencesPageBase::OnControlChange(UINT nID)
@@ -204,10 +261,10 @@ void CPreferencesPageBase::SetBackgroundColor(COLORREF color)
 
 	m_crback = color;
 
-	GraphicsMisc::VerifyDeleteObject(m_brush);
+	GraphicsMisc::VerifyDeleteObject(m_brBack);
 
 	if (color != CLR_NONE)
-		m_brush = ::CreateSolidBrush(color);
+		m_brBack = ::CreateSolidBrush(color);
 
 	if (GetSafeHwnd())
 		Invalidate(TRUE);

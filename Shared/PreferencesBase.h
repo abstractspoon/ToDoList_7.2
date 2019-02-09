@@ -10,6 +10,7 @@
 #include "winhelpbutton.h"
 #include "icon.h"
 #include "Groupline.h"
+#include "mapex.h"
 
 #include "..\Interfaces\IPreferences.h"
 
@@ -42,15 +43,21 @@ public:
 	UINT GetHelpID() const { return m_nHelpID; }
 	BOOL UITextContains(LPCTSTR szSearch) const;
 	BOOL UITextContainsOneOf(const CStringArray& aSearch) const;
+	BOOL HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight = RGB(255, 255, 0));
+	void ClearHighlights();
 	
 	static BOOL UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch);
 	static BOOL UITextContainsOneOf(const CString& sUIText, const CStringArray& aSearch);
 
 protected:
-	HBRUSH m_brush;
+	HBRUSH m_brBack;
 	COLORREF m_crback;
 	BOOL m_bFirstShow;
 	UINT m_nHelpID;
+
+	CSet<HWND> m_mapHighlightedCtrls;
+	HBRUSH m_brHighlight;
+
 	CGroupLineManager m_mgrGroupLines;
 
 protected:
@@ -68,6 +75,7 @@ protected:
 protected:
 	BOOL AddGroupLine(UINT nIDStatic);
 
+	static int FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CSet<HWND>& aMatching);
 };
 
 /////////////////////////////////////////////////////////////////////////////

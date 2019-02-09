@@ -385,24 +385,31 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 	CStringArray aPath;
 	VERIFY(Misc::Split(CEnString(nIDPath), aPath, PATHDELIM) >= 1);
 
-	if (bDoSearch && !m_sSearchText.IsEmpty())
+	if (bDoSearch)
 	{
-		CStringArray aSearchTerms;
-		Misc::Split(m_sSearchText, aSearchTerms, ' ');
-
-		// Check path first
-		int nPath = aPath.GetSize();
-
-		while (nPath--)
+		if (!m_sSearchText.IsEmpty())
 		{
-			if (CPreferencesPageBase::UITextContainsOneOf(aPath[nPath], aSearchTerms))
-				break;
+			CStringArray aSearchTerms;
+			Misc::Split(m_sSearchText, aSearchTerms, ' ');
+
+			// Check path first
+			int nPath = aPath.GetSize();
+
+			while (nPath--)
+			{
+				if (CPreferencesPageBase::UITextContainsOneOf(aPath[nPath], aSearchTerms))
+					break;
+			}
+
+			if (nPath == -1)
+			{
+				if (!pPage->HighlightUIText(aSearchTerms))
+					return FALSE;
+			}
 		}
-
-		if (nPath == -1)
+		else
 		{
-			if (!pPage->UITextContainsOneOf(aSearchTerms))
-				return FALSE;
+			pPage->ClearHighlights();
 		}
 	}
 
