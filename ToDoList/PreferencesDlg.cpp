@@ -120,7 +120,7 @@ CPreferencesDlg::CPreferencesDlg(CShortcutManager* pShortcutMgr,
 	m_pageTaskDef(pContentMgr), 
 	m_pageFile2(pExportMgr),
 	m_iconSearch(IDI_SEARCH_PREFS, 16),
-	m_bInitDlg(FALSE)
+	m_bInitialisingDialog(FALSE)
 {
 	m_eSearchText.AddButton(1, m_iconSearch, CEnString(IDS_SEARCHPREFS_PROMPT));
 
@@ -198,13 +198,13 @@ void CPreferencesDlg::LoadPreferences(const IPreferences* prefs, LPCTSTR szKey)
 {
 	// 'Temporary' hack to prevent prefs being reloaded 
 	// by base class in OnInitDialog
-	if (!m_bInitDlg)
+	if (!m_bInitialisingDialog)
 		CPreferencesDlgBase::LoadPreferences(prefs, szKey);
 }
 
 BOOL CPreferencesDlg::OnInitDialog() 
 {
-	CAutoFlag af(m_bInitDlg, TRUE);
+	CAutoFlag af(m_bInitialisingDialog, TRUE);
 
 	CPreferencesDlgBase::OnInitDialog();
 

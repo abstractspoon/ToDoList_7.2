@@ -334,7 +334,7 @@ protected:
 	CString m_sPageTitle;
 	CUIThemeFile m_theme;
 	TDCAUTOLISTDATA m_autoListData;
-	BOOL m_bInitDlg;
+	BOOL m_bInitialisingDialog;
 
 	CPreferences m_prefs;
 	CMap<CPreferencesPageBase*, CPreferencesPageBase*, HTREEITEM, HTREEITEM&> m_mapPP2HTI;
