@@ -40,8 +40,11 @@ public:
 	void SetBackgroundColor(COLORREF color);
 	CWnd* GetDlgItem(UINT nID) const;
 	UINT GetHelpID() const { return m_nHelpID; }
-	BOOL ContainsUIText(LPCTSTR szText) const;
-	BOOL ContainsUIText(const CStringArray& aText, BOOL bFindOneOf = TRUE) const;
+	BOOL UITextContains(LPCTSTR szSearch) const;
+	BOOL UITextContainsOneOf(const CStringArray& aSearch) const;
+	
+	static BOOL UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch);
+	static BOOL UITextContainsOneOf(const CString& sUIText, const CStringArray& aSearch);
 
 protected:
 	HBRUSH m_brush;

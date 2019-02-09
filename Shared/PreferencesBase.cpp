@@ -71,57 +71,78 @@ CWnd* CPreferencesPageBase::GetDlgItem(UINT nID) const
 	return &wnd;
 }
 
-BOOL CPreferencesPageBase::ContainsUIText(LPCTSTR szText) const
+BOOL CPreferencesPageBase::UITextContains(LPCTSTR szSearch) const
 {
 	ASSERT_VALID(this);
 	
-	if (Misc::IsEmpty(szText))
+	if (Misc::IsEmpty(szSearch))
 	{
 		ASSERT(0);
 		return FALSE;
 	}
 
-	const CWnd* pChild = GetWindow(GW_CHILD);
+	CStringArray aText;
+	aText.Add(szSearch);
+
+	return UITextContainsOneOf(aText);
+}
+
+BOOL CPreferencesPageBase::UITextContainsOneOf(const CStringArray& aSearch) const
+{
+	if (aSearch.GetSize() == 0)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	return UITextContainsOneOf(this, aSearch);
+}
+
+// static
+BOOL CPreferencesPageBase::UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch)
+{
+	ASSERT_VALID(pWnd);
+
+	if (UITextContainsOneOf(GetCtrlText(pWnd), aSearch))
+		return TRUE;
+
+	// Children
+	const CWnd* pChild = pWnd->GetWindow(GW_CHILD);
+
+#ifdef _DEBUG
 	int nChild = 0;
+#endif
 
 	while (pChild)
 	{
-		CString sCtrlText = GetCtrlText(pChild);
-
-		if (Misc::Find(szText, sCtrlText, FALSE) != -1)
+		if (UITextContainsOneOf(pChild, aSearch))
 			return TRUE;
 
 		pChild = pChild->GetNextWindow();
+
+#ifdef _DEBUG
 		nChild++;
+#endif
 	}
 
 	return FALSE;
 }
 
-BOOL CPreferencesPageBase::ContainsUIText(const CStringArray& aText, BOOL bFindOneOf) const
+// static
+BOOL CPreferencesPageBase::UITextContainsOneOf(const CString& sUIText, const CStringArray& aSearch)
 {
-	if (aText.GetSize() == 0)
+	if (!sUIText.IsEmpty())
 	{
-		ASSERT(0);
-		return FALSE;
-	}
-
-	for (int nItem = 0; nItem < aText.GetSize(); nItem++)
-	{
-		if (ContainsUIText(aText[nItem]))
+		for (int nItem = 0; nItem < aSearch.GetSize(); nItem++)
 		{
-			if (bFindOneOf)
+			if (Misc::Find(aSearch[nItem], sUIText, FALSE) != -1)
 				return TRUE;
 		}
-		else
-		{
-			if (!bFindOneOf)
-				return FALSE;
-		}
 	}
 
 	return FALSE;
 }
+
 
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {

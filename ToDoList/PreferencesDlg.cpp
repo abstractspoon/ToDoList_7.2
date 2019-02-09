@@ -382,24 +382,39 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 		return FALSE;
 	}
 
-	CEnString sPath(nIDPath);
+	CStringArray aPath;
+	VERIFY(Misc::Split(CEnString(nIDPath), aPath, PATHDELIM) >= 1);
 
 	if (bDoSearch && !m_sSearchText.IsEmpty())
 	{
 		CStringArray aSearchTerms;
 		Misc::Split(m_sSearchText, aSearchTerms, ' ');
 
-		if (!pPage->ContainsUIText(aSearchTerms))
-			return FALSE;
+		// Check path first
+		int nPath = aPath.GetSize();
+
+		while (nPath--)
+		{
+			if (CPreferencesPageBase::UITextContainsOneOf(aPath[nPath], aSearchTerms))
+				break;
+		}
+
+		if (nPath == -1)
+		{
+			if (!pPage->UITextContainsOneOf(aSearchTerms))
+				return FALSE;
+		}
 	}
 
-	// else
+	// Add parent 'folders' first
 	HTREEITEM htiParent = TVI_ROOT; // default
-	CString sParent(sPath);
+	int nNumPath = aPath.GetSize();
 
-	while (Misc::Split(sParent, sPath, PATHDELIM))
+	for (int nPath = 0; nPath < (nNumPath - 1); nPath++)
 	{
 		// see if parent already exists
+		const CString& sParent = aPath[nPath];
+
 		HTREEITEM htiParentParent = htiParent;
 		htiParent = m_tcPages.GetChildItem(htiParentParent);
 
@@ -419,12 +434,11 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 			if (htiParentParent == TVI_ROOT)
 				m_tcPages.SetItemState(htiParent, TVIS_BOLD, TVIS_BOLD);
 		}
-
-		// next
-		sParent = sPath;
 	}
 
-	HTREEITEM hti = m_tcPages.InsertItem(sPath, htiParent); // whatever's left
+	// Add actual 'leaf' page
+	CString sPage = aPath[nNumPath - 1];
+	HTREEITEM hti = m_tcPages.InsertItem(sPage, htiParent);
 	m_tcPages.EnsureVisible(hti);
 
 	// embolden root items
@@ -751,7 +765,31 @@ LRESULT CPreferencesDlg::OnUpdateSearch(WPARAM wParam, LPARAM lParam)
 
 		CWaitCursor cursor;
 
-		VERIFY(m_ppHost.CreateAllPages());
+		// Forcibly create all pages and translate them
+		if (CLocalizer::IsInitialized())
+		{
+			int nPage = m_ppHost.GetPageCount();
+
+			while (nPage--)
+			{
+				CPropertyPage* pPage = m_ppHost.GetPage(nPage);
+				ASSERT(pPage);
+
+				if (!pPage->GetSafeHwnd())
+				{
+					if (!EnsurePageCreated(nPage))
+						return FALSE;
+
+					// Showing the page triggers translation
+					pPage->ShowWindow(SW_SHOWNOACTIVATE);
+					pPage->ShowWindow(SW_HIDE);
+				}
+			}
+		}
+		else
+		{
+			VERIFY(m_ppHost.CreateAllPages());
+		}
 	}
 
 	CHoldRedraw hr(m_tcPages);
