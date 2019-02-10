@@ -234,12 +234,12 @@ int CPreferencesPageBase::FindMatchingCtrls(const CWnd* pWnd, const CStringArray
 		pChild = pChild->GetNextWindow();
 	}
 
-	return mapMatching.GetSize();
+	return mapMatching.GetCount();
 }
 
 void CPreferencesPageBase::ClearHighlights()
 {
-	if (m_mapHighlightedCtrls.GetSize())
+	if (m_mapHighlightedCtrls.GetCount())
 	{
 		m_mapHighlightedCtrls.RemoveAll();
 		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
