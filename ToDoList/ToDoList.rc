@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,2,4,1
+ FILEVERSION 7,2,5,0
  PRODUCTVERSION 1,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "AbstractSpoon Software\0"
             VALUE "FileDescription", "ToDoList\0"
-            VALUE "FileVersion", "7, 2, 4, 1\0"
+            VALUE "FileVersion", "7, 2, 5, 0\0"
             VALUE "InternalName", "ToDoList\0"
             VALUE "LegalCopyright", "Copyright (c) AbstractSpoon 2003-19\0"
             VALUE "LegalTrademarks", "\0"
@@ -97,7 +97,7 @@ END
 IDD_PREFERENCES DIALOGEX 0, 0, 547, 295
 STYLE WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "ToDoList Preferences"
-FONT 8, "Tahoma"
+FONT 8, "Tahoma", 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_SEARCH,7,7,120,14,ES_AUTOHSCROLL
     CONTROL         "Tree1",IDC_PAGES,"SysTreeView32",TVS_DISABLEDRAGDROP | 
@@ -205,7 +205,7 @@ END
 
 IDD_PREFGEN_PAGE DIALOGEX 0, 0, 400, 457
 STYLE WS_CHILD
-FONT 8, "Tahoma"
+FONT 8, "Tahoma", 0, 0, 0x1
 BEGIN
     LTEXT           "&Display Language:",IDC_STATIC,7,10,376,10
     CONTROL         "",IDC_LANGUAGE,"ComboBoxEx32",CBS_DROPDOWNLIST | 
