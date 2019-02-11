@@ -490,17 +490,23 @@ void CPreferencesDlg::OnTreeSelChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	
 	if (pPage && CPreferencesDlgBase::SetActivePage(pPage))
 	{
-		UpdateData(); // make sure search text is not overwritten
+		CWnd* pScrollTo = NULL;
 
-		// move to the section
-		if (nIDSection == IDC_TOPOFPAGE) // pseudo control ID
+		// If searching, move to the first match
+		if (m_aSearchTerms.GetSize())
 		{
+			pScrollTo = pPage->FindFirstUITextContainingOneOf(m_aSearchTerms);
+		}
+		// else move to the section
+		else if (nIDSection > 0)
+		{
+			pScrollTo = pPage->GetDlgItem(nIDSection);
+		}
+
+		if (pScrollTo)
+			m_ppHost.ScrollTo(pScrollTo);
+		else
 			m_ppHost.ScrollToTop();
-		}
-		else if (nIDSection)
-		{
-			m_ppHost.ScrollTo(pPage->GetDlgItem(nIDSection));
-		}
 
 		// special page handling
 		if (pPage == &m_pageTaskDef)

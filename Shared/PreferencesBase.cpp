@@ -145,6 +145,21 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CString& sUIText, const CSt
 	return FALSE;
 }
 
+CWnd* CPreferencesPageBase::FindFirstUITextContainingOneOf(const CStringArray& aSearch)
+{
+	CWnd* pChild = GetWindow(GW_CHILD);
+
+	while (pChild)
+	{
+		if (UITextContainsOneOf(GetCtrlText(pChild), aSearch))
+			return pChild;
+
+		pChild = pChild->GetNextWindow();
+	}
+
+	return NULL;
+}
+
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {
 	if (m_brBack != NULL)

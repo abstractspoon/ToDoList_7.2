@@ -45,6 +45,7 @@ public:
 	BOOL UITextContainsOneOf(const CStringArray& aSearch) const;
 	BOOL HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight);
 	void ClearHighlights();
+	CWnd* FindFirstUITextContainingOneOf(const CStringArray& aSearch);
 	
 	static BOOL UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch);
 	static BOOL UITextContainsOneOf(const CString& sUIText, const CStringArray& aSearch);
