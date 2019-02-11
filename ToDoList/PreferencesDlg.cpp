@@ -529,7 +529,7 @@ void CPreferencesDlg::OnSelchangedPages(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		m_sPageTitle = GetItemPath(htiSel);
 		UpdateData(FALSE);
 
-		UpdatePageTitleColors();
+		UpdatePageTitleTextColors();
 	}
 	
 	m_tcPages.SetFocus();
@@ -672,18 +672,20 @@ void CPreferencesDlg::ReposContents(CDeferWndMove& dwm, int nDX, int nDY)
 void CPreferencesDlg::SetUITheme(const CUIThemeFile& theme)
 {
 	m_theme = theme;
-	m_sbGrip.SetBackgroundColor(theme.crAppBackLight);
 
-	UpdatePageTitleColors();
+	m_sbGrip.SetBackgroundColor(theme.crAppBackLight);
+	m_stPageTitle.SetBkgndColors(theme.crStatusBarLight, theme.crStatusBarDark);
+	m_stPageTitle.SetBkgndStyle(theme.HasGlass(), theme.HasGradient());
+	
+	UpdatePageTitleTextColors();
 	
 	if (GetSafeHwnd())
 		Invalidate(TRUE);
 }
 
-void CPreferencesDlg::UpdatePageTitleColors()
+void CPreferencesDlg::UpdatePageTitleTextColors()
 {
-	COLORREF crFrom = m_theme.crStatusBarLight, crTo = m_theme.crStatusBarDark, crText = m_theme.crStatusBarText;
-	BOOL bGradient = m_theme.HasGradient(), bGlass = m_theme.HasGlass();
+	COLORREF crText = m_theme.crStatusBarText, crBack = CLR_NONE;
 
 	if (!m_sSearchText.IsEmpty())
 	{
@@ -693,12 +695,11 @@ void CPreferencesDlg::UpdatePageTitleColors()
 		if (CPreferencesPageBase::UITextContainsOneOf(m_sPageTitle, aSearch))
 		{
 			crText = 0;
-			crFrom = crTo = HILITE_COLOUR;
-			bGlass = bGradient = FALSE;
+			crBack = HILITE_COLOUR;
 		}
 	}
 
-	m_stPageTitle.SetColors(crText, crFrom, crTo, bGlass, bGradient);
+	m_stPageTitle.SetTextColors(crText, crBack);
 }
 
 BOOL CPreferencesDlg::OnEraseBkgnd(CDC* pDC)
