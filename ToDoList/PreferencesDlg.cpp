@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
-const COLORREF HILITE_COLOUR = RGB(255, 255, 0); // yellow
+const COLORREF HILITE_COLOUR = RGB(255, 255, 64); // yellow
 
 /////////////////////////////////////////////////////////////////////////////
 // Private class for tracking mouse middle-button clicking
