@@ -103,19 +103,6 @@ void CEnStatic::OnPaint()
 	{
 		CPaintDC dc(this); // device context for painting
 
-		if (m_crTextFore != CLR_NONE)
-			dc.SetTextColor(m_crTextFore);
-
-		if (m_crTextBack != CLR_NONE)
-		{
-			dc.SetBkColor(m_crTextBack);
-			dc.SetBkMode(OPAQUE);
-		}
-		else
-		{
-			dc.SetBkMode(TRANSPARENT);
-		}
-
 		if (DrawColorBkgnd(&dc))
 		{
 			// render text also
@@ -131,12 +118,35 @@ void CEnStatic::OnPaint()
 				CFont* pOldFont = GraphicsMisc::PrepareDCFont(&dc, GetSafeHwnd());
 				UINT nFlags = (DT_VCENTER | DT_SINGLELINE | GetHorzTextAlignment());
 
+				if (m_crTextFore != CLR_NONE)
+					dc.SetTextColor(m_crTextFore);
+
+				if (m_crTextBack != CLR_NONE)
+				{
+					// Paint a slightly bigger bkgnd rect
+					CSize sizeText = dc.GetTextExtent(sText);
+					CRect rBack(rText);
+
+					rBack.DeflateRect(0, ((rText.Height() - sizeText.cy) / 2));
+					rBack.right = rBack.left + sizeText.cx;
+					rBack.InflateRect(2, 2);
+
+					dc.FillSolidRect(rBack, m_crTextBack);
+				}
+				
+				dc.SetBkMode(TRANSPARENT);
 				dc.DrawText(sText, rText, nFlags);
 				dc.SelectObject(pOldFont);
 			}
 		}
 		else // default
 		{
+			if (m_crTextFore != CLR_NONE)
+				dc.SetTextColor(m_crTextFore);
+
+			if (m_crTextBack != CLR_NONE)
+				dc.SetBkColor(m_crTextBack);
+
 			DefWindowProc(WM_PAINT, (WPARAM)(HDC)dc, 0);
 		}
 
