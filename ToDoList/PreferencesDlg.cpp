@@ -277,12 +277,12 @@ void CPreferencesDlg::SynchronizeTree()
 {
 	HTREEITEM htiMap = NULL;
 	
-	if (m_mapPP2HTI.Lookup(GetActivePage(), htiMap))
-	{
-		m_tcPages.SelectItem(htiMap);
-		m_tcPages.EnsureVisible(htiMap);
-		m_tcPages.SetFocus();
-	}
+	if (!m_mapPP2HTI.Lookup(GetActivePage(), htiMap))
+		htiMap = m_tcPages.GetChildItem(NULL);
+
+	m_tcPages.SelectItem(htiMap);
+	m_tcPages.EnsureVisible(htiMap);
+	m_tcPages.SetFocus();
 }
 
 BOOL CPreferencesDlg::PreTranslateMessage(MSG* pMsg) 
@@ -826,7 +826,6 @@ LRESULT CPreferencesDlg::OnUpdateSearch(WPARAM wParam, LPARAM lParam)
 		if (!m_tcPages.GetCount())
 			AddPagesToTree(FALSE); // add all pages
 
-		m_tcPages.SelectItem(m_tcPages.GetChildItem(NULL));
 		Resize();
 	}
 
