@@ -330,7 +330,7 @@ protected:
 	CIcon m_iconSearch;
 	CWndPromptManager m_mgrPrompts;
 
-	CString	m_sSearchText;
+	CStringArray m_aSearchTerms;
 	CString m_sPageTitle;
 	CUIThemeFile m_theme;
 	TDCAUTOLISTDATA m_autoListData;
@@ -355,9 +355,10 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CPreferencesDlg)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangedPages(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTreeSelChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnApply();
 	//}}AFX_MSG
+	afx_msg void OnTreeCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnUpdateSearch(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnToolPageTestTool(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnGenPageClearMRU(WPARAM wp, LPARAM lp);

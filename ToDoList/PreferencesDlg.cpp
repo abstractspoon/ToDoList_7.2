@@ -164,15 +164,15 @@ void CPreferencesDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 	DDX_Text(pDX, IDC_PAGE_TITLE, m_sPageTitle);
 	DDX_Control(pDX, IDC_PAGE_TITLE, m_stPageTitle);
-	DDX_Text(pDX, IDC_SEARCH, m_sSearchText);
 	DDX_Control(pDX, IDC_SEARCH, m_eSearchText);
 }
 
 BEGIN_MESSAGE_MAP(CPreferencesDlg, CPreferencesDlgBase)
 	//{{AFX_MSG_MAP(CPreferencesDlg)
-	ON_NOTIFY(TVN_SELCHANGED, IDC_PAGES, OnSelchangedPages)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_PAGES, OnTreeSelChanged)
 	ON_BN_CLICKED(IDC_APPLY, OnApply)
 	//}}AFX_MSG_MAP
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PAGES, OnTreeCustomDraw)
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(WM_EE_BTNCLICK, OnUpdateSearch)
@@ -392,21 +392,18 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 
 	if (bDoSearch)
 	{
-		if (!m_sSearchText.IsEmpty())
+		if (m_aSearchTerms.GetSize())
 		{
-			CStringArray aSearchTerms;
-			Misc::Split(m_sSearchText, aSearchTerms, ' ');
-
 			// Check path first
 			int nPath = aPath.GetSize();
 
 			while (nPath--)
 			{
-				if (CPreferencesPageBase::UITextContainsOneOf(aPath[nPath], aSearchTerms))
+				if (CPreferencesPageBase::UITextContainsOneOf(aPath[nPath], m_aSearchTerms))
 					break;
 			}
 
-			if (!pPage->HighlightUIText(aSearchTerms, HILITE_COLOUR) && (nPath == -1))
+			if (!pPage->HighlightUIText(m_aSearchTerms, HILITE_COLOUR) && (nPath == -1))
 				return FALSE;
 		}
 		else
@@ -473,7 +470,7 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 	return TRUE;
 }
 
-void CPreferencesDlg::OnSelchangedPages(NMHDR* /*pNMHDR*/, LRESULT* pResult) 
+void CPreferencesDlg::OnTreeSelChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult) 
 {
 	if (m_bBuildingTree)
 		return;
@@ -687,16 +684,11 @@ void CPreferencesDlg::UpdatePageTitleTextColors()
 {
 	COLORREF crText = m_theme.crStatusBarText, crBack = CLR_NONE;
 
-	if (!m_sSearchText.IsEmpty())
+	if (m_aSearchTerms.GetSize() &&
+		CPreferencesPageBase::UITextContainsOneOf(m_sPageTitle, m_aSearchTerms))
 	{
-		CStringArray aSearch;
-		Misc::Split(m_sSearchText, aSearch, ' ');
-
-		if (CPreferencesPageBase::UITextContainsOneOf(m_sPageTitle, aSearch))
-		{
-			crText = 0;
-			crBack = HILITE_COLOUR;
-		}
+		crText = 0;
+		crBack = HILITE_COLOUR;
 	}
 
 	m_stPageTitle.SetTextColors(crText, crBack);
@@ -819,16 +811,54 @@ LRESULT CPreferencesDlg::OnUpdateSearch(WPARAM wParam, LPARAM lParam)
 	}
 
 	CHoldRedraw hr(m_tcPages);
+	
+	CString sSearchText = GetCtrlText(&m_eSearchText);
+	CStringArray aSearchText;
 
-	UpdateData();
-	AddPagesToTree(TRUE);
+	Misc::Split(sSearchText, aSearchText, ' ');
 
-	if (!m_tcPages.GetCount())
-		AddPagesToTree(FALSE); // add all pages
+	if (!Misc::MatchAll(aSearchText, m_aSearchTerms))
+	{
+		m_aSearchTerms.Copy(aSearchText);
 
-	m_tcPages.SelectItem(m_tcPages.GetChildItem(NULL));
-	Resize();
+		AddPagesToTree(TRUE);
+
+		if (!m_tcPages.GetCount())
+			AddPagesToTree(FALSE); // add all pages
+
+		m_tcPages.SelectItem(m_tcPages.GetChildItem(NULL));
+		Resize();
+	}
 
 	return 0L;
+}
+
+void CPreferencesDlg::OnTreeCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	*pResult = CDRF_DODEFAULT; // catch all
+
+	NMTVCUSTOMDRAW* pTVCD = (NMTVCUSTOMDRAW*)pNMHDR;
+	HTREEITEM hti = (HTREEITEM)pTVCD->nmcd.dwItemSpec;
+
+	switch (pTVCD->nmcd.dwDrawStage)
+	{
+		case CDDS_PREPAINT:
+			if (m_aSearchTerms.GetSize())
+				*pResult = CDRF_NOTIFYITEMDRAW;
+			break;
+
+		case CDDS_ITEMPREPAINT:
+			if (m_aSearchTerms.GetSize())
+			{
+				CString sPage = m_tcPages.GetItemText(hti);
+
+				if (CPreferencesPageBase::UITextContainsOneOf(sPage, m_aSearchTerms))
+				{
+					pTVCD->clrTextBk = HILITE_COLOUR;
+					*pResult = CDRF_NEWFONT;
+				}
+			}
+			break;
+	}
 }
 
