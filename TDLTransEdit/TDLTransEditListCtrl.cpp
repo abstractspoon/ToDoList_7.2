@@ -9,6 +9,7 @@
 
 #include "..\shared\holdredraw.h"
 #include "..\shared\misc.h"
+#include "..\shared\Graphicsmisc.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
