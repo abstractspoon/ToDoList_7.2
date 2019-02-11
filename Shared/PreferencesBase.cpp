@@ -219,7 +219,7 @@ HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if (nCtlColor == CTLCOLOR_STATIC)
 	{
-		if (m_mapHighlightedCtrls.Has(pWnd->GetSafeHwnd()))
+		if (pWnd->IsWindowVisible() && m_mapHighlightedCtrls.Has(pWnd->GetSafeHwnd()))
 		{
 			hbr = m_brHighlight;
 		}
