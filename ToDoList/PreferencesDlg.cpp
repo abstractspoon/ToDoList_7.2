@@ -26,6 +26,8 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 
+const COLORREF HILITE_COLOUR = RGB(255, 255, 0); // yellow
+
 /////////////////////////////////////////////////////////////////////////////
 // Private class for tracking mouse middle-button clicking
 // so we can copy the clicked items text to the clipboard
@@ -404,7 +406,7 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 					break;
 			}
 
-			if (!pPage->HighlightUIText(aSearchTerms) && (nPath == -1))
+			if (!pPage->HighlightUIText(aSearchTerms, HILITE_COLOUR) && (nPath == -1))
 				return FALSE;
 		}
 		else
@@ -526,6 +528,8 @@ void CPreferencesDlg::OnSelchangedPages(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 		// update caption
 		m_sPageTitle = GetItemPath(htiSel);
 		UpdateData(FALSE);
+
+		UpdatePageTitleColors();
 	}
 	
 	m_tcPages.SetFocus();
@@ -668,19 +672,33 @@ void CPreferencesDlg::ReposContents(CDeferWndMove& dwm, int nDX, int nDY)
 void CPreferencesDlg::SetUITheme(const CUIThemeFile& theme)
 {
 	m_theme = theme;
-
 	m_sbGrip.SetBackgroundColor(theme.crAppBackLight);
 
-	SetTitleThemeColors(m_stPageTitle, theme);
+	UpdatePageTitleColors();
 	
 	if (GetSafeHwnd())
 		Invalidate(TRUE);
 }
 
-void CPreferencesDlg::SetTitleThemeColors(CEnStatic& stTitle, const CUIThemeFile& theme)
+void CPreferencesDlg::UpdatePageTitleColors()
 {
-	stTitle.SetColors(theme.crStatusBarText, theme.crStatusBarLight, theme.crStatusBarDark, 
-						theme.HasGlass(), theme.HasGradient(), FALSE);
+	COLORREF crFrom = m_theme.crStatusBarLight, crTo = m_theme.crStatusBarDark, crText = m_theme.crStatusBarText;
+	BOOL bGradient = m_theme.HasGradient(), bGlass = m_theme.HasGlass();
+
+	if (!m_sSearchText.IsEmpty())
+	{
+		CStringArray aSearch;
+		Misc::Split(m_sSearchText, aSearch, ' ');
+
+		if (CPreferencesPageBase::UITextContainsOneOf(m_sPageTitle, aSearch))
+		{
+			crText = 0;
+			crFrom = crTo = HILITE_COLOUR;
+			bGlass = bGradient = FALSE;
+		}
+	}
+
+	m_stPageTitle.SetColors(crText, crFrom, crTo, bGlass, bGradient);
 }
 
 BOOL CPreferencesDlg::OnEraseBkgnd(CDC* pDC)

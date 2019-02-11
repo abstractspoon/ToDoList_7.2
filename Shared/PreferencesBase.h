@@ -43,7 +43,7 @@ public:
 	UINT GetHelpID() const { return m_nHelpID; }
 	BOOL UITextContains(LPCTSTR szSearch) const;
 	BOOL UITextContainsOneOf(const CStringArray& aSearch) const;
-	BOOL HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight = RGB(255, 255, 0));
+	BOOL HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight);
 	void ClearHighlights();
 	
 	static BOOL UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch);

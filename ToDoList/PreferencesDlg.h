@@ -379,7 +379,7 @@ protected:
 	virtual void ReposContents(CDeferWndMove& dwm, int nDX, int nDY);
 	virtual void LoadPreferences(const IPreferences* prefs, LPCTSTR szKey);
 
-	static void SetTitleThemeColors(CEnStatic& stTitle, const CUIThemeFile& theme);
+	void UpdatePageTitleColors();
 };
 
 //{{AFX_INSERT_LOCATION}}
