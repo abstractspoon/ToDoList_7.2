@@ -22,7 +22,9 @@ CPreferencesPageBase::CPreferencesPageBase(UINT nDlgTemplateID)
 	m_brBack(NULL), 
 	m_crback(CLR_NONE), 
 	m_bFirstShow(TRUE), 
-	m_nHelpID(nDlgTemplateID)
+	m_nHelpID(nDlgTemplateID),
+	m_brHighlight(NULL),
+	m_crHighlight(CLR_NONE)
 {
 }
 
@@ -145,13 +147,32 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CString& sUIText, const CSt
 
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {
-	if (m_brBack == NULL)
-		return CPropertyPage::OnEraseBkgnd(pDC);
+	if (m_brBack != NULL)
+	{
+		CRect rClient;
+		pDC->GetClipBox(rClient);
+		pDC->FillSolidRect(rClient, m_crback);
+	}
+	else
+	{
+		CPropertyPage::OnEraseBkgnd(pDC);
+	}
 
-	// else
-	CRect rClient;
-	pDC->GetClipBox(rClient);	
-	pDC->FillSolidRect(rClient, m_crback);
+	if (m_brHighlight != NULL)
+	{
+		POSITION pos = m_mapHighlightedCtrls.GetStartPosition();
+
+		while (pos)
+		{
+			const CWnd* pCtrl = CWnd::FromHandle(m_mapHighlightedCtrls.GetNext(pos));
+
+			CRect rCtrl = GetChildRect(pCtrl);
+			rCtrl.InflateRect(2, 2, 2, 2);
+
+			pDC->FillSolidRect(rCtrl, m_crHighlight);
+		}
+
+	}
 
 	return TRUE;
 }
@@ -211,7 +232,9 @@ BOOL CPreferencesPageBase::HighlightUIText(const CStringArray& aSearch, COLORREF
 	if (!FindMatchingCtrls(this, aSearch, m_mapHighlightedCtrls))
 		return FALSE;
 
+	m_crHighlight = crHighlight;
 	m_brHighlight = ::CreateSolidBrush(crHighlight);
+
 	Invalidate(TRUE);
 
 	return TRUE;
@@ -243,6 +266,7 @@ void CPreferencesPageBase::ClearHighlights()
 	{
 		m_mapHighlightedCtrls.RemoveAll();
 		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
+		m_crHighlight = CLR_NONE;
 
 		Invalidate(TRUE);
 	}

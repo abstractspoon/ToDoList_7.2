@@ -312,64 +312,67 @@ BOOL CPreferencesDlg::PreTranslateMessage(MSG* pMsg)
 
 void CPreferencesDlg::AddPagesToTree(BOOL bDoSearch)
 {
-	CAutoFlag af(m_bBuildingTree, TRUE);
-
-	m_tcPages.DeleteAllItems();
-	m_mapHTIToSection.RemoveAll();
-	m_mapPP2HTI.RemoveAll();
-
-	AddPageToTree(&m_pageGen, IDS_PREF_GEN, IDC_TOPOFPAGE, bDoSearch);
-
-	if (AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSER, IDC_TOPOFPAGE, bDoSearch))
+	// scope to allow SynchroniseTree to work
 	{
-		AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSERFILE, IDC_TOPOFPAGE, FALSE);
-		AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSERSS, IDC_SSCGROUP, FALSE);
+		CAutoFlag af(m_bBuildingTree, TRUE);
+
+		m_tcPages.DeleteAllItems();
+		m_mapHTIToSection.RemoveAll();
+		m_mapPP2HTI.RemoveAll();
+
+		AddPageToTree(&m_pageGen, IDS_PREF_GEN, IDC_TOPOFPAGE, bDoSearch);
+
+		if (AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSER, IDC_TOPOFPAGE, bDoSearch))
+		{
+			AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSERFILE, IDC_TOPOFPAGE, FALSE);
+			AddPageToTree(&m_pageMultiUser, IDS_PREF_MULTIUSERSS, IDC_SSCGROUP, FALSE);
+		}
+
+		if (AddPageToTree(&m_pageFile, IDS_PREF_FILE, IDC_TOPOFPAGE, bDoSearch))
+		{
+			AddPageToTree(&m_pageFile, IDS_PREF_FILELOAD, IDC_LOADGROUP, FALSE);
+			AddPageToTree(&m_pageFile, IDS_PREF_FILEARCHIVE, IDC_ARCHIVEGROUP, FALSE);
+			AddPageToTree(&m_pageFile, IDS_PREF_FILESWITCH, IDC_SWITCHGROUP, FALSE);
+			AddPageToTree(&m_pageFile, IDS_PREF_FILENOTIFY, IDC_DUEGROUP, FALSE);
+		}
+
+		if (AddPageToTree(&m_pageFile2, IDS_PREF_FILEMORE, IDC_TOPOFPAGE, bDoSearch))
+		{
+			AddPageToTree(&m_pageFile2, IDS_PREF_FILEBACKUP, IDC_BACKUPGROUP, FALSE);
+			AddPageToTree(&m_pageFile2, IDS_PREF_FILESAVE, IDC_SAVEGROUP, FALSE);
+		}
+
+		if (AddPageToTree(&m_pageUI, IDS_PREF_UI, IDC_TOPOFPAGE, bDoSearch))
+		{
+			AddPageToTree(&m_pageUI, IDS_PREF_UIFILTERING, IDC_FILTERGROUP, FALSE);
+			AddPageToTree(&m_pageUI, IDS_PREF_UISORTING, IDC_SORTGROUP, FALSE);
+			AddPageToTree(&m_pageUI, IDS_PREF_UITOOLBAR, IDC_TOOLBARGROUP, FALSE);
+			AddPageToTree(&m_pageUI, IDS_PREF_UICOMMENTS, IDC_COMMENTSGROUP, FALSE);
+			AddPageToTree(&m_pageUI, IDS_PREF_UITABBAR, IDC_TABBARGROUP, FALSE);
+			AddPageToTree(&m_pageUI, IDS_PREF_TASKVIEWVISIBILITY, IDC_TASKVIEWSGROUP, FALSE);
+		}
+
+		AddPageToTree(&m_pageUICustomToolbar, IDS_PREF_TOOLBAR, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageUIVisibility, IDS_PREF_UIVISIBILITY, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageUITasklist, IDS_PREF_UITASK, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageUITasklistColors, IDS_PREF_UITASKCOLOR, IDC_TOPOFPAGE, bDoSearch);
+
+		if (AddPageToTree(&m_pageTask, IDS_PREF_TASK, IDC_TOPOFPAGE, bDoSearch))
+		{
+			AddPageToTree(&m_pageTask, IDS_PREF_TIMETRACK, IDC_TRACKGROUP, FALSE);
+			AddPageToTree(&m_pageTask, IDS_PREF_TASKTIME, IDC_TIMEGROUP, FALSE);
+		}
+
+		AddPageToTree(&m_pageTaskCalc, IDS_PREF_TASKCALCS, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageTaskDef, IDS_PREF_TASKDEFATTRIB, IDC_TOPOFPAGE, bDoSearch);
+
+		if (AddPageToTree(&m_pageTaskDef2, IDS_PREF_TASKDEFINHERIT, IDC_TOPOFPAGE, bDoSearch))
+			AddPageToTree(&m_pageTaskDef2, IDS_PREF_TASKDEFLISTS, IDC_DROPLISTGROUP, FALSE);
+
+		AddPageToTree(&m_pageExport, IDS_PREF_EXPORT, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageTools, IDS_PREF_TOOLS, IDC_TOPOFPAGE, bDoSearch);
+		AddPageToTree(&m_pageShortcuts, IDS_PREF_SHORTCUT, IDC_TOPOFPAGE, bDoSearch);
 	}
-
-	if (AddPageToTree(&m_pageFile, IDS_PREF_FILE, IDC_TOPOFPAGE, bDoSearch))
-	{
-		AddPageToTree(&m_pageFile, IDS_PREF_FILELOAD, IDC_LOADGROUP, FALSE);
-		AddPageToTree(&m_pageFile, IDS_PREF_FILEARCHIVE, IDC_ARCHIVEGROUP, FALSE);
-		AddPageToTree(&m_pageFile, IDS_PREF_FILESWITCH, IDC_SWITCHGROUP, FALSE);
-		AddPageToTree(&m_pageFile, IDS_PREF_FILENOTIFY, IDC_DUEGROUP, FALSE);
-	}
-
-	if (AddPageToTree(&m_pageFile2, IDS_PREF_FILEMORE, IDC_TOPOFPAGE, bDoSearch))
-	{
-		AddPageToTree(&m_pageFile2, IDS_PREF_FILEBACKUP, IDC_BACKUPGROUP, FALSE);
-		AddPageToTree(&m_pageFile2, IDS_PREF_FILESAVE, IDC_SAVEGROUP, FALSE);
-	}
-
-	if (AddPageToTree(&m_pageUI, IDS_PREF_UI, IDC_TOPOFPAGE, bDoSearch))
-	{
-		AddPageToTree(&m_pageUI, IDS_PREF_UIFILTERING, IDC_FILTERGROUP, FALSE);
-		AddPageToTree(&m_pageUI, IDS_PREF_UISORTING, IDC_SORTGROUP, FALSE);
-		AddPageToTree(&m_pageUI, IDS_PREF_UITOOLBAR, IDC_TOOLBARGROUP, FALSE);
-		AddPageToTree(&m_pageUI, IDS_PREF_UICOMMENTS, IDC_COMMENTSGROUP, FALSE);
-		AddPageToTree(&m_pageUI, IDS_PREF_UITABBAR, IDC_TABBARGROUP, FALSE);
-		AddPageToTree(&m_pageUI, IDS_PREF_TASKVIEWVISIBILITY, IDC_TASKVIEWSGROUP, FALSE);
-	}
-
-	AddPageToTree(&m_pageUICustomToolbar, IDS_PREF_TOOLBAR, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageUIVisibility, IDS_PREF_UIVISIBILITY, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageUITasklist, IDS_PREF_UITASK, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageUITasklistColors, IDS_PREF_UITASKCOLOR, IDC_TOPOFPAGE, bDoSearch);
-
-	if (AddPageToTree(&m_pageTask, IDS_PREF_TASK, IDC_TOPOFPAGE, bDoSearch))
-	{
-		AddPageToTree(&m_pageTask, IDS_PREF_TIMETRACK, IDC_TRACKGROUP, FALSE);
-		AddPageToTree(&m_pageTask, IDS_PREF_TASKTIME, IDC_TIMEGROUP, FALSE);
-	}
-
-	AddPageToTree(&m_pageTaskCalc, IDS_PREF_TASKCALCS, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageTaskDef, IDS_PREF_TASKDEFATTRIB, IDC_TOPOFPAGE, bDoSearch);
-	
-	if (AddPageToTree(&m_pageTaskDef2, IDS_PREF_TASKDEFINHERIT, IDC_TOPOFPAGE, bDoSearch))
-		AddPageToTree(&m_pageTaskDef2, IDS_PREF_TASKDEFLISTS, IDC_DROPLISTGROUP, FALSE);
-
-	AddPageToTree(&m_pageExport, IDS_PREF_EXPORT, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageTools, IDS_PREF_TOOLS, IDC_TOPOFPAGE, bDoSearch);
-	AddPageToTree(&m_pageShortcuts, IDS_PREF_SHORTCUT, IDC_TOPOFPAGE, bDoSearch);
 
 	SynchronizeTree();
 }
@@ -401,11 +404,8 @@ BOOL CPreferencesDlg::AddPageToTree(CPreferencesPageBase* pPage, UINT nIDPath, U
 					break;
 			}
 
-			if (nPath == -1)
-			{
-				if (!pPage->HighlightUIText(aSearchTerms))
-					return FALSE;
-			}
+			if (!pPage->HighlightUIText(aSearchTerms) && (nPath == -1))
+				return FALSE;
 		}
 		else
 		{

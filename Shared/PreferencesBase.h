@@ -57,6 +57,7 @@ protected:
 
 	CSet<HWND> m_mapHighlightedCtrls;
 	HBRUSH m_brHighlight;
+	COLORREF m_crHighlight;
 
 	CGroupLineManager m_mgrGroupLines;
 
