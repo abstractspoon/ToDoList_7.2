@@ -181,12 +181,15 @@ BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 		{
 			const CWnd* pCtrl = CWnd::FromHandle(m_mapHighlightedCtrls.GetNext(pos));
 
-			CRect rCtrl = GetChildRect(pCtrl);
-			rCtrl.InflateRect(2, 2, 2, 2);
+			if (pCtrl->IsWindowVisible())
+			{
+				// Slightly enlarge the rect for non-static-text controls
+				CRect rCtrl = GetChildRect(pCtrl);
+				rCtrl.InflateRect(2, 2, 2, 2);
 
-			pDC->FillSolidRect(rCtrl, m_crHighlight);
+				pDC->FillSolidRect(rCtrl, m_crHighlight);
+			}
 		}
-
 	}
 
 	return TRUE;
