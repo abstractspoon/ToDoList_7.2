@@ -145,19 +145,29 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CString& sUIText, const CSt
 	return FALSE;
 }
 
-CWnd* CPreferencesPageBase::FindFirstUITextContainingOneOf(const CStringArray& aSearch)
+CWnd* CPreferencesPageBase::GetFirstHighlightedItem() const
 {
-	CWnd* pChild = GetWindow(GW_CHILD);
+	if (m_aHighlightedCtrls.GetSize())
+		return CWnd::FromHandle(m_aHighlightedCtrls[0]);
 
-	while (pChild)
+	// else 
+	return NULL;
+}
+
+BOOL CPreferencesPageBase::IsHighlighted(const CWnd* pWnd) const
+{
+	ASSERT(pWnd && pWnd->GetSafeHwnd());
+
+	int nCtrl = m_aHighlightedCtrls.GetSize();
+
+	while (nCtrl--)
 	{
-		if (UITextContainsOneOf(GetCtrlText(pChild), aSearch))
-			return pChild;
-
-		pChild = pChild->GetNextWindow();
+		if (m_aHighlightedCtrls[nCtrl] == pWnd->GetSafeHwnd())
+			return TRUE;
 	}
 
-	return NULL;
+	// else 
+	return FALSE;
 }
 
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
@@ -175,11 +185,11 @@ BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 
 	if (m_brHighlight != NULL)
 	{
-		POSITION pos = m_mapHighlightedCtrls.GetStartPosition();
+		int nNumCtrl = m_aHighlightedCtrls.GetSize();
 
-		while (pos)
+		for (int nCtrl = 0; nCtrl < nNumCtrl; nCtrl++)
 		{
-			const CWnd* pCtrl = CWnd::FromHandle(m_mapHighlightedCtrls.GetNext(pos));
+			const CWnd* pCtrl = CWnd::FromHandle(m_aHighlightedCtrls[nCtrl]);
 
 			if (pCtrl->IsWindowVisible())
 			{
@@ -222,7 +232,7 @@ HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if (nCtlColor == CTLCOLOR_STATIC)
 	{
-		if (pWnd->IsWindowVisible() && m_mapHighlightedCtrls.Has(pWnd->GetSafeHwnd()))
+		if (IsHighlighted(pWnd))
 		{
 			hbr = m_brHighlight;
 		}
@@ -247,7 +257,7 @@ BOOL CPreferencesPageBase::HighlightUIText(const CStringArray& aSearch, COLORREF
 
 	ClearHighlights();
 
-	if (!FindMatchingCtrls(this, aSearch, m_mapHighlightedCtrls))
+	if (!FindMatchingCtrls(this, aSearch, m_aHighlightedCtrls))
 		return FALSE;
 
 	m_crHighlight = crHighlight;
@@ -258,31 +268,39 @@ BOOL CPreferencesPageBase::HighlightUIText(const CStringArray& aSearch, COLORREF
 	return TRUE;
 }
 
-int CPreferencesPageBase::FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CSet<HWND>& mapMatching)
+int CPreferencesPageBase::FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CArray<HWND, HWND&>& aMatching) const
 {
 	ASSERT(pWnd && pWnd->GetSafeHwnd());
 
-	if (UITextContainsOneOf(GetCtrlText(pWnd), aSearch))
-		mapMatching.Add(pWnd->GetSafeHwnd());
+	// Ignore 'us'
+	if (pWnd != this)
+	{
+		CString sCtrlText = GetCtrlText(pWnd);
+
+		if (UITextContainsOneOf(sCtrlText, aSearch))
+		{
+			HWND hwnd = pWnd->GetSafeHwnd();
+			aMatching.Add(hwnd);
+		}
+	}
 
 	// Children
 	const CWnd* pChild = pWnd->GetWindow(GW_CHILD);
 
 	while (pChild)
 	{
-		FindMatchingCtrls(pChild, aSearch, mapMatching);
-
+		FindMatchingCtrls(pChild, aSearch, aMatching);
 		pChild = pChild->GetNextWindow();
 	}
 
-	return mapMatching.GetCount();
+	return aMatching.GetCount();
 }
 
 void CPreferencesPageBase::ClearHighlights()
 {
-	if (m_mapHighlightedCtrls.GetCount())
+	if (m_aHighlightedCtrls.GetCount())
 	{
-		m_mapHighlightedCtrls.RemoveAll();
+		m_aHighlightedCtrls.RemoveAll();
 		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
 		m_crHighlight = CLR_NONE;
 

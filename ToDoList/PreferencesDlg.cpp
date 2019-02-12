@@ -494,14 +494,11 @@ void CPreferencesDlg::OnTreeSelChanged(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 
 		// If searching, move to the first match
 		if (m_aSearchTerms.GetSize())
-		{
-			pScrollTo = pPage->FindFirstUITextContainingOneOf(m_aSearchTerms);
-		}
+			pScrollTo = pPage->GetFirstHighlightedItem();
+
 		// else move to the section
-		else if (nIDSection > 0)
-		{
+		if ((pScrollTo == NULL) && (nIDSection > 0))
 			pScrollTo = pPage->GetDlgItem(nIDSection);
-		}
 
 		if (pScrollTo)
 			m_ppHost.ScrollTo(pScrollTo);

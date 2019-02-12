@@ -10,9 +10,10 @@
 #include "winhelpbutton.h"
 #include "icon.h"
 #include "Groupline.h"
-#include "mapex.h"
 
 #include "..\Interfaces\IPreferences.h"
+
+#include <afxtempl.h>
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -45,8 +46,8 @@ public:
 	BOOL UITextContainsOneOf(const CStringArray& aSearch) const;
 	BOOL HighlightUIText(const CStringArray& aSearch, COLORREF crHighlight);
 	void ClearHighlights();
-	CWnd* FindFirstUITextContainingOneOf(const CStringArray& aSearch);
-	
+	CWnd* GetFirstHighlightedItem() const;
+
 	static BOOL UITextContainsOneOf(const CWnd* pWnd, const CStringArray& aSearch);
 	static BOOL UITextContainsOneOf(const CString& sUIText, const CStringArray& aSearch);
 
@@ -56,7 +57,7 @@ protected:
 	BOOL m_bFirstShow;
 	UINT m_nHelpID;
 
-	CSet<HWND> m_mapHighlightedCtrls;
+	CArray<HWND, HWND&> m_aHighlightedCtrls;
 	HBRUSH m_brHighlight;
 	COLORREF m_crHighlight;
 
@@ -76,8 +77,8 @@ protected:
 
 protected:
 	BOOL AddGroupLine(UINT nIDStatic);
-
-	static int FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CSet<HWND>& aMatching);
+	int FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CArray<HWND, HWND&>& aMatching) const;
+	BOOL IsHighlighted(const CWnd* pWnd) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
