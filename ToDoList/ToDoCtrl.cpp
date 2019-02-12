@@ -76,7 +76,7 @@ static char THIS_FILE[] = __FILE__;
 
 // In DLU
 const int CTRLHEIGHT		= 13;
-const int LABELHEIGHT		= 8; 
+const int LABELHEIGHT		= 9; 
 const int CTRLHSPACING		= 6; 
 const int CTRLVSPACING		= 4; 
 const int CTRLLEN			= 75;
@@ -870,12 +870,16 @@ int CToDoCtrl::GetDefaultControlHeight() const
 void CToDoCtrl::ReposProjectName(CDeferWndMove* pDWM, CRect& rAvailable)
 {
 	// project name
-	CRect rProject = GetCtrlRect(IDC_PROJECTNAME), rLabel(rProject); 
-	rProject.bottom = (rProject.top + GetDefaultControlHeight());
+	CRect rLabel = GetCtrlRect(IDC_PROJECTLABEL); 
+	CRect rProject = GetCtrlRect(IDC_PROJECTNAME); 
 
-	rLabel.OffsetRect(-rLabel.left, 0);
-	rLabel.right = rProject.left;
+	int nOffset = (rAvailable.left - rLabel.left);
 
+	rLabel.OffsetRect(nOffset, 0);
+	rProject.left += nOffset;
+
+	rLabel.top = rProject.top;
+	rLabel.bottom = rProject.bottom;
 	rProject.right = rAvailable.right;
 
 	pDWM->MoveWindow(GetDlgItem(IDC_PROJECTLABEL), rLabel);
@@ -909,10 +913,14 @@ BOOL CToDoCtrl::CalcRequiredControlsRect(const CRect& rAvailable, CRect& rRequir
 	BOOL bStackedWithComments = GetStackCommentsAndControls();
 	BOOL bStackCommentsAbove = HasStyle(TDCS_STACKCOMMENTSABOVEEDITS);
 	
-	// To handle DPI scaling better simply use the height of the category combo
 	CDlgUnits dlu(this);
-	const int CTRLHEIGHT = dlu.FromPixelsY(GetDefaultControlHeight());
-	
+
+	const int nCtrlHeight = GetDefaultControlHeight();
+	const int nLabelHeight = dlu.ToPixelsY(LABELHEIGHT);
+	const int nVSpacing = dlu.ToPixelsY(CTRLVSPACING);
+	const int nCtrlWidth = dlu.ToPixelsX(CTRLLEN);
+	const int nHSpacing = dlu.ToPixelsX(CTRLHSPACING);
+
 	if (HasStyle(TDCS_AUTOREPOSCTRLS))
 	{
 		int nAvailHeight = -1, nAvailWidth = -1;
@@ -937,14 +945,11 @@ BOOL CToDoCtrl::CalcRequiredControlsRect(const CRect& rAvailable, CRect& rRequir
 
 		if (nAvailHeight > 0)
 		{
-			int nCtrlHeightDLU = (CTRLHEIGHT + LABELHEIGHT + CTRLVSPACING);
-			int nAvailHeightDLU = dlu.FromPixelsY(nAvailHeight);
-
-			// To account of the 'extra' CTRLVSPACING that will occur
+			// Account of the 'extra' CTRLVSPACING that will occur
 			// after the last column we add it into our calculations
-			nAvailHeightDLU += CTRLVSPACING;
+			nAvailHeight += nVSpacing;
 
-			nRows = max(2, nAvailHeightDLU / nCtrlHeightDLU);
+			nRows = max(2, nAvailHeight / (nCtrlHeight + nLabelHeight + nVSpacing));
 			nCols = (nVisibleCtrls / nRows) + ((nVisibleCtrls % nRows) ? 1 : 0);
 
 			// recalc actual rows used
@@ -952,14 +957,11 @@ BOOL CToDoCtrl::CalcRequiredControlsRect(const CRect& rAvailable, CRect& rRequir
 		}
 		else if (nAvailWidth > 0)
 		{
-			int nCtrlWidthDLU = (CTRLLEN + CTRLHSPACING);
-			int nAvailWidthDLU = dlu.FromPixelsX(nAvailWidth);
-
-			// To account of the 'extra' CTRLHSPACING that will occur
+			// Account of the 'extra' CTRLHSPACING that will occur
 			// after the last column we add it into our calculations
-			nAvailWidthDLU += CTRLHSPACING;
+			nAvailWidth += nHSpacing;
 
-			nCols = max(2, nAvailWidthDLU / nCtrlWidthDLU);
+			nCols = max(2, nAvailWidth / (nCtrlWidth + nHSpacing));
 			nRows = (nVisibleCtrls / nCols) + ((nVisibleCtrls % nCols) ? 1 : 0);
 		}
 	}
@@ -991,8 +993,8 @@ BOOL CToDoCtrl::CalcRequiredControlsRect(const CRect& rAvailable, CRect& rRequir
 	// of the 'extra' spacing above
 	rRequired = rAvailable;
 	
-	int nRequiredWidth = dlu.ToPixelsX((nCols * (CTRLLEN + CTRLHSPACING)) - CTRLHSPACING);
-	int nRequiredHeight = dlu.ToPixelsY((nRows * (CTRLHEIGHT + LABELHEIGHT + CTRLVSPACING)) - CTRLVSPACING);
+	int nRequiredWidth = ((nCols * (nCtrlWidth + nHSpacing)) - nHSpacing);
+	int nRequiredHeight = ((nRows * (nCtrlHeight + nLabelHeight + nVSpacing)) - nVSpacing);
 
 	switch (m_nControlsPos)
 	{
@@ -1171,16 +1173,16 @@ void CToDoCtrl::ReposControls(CDeferWndMove* pDWM, CRect& rAvailable, BOOL bSpli
 	
 	ASSERT(nVisibleCtrls);
 	
-	// Note: All calculations are performed in DLU until just before the move
-	// is performed. This ensures that we minimize the risk of rounding errors.
 	CDlgUnits dlu(this);
 
-	int nXPosDLU = 0, nYPosDLU = 0;
-	int nWidthDLU = dlu.FromPixelsX(rCtrls.Width());
+	const int nCtrlHeight = GetDefaultControlHeight();
+	const int nLabelHeight = dlu.ToPixelsY(LABELHEIGHT);
+	const int nVSpacing = dlu.ToPixelsY(CTRLVSPACING);
+	const int nCtrlWidth = dlu.ToPixelsX(CTRLLEN);
+	const int nHSpacing = dlu.ToPixelsX(CTRLHSPACING);
 
-	// To handle DPI scaling better simply use the height of the category combo
-	int nActualCtrlHeight = GetDefaultControlHeight();
-	const int CTRLHEIGHT = dlu.FromPixelsY(nActualCtrlHeight);
+	int nXPos = 0, nYPos = 0;
+	int nWidth = rCtrls.Width();
 
 	for (int nCtrl = 0; nCtrl < aControls.GetSize(); nCtrl++)
 	{
@@ -1190,30 +1192,24 @@ void CToDoCtrl::ReposControls(CDeferWndMove* pDWM, CRect& rAvailable, BOOL bSpli
 		if ((nCtrl != 0) && ((nCtrl % nCols) == 0))
 		{
 			// move to next line
-			nXPosDLU = 0;
-			nYPosDLU += (CTRLVSPACING + LABELHEIGHT + CTRLHEIGHT);
+			nXPos = 0;
+			nYPos += (nCtrlHeight + nLabelHeight + nVSpacing);
 		}
 		
-		CRect rCtrlDLU(nXPosDLU, nYPosDLU, nXPosDLU + CTRLLEN, nYPosDLU + LABELHEIGHT);
-		CRect rCtrl = rCtrlDLU;
-		
-		dlu.ToPixels(rCtrl);
+		// Move label
+		CRect rCtrl(nXPos, nYPos, nXPos + nCtrlWidth, nYPos + nLabelHeight);
 		rCtrl.OffsetRect(rCtrls.TopLeft());
 
 		pDWM->MoveWindow(GetDlgItem(ctrl.nLabelID), rCtrl);
 		
 		// move ctrl
-		rCtrlDLU.OffsetRect(0, LABELHEIGHT);
-		rCtrl = rCtrlDLU;
-		
-		dlu.ToPixels(rCtrl);
-		rCtrl.bottom = (rCtrl.top + nActualCtrlHeight);
+		rCtrl.OffsetRect(0, nLabelHeight);
+		rCtrl.bottom = (rCtrl.top + nCtrlHeight);
 
-		rCtrl.OffsetRect(rCtrls.TopLeft());
 		ReposControl(ctrl, pDWM, rCtrl, rCtrls.right);
 		
 		// update XPos for the control
-		nXPosDLU = rCtrlDLU.right + CTRLHSPACING;
+		nXPos += (nCtrlWidth + nHSpacing);
 	}
 }
 
@@ -1440,7 +1436,8 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 						rComments.top = rCtrls.top;
 						rComments.bottom = rCtrls.top + m_nCommentsSize;
 
-						rAvailable.bottom = rComments.top - SPLITSIZE;
+						const int PADDING = (SPLITSIZE / 2);
+						rAvailable.bottom = rComments.top - (SPLITSIZE + PADDING);
 					}
 					break;
 				}
@@ -1473,7 +1470,8 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 					rComments.left = rAvailable.left;
 					rComments.top = rAvailable.bottom - m_nCommentsSize;
 
-					rAvailable.bottom = rComments.top - SPLITSIZE;
+					const int PADDING = (SPLITSIZE / 2);
+					rAvailable.bottom = rComments.top - (SPLITSIZE + PADDING);
 				}
 				break;
 			}
