@@ -78,7 +78,8 @@ protected:
 protected:
 	BOOL AddGroupLine(UINT nIDStatic);
 	int FindMatchingCtrls(const CWnd* pWnd, const CStringArray& aSearch, CArray<HWND, HWND&>& aMatching) const;
-	BOOL IsHighlighted(const CWnd* pWnd) const;
+	
+	BOOL GetHighlightRect(HWND hwnd, CRect& rHighlight) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////

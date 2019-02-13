@@ -6,12 +6,19 @@
 #include "graphicsmisc.h"
 #include "deferwndmove.h"
 #include "misc.h"
+#include "winclasses.h"
+#include "wclassdefines.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+
+const int STATIC_PADDING = GraphicsMisc::ScaleByDPIFactor(1);
+const int OTHER_PADDING = GraphicsMisc::ScaleByDPIFactor(2);
 
 /////////////////////////////////////////////////////////////////////////////
 // CPreferencesPageBase property page
@@ -111,20 +118,12 @@ BOOL CPreferencesPageBase::UITextContainsOneOf(const CWnd* pWnd, const CStringAr
 	// Children
 	const CWnd* pChild = pWnd->GetWindow(GW_CHILD);
 
-#ifdef _DEBUG
-	int nChild = 0;
-#endif
-
 	while (pChild)
 	{
 		if (UITextContainsOneOf(pChild, aSearch))
 			return TRUE;
 
 		pChild = pChild->GetNextWindow();
-
-#ifdef _DEBUG
-		nChild++;
-#endif
 	}
 
 	return FALSE;
@@ -154,22 +153,6 @@ CWnd* CPreferencesPageBase::GetFirstHighlightedItem() const
 	return NULL;
 }
 
-BOOL CPreferencesPageBase::IsHighlighted(const CWnd* pWnd) const
-{
-	ASSERT(pWnd && pWnd->GetSafeHwnd());
-
-	int nCtrl = m_aHighlightedCtrls.GetSize();
-
-	while (nCtrl--)
-	{
-		if (m_aHighlightedCtrls[nCtrl] == pWnd->GetSafeHwnd())
-			return TRUE;
-	}
-
-	// else 
-	return FALSE;
-}
-
 BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 {
 	if (m_brBack != NULL)
@@ -186,22 +169,81 @@ BOOL CPreferencesPageBase::OnEraseBkgnd(CDC* pDC)
 	if (m_brHighlight != NULL)
 	{
 		int nNumCtrl = m_aHighlightedCtrls.GetSize();
+		CRect rCtrl;
 
 		for (int nCtrl = 0; nCtrl < nNumCtrl; nCtrl++)
 		{
-			const CWnd* pCtrl = CWnd::FromHandle(m_aHighlightedCtrls[nCtrl]);
-
-			if (pCtrl->IsWindowVisible())
-			{
-				// Slightly enlarge the rect for non-static-text controls
-				CRect rCtrl = GetChildRect(pCtrl);
-				rCtrl.InflateRect(2, 2, 2, 2);
-
+			if (GetHighlightRect(m_aHighlightedCtrls[nCtrl], rCtrl))
 				pDC->FillSolidRect(rCtrl, m_crHighlight);
-			}
 		}
 	}
 
+	return TRUE;
+}
+
+BOOL CPreferencesPageBase::GetHighlightRect(HWND hwnd, CRect& rHighlight) const
+{
+	if (!::IsWindowVisible(hwnd))
+		return FALSE;
+
+	ASSERT(Misc::HasT(m_aHighlightedCtrls, hwnd));
+
+	::GetWindowRect(hwnd, rHighlight);
+	ScreenToClient(rHighlight);
+
+	// Tweak the rect on a per-class basis
+	int nPadding = 0;
+	CString sClass = CWinClasses::GetClass(hwnd);
+
+	if (CWinClasses::IsClass(sClass, WC_STATIC))
+	{
+		nPadding = STATIC_PADDING;
+	}
+	else if (CWinClasses::IsClass(sClass, WC_BUTTON))
+	{
+		DWORD dwStyle = ::GetWindowLong(hwnd, GWL_STYLE);
+		int nType = (dwStyle & BS_TYPEMASK);
+
+		switch (nType)
+		{
+			case BS_PUSHBUTTON:
+			case BS_DEFPUSHBUTTON:
+				nPadding = OTHER_PADDING;
+				break;
+
+			case BS_GROUPBOX:
+				return FALSE;
+		}
+	}
+	else if (CWinClasses::IsClass(sClass, WC_EDIT))
+	{
+		// Handled by OnCtlColor
+		return FALSE;
+	}
+	else if (CWinClasses::IsClass(sClass, WC_COMBOBOX))
+	{
+		DWORD dwStyle = ::GetWindowLong(hwnd, GWL_STYLE);
+		int nType = (dwStyle & 0xF);
+
+		switch (nType)
+		{
+			case CBS_SIMPLE:
+			case CBS_DROPDOWN:
+				// Handled by the embedded edit
+				return FALSE;
+
+			case CBS_DROPDOWNLIST:
+				nPadding = OTHER_PADDING;
+				break;
+		}
+	}
+	else
+	{
+		nPadding = OTHER_PADDING;
+	}
+
+	rHighlight.InflateRect(nPadding, nPadding);
+	
 	return TRUE;
 }
 
@@ -230,20 +272,30 @@ HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr = CPropertyPage::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (nCtlColor == CTLCOLOR_STATIC)
+	switch (nCtlColor)
 	{
-		if (IsHighlighted(pWnd))
-		{
-			hbr = m_brHighlight;
-		}
-		else if (m_brBack != NULL)
-		{
-			hbr = m_brBack;
-		}
+		case CTLCOLOR_STATIC:
+			if (Misc::HasT(m_aHighlightedCtrls, pWnd->GetSafeHwnd()))
+			{
+				hbr = m_brHighlight;
+			}
+			else if (m_brBack != NULL)
+			{
+				hbr = m_brBack;
+			}
 
-		pDC->SetBkMode(TRANSPARENT);
+			pDC->SetBkMode(TRANSPARENT);
+			break;
+
+		case CTLCOLOR_EDIT:
+		case CTLCOLOR_LISTBOX:
+			if (Misc::HasT(m_aHighlightedCtrls, pWnd->GetSafeHwnd()))
+			{
+				hbr = m_brHighlight;
+			}
+			break;
 	}
-	
+
 	return hbr;
 }
 
