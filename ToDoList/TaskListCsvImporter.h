@@ -40,7 +40,6 @@ protected:
 	BOOL ImportTask(ITASKLISTBASE* pTasks, const CString& sLine) const;
 
 	bool InitConsts(LPCTSTR szSrcFilePath, bool bSilent, IPreferences* pPrefs, LPCTSTR szKey);
-	int GetDepth(const CString& sLine);
 
 	void GetTaskAndParentIDs(const CStringArray& aValues, DWORD& dwTaskID, DWORD& dwParentID) const;
 	CString GetTaskTitle(const CStringArray& aValues) const;
