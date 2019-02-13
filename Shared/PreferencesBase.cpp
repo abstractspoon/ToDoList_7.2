@@ -283,7 +283,6 @@ HBRUSH CPreferencesPageBase::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 			{
 				hbr = m_brBack;
 			}
-
 			pDC->SetBkMode(TRANSPARENT);
 			break;
 
@@ -315,7 +314,7 @@ BOOL CPreferencesPageBase::HighlightUIText(const CStringArray& aSearch, COLORREF
 	m_crHighlight = crHighlight;
 	m_brHighlight = ::CreateSolidBrush(crHighlight);
 
-	Invalidate(TRUE);
+	InvalidateAllCtrls(this);
 
 	return TRUE;
 }
@@ -356,7 +355,7 @@ void CPreferencesPageBase::ClearHighlights()
 		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
 		m_crHighlight = CLR_NONE;
 
-		Invalidate(TRUE);
+		InvalidateAllCtrls(this);
 	}
 }
 

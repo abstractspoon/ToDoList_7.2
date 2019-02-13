@@ -145,6 +145,7 @@ public:
 	static void ExcludeChild(const CWnd* pChild, CDC* pDC, BOOL bIgnoreCorners = FALSE);
 
 	static void EnableAllCtrls(const CWnd* pParent, BOOL bEnable = TRUE);
+	static void InvalidateAllCtrls(const CWnd* pParent, BOOL bErase = TRUE);
 
 	static int ShowMessageBox(HWND hwndParent, LPCTSTR szCaption, LPCTSTR szInstruction, LPCTSTR szText, UINT nFlags);
 	static BOOL TrackMouseLeave(HWND hWnd, BOOL bEnable = TRUE, BOOL bIncludeNonClient = TRUE);

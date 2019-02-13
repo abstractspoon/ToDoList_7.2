@@ -1695,6 +1695,17 @@ void CDialogHelper::EnableAllCtrls(const CWnd* pParent, BOOL bEnable)
 	}
 }
 
+void CDialogHelper::InvalidateAllCtrls(const CWnd* pParent, BOOL bErase)
+{
+	CWnd* pChild = pParent->GetWindow(GW_CHILD);
+
+	while (pChild)
+	{
+		pChild->Invalidate(bErase);
+		pChild = pChild->GetNextWindow();
+	}
+}
+
 void CDialogHelper::RemoveCtrlID(UINT nCtrlID, CUIntArray& aCtrlIDs)
 {
 	int nFind = Misc::FindT(aCtrlIDs, nCtrlID);
