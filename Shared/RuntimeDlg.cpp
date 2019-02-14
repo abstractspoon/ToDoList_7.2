@@ -221,13 +221,18 @@ BOOL CRuntimeDlg::Create(LPCTSTR szCaption, DWORD dwStyle, DWORD dwExStyle, cons
 	BOOL bVisible = (dwStyle & WS_VISIBLE);
 	dwStyle &= ~WS_VISIBLE;
 	
-	// remove DS_SETFONT (not supported)
-	if ((dwStyle & DS_SETFONT) && pParentWnd && GraphicsMisc::GetFont(*pParentWnd, FALSE))
+	// Handle DS_SETFONT
+	if (pParentWnd && (dwStyle & DS_SETFONT))
 	{
-		CString sFont;
-		int nSize = GraphicsMisc::GetFontNameAndPointSize(*pParentWnd, sFont);
+		HFONT hFont = GraphicsMisc::GetFont(*pParentWnd, FALSE);
 
-		dlgTemp.SetFont(sFont, (WORD)nSize);
+		if (hFont)
+		{
+			CString sFont;
+			int nSize = GraphicsMisc::GetFontNameAndPointSize(hFont, sFont);
+
+			dlgTemp.SetFont(sFont, (WORD)nSize);
+		}
 	}
 	
 	if (dwStyle & WS_CHILD)
