@@ -6117,7 +6117,7 @@ void CGanttTreeListCtrl::ScrollToTask(DWORD dwTaskID)
 	
 	if (GetTaskStartDueDates(*pGI, dtStart, dtDue))
 	{
-		ScrollTo(dtStart);
+		ScrollTo(IsMilestone(*pGI) ? dtDue : dtStart);
 	}
 	else if (HasDoneDate(*pGI))
 	{
