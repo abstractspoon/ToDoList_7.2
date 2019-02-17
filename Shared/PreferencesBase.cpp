@@ -202,7 +202,7 @@ BOOL CPreferencesPageBase::GetHighlightRect(HWND hwnd, CRect& rHighlight) const
 	else if (CWinClasses::IsClass(sClass, WC_BUTTON))
 	{
 		DWORD dwStyle = ::GetWindowLong(hwnd, GWL_STYLE);
-		int nType = (dwStyle & BS_TYPEMASK);
+		int nType = (dwStyle & 0xF);
 
 		switch (nType)
 		{
@@ -344,12 +344,12 @@ int CPreferencesPageBase::FindMatchingCtrls(const CWnd* pWnd, const CStringArray
 		pChild = pChild->GetNextWindow();
 	}
 
-	return aMatching.GetCount();
+	return aMatching.GetSize();
 }
 
 void CPreferencesPageBase::ClearHighlights()
 {
-	if (m_aHighlightedCtrls.GetCount())
+	if (m_aHighlightedCtrls.GetSize())
 	{
 		m_aHighlightedCtrls.RemoveAll();
 		GraphicsMisc::VerifyDeleteObject(m_brHighlight);
