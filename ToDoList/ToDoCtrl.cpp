@@ -8294,97 +8294,100 @@ BOOL CToDoCtrl::PasteTasks(TDC_PASTE nWhere, BOOL bAsRef)
 
 	CTaskFile tasks;
 
-	if (CTaskClipboard::GetTasks(tasks, sClipID))
+	if (!CTaskClipboard::GetTasks(tasks, sClipID))
+		return FALSE;
+
+	// else
+	HTREEITEM htiDest = NULL, htiDestAfter = NULL;
+	
+	switch (nWhere)
 	{
-		HTREEITEM htiDest = NULL, htiDestAfter = NULL;
-
-		switch (nWhere)
-		{
-		case TDCP_ONSELTASK:
-			htiDest = m_taskTree.GetTreeSelectedItem();
-			htiDestAfter = TVI_FIRST;
-			break;
-
-		case TDCP_BELOWSELTASK:
-			htiDestAfter = m_taskTree.GetTreeSelectedItem();
-			
-			if (!htiDestAfter)
-				htiDestAfter = TVI_LAST;
-			else
-				htiDest = m_taskTree.GetParentItem(htiDestAfter);
-			break;
-
-		case TDCP_ATBOTTOM:
+	case TDCP_ONSELTASK:
+		htiDest = m_taskTree.GetTreeSelectedItem();
+		htiDestAfter = TVI_FIRST;
+		break;
+		
+	case TDCP_BELOWSELTASK:
+		htiDestAfter = m_taskTree.GetTreeSelectedItem();
+		
+		if (!htiDestAfter)
 			htiDestAfter = TVI_LAST;
-			break;
-		}
-			
-		if (bAsRef)
-		{
-			// remove tasks not originally selected
-			RemoveNonSelectedTasks(tasks);
-
-			// pre-process the tasks to add themselves
-			// as a reference, and then to clear the task ID
-			// so that it gets a newly allocated one
-			PrepareTaskIDsForPasteAsRef(tasks);
-		}
 		else
+			htiDest = m_taskTree.GetParentItem(htiDestAfter);
+		break;
+		
+	case TDCP_ATBOTTOM:
+		htiDestAfter = TVI_LAST;
+		break;
+	}
+	
+	if (bAsRef)
+	{
+		// remove tasks not originally selected
+		RemoveNonSelectedTasks(tasks);
+		
+		// pre-process the tasks to add themselves
+		// as a reference, and then to clear the task ID
+		// so that it gets a newly allocated one
+		PrepareTaskIDsForPasteAsRef(tasks);
+	}
+	else
+	{
+		// pre-process task IDs if the tasks did *not* originate 
+		// from us (or our archive) and we're not empty
+		TDC_RESETIDS nResetID = TDCR_YES;
+		
+		if (CTaskClipboard::ClipIDMatches(sClipID) ||
+			(bCheckArchive && CTaskClipboard::ClipIDMatches(sArchiveID)))
 		{
-			// pre-process task IDs if the tasks did *not* originate 
-			// from us (or our archive) and we're not empty
-			TDC_RESETIDS nResetID = TDCR_YES;
-			
-			if (CTaskClipboard::ClipIDMatches(sClipID) ||
-				(bCheckArchive && CTaskClipboard::ClipIDMatches(sArchiveID)))
-			{
-				nResetID = TDCR_CHECK;
-			}
-			else if (GetTaskCount() == 0)
-			{
-				nResetID = TDCR_NO;
-			}
-
-			// and fix up the dependencies of the tasks
-			// and the creation date
-			PrepareTasksForPaste(tasks, nResetID, TRUE);
+			nResetID = TDCR_CHECK;
 		}
-
-		IMPLEMENT_DATA_UNDO(m_data, TDCUAT_PASTE);
-		HOLD_REDRAW(*this, m_taskTree);
-
-		// Merge in any custom attributes we don't already have
-		CTDCCustomAttribDefinitionArray aOrgAttribDefs, aPasteAttribDefs;
-		aOrgAttribDefs.Copy(m_aCustomAttribDefs);
-
-		BOOL bRebuildCustomUI = (tasks.GetCustomAttributeDefs(aPasteAttribDefs) &&
-								m_aCustomAttribDefs.Append(aPasteAttribDefs));
-
-		// no need to re-check IDs as we've already done it
-		if (PasteTasksToTree(tasks, htiDest, htiDestAfter, TDCR_NO, TRUE))
+		else if (GetTaskCount() == 0)
 		{
-			FixupParentCompletion(GetTaskID(htiDest));
-
+			nResetID = TDCR_NO;
+		}
+		
+		// and fix up the dependencies of the tasks
+		// and the creation date
+		PrepareTasksForPaste(tasks, nResetID, TRUE);
+	}
+		
+	// Merge in any custom attributes we don't already have
+	CTDCCustomAttribDefinitionArray aOrgAttribDefs, aPasteAttribDefs;
+	aOrgAttribDefs.Copy(m_aCustomAttribDefs);
+	
+	BOOL bRebuildCustomUI = (tasks.GetCustomAttributeDefs(aPasteAttribDefs) &&
+								m_aCustomAttribDefs.Append(aPasteAttribDefs));
+	
+	IMPLEMENT_DATA_UNDO(m_data, TDCUAT_PASTE);
+	{
+		HOLD_REDRAW(*this, m_taskTree);
+			
+		// no need to re-check IDs as we've already done it
+		if (!PasteTasksToTree(tasks, htiDest, htiDestAfter, TDCR_NO, TRUE))
+		{
 			if (bRebuildCustomUI)
 			{
-				RebuildCustomAttributeUI();
-
-				CTDCCustomAttributeDataMap mapData;
-
-				if (GetSelectedTaskCustomAttributeData(mapData))
-					CTDCCustomAttributeHelper::UpdateControls(this, m_aCustomControls, m_aCustomAttribDefs, mapData);
+				m_aCustomAttribDefs.Copy(aOrgAttribDefs);
 			}
-
-			return TRUE;
-		}
-		else if (bRebuildCustomUI)
-		{
-			m_aCustomAttribDefs.Copy(aOrgAttribDefs);
+			
+			return FALSE;
 		}
 	}
 
-   // else
-   return FALSE;
+	FixupParentCompletion(GetTaskID(htiDest));
+	
+	if (bRebuildCustomUI)
+	{
+		RebuildCustomAttributeUI();
+		
+		CTDCCustomAttributeDataMap mapData;
+		
+		if (GetSelectedTaskCustomAttributeData(mapData))
+			CTDCCustomAttributeHelper::UpdateControls(this, m_aCustomControls, m_aCustomAttribDefs, mapData);
+	}
+	
+	return TRUE;
 }
 
 BOOL CToDoCtrl::PasteTasksToTree(const CTaskFile& tasks, HTREEITEM htiDestParent, HTREEITEM htiDestAfter, 
