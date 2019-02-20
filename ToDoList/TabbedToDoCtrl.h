@@ -255,6 +255,7 @@ protected:
 	void UpdateListView(TDC_ATTRIBUTE nAttrib, DWORD dwTaskID = 0);
 	int GetVisibleTaskViews(CStringArray& aTypeIDs, BOOL bIncListView) const;
 
+	void SyncActiveViewSelectionToTree();
 	void SyncListSelectionToTree();
 	void SyncExtensionSelectionToTree(FTC_VIEW nView);
 	BOOL HasSingleSelectionChanged(DWORD dwSelID) const;

@@ -1269,6 +1269,8 @@ void CFilteredToDoCtrl::SetModified(BOOL bMod, TDC_ATTRIBUTE nAttrib, DWORD dwMo
 	CAutoFlag af2(m_bIgnoreExtensionUpdate, bTreeRefiltered);
 
 	CTabbedToDoCtrl::SetModified(bMod, nAttrib, dwModTaskID);
+
+	SyncActiveViewSelectionToTree();
 }
 
 void CFilteredToDoCtrl::EndTimeTracking(BOOL bAllowConfirm, BOOL bNotify)
