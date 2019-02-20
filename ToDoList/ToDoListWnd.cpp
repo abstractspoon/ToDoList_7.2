@@ -6651,7 +6651,10 @@ void CToDoListWnd::OnTimerTimeTracking()
 		bWasTimeTracking = bNowTimeTracking;
 	}
 
-	m_dlgTimeTracker.UpdateTaskTime(&GetToDoCtrl());
+	const CFilteredToDoCtrl* pTDC = m_dlgTimeTracker.GetSelectedTasklist();
+
+	if (pTDC && pTDC->IsActivelyTimeTracking())
+		m_dlgTimeTracker.UpdateTaskTime(pTDC);
 }
 
 void CToDoListWnd::UpdateWindowIcons()

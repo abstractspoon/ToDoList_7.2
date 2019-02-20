@@ -890,6 +890,7 @@ BOOL CTDLTimeTrackerDlg::UpdateTracking(const CFilteredToDoCtrl* pTDC)
 	BOOL bWasTracking = pTTL->IsTracking();
 
 	VERIFY(m_aTasklists.UpdateTracking(pTTL));
+	ASSERT((bWasTracking && !pTTL->IsTracking()) || (!bWasTracking && pTTL->IsTracking()));
 
 	// If we've just started tracking, switch to that tasklist
 	// and show the dialog if required
