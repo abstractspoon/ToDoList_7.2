@@ -2831,15 +2831,16 @@ LRESULT CKanbanCtrl::OnListCheckChange(WPARAM /*wp*/, LPARAM lp)
 {
 	ASSERT(!m_bReadOnly);
 
-	const KANBANITEM* pKI = m_data.GetItem(lp);
+	DWORD dwTaskID = lp;
+	const KANBANITEM* pKI = m_data.GetItem(dwTaskID);
 	ASSERT(pKI);
 
 	if (pKI)
 	{
 		LRESULT lr = GetParent()->SendMessage(WM_KBC_COMPLETIONCHANGE, (WPARAM)GetSafeHwnd(), !pKI->IsDone(FALSE));
 
-		if (lr)
-			PostMessage(WM_KCM_SELECTTASK, 0, lp);
+		if (lr && m_data.HasItem(dwTaskID))
+			PostMessage(WM_KCM_SELECTTASK, 0, dwTaskID);
 
 		return lr;
 	}
