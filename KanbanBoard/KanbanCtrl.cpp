@@ -1595,18 +1595,19 @@ void CKanbanCtrl::RebuildListCtrls(BOOL bRebuildData, BOOL bTaskUpdate)
 	
 	// We only need to restore selection if not doing a task update
 	// because the app takes care of that
-	if (!bTaskUpdate)
+	if (!bTaskUpdate && aSelTaskIDs.GetSize())
 	{
 		if (!SelectTasks(aSelTaskIDs))
-
-		if (!m_pSelectedList || !Misc::HasT(m_aListCtrls, m_pSelectedList))
 		{
-			// Find the first list with some items
-			m_pSelectedList = m_aListCtrls.GetFirstNonEmpty();
+			if (!m_pSelectedList || !Misc::HasT(m_aListCtrls, m_pSelectedList))
+			{
+				// Find the first list with some items
+				m_pSelectedList = m_aListCtrls.GetFirstNonEmpty();
 
-			// No list has items?
-			if (!m_pSelectedList)
-				m_pSelectedList = m_aListCtrls[0];
+				// No list has items?
+				if (!m_pSelectedList)
+					m_pSelectedList = m_aListCtrls[0];
+			}
 		}
 	}
 }
