@@ -11117,8 +11117,14 @@ LRESULT CToDoListWnd::OnAppRestoreFocus(WPARAM /*wp*/, LPARAM lp)
 	{
 		GetToDoCtrl().SetFocusToTasks();
 	}
-	else if (::IsWindowEnabled(hWnd))
+	else if (::IsWindowEnabled(hWnd) && ::IsWindowVisible(hWnd) && (::GetFocus() != hWnd))
 	{
+#ifdef _DEBUG
+		CString sFocus;
+		CWnd::FromHandle(hWnd)->GetWindowText(sFocus);
+		TRACE(_T("OnAppRestoreFocus(%s = %s)\n"), CWinClasses::GetClassEx(hWnd), sFocus.Left(100));
+#endif
+
 		::SetFocus(hWnd);
 		::SendMessage(hWnd, WM_SETFOCUS, 0L, 0L);
 	}
