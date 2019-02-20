@@ -927,6 +927,9 @@ BOOL CTDLTimeTrackerDlg::IsTrackingSelectedTasklistAndTask() const
 
 void CTDLTimeTrackerDlg::UpdateButtonState()
 {
+	if (!IsWindowVisible() || m_bCollapsed)
+		return;
+
 	BOOL bEnable = ((m_cbTasklists.GetCurSel() != CB_ERR) &&
 					(m_cbTasks.GetCurSel() != CB_ERR));
 	
@@ -948,7 +951,7 @@ void CTDLTimeTrackerDlg::UpdateButtonState()
 
 void CTDLTimeTrackerDlg::UpdateTaskTime(const CFilteredToDoCtrl* pTDC)
 {
-	if (!IsSelectedTasklist(pTDC))
+	if (!IsWindowVisible() || !IsSelectedTasklist(pTDC))
 		return;
 
 	DWORD dwSelTaskID = GetSelectedTaskID();
@@ -1241,6 +1244,13 @@ void CTDLTimeTrackerDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 		CenterWindow(m_pWndNotify);
 		m_bCentreOnShow = FALSE;
 	}
+
+	if (bShow)
+	{
+		UpdateButtonState();
+		UpdateTaskTime(GetSelectedTasklist());
+	}
+
 }
 
 void CTDLTimeTrackerDlg::OnDestroy()
