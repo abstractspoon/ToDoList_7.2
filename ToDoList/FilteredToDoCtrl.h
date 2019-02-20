@@ -140,7 +140,6 @@ protected:
 	void RefreshTreeFilter();
 	void RefreshExtensionFilter(FTC_VIEW nView, BOOL bShowProgress = FALSE);
 	BOOL IsFilterSet(FTC_VIEW nView) const;
-	BOOL IsFilterSet(const TDCFILTER& filter, FTC_VIEW nView) const;
 	BOOL FiltersMatch(const TDCFILTER& filter1, const TDCFILTER& filter2, FTC_VIEW nView) const;
 	BOOL FilterMatches(const TDCFILTER& filter, FTC_VIEW nView) const;
 	void SetExtensionsNeedRefilter(BOOL bRefilter, FTC_VIEW nIgnore = FTCV_UNSET);
