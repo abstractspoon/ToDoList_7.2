@@ -5254,7 +5254,7 @@ BOOL CToDoCtrl::DeleteSelectedTask(BOOL bWarnUser, BOOL bResetSel)
 		EndTimeTracking(FALSE, TRUE);
 
 	// cache focus
-	HWND hFocus = ::GetFocus();
+	CSaveFocus focus;
 	
 	if (bWarnUser && !ConfirmDeleteAllTasks(TRUE))
 		return FALSE;
@@ -5315,9 +5315,7 @@ BOOL CToDoCtrl::DeleteSelectedTask(BOOL bWarnUser, BOOL bResetSel)
 		UpdateControls(FALSE); // don't update comments
 
 	// restore focus
-	if (hFocus && ::IsWindowEnabled(hFocus))
-		::SetFocus(hFocus);
-	else
+	if (!focus.RestoreFocus())
 		SetFocusToTasks();
 
 	return TRUE;
