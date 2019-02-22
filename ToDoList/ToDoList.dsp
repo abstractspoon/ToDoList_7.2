@@ -451,10 +451,6 @@ SOURCE=.\TDLImportDialog.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\tdlimportexportcombobox.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\TDLImportOutlookDlg.cpp
 # End Source File
 # Begin Source File
@@ -1032,10 +1028,6 @@ SOURCE=.\TDLImpExpAttributeMappingListCtrl.h
 # Begin Source File
 
 SOURCE=.\TDLImportDialog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\tdlimportexportcombobox.h
 # End Source File
 # Begin Source File
 

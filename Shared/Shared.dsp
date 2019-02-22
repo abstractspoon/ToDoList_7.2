@@ -349,6 +349,10 @@ SOURCE=.\ImageProcessors.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ImportExportComboBox.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ImportExportMgr.cpp
 # End Source File
 # Begin Source File
@@ -1006,6 +1010,10 @@ SOURCE=.\IconCache.h
 # Begin Source File
 
 SOURCE=.\ImageProcessors.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ImportExportComboBox.h
 # End Source File
 # Begin Source File
 
