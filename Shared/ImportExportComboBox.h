@@ -7,23 +7,24 @@
 // tdlimportexportcombobox.h : header file
 //
 
-#include "..\shared\importexportmgr.h"
-#include "..\shared\sysimagelist.h"
-#include "..\shared\ownerdrawcomboboxbase.h"
+#include "importexportmgr.h"
+#include "sysimagelist.h"
+#include "ownerdrawcomboboxbase.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CTDLImportExportComboBox window
 
-class CTDLImportExportComboBox : public COwnerdrawComboBoxBase
+class CImportExportComboBox : public COwnerdrawComboBoxBase
 {
 // Construction
 public:
-	CTDLImportExportComboBox(const CImportExportMgr& mgrImpExp, BOOL bImport, BOOL bFileBasedOnly = FALSE);
+	CImportExportComboBox(const CImportExportMgr& mgrImpExp, BOOL bImport, BOOL bFileBasedOnly = FALSE);
 
 	void SetFileBasedOnly(BOOL bFileBased);
 
 protected:
 	const CImportExportMgr& m_mgrImpExp;
+
 	BOOL m_bImporting, m_bFileBasedOnly;
 	CSysImageList m_ilImages;
 
@@ -36,7 +37,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CTDLImportExportComboBox();
+	virtual ~CImportExportComboBox();
 
 	// Generated message map functions
 protected:
