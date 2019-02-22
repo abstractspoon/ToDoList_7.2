@@ -49,7 +49,8 @@ protected:
 protected:
 	virtual void DrawItemText(CDC& dc, const CRect& rect, int nItem, UINT nItemState, 
 								DWORD dwItemData, const CString& sItem, BOOL bList, COLORREF crText);	
-	BOOL HasIcon() const { return TRUE; }
+	virtual BOOL HasIcon() const { return TRUE; }
+	virtual int CalcMinItemHeight(BOOL bList) const;
 
 	void BuildCombo();
 	CString GetImpExpMenuText(int nImpExp) const;

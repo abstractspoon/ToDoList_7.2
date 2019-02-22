@@ -108,6 +108,13 @@ void CImportExportComboBox::DrawItemText(CDC& dc, const CRect& rect, int nItem, 
 	COwnerdrawComboBoxBase::DrawItemText(dc, rText, nItem, nItemState, dwItemData, sItem, bList, crText);
 }
 
+int CImportExportComboBox::CalcMinItemHeight(BOOL bList) const
+{
+	int nMinHeight = COwnerdrawComboBoxBase::CalcMinItemHeight(bList);
+
+	return (nMinHeight + 2); // icon padding
+}
+
 void CImportExportComboBox::BuildCombo()
 {
 	// once only
