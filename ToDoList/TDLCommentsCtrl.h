@@ -5,8 +5,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "tdlcontenttypecombobox.h"
 
+#include "..\shared\contenttypecombobox.h"
 #include "..\shared\runtimedlg.h"
 #include "..\shared\contentctrl.h"
 #include "..\Shared\binarydata.h"
@@ -29,6 +29,7 @@ public:
 	virtual ~CTDLCommentsCtrl();
 
 	BOOL Create(CWnd* pParent, UINT nID, const CRect& rPos = CRect(0, 0, 0, 0));
+
 	void SetUITheme(const CUIThemeFile& theme);
 	void SetDefaultCommentsFont(HFONT hFont);
 	void SetCtrlStates(RT_CTRLSTATE nComboState, RT_CTRLSTATE nCommentsState);
@@ -54,7 +55,7 @@ public:
 protected:
 	const CContentMgr* m_pMgrContent;
 
-	CTDLContentTypeComboBox	m_cbCommentsFmt;
+	CContentTypeComboBox m_cbCommentsFmt;
 	CContentCtrl m_ctrlComments;
 	CUIThemeFile m_theme;
 	CBrush m_brBack;

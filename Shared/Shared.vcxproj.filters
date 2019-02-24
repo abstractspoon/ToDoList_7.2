@@ -481,10 +481,16 @@
     <ClCompile Include="ComboListboxPositioner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImportExportComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ScopedTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImportExportComboBox.cpp">
+    <ClCompile Include="ContentTypeCombobox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIExtensionHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1005,10 +1011,16 @@
     <ClInclude Include="ComboListboxPositioner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImportExportComboBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ScopedTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImportExportComboBox.h">
+    <ClInclude Include="ContentTypeCombobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIExtensionHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
