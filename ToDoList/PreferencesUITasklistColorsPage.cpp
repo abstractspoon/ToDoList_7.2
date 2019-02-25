@@ -902,20 +902,7 @@ void CPreferencesUITasklistColorsPage::LoadPreferences(const IPreferences* pPref
 	m_bSpecifyFlaggedColor = pPrefs->GetProfileInt(szKey, _T("FlaggedColor"), FALSE);
 	m_bSpecifyReferenceColor = pPrefs->GetProfileInt(szKey, _T("ReferenceColor"), FALSE);
 
-	m_btFilteredColor.LoadPreferences(pPrefs);
-	m_btAttribColor.LoadPreferences(pPrefs);
-	m_btDoneColor.LoadPreferences(pPrefs);
-	m_btGridlineColor.LoadPreferences(pPrefs);
-	m_btDueColor.LoadPreferences(pPrefs);
-	m_btDueTodayColor.LoadPreferences(pPrefs);
-	m_btStartColor.LoadPreferences(pPrefs);
-	m_btStartTodayColor.LoadPreferences(pPrefs);
-	m_btFlaggedColor.LoadPreferences(pPrefs);
-	m_btReferenceColor.LoadPreferences(pPrefs);
-	m_btSetColor.LoadPreferences(pPrefs);
-	m_btLowColor.LoadPreferences(pPrefs);
-	m_btHighColor.LoadPreferences(pPrefs);
-	m_btAltLineColor.LoadPreferences(pPrefs);
+	CColorButton::LoadPreferences(pPrefs);
 
 	// colors
 	CString sColorKey(szKey);
