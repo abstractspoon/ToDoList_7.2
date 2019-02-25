@@ -9,9 +9,13 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+//////////////////////////////////////////////////////////////////////
+
 #include "ToDoitem.h"
 
-#include "..\SHARED\ImportExportMgr.h"
+#include "..\Interfaces\ImportExportMgr.h"
+
+//////////////////////////////////////////////////////////////////////
 
 enum { EXPTOHTML, EXPTOTXT, EXPTOCSV, EXPTOTDL };
 enum { IMPFROMCSV, IMPFROMTDL, IMPFROMOUTLOOK };

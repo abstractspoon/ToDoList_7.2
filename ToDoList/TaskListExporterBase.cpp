@@ -4,17 +4,20 @@
 
 #include "stdafx.h"
 #include "TasklistExporterBase.h"
-#include "tdlschemadef.h"
 #include "tdlrecurringtaskedit.h"
 #include "tdcstatic.h"
 
 #include "..\shared\xmlfile.h"
-#include "..\shared\preferences.h"
 #include "..\shared\enstring.h"
 #include "..\shared\timehelper.h"
 #include "..\shared\filemisc.h"
 
+#include "..\Interfaces\Preferences.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
+
 #include <locale.h>
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -604,7 +607,7 @@ void CTaskListExporterBase::BuildAttribList(const ITASKLISTBASE* pTasks, HTASKIT
 		CheckAddAttribtoList(pTasks, hTask, TDCA_TIMESPENT,		TDL_TASKTIMESPENT);
 		CheckAddAttribtoList(pTasks, hTask, TDCA_CREATIONDATE,	TDL_TASKCREATIONDATESTRING);
 		CheckAddAttribtoList(pTasks, hTask, TDCA_CREATEDBY,		TDL_TASKCREATEDBY);
-		CheckAddAttribtoList(pTasks, hTask, TDCA_LASTMODDATE,		TDL_TASKLASTMODSTRING);
+		CheckAddAttribtoList(pTasks, hTask, TDCA_LASTMODDATE,	TDL_TASKLASTMODSTRING);
 		CheckAddAttribtoList(pTasks, hTask, TDCA_LASTMODBY,		TDL_TASKLASTMODBY);
 		CheckAddAttribtoList(pTasks, hTask, TDCA_STARTDATE,		TDL_TASKSTARTDATESTRING);
 		CheckAddAttribtoList(pTasks, hTask, TDCA_DUEDATE,		TDL_TASKDUEDATESTRING);

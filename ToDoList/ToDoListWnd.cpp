@@ -12,7 +12,6 @@
 #include "tasklisttxtexporter.h"
 #include "tdcmsg.h"
 #include "tdcmapping.h"
-#include "tdlschemadef.h"
 #include "tdlprintdialog.h"
 #include "tdltransformdialog.h"
 #include "tdstringres.h"
@@ -43,7 +42,6 @@
 #include "..\shared\holdredraw.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\enbitmap.h"
-#include "..\shared\spellcheckdlg.h"
 #include "..\shared\encolordialog.h"
 #include "..\shared\winclasses.h"
 #include "..\shared\wclassdefines.h"
@@ -73,10 +71,13 @@
 #include "..\shared\xslfile.h"
 #include "..\shared\soundedit.h"
 #include "..\shared\ComboListboxPositioner.h"
-#include "..\shared\uiextensionhelper.h"
 
 #include "..\3rdparty\gui.h"
 #include "..\3rdparty\sendfileto.h"
+
+#include "..\Interfaces\spellcheckdlg.h"
+#include "..\Interfaces\uiextensionhelper.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
 
 #include <shlwapi.h>
 #include <windowsx.h>
@@ -86,6 +87,8 @@
 
 #pragma warning(disable: 4201)
 #include <Mmsystem.h> 
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -5733,7 +5736,7 @@ BOOL CToDoListWnd::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
 
 BOOL CToDoListWnd::ImportFile(LPCTSTR szFilePath, BOOL bSilent)
 {
-	int nImporter = m_mgrImportExport.FindImporter(szFilePath);
+	int nImporter = m_mgrImportExport.FindImporterByPath(szFilePath);
 
 	if (nImporter == -1)
 		return FALSE;
@@ -8706,7 +8709,7 @@ LRESULT CToDoListWnd::OnToDoCtrlCanImportDropFiles(WPARAM wp, LPARAM lp)
 		{
 			CString sFilePath = pFiles->GetAt(nFile);
 
-			if (m_mgrImportExport.FindImporter(sFilePath) != -1)
+			if (m_mgrImportExport.FindImporterByPath(sFilePath) != -1)
 				return TRUE;
 		}
 	}

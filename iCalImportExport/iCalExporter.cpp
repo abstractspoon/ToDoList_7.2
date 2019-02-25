@@ -7,14 +7,16 @@
 #include "iCalExporter.h"
 #include "iCalExporterOptionsDlg.h"
 
-#include "..\Interfaces\IPreferences.h"
+#include "..\ToDoList\tdcenum.h"
 
 #include "..\Shared\DateHelper.h"
 #include "..\Shared\misc.h"
 
-#include "..\todolist\tdcenum.h"
-
 #include "..\3rdParty\stdiofileex.h"
+
+#include "..\Interfaces\IPreferences.h"
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE

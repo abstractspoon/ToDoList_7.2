@@ -9,17 +9,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "..\Shared\xmlfileex.h"
+
 #include "..\Interfaces\ITaskList.h"
 
 #include <afxtempl.h>
-
-#ifdef NO_TL_ENCRYPTDECRYPT
-#	include "..\SHARED\xmlfile.h"
-#	define XMLBASE CXmlFile
-#else
-#	include "..\SHARED\xmlfileex.h"
-#	define XMLBASE CXmlFileEx
-#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -77,7 +71,7 @@ struct TASKFILE_HEADER
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-class CTaskFile : public ITASKLISTBASE, public XMLBASE
+class CTaskFile : public ITASKLISTBASE, public CXmlFileEx
 {
 	friend class CMultiTaskFile;
 
@@ -99,12 +93,10 @@ public:
 	void SetHeader(const TASKFILE_HEADER& header);
 	void GetHeader(TASKFILE_HEADER& header) const;
 
-#ifndef NO_TL_ENCRYPTDECRYPT
 	virtual BOOL Decrypt(LPCTSTR szPassword = NULL); 
 
 	void SetDisablePasswordPrompting();
 	BOOL IsPasswordPromptingDisabled() const;
-#endif
 
 	BOOL CopyFrom(const CTaskFile& tasks);
 	BOOL CopyFrom(const ITaskList* pTasks);
@@ -119,10 +111,8 @@ public:
 	int GetTaskCount() const;
 	int GetTopLevelTaskCount() const;
 
-#ifndef NO_TL_MERGE
 	int Merge(const CTaskFile& tasks, BOOL bByID, BOOL bMoveExist);
 	int Merge(LPCTSTR szTaskFilePath, BOOL bByID, BOOL bMoveExist);
-#endif
 
 	HTASKITEM NewTask(const CString& sTitle, HTASKITEM hParent, DWORD dwID, DWORD dwParentID, BOOL bInitCreationDate = FALSE);
 
@@ -481,8 +471,6 @@ public:
 	bool SetTaskFileLinkPath(HTASKITEM hTask, LPCTSTR szFileRefpath);
 
 	bool SetTaskColor(HTASKITEM hTask, unsigned long nColor);
-	bool SetTaskWebColor(HTASKITEM hTask, unsigned long nColor);
-
 	bool SetTaskPriority(HTASKITEM hTask, int nPriority);
 	bool SetTaskPercentDone(HTASKITEM hTask, unsigned char nPercent);
 

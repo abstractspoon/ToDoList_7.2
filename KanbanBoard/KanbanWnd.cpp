@@ -7,9 +7,6 @@
 #include "KanbanWnd.h"
 #include "KanbanMsg.h"
 
-#include "..\todolist\tdcenum.h"
-#include "..\todolist\tdcmsg.h"
-
 #include "..\shared\misc.h"
 #include "..\shared\themed.h"
 #include "..\shared\graphicsmisc.h"

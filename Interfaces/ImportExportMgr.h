@@ -47,8 +47,9 @@ public:
 	IIMPORTEXPORT_RESULT ExportTaskList(const ITaskList* pSrcTasks, LPCTSTR szDestFile, int nByExporter, BOOL bSilent, IPreferences* pPrefs) const;
 	IIMPORTEXPORT_RESULT ExportTaskLists(const IMultiTaskList* pSrcTasks, LPCTSTR szDestFile, int nByExporter, BOOL bSilent, IPreferences* pPrefs) const;
 	
-	int FindImporter(LPCTSTR szFilePath) const;
-	int FindExporter(LPCTSTR szFilePath) const;
+	int FindImporterByPath(LPCTSTR szFilePath) const;
+	int FindExporterByPath(LPCTSTR szFilePath) const;
+
 	
 protected:
 	BOOL m_bInitialized;
@@ -59,7 +60,6 @@ protected:
 	virtual void Initialize() const;
 
 	static CString& FormatExtension(CString& sExt, BOOL bWithDot);
-
 };
 
 //////////////////////////////////////////////////////////////////////

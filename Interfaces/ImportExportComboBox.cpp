@@ -3,7 +3,10 @@
 
 #include "stdafx.h"
 #include "importexportcombobox.h"
-#include "GraphicsMisc.h"
+
+#include "..\shared\GraphicsMisc.h"
+#include "..\shared\Misc.h"
+#include "..\shared\DialogHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -136,8 +139,7 @@ void CImportExportComboBox::BuildCombo()
 			else
 				sItem = sMenu;
 
-			int nItem = AddString(sItem);
-			SetItemData(nItem, nImpExp);
+			CDialogHelper::AddString(*this, sItem, nImpExp);
 		}
 	}
 }

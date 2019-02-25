@@ -50,7 +50,7 @@ public:
 	BOOL ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0);
 
 	operator HWND() const;
-	HWND GetSafeHwnd() const { return *this; }
+	HWND GetSafeHwnd() const;
 
 	UINT GetDlgCtrlID() { return ::GetDlgCtrlID(*this); }
 

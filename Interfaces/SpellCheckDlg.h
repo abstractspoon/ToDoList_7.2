@@ -7,12 +7,13 @@
 // SpellCheckDlg.h : header file
 //
 
-#include "runtimedlg.h"
-#include "richeditncborder.h"
-#include "richeditspellcheck.h"
-#include "RichEditBaseCtrl.h"
+#include "..\Shared\runtimedlg.h"
+#include "..\Shared\richeditncborder.h"
+#include "..\Shared\RichEditBaseCtrl.h"
 
 #include "..\3rdparty\statlink.h"
+
+#include "..\Interfaces\richeditspellcheck.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSpellCheckDlg dialog
@@ -21,6 +22,7 @@ const int IDNOERRORS = 20; // can be returned from DoModal
 
 class ISpellChecker;
 class ISpellCheck;
+class IPreferences;
 
 enum // control IDs
 {
@@ -53,11 +55,11 @@ class CSpellCheckDlg : public CRuntimeDlg
 {
 // Construction
 public:
-	CSpellCheckDlg(const CString& sDictionaryPath = _T(""), ISpellCheck* pSpellCheck = NULL, const CString& sText = _T(""), CWnd* pParent = NULL);   // standard constructor
+	CSpellCheckDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CSpellCheckDlg();
 
 	BOOL IsInitialized() { return ((m_pSpellCheck || !m_sText.IsEmpty()) && m_pSpellChecker); }
-	int DoModal(BOOL bEndOnNoErrors = FALSE);
+	int DoModal(IPreferences* pPrefs, BOOL bEndOnNoErrors = FALSE);
 
 	void SetSpellCheck(ISpellCheck* pSpellCheck);
 	void SetDictionaryDownloadUrl(const CString& sUrl);
@@ -79,8 +81,6 @@ protected:
 	CString	m_sMisspeltWord;
 	CString	m_sSuggestion;
 	//}}AFX_DATA
-	ISpellChecker* m_pSpellChecker;
-	ISpellCheck* m_pSpellCheck;
 	CString m_sEnginePath;
 	CComboBox m_cbDictionaries;
 	CString m_sSelDictionary;
@@ -89,6 +89,11 @@ protected:
 	CRichEditNcBorder m_ncBorder;
 	CRichEditSpellCheck m_reSpellCheck;
 	BOOL m_bMadeChanges;
+
+	ISpellChecker* m_pSpellChecker;
+	ISpellCheck* m_pSpellCheck;
+	IPreferences* m_pPrefs;
+
 	mutable CPoint m_ptTopLeft;
 
 	static CMap<UINT, UINT, CString, CString&> s_mapText;

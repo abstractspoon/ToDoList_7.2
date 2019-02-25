@@ -16,22 +16,24 @@
 #include "..\shared\holdredraw.h"
 #include "..\shared\datehelper.h"
 #include "..\shared\enstring.h"
-#include "..\shared\preferences.h"
+#include "..\Interfaces\Preferences.h"
 #include "..\shared\deferwndmove.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\holdredraw.h"
 #include "..\shared\osversion.h"
 #include "..\shared\graphicsmisc.h"
-#include "..\shared\uiextensionmgr.h"
 #include "..\shared\filemisc.h"
 #include "..\shared\icon.h"
-#include "..\shared\uiextensionhelper.h"
 
 #include "..\3rdparty\dibdata.h"
 
+#include "..\Interfaces\uiextensionhelper.h"
+#include "..\Interfaces\uiextensionmgr.h"
 #include "..\Interfaces\iuiextension.h"
 
 #include <math.h>
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE

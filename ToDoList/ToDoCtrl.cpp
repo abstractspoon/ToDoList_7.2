@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "ToDoCtrl.h"
-#include "tdlschemadef.h"
 #include "taskfile.h"
 #include "taskclipboard.h"
 #include "tdcmsg.h"
@@ -30,7 +29,6 @@
 #include "..\shared\datehelper.h"
 #include "..\shared\driveinfo.h"
 #include "..\shared\toolbarhelper.h"
-#include "..\shared\spellcheckdlg.h"
 #include "..\shared\passworddialog.h"
 #include "..\shared\winclasses.h"
 #include "..\shared\wclassdefines.h"
@@ -42,7 +40,7 @@
 #include "..\shared\stringres.h"
 #include "..\shared\treectrlhelper.h"
 #include "..\shared\filemisc.h"
-#include "..\shared\preferences.h"
+#include "..\Interfaces\Preferences.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\enbitmap.h"
 #include "..\shared\enmenu.h"
@@ -52,12 +50,14 @@
 #include "..\shared\clipboard.h"
 #include "..\shared\mapex.h"
 
-#include "..\interfaces\IContentControl.h"
-
 #include "..\3rdparty\msoutl.h"
 #include "..\3rdparty\shellicons.h"
 #include "..\3rdparty\colordef.h"
 #include "..\3rdparty\dibdata.h"
+
+#include "..\interfaces\spellcheckdlg.h"
+#include "..\interfaces\IContentControl.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
 
 #include <Windowsx.h>
 #include <float.h>
@@ -65,6 +65,8 @@
 #include <math.h>
 #include <afxpriv.h>
 #include <shlwapi.h>
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11471,7 +11473,7 @@ BOOL CToDoCtrl::SpellcheckItem(HTREEITEM hti, CSpellCheckDlg* pSpellChecker, BOO
 			pSpellChecker->SetSpellCheck(m_ctrlComments.GetSpellCheckInterface());
 		}
 		
-		int nRet = pSpellChecker->DoModal(TRUE);
+		int nRet = pSpellChecker->DoModal(CPreferences(), TRUE);
 		UpdateWindow();
 			
 		if (nRet == IDOK && !IsReadOnly())

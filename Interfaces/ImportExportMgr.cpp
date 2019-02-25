@@ -4,10 +4,11 @@
 
 #include "stdafx.h"
 #include "ImportExportMgr.h"
-#include "filemisc.h"
-#include "localizer.h"
-#include "misc.h"
-#include "osversion.h"
+
+#include "..\shared\filemisc.h"
+#include "..\shared\localizer.h"
+#include "..\shared\misc.h"
+#include "..\shared\osversion.h"
 
 #include "..\Interfaces\ITaskList.h"
 #include "..\Interfaces\IImportExport.h"
@@ -314,7 +315,7 @@ IIMPORTEXPORT_RESULT CImportExportMgr::ExportTaskLists(const IMultiTaskList* pSr
 	return IIER_BADFORMAT;
 }
 
-int CImportExportMgr::FindImporter(LPCTSTR szFilePath) const
+int CImportExportMgr::FindImporterByPath(LPCTSTR szFilePath) const
 {
 	CString sExt = FileMisc::GetExtension(szFilePath, FALSE);
 
@@ -334,7 +335,7 @@ int CImportExportMgr::FindImporter(LPCTSTR szFilePath) const
 	return nImporter; // match or -1
 }
 
-int CImportExportMgr::FindExporter(LPCTSTR szFilePath) const
+int CImportExportMgr::FindExporterByPath(LPCTSTR szFilePath) const
 {
 	CString sExt = FileMisc::GetExtension(szFilePath, FALSE);
 

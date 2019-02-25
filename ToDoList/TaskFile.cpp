@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "TaskFile.h"
-#include "tdlschemadef.h"
 #include "tdcmergetasklist.h"
 #include "tdcstruct.h"
 #include "todoitem.h"
@@ -20,7 +19,11 @@
 
 #include "..\3rdparty\Base64Coder.h"
 
+#include "..\Interfaces\TasklistSchemaDef.h"
+
 #include <math.h>
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -46,7 +49,7 @@ public:
 	
 	virtual BOOL Continue(LPCTSTR szItem, LPCTSTR /*szValue*/) const
 	{
-		if (TDL_TASK.CompareNoCase(szItem) == 0)
+		if (lstrcmpi(TDL_TASK, szItem) == 0)
 			return FALSE; // stop
 		
 #ifndef NO_TL_ENCRYPTDECRYPT
@@ -86,44 +89,29 @@ TASKFILE_HEADER::TASKFILE_HEADER()
 
 CTaskFile::CTaskFile(LPCTSTR szPassword) 
 	: 
+	CXmlFileEx(TDL_ROOT, szPassword),
 	m_dwNextUniqueID(1), 
 	m_bISODates(FALSE), 
-	m_bHideParentID(FALSE),
-
-#ifdef NO_TL_ENCRYPTDECRYPT
-	CXmlFile(TDL_ROOT)
-#else
-	CXmlFileEx(TDL_ROOT, szPassword)
-#endif
+	m_bHideParentID(FALSE)
 {
 }
 
 CTaskFile::CTaskFile(const CTaskFile& tasks, LPCTSTR szPassword)
 	: 
+	CXmlFileEx(TDL_ROOT, szPassword),
 	m_dwNextUniqueID(1), 
 	m_bISODates(FALSE), 
-	m_bHideParentID(FALSE),
-
-#ifdef NO_TL_ENCRYPTDECRYPT
-	CXmlFile(TDL_ROOT)
-#else
-	CXmlFileEx(TDL_ROOT, szPassword)
-#endif
+	m_bHideParentID(FALSE)
 {
 	CopyFrom(tasks);
 }
 
 CTaskFile::CTaskFile(const ITaskList* pTasks, LPCTSTR szPassword)
 	: 
+	CXmlFileEx(TDL_ROOT, szPassword),
 	m_dwNextUniqueID(1), 
 	m_bISODates(FALSE), 
-	m_bHideParentID(FALSE),
-
-#ifdef NO_TL_ENCRYPTDECRYPT
-	CXmlFile(TDL_ROOT)
-#else
-	CXmlFileEx(TDL_ROOT, szPassword)
-#endif
+	m_bHideParentID(FALSE)
 {
 	CopyFrom(pTasks);
 }
@@ -300,7 +288,7 @@ BOOL CTaskFile::Load(LPCTSTR szFilePath, IXmlParse* pCallback, BOOL bDecrypt)
 
 BOOL CTaskFile::LoadContent(const CString& sContent)
 {
-	if (XMLBASE::LoadContent(sContent, TDL_ROOT))
+	if (CXmlFileEx::LoadContent(sContent, TDL_ROOT))
 	{
 		ClearHandleMap();
 		return TRUE;
@@ -375,7 +363,7 @@ void CTaskFile::GetHeader(TASKFILE_HEADER& header) const
 
 BOOL CTaskFile::LoadEx(IXmlParse* pCallback)
 {
-	BOOL bResult = XMLBASE::LoadEx(TDL_ROOT, pCallback);
+	BOOL bResult = CXmlFileEx::LoadEx(TDL_ROOT, pCallback);
 
 #ifdef NO_TL_ENCRYPTDECRYPT
 	if (bResult)
@@ -513,12 +501,12 @@ BOOL CTaskFile::SaveEx()
 	SetItemValue(TDL_APPVER, FileMisc::GetAppVersion());
 	SetItemValue(TDL_FILEFORMAT, TDL_FILEFORMAT_CURRENT);
 	
-	return XMLBASE::SaveEx();
+	return CXmlFileEx::SaveEx();
 }
 
 BOOL CTaskFile::CopyFrom(const CTaskFile& tasks)
 {
-	XMLBASE::CopyFrom(tasks);
+	CXmlFileEx::CopyFrom(tasks);
 
 	m_dwNextUniqueID = tasks.GetNextUniqueID();
 	ClearHandleMap();
@@ -562,7 +550,7 @@ BOOL CTaskFile::CopyTasksTo(ITaskList* pTasks)
 
 void CTaskFile::Reset()
 {
-	XMLBASE::Reset();
+	CXmlFileEx::Reset();
 
 	ClearHandleMap();
 
@@ -882,7 +870,6 @@ BOOL CTaskFile::CopyTask(const ITaskList* pTasksSrc, HTASKITEM hTaskSrc,
 	return TRUE;
 }
 
-#ifndef NO_TL_MERGE
 int CTaskFile::Merge(const CTaskFile& tasks, BOOL bByID, BOOL bMoveExist)
 {
 	CTDCMergeTasklist mtdl(bByID ? TDLM_BYID : TDLM_BYTITLE, 
@@ -910,7 +897,6 @@ int CTaskFile::Merge(LPCTSTR szTaskFilePath, BOOL bByID, BOOL bMoveExist)
 
 	return nMerge;
 }
-#endif
 
 DWORD CTaskFile::GetNextUniqueID() const
 {

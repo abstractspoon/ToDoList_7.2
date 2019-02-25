@@ -4,18 +4,21 @@
 
 #include "stdafx.h"
 #include "TaskListCsvImporter.h"
-#include "tdlschemadef.h"
 #include "resource.h"
 #include "tdlrecurringtaskedit.h"
 #include "TDLCsvImportExportDlg.h"
-
-#include <locale.h>
 
 #include "..\shared\timehelper.h"
 #include "..\shared\enstring.h"
 #include "..\shared\misc.h"
 #include "..\shared\filemisc.h"
-#include "..\shared\Preferences.h"
+
+#include "..\Interfaces\Preferences.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
+
+#include <locale.h>
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE

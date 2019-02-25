@@ -5,8 +5,11 @@
 #include "resource.h"
 #include "TDLSendTasksDlg.h"
 
-#include "..\shared\preferences.h"
 #include "..\shared\dialoghelper.h"
+
+#include "..\Interfaces\Preferences.h"
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,7 +34,7 @@ CTDLSendTasksDlg::CTDLSendTasksDlg(const CImportExportMgr& mgr, BOOL bSelectedTa
 	CPreferences prefs;
 	m_nSendTasksAsOption = prefs.GetProfileInt(m_sPrefsKey, _T("SendTasksAs"), TDSA_TASKLIST);
 
-	int nDefaultFormat = mgr.FindExporter(_T("temp.tdl"));
+	int nDefaultFormat = mgr.FindExporterByPath(_T("temp.tdl"));
 
 	m_nFormatOption = prefs.GetProfileInt(m_sPrefsKey, _T("FormatOption"), nDefaultFormat);
 	m_nFormatOption = min(m_nFormatOption, mgr.GetNumExporters());

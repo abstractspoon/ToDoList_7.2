@@ -245,6 +245,12 @@ void CGanttPreferencesPage::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey)
 	pPrefs->WriteProfileInt(szKey, _T("DecadesAreOneBased"), m_bDecadesAreOneBased);
 	pPrefs->WriteProfileInt(szKey, _T("DisplayParentsAsRollups"), m_bDisplayParentsAsRollups);
 
+	m_btNonWorkingHoursColor.SavePreferences(pPrefs);
+	m_btWeekendColor.SavePreferences(pPrefs);
+	m_btTodayColor.SavePreferences(pPrefs);
+	m_btParentColor.SavePreferences(pPrefs);
+	m_btDefaultColor.SavePreferences(pPrefs);
+
 	CString sColVis(szKey);
 	sColVis += _T("\\ColumnVisibility");
 
@@ -280,6 +286,12 @@ void CGanttPreferencesPage::LoadPreferences(const IPreferences* pPrefs, LPCTSTR 
 	m_bDisplayProgressInBar = pPrefs->GetProfileInt(szKey, _T("DisplayProgressInBar"), FALSE);
 	m_bDecadesAreOneBased = pPrefs->GetProfileInt(szKey, _T("DecadesAreOneBased"), FALSE);
 	m_bDisplayParentsAsRollups = pPrefs->GetProfileInt(szKey, _T("DisplayParentsAsRollups"), FALSE);
+
+	m_btNonWorkingHoursColor.LoadPreferences(pPrefs);
+	m_btWeekendColor.LoadPreferences(pPrefs);
+	m_btTodayColor.LoadPreferences(pPrefs);
+	m_btParentColor.LoadPreferences(pPrefs);
+	m_btDefaultColor.LoadPreferences(pPrefs);
 
 	CString sColVis(szKey);
 	sColVis += _T("\\ColumnVisibility");

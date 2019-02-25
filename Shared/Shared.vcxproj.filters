@@ -34,12 +34,6 @@
     <ClCompile Include="colorcombobox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ContentCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="custombutton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -175,12 +169,6 @@
     <ClCompile Include="ImageProcessors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImportExportMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportExportUIHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InputListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -247,9 +235,6 @@
     <ClCompile Include="popupListboxctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Preferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PreferencesBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -283,9 +268,6 @@
     <ClCompile Include="RichEditNcBorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RichEditSpellCheck.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RoundCorner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -311,12 +293,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SizeGrip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpellCheckDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpellChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StatusBarProgress.cpp">
@@ -349,9 +325,6 @@
     <ClCompile Include="tabctrlex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TasklistStorageMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Themed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -380,12 +353,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TreeSelectionHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIExtensionMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIThemeFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Unzipper.cpp">
@@ -481,16 +448,7 @@
     <ClCompile Include="ComboListboxPositioner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImportExportComboBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ScopedTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentTypeCombobox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UIExtensionHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -529,12 +487,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="colorcombobox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="custombutton.h">
@@ -681,12 +633,6 @@
     <ClInclude Include="ImageProcessors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImportExportMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportExportUIHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InputListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -762,9 +708,6 @@
     <ClInclude Include="popupListboxctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Preferences.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PreferencesBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -787,9 +730,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteFileDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="richeditbasectrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RichEditNcBorder.h">
@@ -823,12 +763,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SizeGrip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpellCheckDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpellChecker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StatusBarProgress.h">
@@ -867,9 +801,6 @@
     <ClInclude Include="tabctrlex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TaskListStorageMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Themed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -901,15 +832,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TreeSelectionHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIExtensionMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UITHEME.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIThemeFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Unzipper.h">
@@ -1011,16 +933,7 @@
     <ClInclude Include="ComboListboxPositioner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImportExportComboBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScopedTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentTypeCombobox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UIExtensionHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

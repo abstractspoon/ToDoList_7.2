@@ -7,9 +7,6 @@
 #include "CreateFileLinkDlg.h"
 #include "RTFPreferencesDlg.h"
 
-#include "..\todolist\tdcmsg.h"
-#include "..\todolist\tdlschemadef.h"
-
 #include "..\shared\enfiledialog.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\richedithelper.h"
@@ -17,7 +14,6 @@
 #include "..\shared\misc.h"
 #include "..\shared\filemisc.h"
 #include "..\shared\enstring.h"
-#include "..\shared\preferences.h"
 #include "..\shared\binarydata.h"
 #include "..\shared\mswordhelper.h"
 #include "..\shared\enmenu.h"
@@ -25,14 +21,18 @@
 #include "..\shared\clipboard.h"
 #include "..\shared\localizer.h"
 
-#include "..\Interfaces\uitheme.h"
-#include "..\Interfaces\itasklist.h"
-
 #include "..\3rdparty\compression.h"
 #include "..\3rdparty\zlib\zlib.h"
 #include "..\3rdparty\clipboardbackup.h"
 
+#include "..\Interfaces\Preferences.h"
+#include "..\Interfaces\uitheme.h"
+#include "..\Interfaces\itasklist.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
+
 #include <afxpriv.h>
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -685,7 +685,7 @@ LRESULT CRTFContentControl::OnCustomUrl(WPARAM wp, LPARAM lp)
 	CString sUrl((LPCTSTR)lp);
 	sUrl.MakeLower();
 
-	if (sUrl.Find(TDL_LINK) != -1 || sUrl.Find(TDL_EXTENSION) != -1)
+	if (sUrl.Find(TDL_LINK) != -1 || sUrl.Find(_T(".tdl")) != -1)
 		return GetParent()->SendMessage(WM_ICC_TASKLINK, 0, lp);
 
 	return OnFailedUrl(wp, lp);
@@ -880,7 +880,9 @@ void CRTFContentControl::OnEditPasteasRef()
 		sFileName.Replace(_T(" "), _T("%20"));
 	}
 	else // get the clipboard for just this tasklist
+	{
 		pClipboard = (ITaskList*)GetParent()->SendMessage(WM_ICC_GETCLIPBOARD, 0, TRUE);
+	}
 
 	if (pClipboard && pClipboard->GetFirstTask())
 	{

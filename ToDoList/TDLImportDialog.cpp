@@ -10,9 +10,10 @@
 #include "../shared/misc.h"
 #include "../shared/filemisc.h"
 #include "../shared/graphicsmisc.h"
-#include "../shared/preferences.h"
 #include "../shared/dialoghelper.h"
 #include "../shared/clipboard.h"
+
+#include "../Interfaces/preferences.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -112,7 +113,7 @@ int CTDLImportDialog::DoModal(LPCTSTR szFilePath)
 		m_sFromFilePath = szFilePath;
 		m_bFileOnly = TRUE;
 
-		m_nFormatOption = m_mgrImportExport.FindImporter(szFilePath);
+		m_nFormatOption = m_mgrImportExport.FindImporterByPath(szFilePath);
 
 		if (m_nFormatOption == -1)
 			return IDCANCEL;

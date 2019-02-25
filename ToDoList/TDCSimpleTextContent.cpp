@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "TDCSimpleTextContent.h"
 #include "tdcmsg.h"
-#include "tdlschemadef.h"
 #include "resource.h"
 
 #include "..\shared\toolbarhelper.h"
@@ -12,7 +11,6 @@
 #include "..\shared\wclassdefines.h"
 #include "..\shared\autoflag.h"
 #include "..\shared\richedithelper.h"
-#include "..\shared\richeditspellcheck.h"
 #include "..\shared\misc.h"
 #include "..\shared\enstring.h"
 #include "..\shared\filemisc.h"
@@ -23,6 +21,10 @@
 
 #include "..\Interfaces\ipreferences.h"
 #include "..\Interfaces\ITaskList.h"
+#include "..\Interfaces\richeditspellcheck.h"
+#include "..\Interfaces\TasklistSchemaDef.h"
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -89,7 +91,11 @@ int CTDCSimpleTextContent::ConvertToHtml(const unsigned char* /*pContent*/, int 
 { 
 	return 0; // not supported
 }
-void CTDCSimpleTextContent::FreeHtmlBuffer(LPTSTR& /*szHtml*/) {}
+
+void CTDCSimpleTextContent::FreeHtmlBuffer(LPTSTR& /*szHtml*/) 
+{
+	// not required
+}
 
 void CTDCSimpleTextContent::SavePreferences(IPreferences* pPrefs, LPCWSTR szKey) const 
 {

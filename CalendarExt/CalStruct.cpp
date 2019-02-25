@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "TaskCalendarCtrl.h"
 
-#include "..\todolist\tdcenum.h"
-
 #include "..\Shared\GraphicsMisc.h"
 #include "..\Shared\themed.h"
 #include "..\Shared\DateHelper.h"
@@ -14,6 +12,8 @@
 #include "..\Shared\dialoghelper.h"
 
 #include <math.h>
+
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

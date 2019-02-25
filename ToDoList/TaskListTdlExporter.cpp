@@ -5,10 +5,13 @@
 #include "stdafx.h"
 #include "TaskListtdlExporter.h"
 #include "TaskFile.h"
-#include "tdlschemadef.h"
 #include "tdcstruct.h"
 
 #include "..\shared\filemisc.h"
+
+#include "..\Interfaces\TasklistSchemaDef.h"
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #undef THIS_FILE
