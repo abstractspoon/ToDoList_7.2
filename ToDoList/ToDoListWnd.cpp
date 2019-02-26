@@ -2839,7 +2839,7 @@ void CToDoListWnd::RestorePosition()
 			wp.ptMinPosition.x = -1;
 			wp.ptMinPosition.y = -1;
 			
-			TRACE(_T("CToDoListWnd::SetWindowPlacement(%d, %d)\n"), rect.Width(), rect.Height());
+			//TRACE(_T("CToDoListWnd::SetWindowPlacement(%d, %d)\n"), rect.Width(), rect.Height());
 			SetWindowPlacement(&wp);
 		}
 		else
@@ -6082,7 +6082,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 	if (m_bIgnoreNextResize)
 	{
 		ASSERT(nType == SIZE_RESTORED);
-		TRACE(_T("CToDoListWnd::OnSize(Ignoring Resize)\n"));
+		//TRACE(_T("CToDoListWnd::OnSize(Ignoring Resize)\n"));
 
 		return;
 	}
@@ -6091,7 +6091,7 @@ void CToDoListWnd::OnSize(UINT nType, int cx, int cy)
 
 	if (bVisible && m_toolbarMain.GetSafeHwnd())
 	{
-		TRACE(_T("CToDoListWnd::OnSize(%d, %d)\n"), cx, cy);
+		//TRACE(_T("CToDoListWnd::OnSize(%d, %d)\n"), cx, cy);
 
 		Resize(cx, cy, (nType == SIZE_MAXIMIZED));
 		
@@ -11115,10 +11115,6 @@ LRESULT CToDoListWnd::OnAppRestoreFocus(WPARAM /*wp*/, LPARAM lp)
 {
 	HWND hWnd = (HWND)lp;
 	
-#ifdef _DEBUG
-	CString sClass = CWinClasses::GetClass(hWnd);
-#endif
-
 	if (GetTDCCount() && (hWnd == GetToDoCtrl().GetSafeHwnd()))
 	{
 		GetToDoCtrl().SetFocusToTasks();
@@ -11126,9 +11122,9 @@ LRESULT CToDoListWnd::OnAppRestoreFocus(WPARAM /*wp*/, LPARAM lp)
 	else if (::IsWindowEnabled(hWnd) && ::IsWindowVisible(hWnd) && (::GetFocus() != hWnd))
 	{
 #ifdef _DEBUG
-		CString sFocus;
-		CWnd::FromHandle(hWnd)->GetWindowText(sFocus);
-		TRACE(_T("OnAppRestoreFocus(%s = %s)\n"), CWinClasses::GetClassEx(hWnd), sFocus.Left(100));
+// 		CString sFocus, sClass = CWinClasses::GetClassEx(hWnd);
+// 		CWnd::FromHandle(hWnd)->GetWindowText(sFocus);
+// 		TRACE(_T("OnAppRestoreFocus(%s = %s)\n"), sClass, sFocus.Left(100));
 #endif
 
 		::SetFocus(hWnd);
