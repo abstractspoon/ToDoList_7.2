@@ -6757,7 +6757,7 @@ void CToDoListWnd::OnTimerReadOnlyStatus(int nCtrl, BOOL bForceCheckRemote)
 
 	// Don't distract the user unnecessarily
 	const CPreferencesDlg& userPrefs = Prefs();
-	int nReloadOption = userPrefs.GetReadonlyReloadOption();
+	RELOAD_OPTION nReloadOption = userPrefs.GetReadonlyReloadOption();
 
 	if (!WantCheckReloadFiles(nReloadOption))
 		return;
@@ -6840,7 +6840,7 @@ void CToDoListWnd::OnTimerReadOnlyStatus(int nCtrl, BOOL bForceCheckRemote)
 	}
 }
 
-BOOL CToDoListWnd::WantCheckReloadFiles(int nOption) const
+BOOL CToDoListWnd::WantCheckReloadFiles(RELOAD_OPTION nOption) const
 {
 	switch (nOption)
 	{
@@ -6865,7 +6865,7 @@ void CToDoListWnd::OnTimerTimestampChange(int nCtrl, BOOL bForceCheckRemote)
 		
 	// Don't distract the user unnecessarily
 	const CPreferencesDlg& userPrefs = Prefs();
-	int nReloadOption = userPrefs.GetTimestampReloadOption();
+	RELOAD_OPTION nReloadOption = userPrefs.GetTimestampReloadOption();
 
 	if (!WantCheckReloadFiles(nReloadOption))
 		return;
