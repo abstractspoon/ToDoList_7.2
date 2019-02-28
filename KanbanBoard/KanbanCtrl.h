@@ -112,7 +112,6 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnCustomDrawList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnListItemChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnListEditLabel(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginDragListItem(NMHDR* pNMHDR, LRESULT* pResult);
@@ -128,9 +127,6 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	BOOL DrawListItemColumn(CDC* pDC, int nItem, int nCol, DWORD dwTaskID, BOOL bSelected);
-	GM_ITEMSTATE GetItemState(int nItem) const;
-	
 	void RedrawListCtrls(BOOL bErase = FALSE);
 	void RemoveDeletedTasks(const ITASKLISTBASE* pTasks);
 	void Resize();
@@ -168,14 +164,10 @@ protected:
 
 	BOOL SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent = TRUE);
 	BOOL IsSelectedListCtrl(HWND hWnd) const;
-	void FixupSelection();
+	void FixupSelectedList();
 	void FixupFocus();
 	BOOL DeleteListCtrl(int nList);
 	BOOL HasFocus() const;
-
-	DWORD GetTaskID(HTREEITEM hti) const;
-	DWORD GetTaskID(int nItem) const;
-	DWORD GetListTaskID(DWORD nItemData) const;
 
 	inline BOOL UsingFixedColumns() const { return m_aColumnDefs.GetSize(); }
 	inline BOOL UsingDynamicColumns() const { return !UsingFixedColumns(); }
@@ -206,8 +198,6 @@ protected:
 	BOOL WantShowColumn(LPCTSTR szAttribID, const CKanbanItemArrayMap& mapKIArray) const;
 	BOOL WantShowColumn(const CKanbanListCtrl* pList) const;
 
-	static COLORREF GetColor(COLORREF crBase, double dLighter, BOOL bSelected);
-	static int GetTaskValues(const ITASKLISTBASE* pTasks, HTASKITEM hTask, IUI_ATTRIBUTE nAttribID, CStringArray& aValues);
 	static int GetTaskAllocTo(const ITASKLISTBASE* pTasks, HTASKITEM hTask, CStringArray& aValues);
 	static int GetTaskCategories(const ITASKLISTBASE* pTasks, HTASKITEM hTask, CStringArray& aValues);
 	static int GetTaskTags(const ITASKLISTBASE* pTasks, HTASKITEM hTask, CStringArray& aValues);

@@ -67,7 +67,7 @@ public:
 	BOOL SelectTasks(const CDWordArray& aTaskIDs);
 	BOOL SelectTask(DWORD dwTaskID, BOOL bAppend = FALSE);
 	BOOL SelectItem(int nItem, BOOL bFocus, BOOL bAppend = FALSE);
-	BOOL IsSelectingTask() const { return (m_dwSelectingTaskID != 0); }
+	BOOL IsSelectingTask() const { return (m_dwSelectingTaskID != 0) && m_data.HasItem(m_dwSelectingTaskID); }
 	void ScrollToSelection();
 	BOOL GetLabelEditRect(LPRECT pEdit);
 	void ClearSelection();

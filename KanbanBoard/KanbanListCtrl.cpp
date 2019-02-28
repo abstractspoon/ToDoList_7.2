@@ -1784,7 +1784,12 @@ int CKanbanListCtrl::GetSelectedTasks(CDWordArray& aItemIDs) const
 	POSITION pos = GetFirstSelectedItemPosition();
 	
 	while (pos)
-		aItemIDs.Add(GetItemData(GetNextSelectedItem(pos)));
+	{
+		DWORD dwTaskID = GetItemData(GetNextSelectedItem(pos));
+
+		if (m_data.HasItem(dwTaskID))
+			aItemIDs.Add(dwTaskID);
+	}
 
 	if ((aItemIDs.GetSize() == 0) && IsSelectingTask())
 		aItemIDs.Add(m_dwSelectingTaskID);

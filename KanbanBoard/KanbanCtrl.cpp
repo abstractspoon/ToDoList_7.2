@@ -1643,7 +1643,7 @@ void CKanbanCtrl::RebuildListCtrlData(const CKanbanItemArrayMap& mapKIArray)
 	Sort(m_nSortBy, m_bSortAscending);
 }
 
-void CKanbanCtrl::FixupSelection()
+void CKanbanCtrl::FixupSelectedList()
 {
 	ASSERT(m_aListCtrls.GetSize());
 
