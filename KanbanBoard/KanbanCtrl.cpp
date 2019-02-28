@@ -185,6 +185,78 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 {
 	switch (wp)
 	{
+	case VK_LEFT:
+		if (m_pSelectedList->GetSelectedCount())
+		{
+			int nList = m_aListCtrls.Find(m_pSelectedList);
+
+			while (nList--)
+			{
+				if (!m_aListCtrls[nList]->GetItemCount())
+					continue;
+
+				// Find the closest task at the currently
+				// selected task's scroll pos
+				int nSelItem = m_pSelectedList->GetFirstSelectedItem();
+				ASSERT(nSelItem >= 0);
+
+				// scroll into view first
+				m_pSelectedList->EnsureVisible(nSelItem, FALSE);
+
+				CRect rItem;
+				VERIFY(m_pSelectedList->GetItemBounds(nSelItem, &rItem));
+
+				int nClosest = m_aListCtrls[nList]->HitTest(rItem.CenterPoint());
+
+				if (nClosest == -1)
+					nClosest = (m_aListCtrls[nList]->GetItemCount() - 1);
+
+				SelectListCtrl(m_aListCtrls[nList], FALSE);
+				m_pSelectedList->SelectItem(nClosest, TRUE);
+				m_pSelectedList->UpdateWindow();
+
+				return TRUE;
+			}
+		}
+		break;
+
+	case VK_RIGHT:
+		if (m_pSelectedList->GetSelectedCount())
+		{
+			int nList = m_aListCtrls.Find(m_pSelectedList);
+
+			for (nList = nList + 1; nList < m_aListCtrls.GetCount(); nList++)
+			{
+				if (!m_aListCtrls[nList]->GetItemCount())
+					continue;
+
+				// Find the closest task at the currently
+				// selected task's scroll pos
+				int nSelItem = m_pSelectedList->GetFirstSelectedItem();
+				ASSERT(nSelItem >= 0);
+
+				// scroll into view first
+				m_pSelectedList->EnsureVisible(nSelItem, FALSE);
+
+				CRect rItem;
+				VERIFY(m_pSelectedList->GetItemBounds(nSelItem, rItem));
+
+				int nClosest = m_aListCtrls[nList]->HitTest(rItem.CenterPoint());
+
+				if (nClosest == -1)
+					nClosest = (m_aListCtrls[nList]->GetItemCount() - 1);
+
+				SelectListCtrl(m_aListCtrls[nList], FALSE);
+				m_pSelectedList->SelectItem(nClosest, TRUE);
+				m_pSelectedList->UpdateWindow();
+
+				return TRUE;
+			}
+		}
+		break;
+
+
+
 	case VK_ESCAPE:
 		// handle 'escape' during dragging
 		return (CancelOperation() != FALSE);

@@ -1515,9 +1515,14 @@ BOOL CKanbanListCtrl::GetItemCheckboxRect(int nItem, CRect& rItem, const KANBANI
 	return FALSE;
 }
 
+BOOL CKanbanListCtrl::GetItemBounds(int nItem, LPRECT lpRect) const
+{
+	return CListCtrl::GetItemRect(nItem, lpRect, LVIR_BOUNDS);
+}
+
 BOOL CKanbanListCtrl::GetItemRect(int nItem, CRect& rItem, const KANBANITEM* pKI) const
 {
-	if (!CListCtrl::GetItemRect(nItem, rItem, LVIR_BOUNDS))
+	if (!GetItemBounds(nItem, rItem))
 		return FALSE;
 
 	if (m_bIndentSubtasks)
@@ -1747,7 +1752,7 @@ void CKanbanListCtrl::OnHeaderCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 
 BOOL CKanbanListCtrl::GetLabelEditRect(LPRECT pEdit)
 {
-	if (!m_bSelected || !GetItemCount())
+	if (!m_bSelected || !GetItemCount() || !GetSelectedCount())
 	{
 		ASSERT(0);
 		return FALSE;
@@ -1755,14 +1760,8 @@ BOOL CKanbanListCtrl::GetLabelEditRect(LPRECT pEdit)
 
 	ASSERT(GetSelectedCount() == 1);
 
-	POSITION pos = GetFirstSelectedItemPosition();
-	int nSelItem = GetNextSelectedItem(pos);
-
-	if (nSelItem < 0)
-	{
-		ASSERT(0);
-		return FALSE;
-	}
+	int nSelItem = GetFirstSelectedItem();
+	ASSERT(nSelItem >= 0);
 
 	// scroll into view first
 	EnsureVisible(nSelItem, FALSE);
