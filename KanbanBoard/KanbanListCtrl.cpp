@@ -2181,6 +2181,9 @@ BOOL CKanbanListCtrl::HandleLButtonClick(CPoint point)
 
 	m_dwSelectingTaskID = 0;
 
+	if (!m_bSelected)
+		GetParent()->SendMessage(WM_KLCN_WANTFOCUS, (WPARAM)GetSafeHwnd());
+
 	// don't let the selection to be set to -1
 	// when clicking below the last item
 	int nHit = HitTest(point);

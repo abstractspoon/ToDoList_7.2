@@ -19,8 +19,9 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const UINT WM_KLCN_CHECKCHANGE = (WM_APP+1); // WPARAM = HWND, LPARAM = Task ID
-const UINT WM_KLCN_GETTASKICON = (WM_APP+2); // WPARAM = TaskID, LPARAM = int* (imageIndex), return HIMAGELIST
+const UINT WM_KLCN_CHECKCHANGE	= (WM_APP+1); // WPARAM = HWND, LPARAM = Task ID
+const UINT WM_KLCN_GETTASKICON	= (WM_APP+2); // WPARAM = TaskID, LPARAM = int* (imageIndex), return HIMAGELIST
+const UINT WM_KLCN_WANTFOCUS	= (WM_APP+3); // WPARAM = HWND, LPARAM = 0L
 
 /////////////////////////////////////////////////////////////////////////////
 // CKanbanListCtrl window

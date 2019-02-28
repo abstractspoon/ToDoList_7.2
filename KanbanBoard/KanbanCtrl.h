@@ -88,6 +88,7 @@ protected:
 	BOOL m_bSortAscending;
 	BOOL m_bStrikeThruDone;
 	BOOL m_bSelectTasks;
+	BOOL m_bSettingListFocus;
 
 	DWORD m_dwOptions;
 	UINT m_nNextColor;
@@ -115,8 +116,9 @@ protected:
 	afx_msg void OnListItemChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnListEditLabel(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginDragListItem(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnListSetFocus(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnListCheckChange(WPARAM wp, LPARAM lp);
+	afx_msg LRESULT OnListWantFocus(WPARAM wp, LPARAM lp);
+	afx_msg void OnListSetFocus(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnListGetTaskIcon(WPARAM wp, LPARAM lp);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -165,7 +167,7 @@ protected:
 	BOOL SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent = TRUE);
 	BOOL IsSelectedListCtrl(HWND hWnd) const;
 	void FixupSelectedList();
-	void FixupFocus();
+	void FixupListFocus();
 	BOOL DeleteListCtrl(int nList);
 	BOOL HasFocus() const;
 

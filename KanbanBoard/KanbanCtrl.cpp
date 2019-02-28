@@ -93,7 +93,8 @@ CKanbanCtrl::CKanbanCtrl()
 	m_pSelectedList(NULL),
 	m_nTrackAttribute(IUI_NONE),
 	m_nSortBy(IUI_NONE),
-	m_bSelectTasks(FALSE)
+	m_bSelectTasks(FALSE),
+	m_bSettingListFocus(FALSE)
 {
 
 }
@@ -119,6 +120,7 @@ BEGIN_MESSAGE_MAP(CKanbanCtrl, CWnd)
 	ON_MESSAGE(WM_SETFONT, OnSetFont)
 	ON_MESSAGE(WM_KLCN_CHECKCHANGE, OnListCheckChange)
 	ON_MESSAGE(WM_KLCN_GETTASKICON, OnListGetTaskIcon)
+	ON_MESSAGE(WM_KLCN_WANTFOCUS, OnListWantFocus)
 	ON_MESSAGE(WM_KCM_SELECTTASK, OnSelectTask)
 
 END_MESSAGE_MAP()
@@ -159,6 +161,7 @@ bool CKanbanCtrl::ProcessMessage(MSG* pMsg)
 	case WM_KEYDOWN:
 		return (HandleKeyDown(pMsg->wParam, pMsg->lParam) != FALSE);
 
+/*
 	case WM_LBUTTONDOWN:
 		{
 			CPoint ptScreen(pMsg->lParam);
@@ -171,6 +174,7 @@ bool CKanbanCtrl::ProcessMessage(MSG* pMsg)
 				pList->SetFocus();
 		}
 		break;
+*/
 	}
 	
 	// all else
@@ -1658,13 +1662,15 @@ void CKanbanCtrl::FixupSelectedList()
 			m_pSelectedList = m_aListCtrls[0];
 	}
 
-	FixupFocus();
+	FixupListFocus();
 }
 
-void CKanbanCtrl::FixupFocus()
+void CKanbanCtrl::FixupListFocus()
 {
 	if (IsWindowVisible() && HasFocus())
 	{
+		CAutoFlag af(m_bSettingListFocus, TRUE);
+
 		m_pSelectedList->SetFocus();
 		m_pSelectedList->Invalidate(TRUE);
 	}
@@ -2046,15 +2052,8 @@ void CKanbanCtrl::OnSetFocus(CWnd* pOldWnd)
 {
 	CWnd::OnSetFocus(pOldWnd);
 
-	CKanbanListCtrl* pList = GetSelListCtrl();
-
-	if (pList)
-	{
-		pList->SetFocus();
-		pList->Invalidate(FALSE);
-
-		ScrollToSelectedTask();
-	}
+	FixupListFocus();
+	ScrollToSelectedTask();
 }
 
 int CKanbanCtrl::GetVisibleListCtrlCount() const
@@ -2471,20 +2470,6 @@ BOOL CKanbanCtrl::CancelOperation()
 	return FALSE;
 }
 
-void CKanbanCtrl::OnListSetFocus(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	*pResult = 0;
-
-	// Ignore focus changes during drag and drop
-	if ((m_bReadOnly || !IsDragging()) && !IsSelectedListCtrl(pNMHDR->hwndFrom))
-	{
-		CKanbanListCtrl* pList = GetListCtrl(pNMHDR->hwndFrom);
-		ASSERT(pList);
-		
-		SelectListCtrl(pList);
-	}
-}
-
 BOOL CKanbanCtrl::SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent)
 {
 	if (pList)
@@ -2499,7 +2484,7 @@ BOOL CKanbanCtrl::SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent)
 		CKanbanListCtrl* pPrevSelList = m_pSelectedList;
 		m_pSelectedList = pList;
 
-		FixupFocus();
+		FixupListFocus();
 
 		if (pList->GetItemCount() > 0)
 		{
@@ -2861,4 +2846,34 @@ LRESULT CKanbanCtrl::OnSelectTask(WPARAM /*wp*/, LPARAM lp)
 LRESULT CKanbanCtrl::OnListGetTaskIcon(WPARAM wp, LPARAM lp)
 {
 	return GetParent()->SendMessage(WM_KBC_GETTASKICON, wp, lp);
+}
+
+LRESULT CKanbanCtrl::OnListWantFocus(WPARAM wp, LPARAM /*lp*/)
+{
+	HWND hwndList = (HWND)wp;
+	ASSERT(hwndList && IsWindow(hwndList));
+
+	CKanbanListCtrl* pList = m_aListCtrls.Get(hwndList);
+	ASSERT(pList);
+
+	if (pList)
+	{
+		ASSERT(pList != m_pSelectedList);
+
+		if (pList != m_pSelectedList)
+			SelectListCtrl(pList, FALSE);
+	}
+
+	return 0L;
+}
+
+void CKanbanCtrl::OnListSetFocus(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	*pResult = 0;
+
+	// Reverse focus changes outside of our own doing
+	if (!m_bSettingListFocus)
+	{
+		FixupListFocus();
+	}
 }
