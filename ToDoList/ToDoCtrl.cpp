@@ -1438,7 +1438,6 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 			{
 			case TDCUIL_RIGHT: // vertical
 				{
-					//rComments.top += 2;
 					rComments.left = rAvailable.right - m_nCommentsSize;
 
 					rAvailable.right = rComments.left - SPLITSIZE;
@@ -1447,7 +1446,6 @@ void CToDoCtrl::ReposComments(CDeferWndMove* pDWM, CRect& rAvailable /*in/out*/)
 				
 			case TDCUIL_LEFT:
 				{
-					//rComments.top += 2;
 					rComments.right = rAvailable.left + m_nCommentsSize;
 
 					rAvailable.left = rComments.right + SPLITSIZE;
