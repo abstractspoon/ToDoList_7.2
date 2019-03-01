@@ -373,16 +373,13 @@ void CRRECToolBar::OnSize(UINT nType, int cx, int cy)
  		CRect rect;
 		GetItemRect(FONT_NAME_POS, &rect);
 
-		rect.left++;
-		rect.top += COMBO_VOFFSET;		
-		rect.bottom += COMBO_HEIGHT;
-
 		int nNewWidth = FONT_COMBO_WIDTH - max(0, DEFCTRLSWIDTH - cx);
 		nNewWidth = max(nNewWidth, MIN_FONT_COMBO_WIDTH);
 
 		if (nNewWidth != rect.Width())
 		{
 			rect.right = rect.left + nNewWidth;
+			rect.top += COMBO_VOFFSET;
 			rect.bottom += COMBO_HEIGHT;
 			m_font.MoveWindow(rect);
 			
@@ -392,7 +389,7 @@ void CRRECToolBar::OnSize(UINT nType, int cx, int cy)
 			
 			// move the other two items to suit their toolbar rects
 			GetItemRect(FONT_SIZE_POS, &rect);
-			rect.top++;		
+			rect.top += COMBO_VOFFSET;
 			rect.bottom += COMBO_HEIGHT;
 			m_size.MoveWindow(rect);
 		}
