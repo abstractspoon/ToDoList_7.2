@@ -502,7 +502,7 @@ BOOL CCheckComboBox::OnEditchange()
 
 		// update m_sText manually to point to
 		// whatever has been input
-		GetDlgItem(1001)->GetWindowText(m_sText);
+		m_sText = GetEditText();
 	}
 
 	m_bEditChange = TRUE;

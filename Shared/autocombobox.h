@@ -144,6 +144,7 @@ protected:
 	BOOL CaseSensitive() const { return Misc::HasFlag(m_dwFlags, ACBS_CASESENSITIVE); }
 	BOOL AddToStart() const { return Misc::HasFlag(m_dwFlags, ACBS_ADDTOSTART); }
 	int AddUniqueItem(const CString& sItem, BOOL bAddToStart);
+	CString GetEditText() const;
 
 	inline HWND GetEdit() const { return m_scEdit.GetHwnd(); }
 	inline HWND GetListbox() const { return m_scList.GetHwnd(); }

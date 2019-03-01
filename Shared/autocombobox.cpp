@@ -625,6 +625,17 @@ int CAutoComboBox::GetCurSel() const
 	return CComboBox::GetCurSel();
 }
 
+CString CAutoComboBox::GetEditText() const
+{
+	if (!m_scEdit.IsValid())
+		return _T("");
+
+	CString sEdit;
+	m_scEdit.GetCWnd()->GetWindowText(sEdit);
+
+	return sEdit;
+}
+
 void CAutoComboBox::HandleReturnKey()
 {
 	// Prevent re-entrancy
@@ -640,9 +651,7 @@ void CAutoComboBox::HandleReturnKey()
 
 	if (m_scEdit.IsValid())
 	{
-		CString sEdit;
-		m_scEdit.GetCWnd()->GetWindowText(sEdit);
-		
+		CString sEdit = GetEditText();
 		int nAdd = AddUniqueItem(sEdit);
 		
 		if (nAdd != CB_ERR)
