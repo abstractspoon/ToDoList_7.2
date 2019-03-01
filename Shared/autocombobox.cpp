@@ -460,7 +460,6 @@ int CAutoComboBox::GetItems(CStringArray& aItems) const
     return aItems.GetSize();
 }
 
-// this handles messages destined for the dropped listbox
 LRESULT CAutoComboBox::ScWindowProc(HWND hRealWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	if (m_scEdit.GetHwnd() == hRealWnd)
