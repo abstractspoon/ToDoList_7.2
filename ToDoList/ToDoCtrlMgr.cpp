@@ -125,16 +125,6 @@ const CToDoCtrlMgr::TDCITEM& CToDoCtrlMgr::GetTDCItem(int nIndex) const
 	return m_aToDoCtrls.GetData()[nIndex];
 }
 
-BOOL CToDoCtrlMgr::GetFileNameAndExt(int nIndex, CString& sFileName, CString& sExt, BOOL bStrict) const
-{
-	CHECKVALIDINDEXRET(nIndex, FALSE);
-
-	CString sPath = GetFilePath(nIndex, bStrict);
-	FileMisc::SplitPath(sPath, NULL, NULL, &sFileName, &sExt);
-
-	return (!sFileName.IsEmpty() && !sExt.IsEmpty());
-}
-
 CString CToDoCtrlMgr::GetFileName(int nIndex, BOOL bStrict) const
 {
 	CHECKVALIDINDEXRET(nIndex, _T(""));
@@ -1100,13 +1090,9 @@ CString CToDoCtrlMgr::GetTabItemTooltip(int nIndex) const
 	{
 	case IM_READONLY:
 		if (tci.pTDC->CompareFileFormat() == TDCFF_NEWER)
-		{
 			sTooltip.LoadString(IDS_STATUSNEWERFORMAT);
-		}
 		else
-		{
 			sTooltip.LoadString(IDS_STATUSREADONLY);
-		}
 		break;
 
 	case IM_CHECKEDIN:
@@ -1226,25 +1212,6 @@ int CToDoCtrlMgr::FindToDoCtrl(const TSM_TASKLISTINFO& info) const
 	return -1;
 }
 
-COleDateTime CToDoCtrlMgr::GetMostRecentEdit() const
-{
-	COleDateTime dtRecent;
-
-	int nCtrl = GetCount();
-	
-	while (nCtrl--)
-	{
-		COleDateTime dtLastEdit = GetTDCItem(nCtrl).pTDC->GetLastTaskModified();
-
-		if (!CDateHelper::IsDateSet(dtRecent))
-			dtRecent = dtLastEdit;
-		else
-			dtRecent = min(dtLastEdit, dtRecent);
-	}
-
-	return dtRecent;	
-}
-
 void CToDoCtrlMgr::PreparePopupMenu(CMenu& menu, UINT nID1, int nMax) const
 {
 	int nTDC = 0;
@@ -1260,26 +1227,6 @@ void CToDoCtrlMgr::PreparePopupMenu(CMenu& menu, UINT nID1, int nMax) const
 	for (; nTDC < nMax; nTDC++)
 		menu.RemoveMenu(nID1 + nTDC, MF_BYCOMMAND);
 
-}
-
-BOOL CToDoCtrlMgr::HasTasks(int nIndex) const
-{
-	CHECKVALIDINDEXRET(nIndex, FALSE);
-	
-	return GetToDoCtrl(nIndex).GetTaskCount();
-}
-
-BOOL CToDoCtrlMgr::AnyHasTasks() const
-{
-	int nCtrl = GetCount();
-	
-	while (nCtrl--)
-	{
-		if (HasTasks(nCtrl))
-			return TRUE;
-	}
-	
-	return FALSE;
 }
 
 BOOL CToDoCtrlMgr::AnyIsModified() const

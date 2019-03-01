@@ -54,9 +54,6 @@ public:
 	BOOL IsLoaded(int nIndex) const;
 	void SetLoaded(int nIndex, BOOL bLoaded = TRUE);
 	BOOL VerifyPassword(int nIndex) const;
-
-	BOOL HasTasks(int nIndex) const;
-	BOOL AnyHasTasks() const;
 	BOOL AnyIsModified() const;
 	BOOL AnyIsSourceControlled() const;
 
@@ -74,7 +71,6 @@ public:
 	TDCM_PATHTYPE RefreshPathType(int nIndex); 
 	CString GetFriendlyProjectName(int nIndex) const;
 	CString GetDisplayPath(int nIndex) const;
-	BOOL GetFileNameAndExt(int nIndex, CString& sFileName, CString& sExt, BOOL bStrict = TRUE) const;
 	CString FormatProjectNameWithFileName(int nIndex) const;
 
 	int GetFileNames(CStringArray& sFileNames, BOOL bStrict = TRUE) const;
@@ -114,7 +110,7 @@ public:
 	BOOL CanAddToSourceControl(int nIndex, BOOL bAdd = TRUE) const;
 	BOOL IsCheckedOut(int nIndex) const;
 	TDC_FILE CheckOut(int nIndex);
-	TDC_FILE CheckOut(int nIndex, CString& sCheckedOutTo, BOOL bForce);
+	TDC_FILE CheckOut(int nIndex, CString& sCheckedOutTo, BOOL bForce = FALSE);
 	TDC_FILE CheckIn(int nIndex);
 	
 	void MoveToDoCtrl(int nIndex, int nNumPlaces);
@@ -138,7 +134,6 @@ public:
 	void SetAllNeedPreferenceUpdate(BOOL bNeed, int nExcept = -1);
 
 	void PreparePopupMenu(CMenu& menu, UINT nID1, int nMax = 20) const;
-	COleDateTime GetMostRecentEdit() const;
 
 	BOOL DoBackup(int nIndex) const;
 
