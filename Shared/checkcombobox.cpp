@@ -487,9 +487,7 @@ BOOL CCheckComboBox::OnEditchange()
 		m_sText = GetEditText();
 	}
 
-	m_bEditChange = TRUE;
-	
-	return FALSE; // pass to parent
+	return CAutoComboBox::OnEditChange();
 }
 
 BOOL CCheckComboBox::OnDropdown() 
@@ -874,4 +872,37 @@ BOOL CCheckComboBox::ToggleCheck(int nItem)
 	}
 
 	return SetCheck(nItem, nCheck);
+}
+
+BOOL CCheckComboBox::SelectFirstMatchingItem(const CString& sText, int nCaretPos)
+{
+	if ((nCaretPos >= 0) && (nCaretPos <= sText.GetLength()))
+	{
+		// find the item containing the caret
+		CString sSep = Misc::GetListSeparator(), sItem;
+		int nItemStart = 0;
+
+		while (nItemStart < sText.GetLength())
+		{
+			int nItemEnd = sText.Find(sSep, nItemStart);
+
+			if (nItemEnd == -1)
+			{
+				sItem = sText.Mid(nItemStart, (nCaretPos - nItemStart));
+				break;
+			}
+			else if (nCaretPos <= nItemEnd)
+			{
+				sItem = sText.Mid(nItemStart, (nItemEnd - nItemStart));
+				break;
+			}
+
+			nItemStart = (nItemEnd + sSep.GetLength());
+		}
+
+		if (!Misc::Trim(sItem).IsEmpty())
+			return CAutoComboBox::SelectFirstMatchingItem(sItem, -1);
+	}
+
+	return CAutoComboBox::SelectFirstMatchingItem(sText, nCaretPos);
 }

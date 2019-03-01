@@ -145,6 +145,17 @@ BOOL CAutoComboBox::OnEditChange()
 {
 	m_bEditChange = TRUE;
 
+	if (GetDroppedState())
+	{
+		int nSelStart = -1, nSelEnd = -1, nCaretPos = -1;
+		m_scEdit.SendMessage(EM_GETSEL, (WPARAM)&nSelStart, (LPARAM)&nSelEnd);
+
+		if ((nSelStart != -1) && (nSelStart == nSelEnd))
+			nCaretPos = nSelStart;
+
+		SelectFirstMatchingItem(GetEditText(), nCaretPos);
+	}
+
 	return FALSE; // pass to parent
 }
 
@@ -595,8 +606,9 @@ int CAutoComboBox::HitTestListDeleteBtn(const CPoint& ptList) const
 			
 			if (LB_ERR != ::SendMessage(GetListbox(), LB_GETITEMRECT, nItem, (LPARAM)(LPRECT)rItem))
 			{
-				rItem.left = rItem.right - SIZE_CLOSEBTN;
-
+				GetListDeleteButtonRect(rItem, rBtn);
+				rItem.InflateRect(2, 2);
+				
 				if (rItem.PtInRect(ptList))
 					return nItem;
 			}
@@ -781,4 +793,17 @@ BOOL CAutoComboBox::DeleteLBItem(int nItem)
 
 	// else
 	return FALSE;
+}
+
+BOOL CAutoComboBox::SelectFirstMatchingItem(const CString& sText, int /*nCaretPos*/)
+{
+	ASSERT(GetDroppedState());
+
+	int nMatch = FindString(-1, sText);
+
+	if (nMatch == CB_ERR)
+		return FALSE;
+
+	m_scList.SendMessage(LB_SETCURSEL, nMatch, 0);
+	return TRUE;
 }
