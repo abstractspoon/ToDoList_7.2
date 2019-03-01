@@ -58,6 +58,7 @@ public:
 	BOOL HasTasks(int nIndex) const;
 	BOOL AnyHasTasks() const;
 	BOOL AnyIsModified() const;
+	BOOL AnyIsSourceControlled() const;
 
 	int FindToDoCtrl(HWND hwndTDC) const;
 	int FindToDoCtrl(const CFilteredToDoCtrl* pTDC) const;
@@ -99,6 +100,8 @@ public:
 	void SetDueItemStatus(int nIndex, TDCM_DUESTATUS nStatus);
 	TDCM_DUESTATUS GetDueItemStatus(int nIndex) const;
 	BOOL ShowDueTaskNotification(int nIndex, LPCTSTR szFilePath, BOOL bBrowser);
+	BOOL RefreshDueItemStatus(); // true if changed
+	BOOL RefreshDueItemStatus(int nIndex); // true if changed
 
 	BOOL GetLastCheckoutSucceeded(int nIndex) const;
 	void SetLastCheckoutSucceeded(int nIndex, BOOL bSuccess);
