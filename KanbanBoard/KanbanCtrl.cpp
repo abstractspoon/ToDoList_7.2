@@ -160,28 +160,13 @@ bool CKanbanCtrl::ProcessMessage(MSG* pMsg)
 	{
 	case WM_KEYDOWN:
 		return (HandleKeyDown(pMsg->wParam, pMsg->lParam) != FALSE);
-
-/*
-	case WM_LBUTTONDOWN:
-		{
-			CPoint ptScreen(pMsg->lParam);
-			::ClientToScreen(pMsg->hwnd, &ptScreen);
-
-			BOOL bHeader = FALSE;
-			CKanbanListCtrl* pList = HitTestListCtrl(ptScreen, &bHeader);
-
-			if (bHeader && pList)
-				pList->SetFocus();
-		}
-		break;
-*/
 	}
 	
 	// all else
 	return false;
 }
 
-BOOL CKanbanCtrl::SelectClosestAdjacentTaskToSelection(int nAdjacentList)
+BOOL CKanbanCtrl::SelectClosestAdjacentItemToSelection(int nAdjacentList)
 {
 	if (!m_pSelectedList->GetSelectedCount())
 	{
@@ -225,6 +210,46 @@ BOOL CKanbanCtrl::SelectClosestAdjacentTaskToSelection(int nAdjacentList)
 	return TRUE;
 }
 
+BOOL CKanbanCtrl::SelectNextItem(int nIncrement)
+{
+	if (nIncrement == 0)
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	int nSelItem = m_pSelectedList->GetFirstSelectedItem();
+	int nNumItem = m_pSelectedList->GetItemCount();
+
+	int nNextItem = -1;
+
+	if (nSelItem == -1)
+	{
+		if (nIncrement > 0)
+			nNextItem = 0;
+		else
+			nNextItem = (nNumItem - 1);
+	}
+	else
+	{
+		if (nIncrement > 0)
+			nNextItem = min((nSelItem + nIncrement), (nNumItem - 1));
+		else
+			nNextItem = max((nSelItem + nIncrement), 0);
+	}
+
+	if (nNextItem != nSelItem)
+	{
+		VERIFY(m_pSelectedList->SelectItem(nNextItem, TRUE));
+		m_pSelectedList->EnsureVisible(nNextItem, FALSE);
+
+		return TRUE;
+	}
+
+	// else
+	return FALSE;
+}
+
 BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 {
 	switch (wp)
@@ -236,7 +261,7 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 
 			for (int nList = (nSelList - 1); nList >= 0; nList--)
 			{
-				if (SelectClosestAdjacentTaskToSelection(nList))
+				if (SelectClosestAdjacentItemToSelection(nList))
 					return TRUE;
 			}
 		}
@@ -249,7 +274,7 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 
 			for (int nList = 0; nList < nSelList; nList++)
 			{
-				if (SelectClosestAdjacentTaskToSelection(nList))
+				if (SelectClosestAdjacentItemToSelection(nList))
 					return TRUE;
 			}
 		}
@@ -263,12 +288,11 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 
 			for (int nList = (nSelList + 1); nList < nNumList; nList++)
 			{
-				if (SelectClosestAdjacentTaskToSelection(nList))
+				if (SelectClosestAdjacentItemToSelection(nList))
 					return TRUE;
 			}
 		}
 		break;
-
 
 	case VK_END:
 		if (m_pSelectedList->GetSelectedCount())
@@ -278,12 +302,23 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 
 			for (int nList = (nNumList - 1); nList > nSelList; nList--)
 			{
-				if (SelectClosestAdjacentTaskToSelection(nList))
+				if (SelectClosestAdjacentItemToSelection(nList))
 					return TRUE;
 			}
 		}
 		break;
 
+	case VK_DOWN:
+		return SelectNextItem(1);
+
+	case VK_NEXT:
+		return SelectNextItem(m_pSelectedList->GetCountPerPage());
+
+	case VK_UP:
+		return SelectNextItem(-1);
+
+	case VK_PRIOR:
+		return SelectNextItem(-m_pSelectedList->GetCountPerPage());
 
 	case VK_ESCAPE:
 		// handle 'escape' during dragging

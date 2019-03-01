@@ -170,7 +170,8 @@ protected:
 	void FixupListFocus();
 	BOOL DeleteListCtrl(int nList);
 	BOOL HasFocus() const;
-	BOOL SelectClosestAdjacentTaskToSelection(int nAdjacentList);
+	BOOL SelectClosestAdjacentItemToSelection(int nAdjacentList);
+	BOOL SelectNextItem(int nIncrement);
 
 	inline BOOL UsingFixedColumns() const { return m_aColumnDefs.GetSize(); }
 	inline BOOL UsingDynamicColumns() const { return !UsingFixedColumns(); }
