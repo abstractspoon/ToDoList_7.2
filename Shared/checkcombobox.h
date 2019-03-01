@@ -109,7 +109,6 @@ protected:
 	void RecalcText(BOOL bUpdate = TRUE, BOOL bNotify = TRUE);
 	BOOL ParseText(BOOL bAutoAdd = TRUE);
 
-	static int CalcCheckBoxWidth(HDC hdc = NULL, HWND hwndRef = NULL);
 	int SetCheck(int nIndex, CCB_CHECKSTATE nCheck, BOOL bUpdate);
 	void CheckAll(CCB_CHECKSTATE nCheck, BOOL bUpdate);
 	BOOL ToggleCheck(int nItem);
