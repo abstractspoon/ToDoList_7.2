@@ -484,6 +484,8 @@ void CKanbanPreferencesPage::BuildDisplayAttributeListBox()
 		
 		m_lbDisplayAttrib.SetCheck(nIndex, 1);
 	}
+	
+	CDialogHelper::RefreshMaxColumnWidth(m_lbDisplayAttrib);
 }
 
 int CKanbanPreferencesPage::GetDisplayAttributes(CKanbanAttributeArray& aAttrib) const
