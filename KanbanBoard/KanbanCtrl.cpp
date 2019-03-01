@@ -181,6 +181,50 @@ bool CKanbanCtrl::ProcessMessage(MSG* pMsg)
 	return false;
 }
 
+BOOL CKanbanCtrl::SelectClosestAdjacentTaskToSelection(int nAdjacentList)
+{
+	if (!m_pSelectedList->GetSelectedCount())
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	if ((nAdjacentList < 0) || (nAdjacentList > m_aListCtrls.GetSize()))
+	{
+		ASSERT(0);
+		return FALSE;
+	}
+
+	CKanbanListCtrl* pAdjacentList = m_aListCtrls[nAdjacentList];
+
+	if (!pAdjacentList->GetItemCount())
+		return FALSE;
+
+	// Find the closest task at the currently
+	// selected task's scrolled pos
+	int nSelItem = m_pSelectedList->GetFirstSelectedItem();
+	ASSERT(nSelItem >= 0);
+
+	// scroll into view first
+	m_pSelectedList->EnsureVisible(nSelItem, FALSE);
+
+	CRect rItem;
+	VERIFY(m_pSelectedList->GetItemBounds(nSelItem, &rItem));
+
+	int nClosest = pAdjacentList->HitTest(rItem.CenterPoint());
+
+	if (nClosest == -1)
+		nClosest = (pAdjacentList->GetItemCount() - 1);
+
+	SelectListCtrl(pAdjacentList, FALSE);
+	ASSERT(m_pSelectedList == pAdjacentList);
+
+	pAdjacentList->SelectItem(nClosest, TRUE);
+	pAdjacentList->UpdateWindow();
+
+	return TRUE;
+}
+
 BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 {
 	switch (wp)
@@ -188,34 +232,25 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 	case VK_LEFT:
 		if (m_pSelectedList->GetSelectedCount())
 		{
-			int nList = m_aListCtrls.Find(m_pSelectedList);
+			int nSelList = m_aListCtrls.Find(m_pSelectedList);
 
-			while (nList--)
+			for (int nList = (nSelList - 1); nList >= 0; nList--)
 			{
-				if (!m_aListCtrls[nList]->GetItemCount())
-					continue;
+				if (SelectClosestAdjacentTaskToSelection(nList))
+					return TRUE;
+			}
+		}
+		break;
 
-				// Find the closest task at the currently
-				// selected task's scroll pos
-				int nSelItem = m_pSelectedList->GetFirstSelectedItem();
-				ASSERT(nSelItem >= 0);
+	case VK_HOME:
+		if (m_pSelectedList->GetSelectedCount())
+		{
+			int nSelList = m_aListCtrls.Find(m_pSelectedList);
 
-				// scroll into view first
-				m_pSelectedList->EnsureVisible(nSelItem, FALSE);
-
-				CRect rItem;
-				VERIFY(m_pSelectedList->GetItemBounds(nSelItem, &rItem));
-
-				int nClosest = m_aListCtrls[nList]->HitTest(rItem.CenterPoint());
-
-				if (nClosest == -1)
-					nClosest = (m_aListCtrls[nList]->GetItemCount() - 1);
-
-				SelectListCtrl(m_aListCtrls[nList], FALSE);
-				m_pSelectedList->SelectItem(nClosest, TRUE);
-				m_pSelectedList->UpdateWindow();
-
-				return TRUE;
+			for (int nList = 0; nList < nSelList; nList++)
+			{
+				if (SelectClosestAdjacentTaskToSelection(nList))
+					return TRUE;
 			}
 		}
 		break;
@@ -223,38 +258,31 @@ BOOL CKanbanCtrl::HandleKeyDown(WPARAM wp, LPARAM lp)
 	case VK_RIGHT:
 		if (m_pSelectedList->GetSelectedCount())
 		{
-			int nList = m_aListCtrls.Find(m_pSelectedList);
+			int nSelList = m_aListCtrls.Find(m_pSelectedList);
+			int nNumList = m_aListCtrls.GetSize();
 
-			for (nList = nList + 1; nList < m_aListCtrls.GetCount(); nList++)
+			for (int nList = (nSelList + 1); nList < nNumList; nList++)
 			{
-				if (!m_aListCtrls[nList]->GetItemCount())
-					continue;
-
-				// Find the closest task at the currently
-				// selected task's scroll pos
-				int nSelItem = m_pSelectedList->GetFirstSelectedItem();
-				ASSERT(nSelItem >= 0);
-
-				// scroll into view first
-				m_pSelectedList->EnsureVisible(nSelItem, FALSE);
-
-				CRect rItem;
-				VERIFY(m_pSelectedList->GetItemBounds(nSelItem, rItem));
-
-				int nClosest = m_aListCtrls[nList]->HitTest(rItem.CenterPoint());
-
-				if (nClosest == -1)
-					nClosest = (m_aListCtrls[nList]->GetItemCount() - 1);
-
-				SelectListCtrl(m_aListCtrls[nList], FALSE);
-				m_pSelectedList->SelectItem(nClosest, TRUE);
-				m_pSelectedList->UpdateWindow();
-
-				return TRUE;
+				if (SelectClosestAdjacentTaskToSelection(nList))
+					return TRUE;
 			}
 		}
 		break;
 
+
+	case VK_END:
+		if (m_pSelectedList->GetSelectedCount())
+		{
+			int nSelList = m_aListCtrls.Find(m_pSelectedList);
+			int nNumList = m_aListCtrls.GetSize();
+
+			for (int nList = (nNumList - 1); nList > nSelList; nList--)
+			{
+				if (SelectClosestAdjacentTaskToSelection(nList))
+					return TRUE;
+			}
+		}
+		break;
 
 
 	case VK_ESCAPE:
