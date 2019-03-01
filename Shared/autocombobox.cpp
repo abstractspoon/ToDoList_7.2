@@ -147,13 +147,17 @@ BOOL CAutoComboBox::OnEditChange()
 
 	if (GetDroppedState())
 	{
-		int nSelStart = -1, nSelEnd = -1, nCaretPos = -1;
+		int nSelStart = -1, nSelEnd = -1;
 		m_scEdit.SendMessage(EM_GETSEL, (WPARAM)&nSelStart, (LPARAM)&nSelEnd);
 
-		if ((nSelStart != -1) && (nSelStart == nSelEnd))
-			nCaretPos = nSelStart;
+		BOOL bEndInputAtCaret = (nSelEnd > nSelStart);
 
-		SelectFirstMatchingItem(GetEditText(), nCaretPos);
+		CString sItem = GetInputAtCaret(GetEditText(), nSelStart, bEndInputAtCaret);
+
+		int nMatch = FindString(-1, sItem);
+
+		if (nMatch != CB_ERR)
+			m_scList.SendMessage(LB_SETCURSEL, nMatch, 0);
 	}
 
 	return FALSE; // pass to parent
@@ -794,15 +798,11 @@ BOOL CAutoComboBox::DeleteLBItem(int nItem)
 	return FALSE;
 }
 
-BOOL CAutoComboBox::SelectFirstMatchingItem(const CString& sText, int /*nCaretPos*/)
+CString CAutoComboBox::GetInputAtCaret(const CString& sText, int nCaretPos, BOOL bEndInputAtCaret) const
 {
-	ASSERT(GetDroppedState());
+	if (!bEndInputAtCaret)
+		return sText;
 
-	int nMatch = FindString(-1, sText);
-
-	if (nMatch == CB_ERR)
-		return FALSE;
-
-	m_scList.SendMessage(LB_SETCURSEL, nMatch, 0);
-	return TRUE;
+	// else
+	return sText.Left(nCaretPos);
 }

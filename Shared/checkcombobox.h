@@ -104,7 +104,7 @@ protected:
 	virtual void HandleReturnKey();
 	virtual CString GetSelectedItemText() const;
 	virtual BOOL HasIcon() const { return TRUE; }
-	virtual BOOL SelectFirstMatchingItem(const CString& sText, int nCaretPos);
+	virtual CString GetInputAtCaret(const CString& sText, int nCaretPos, BOOL bEndInputAtCaret) const;
 
 protected:
 	void RecalcText(BOOL bUpdate = TRUE, BOOL bNotify = TRUE);

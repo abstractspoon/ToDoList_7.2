@@ -155,7 +155,7 @@ protected:
 	virtual void HandleReturnKey();
 	virtual CString GetSelectedItemText() const;
 	virtual BOOL DeleteLBItem(int nItem);
-	virtual BOOL SelectFirstMatchingItem(const CString& sText, int nCaretPos);
+	virtual CString GetInputAtCaret(const CString& sText, int nCaretPos, BOOL bEndInputAtCaret) const;
 
 };
 
