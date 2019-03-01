@@ -484,7 +484,7 @@ BOOL CCheckComboBox::OnEditchange()
 
 		// update m_sText manually to point to
 		// whatever has been input
-		m_sText = GetEditText();
+		GetDlgItem(1001)->GetWindowText(m_sText);
 	}
 
 	return CAutoComboBox::OnEditChange();

@@ -32,7 +32,6 @@
 #include "..\shared\GraphicsMisc.h"
 #include "..\shared\Themed.h"
 #include "..\shared\enstring.h"
-#include "..\shared\dialoghelper.h"
 
 #include "..\3rdparty\colourpopup.h"
 
