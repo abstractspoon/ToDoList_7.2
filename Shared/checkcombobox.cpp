@@ -873,8 +873,3 @@ BOOL CCheckComboBox::ToggleCheck(int nItem)
 
 	return SetCheck(nItem, nCheck);
 }
-
-CString CCheckComboBox::GetInputAtCaret(const CString& sText, int nCaretPos, BOOL bEndInputAtCaret) const
-{
-	return Misc::GetValueAtPos(sText, nCaretPos, bEndInputAtCaret, Misc::GetListSeparator());
-}

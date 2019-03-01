@@ -178,8 +178,6 @@ namespace Misc
  	BOOL Split(CString& sText, CString& sRest, TCHAR cDelim, BOOL bTrim = TRUE);
 	BOOL Split(CString& sText, CString& sRest, LPCTSTR szDelim, BOOL bTrim = TRUE);
 
-	CString GetValueAtPos(const CString& sText, int nPos, BOOL bEndWordAtPos, LPCTSTR szSep = _T(" "));
-
 	template <class T, class S> 
 	int FindT(const T& array, const S& toFind)
 	{
@@ -367,7 +365,7 @@ namespace Misc
 	int Find(DWORD dwItem, const CDWordArray& array);
 	int Find(LPCTSTR szItem, const CStringArray& array, BOOL bCaseSensitive = FALSE, BOOL bWholeWord = FALSE);
 	BOOL Contains(LPCTSTR szItem, const CStringArray& array, BOOL bCaseSensitive = FALSE, BOOL bPartialOK = TRUE);
-	
+
 	int Replace(const CString& sSearchFor, const CString& sReplaceWith, CString& sSearchIn, BOOL bCaseSensitive = FALSE, BOOL bWholeWord = FALSE);
 	int Replace(const CString& sSearchFor, const CString& sReplaceWith, CStringArray& aSearchIn, BOOL bCaseSensitive = FALSE, BOOL bWholeWord = FALSE);
 

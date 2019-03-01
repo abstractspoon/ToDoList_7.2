@@ -145,21 +145,6 @@ BOOL CAutoComboBox::OnEditChange()
 {
 	m_bEditChange = TRUE;
 
-	if (GetDroppedState())
-	{
-		int nSelStart = -1, nSelEnd = -1;
-		m_scEdit.SendMessage(EM_GETSEL, (WPARAM)&nSelStart, (LPARAM)&nSelEnd);
-
-		BOOL bEndInputAtCaret = (nSelEnd > nSelStart);
-
-		CString sItem = GetInputAtCaret(GetEditText(), nSelStart, bEndInputAtCaret);
-
-		int nMatch = FindString(-1, sItem);
-
-		if (nMatch != CB_ERR)
-			m_scList.SendMessage(LB_SETCURSEL, nMatch, 0);
-	}
-
 	return FALSE; // pass to parent
 }
 
@@ -603,12 +588,13 @@ int CAutoComboBox::HitTestListDeleteBtn(const CPoint& ptList) const
 	{
 		int nItem = HitTestList(ptList);
 		
-		if ((nItem != LB_ERR) && ::SendMessage(GetListbox(), LB_GETTEXTLEN, nItem, 0))
+		if ((nItem != LB_ERR) && m_scList.SendMessage(LB_GETTEXTLEN, nItem, 0))
 		{
-			CRect rItem, rBtn;
+			CRect rItem;
 			
-			if (LB_ERR != ::SendMessage(GetListbox(), LB_GETITEMRECT, nItem, (LPARAM)(LPRECT)rItem))
+			if (LB_ERR != m_scList.SendMessage(LB_GETITEMRECT, nItem, (LPARAM)(LPRECT)rItem))
 			{
+				CRect rBtn;
 				GetListDeleteButtonRect(rItem, rBtn);
 				rItem.InflateRect(2, 2);
 				
@@ -624,7 +610,7 @@ int CAutoComboBox::HitTestListDeleteBtn(const CPoint& ptList) const
 
 int CAutoComboBox::HitTestList(const CPoint& ptList) const
 {
-	DWORD dwHit = ::SendMessage(GetListbox(), LB_ITEMFROMPOINT, 0, MAKELPARAM(ptList.x, ptList.y));
+	DWORD dwHit = m_scList.SendMessage(LB_ITEMFROMPOINT, 0, MAKELPARAM(ptList.x, ptList.y));
 
 	if (HIWORD(dwHit))
 		return LB_ERR;
@@ -638,17 +624,6 @@ int CAutoComboBox::GetCurSel() const
 	CAutoFlag af(m_bDrawing, FALSE);
 	
 	return CComboBox::GetCurSel();
-}
-
-CString CAutoComboBox::GetEditText() const
-{
-	if (!m_scEdit.IsValid())
-		return _T("");
-
-	CString sEdit;
-	m_scEdit.GetCWnd()->GetWindowText(sEdit);
-
-	return sEdit;
 }
 
 void CAutoComboBox::HandleReturnKey()
@@ -666,7 +641,9 @@ void CAutoComboBox::HandleReturnKey()
 
 	if (m_scEdit.IsValid())
 	{
-		CString sEdit = GetEditText();
+		CString sEdit;
+		m_scEdit.GetCWnd()->GetWindowText(sEdit);
+		
 		int nAdd = AddUniqueItem(sEdit);
 		
 		if (nAdd != CB_ERR)
@@ -713,7 +690,8 @@ BOOL CAutoComboBox::AllowDelete() const
 	{
 		if (Misc::HasFlag(m_dwFlags, ACBS_ALLOWDELETE))
 		{
-			return ((GetStyle() & 0xf) != CBS_DROPDOWNLIST);
+			// Edit field must be present
+			return !IsType(CBS_DROPDOWNLIST);
 		}
 	}
 
@@ -763,7 +741,7 @@ BOOL CAutoComboBox::DeleteLBItem(int nItem)
 			GetWindowText(sCurItem);
 
 		// Do the delete
-		::SendMessage(GetSafeHwnd(), CB_DELETESTRING, nItem, 0);
+		DeleteString(nItem);
 		
 		// restore combo selection
 		if (!sCurItem.IsEmpty())
@@ -796,13 +774,4 @@ BOOL CAutoComboBox::DeleteLBItem(int nItem)
 
 	// else
 	return FALSE;
-}
-
-CString CAutoComboBox::GetInputAtCaret(const CString& sText, int nCaretPos, BOOL bEndInputAtCaret) const
-{
-	if (!bEndInputAtCaret)
-		return sText;
-
-	// else
-	return sText.Left(nCaretPos);
 }
