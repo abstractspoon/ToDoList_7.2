@@ -550,7 +550,7 @@ void CKanbanCtrl::UpdateTasks(const ITaskList* pTaskList, IUI_UPDATETYPE nUpdate
 	{
 	case IUI_ALL:
 		RebuildData(pTasks, attrib);
- 		RebuildListCtrls(TRUE, TRUE);
+ 		RebuildListCtrls(TRUE, FALSE);
 		break;
 		
 	case IUI_NEW:
@@ -561,7 +561,7 @@ void CKanbanCtrl::UpdateTasks(const ITaskList* pTaskList, IUI_UPDATETYPE nUpdate
 			bChange |= UpdateData(pTasks, pTasks->GetFirstTask(), attrib, TRUE);
 
 			if (bChange)
-				RebuildListCtrls(TRUE, TRUE);
+				RebuildListCtrls(TRUE, FALSE);
 			else
 				RedrawListCtrls(TRUE);
 		}
@@ -1262,7 +1262,7 @@ void CKanbanCtrl::LoadDefaultAttributeListValues(const IPreferences* pPrefs)
 	LoadDefaultAttributeListValues(pPrefs, _T("TAGS"),		_T("TagList"));
 
 	if (m_nTrackAttribute != IUI_NONE)
-		RebuildListCtrls(FALSE, FALSE);
+		RebuildListCtrls(FALSE, TRUE);
 }
 
 void CKanbanCtrl::LoadDefaultAttributeListValues(const IPreferences* pPrefs, LPCTSTR szAttribID, LPCTSTR szSubKey)
@@ -1696,7 +1696,7 @@ BOOL CKanbanCtrl::CheckAddBacklogListCtrl()
 	return FALSE;
 }
 
-void CKanbanCtrl::RebuildListCtrls(BOOL bRebuildData, BOOL bTaskUpdate)
+void CKanbanCtrl::RebuildListCtrls(BOOL bRebuildData, BOOL bRestoreSelection)
 {
 	if (m_sTrackAttribID.IsEmpty())
 	{
@@ -1705,9 +1705,10 @@ void CKanbanCtrl::RebuildListCtrls(BOOL bRebuildData, BOOL bTaskUpdate)
 	}
 
 	CHoldRedraw gr(*this, NCR_PAINT | NCR_ERASEBKGND);
-
 	CDWordArray aSelTaskIDs;
-	GetSelectedTaskIDs(aSelTaskIDs);
+
+	if (bRestoreSelection)
+		GetSelectedTaskIDs(aSelTaskIDs);
 	
 	CKanbanItemArrayMap mapKIArray;
 	m_data.BuildTempItemMaps(m_sTrackAttribID, mapKIArray);
@@ -1734,20 +1735,12 @@ void CKanbanCtrl::RebuildListCtrls(BOOL bRebuildData, BOOL bTaskUpdate)
 	
 	// We only need to restore selection if not doing a task update
 	// because the app takes care of that
-	if (!bTaskUpdate && aSelTaskIDs.GetSize())
-	{
-		if (!SelectTasks(aSelTaskIDs))
-		{
-			if (!m_pSelectedList || !Misc::HasT(m_aListCtrls, m_pSelectedList))
-			{
-				// Find the first list with some items
-				m_pSelectedList = m_aListCtrls.GetFirstNonEmpty();
-
-				// No list has items?
-				if (!m_pSelectedList)
-					m_pSelectedList = m_aListCtrls[0];
-			}
-		}
+	if (bRestoreSelection)
+	{ 
+		if (aSelTaskIDs.GetSize())
+			SelectTasks(aSelTaskIDs);
+		else
+			FixupSelectedList();
 	}
 }
 
@@ -1790,11 +1783,13 @@ void CKanbanCtrl::FixupSelectedList()
 	if (!m_pSelectedList || !Misc::HasT(m_aListCtrls, m_pSelectedList))
 	{
 		// Find the first list with some items
-		m_pSelectedList = m_aListCtrls.GetFirstNonEmpty();
+		CKanbanListCtrl* pList = m_aListCtrls.GetFirstNonEmpty();
 
 		// No list has items?
-		if (!m_pSelectedList)
-			m_pSelectedList = m_aListCtrls[0];
+		if (!pList)
+			pList = m_aListCtrls[0];
+
+		SelectListCtrl(pList);
 	}
 
 	FixupListFocus();
@@ -1802,7 +1797,7 @@ void CKanbanCtrl::FixupSelectedList()
 
 void CKanbanCtrl::FixupListFocus()
 {
-	if (IsWindowVisible() && HasFocus())
+	if (IsWindowVisible() && HasFocus() && (m_pSelectedList != NULL))
 	{
 		CAutoFlag af(m_bSettingListFocus, TRUE);
 
@@ -1913,11 +1908,18 @@ BOOL CKanbanCtrl::TrackAttribute(IUI_ATTRIBUTE nAttrib, const CString& sCustomAt
 	// delete all lists and start over
 	CHoldRedraw gr(*this, NCR_PAINT | NCR_ERASEBKGND);
 
+	// cache selected tasks before we do so
+	CDWordArray aSelTaskIDs;
+	GetSelectedTaskIDs(aSelTaskIDs);
+	
 	m_pSelectedList = NULL;
 	m_aListCtrls.RemoveAll();
 
-	RebuildListCtrls(TRUE, TRUE);
+	RebuildListCtrls(TRUE, FALSE); // don't fixup selection
 	Resize();
+
+	if (aSelTaskIDs.GetSize())
+		SelectTasks(aSelTaskIDs);
 
 	return TRUE;
 }
@@ -2117,7 +2119,7 @@ void CKanbanCtrl::SetOption(DWORD dwOption, BOOL bSet)
 			switch (dwOption)
 			{
 			case KBCF_SHOWPARENTTASKS:
-				RebuildListCtrls(TRUE, FALSE);
+				RebuildListCtrls(TRUE, TRUE);
 				break;
 
 			case KBCF_SORTSUBTASTASKSBELOWPARENTS:
@@ -2128,7 +2130,7 @@ void CKanbanCtrl::SetOption(DWORD dwOption, BOOL bSet)
 			case KBCF_SHOWEMPTYCOLUMNS:
 			case KBCF_ALWAYSSHOWBACKLOG:
 				if (m_aListCtrls.GetSize())
-					RebuildListCtrls(FALSE, FALSE);
+					RebuildListCtrls(FALSE, TRUE);
 				break;
 
 			case KBCF_TASKTEXTCOLORISBKGND:
@@ -2633,7 +2635,9 @@ BOOL CKanbanCtrl::SelectListCtrl(CKanbanListCtrl* pList, BOOL bNotifyParent)
 		}
 		else
 		{
-			pPrevSelList->SetSelected(FALSE);
+			if (pPrevSelList)
+				pPrevSelList->SetSelected(FALSE);
+
 			m_pSelectedList->SetSelected(TRUE);
 		}
 

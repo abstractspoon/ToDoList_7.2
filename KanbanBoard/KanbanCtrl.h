@@ -135,7 +135,7 @@ protected:
 	void Resize(const CRect& rect);
 	void ClearOtherListSelections(const CKanbanListCtrl* pList);
 
-	void RebuildListCtrls(BOOL bRebuildData, BOOL bTaskUpdate);
+	void RebuildListCtrls(BOOL bRebuildData, BOOL bRestoreSelection);
 	void RebuildDynamicListCtrls(const CKanbanItemArrayMap& mapKIArray);
 	void RebuildFixedListCtrls(const CKanbanItemArrayMap& mapKIArray);
 	int RemoveOldDynamicListCtrls(const CKanbanItemArrayMap& mapKIArray);
