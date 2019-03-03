@@ -956,6 +956,23 @@ BOOL GraphicsMisc::ChangeWindowMessageFilter(UINT nMessage, BOOL bOn)
 	return FALSE;
 }
 
+BOOL GraphicsMisc::EnableNonClientDpiScaling(HWND hWnd)
+{
+	HMODULE hMod = ::LoadLibrary(_T("User32.dll"));
+	
+	if (hMod)
+	{
+		typedef BOOL (WINAPI *PFNENABLENONCLIENTDPISCALING)(HWND);
+		PFNENABLENONCLIENTDPISCALING pFn = (PFNENABLENONCLIENTDPISCALING)::GetProcAddress(hMod, "EnableNonClientDpiScaling");
+		
+		if (pFn)
+			return pFn(hWnd);
+	}
+
+	// All else
+	return FALSE;
+}
+
 int GraphicsMisc::DrawAnsiSymbol(CDC* pDC, char cSymbol, const CRect& rText, UINT nFlags, CFont* pFont)
 {
 	if (cSymbol == 0)

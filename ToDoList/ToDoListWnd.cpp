@@ -6378,6 +6378,8 @@ void CToDoListWnd::DoPrint(BOOL bPreview)
 	
 	if (m_IE.GetSafeHwnd() || m_IE.Create(NULL, WS_CHILD | WS_VISIBLE, rHidden, this, (UINT)IDC_STATIC))
 	{
+		GraphicsMisc::EnableNonClientDpiScaling(m_IE);
+
 		double dFileSize = FileMisc::GetFileSize(sTempFile);
 		BOOL bPrintBkgnd = Prefs().GetColorTaskBackground();
 
