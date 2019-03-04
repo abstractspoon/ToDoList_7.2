@@ -5,6 +5,7 @@
 #include "enbrowserctrl.h"
 #include "regkey.h"
 #include "misc.h"
+#include "GraphicsMisc.h"
 
 //fabio_2005
 #if _MSC_VER >= 1300
@@ -61,6 +62,36 @@ END_EVENTSINK_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CEnBrowserCtrl message handlers
+
+
+BOOL CEnBrowserCtrl::Create(LPCTSTR lpszClassName,
+							 LPCTSTR lpszWindowName, DWORD dwStyle,
+							 const RECT& rect,
+							 CWnd* pParentWnd, UINT nID,
+							 CCreateContext* pContext)
+{
+	DPI_AWARENESS_CONTEXT nOldContext = GraphicsMisc::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
+
+	BOOL bResult = CWebBrowserCtrl::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+
+	GraphicsMisc::SetThreadDpiAwarenessContext(nOldContext);
+
+	return bResult;
+}
+
+BOOL CEnBrowserCtrl::Create(LPCTSTR lpszWindowName, DWORD dwStyle,
+							 const RECT& rect, CWnd* pParentWnd, UINT nID,
+							 CFile* pPersist, BOOL bStorage,
+							 BSTR bstrLicKey)
+{
+	DPI_AWARENESS_CONTEXT nOldContext = GraphicsMisc::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
+
+	BOOL bResult = CWebBrowserCtrl::Create(lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey);
+
+	GraphicsMisc::SetThreadDpiAwarenessContext(nOldContext);
+
+	return bResult;
+}
 
 void CEnBrowserCtrl::InitPrintBkgnd(BOOL bPrintBkgnd)
 {
