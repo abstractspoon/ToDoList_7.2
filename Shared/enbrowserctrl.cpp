@@ -70,13 +70,7 @@ BOOL CEnBrowserCtrl::Create(LPCTSTR lpszClassName,
 							 CWnd* pParentWnd, UINT nID,
 							 CCreateContext* pContext)
 {
-	DPI_AWARENESS_CONTEXT nOldContext = GraphicsMisc::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
-
-	BOOL bResult = CWebBrowserCtrl::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
-
-	GraphicsMisc::SetThreadDpiAwarenessContext(nOldContext);
-
-	return bResult;
+	return CWebBrowserCtrl::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 }
 
 BOOL CEnBrowserCtrl::Create(LPCTSTR lpszWindowName, DWORD dwStyle,
@@ -84,13 +78,7 @@ BOOL CEnBrowserCtrl::Create(LPCTSTR lpszWindowName, DWORD dwStyle,
 							 CFile* pPersist, BOOL bStorage,
 							 BSTR bstrLicKey)
 {
-	DPI_AWARENESS_CONTEXT nOldContext = GraphicsMisc::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
-
-	BOOL bResult = CWebBrowserCtrl::Create(lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey);
-
-	GraphicsMisc::SetThreadDpiAwarenessContext(nOldContext);
-
-	return bResult;
+	return CWebBrowserCtrl::Create(lpszWindowName, dwStyle, rect, pParentWnd, nID, pPersist, bStorage, bstrLicKey);
 }
 
 void CEnBrowserCtrl::InitPrintBkgnd(BOOL bPrintBkgnd)
