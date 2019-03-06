@@ -840,8 +840,7 @@ BOOL CToDoCtrlMgr::ArchiveDoneTasks(int nIndex)
 {
 	CHECKVALIDINDEXRET(nIndex, FALSE);
 
-	CFilteredToDoCtrl& tdc = GetToDoCtrl(nIndex);
-
+	BOOL bRemoveFlagged = !Prefs().GetDontRemoveFlagged();
 	TDC_ARCHIVE nRemove = TDC_REMOVENONE;
 	
 	if (Prefs().GetRemoveArchivedTasks())
@@ -852,16 +851,16 @@ BOOL CToDoCtrlMgr::ArchiveDoneTasks(int nIndex)
 			nRemove = TDC_REMOVEALL;
 	}
 	
-	return tdc.ArchiveDoneTasks(nRemove, !Prefs().GetDontRemoveFlagged());
+	return GetToDoCtrl(nIndex).ArchiveDoneTasks(nRemove, bRemoveFlagged);
 }
 
 BOOL CToDoCtrlMgr::ArchiveSelectedTasks(int nIndex)
 {
 	CHECKVALIDINDEXRET(nIndex, FALSE);
 
-	CFilteredToDoCtrl& tdc = GetToDoCtrl(nIndex);
+	BOOL bRemove = Prefs().GetRemoveArchivedTasks();
 	
-	return tdc.ArchiveSelectedTasks(Prefs().GetRemoveArchivedTasks());
+	return GetToDoCtrl(nIndex).ArchiveSelectedTasks(bRemove);
 }
 
 CString CToDoCtrlMgr::GetArchivePath(int nIndex) const

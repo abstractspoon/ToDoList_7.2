@@ -5,7 +5,6 @@
 #include "enbrowserctrl.h"
 #include "regkey.h"
 #include "misc.h"
-#include "GraphicsMisc.h"
 
 //fabio_2005
 #if _MSC_VER >= 1300
