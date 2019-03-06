@@ -3497,6 +3497,9 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 			double dRemaining = m_calculator.GetTaskRemainingTime(pTDI, pTDS, nUnits);
 			ASSERT(nUnits != TDCU_NULL);
 
+			if (!dRemaining && HasStyle(TDCS_HIDEZEROTIMECOST))
+				break;
+
 			// format appropriately
 			TH_UNITS nTHUnits = TDC::MapUnitsToTHUnits(nUnits);
 

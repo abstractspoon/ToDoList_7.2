@@ -2337,16 +2337,13 @@ double CTDCTaskCalculator::GetTaskRemainingTime(const TODOITEM* pTDI, const TODO
 		nUnits = pTDI->nTimeEstUnits;
 		dRemain = GetTaskTimeEstimate(pTDI, pTDS, nUnits, dWeightedEstimate);
 
-		if (dRemain > 0)
+		if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYPERCENT))
 		{
-			if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYPERCENT))
-			{
-				dRemain = dWeightedEstimate;
-			}
-			else if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYSPENT))
-			{
-				dRemain -= GetTaskTimeSpent(pTDI, pTDS, nUnits);
-			}
+			dRemain = dWeightedEstimate;
+		}
+		else if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYSPENT))
+		{
+			dRemain -= GetTaskTimeSpent(pTDI, pTDS, nUnits);
 		}
 	}
 
