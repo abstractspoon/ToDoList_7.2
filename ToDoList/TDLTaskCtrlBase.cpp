@@ -3511,7 +3511,7 @@ CString CTDLTaskCtrlBase::GetTaskColumnText(DWORD dwTaskID,
 
 			if (HasStyle(TDCS_CALCREMAININGTIMEBYPERCENT) || HasStyle(TDCS_CALCREMAININGTIMEBYSPENT))
 			{
-				sTaskColText = CTimeHelper().FormatTime(dRemaining, nTHUnits, 2);
+				sTaskColText = CTimeHelper().FormatTime(dRemaining, nTHUnits, 1);
 			}
 			else // TDCS_CALCREMAININGTIMEBYDUEDATE
 			{
