@@ -55,7 +55,7 @@ CRRECRuler::CRRECRuler()
 	
 	m_physicalInch = 0;
 	m_mode = Misc::IsMetricMeasurementSystem() ? MODE_METRIC : MODE_INCH; 	
-   m_margin = 0;
+	m_margin = 0;
 	m_crBack = GetSysColor(COLOR_3DFACE);
 }
 
