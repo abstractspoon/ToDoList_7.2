@@ -2323,29 +2323,47 @@ double CTDCTaskCalculator::GetTaskRemainingTime(const TODOITEM* pTDI, const TODO
 		return 0.0;
 
 	double dRemain = 0.0, dWeightedEstimate;
+	nUnits = TDCU_NULL;
 
 	if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYDUEDATE))
 	{
 		COleDateTime date = GetTaskDueDate(pTDI, pTDS);
-		nUnits = TDCU_DAYS; // always
 
-		if (CDateHelper::IsDateSet(date)) 
+		if (CDateHelper::IsDateSet(date))
+		{
 			dRemain = TODOITEM::GetRemainingDueTime(date);
+			nUnits = TDCU_DAYS;
+		}
 	}
 	else
 	{
-		nUnits = pTDI->nTimeEstUnits;
-		dRemain = GetTaskTimeEstimate(pTDI, pTDS, nUnits, dWeightedEstimate);
+		double dEstimate = GetTaskTimeEstimate(pTDI, pTDS, pTDI->nTimeEstUnits, dWeightedEstimate);
 
 		if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYPERCENT))
 		{
-			dRemain = dWeightedEstimate;
+			// If dEstimate is zero then we know that neither this task
+			// nor its subtasks had a time estimate. The same is not true
+			// for dWeightedEstimate which might be zero just because all
+			// the tasks are at zero percent completion which is different
+			if (dEstimate != 0.0)
+			{
+				dRemain = dWeightedEstimate;
+				nUnits = pTDI->nTimeEstUnits;
+			}
 		}
 		else if (m_data.HasStyle(TDCS_CALCREMAININGTIMEBYSPENT))
 		{
-			dRemain -= GetTaskTimeSpent(pTDI, pTDS, nUnits);
+			double dSpent = GetTaskTimeSpent(pTDI, pTDS, pTDI->nTimeEstUnits);
+
+			if ((dEstimate != 0.0) || (dSpent != 0.0))
+			{
+				dRemain = (dEstimate - dSpent);
+				nUnits = pTDI->nTimeEstUnits;
+			}
 		}
 	}
+
+	ASSERT((nUnits != TDCU_NULL) || (dRemain == 0.0));
 
 	return dRemain;
 }
