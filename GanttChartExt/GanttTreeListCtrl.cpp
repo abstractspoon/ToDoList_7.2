@@ -4345,7 +4345,9 @@ BOOL CGanttTreeListCtrl::GetTaskStartDueDates(const GANTTITEM& gi, COleDateTime&
 		}
 	}
 
-	return (CDateHelper::IsDateSet(dtStart) && CDateHelper::IsDateSet(dtDue));
+	return (CDateHelper::IsDateSet(dtStart) && 
+			CDateHelper::IsDateSet(dtDue) &&
+			(dtDue >= dtStart));
 }
 
 COLORREF CGanttTreeListCtrl::GetTreeTextBkColor(const GANTTITEM& gi, BOOL bSelected, BOOL bAlternate) const
