@@ -1352,6 +1352,7 @@ BOOL CToDoListWnd::InitMainToolbar()
 	rect.top += QUICKFIND_VOFFSET;
 	rect.bottom += QUICKFIND_HEIGHT;
 	
+	// Note: not sorted
 	if (!m_cbQuickFind.Create(WS_CHILD | WS_VSCROLL | WS_VISIBLE | CBS_AUTOHSCROLL | 
 		CBS_DROPDOWN | CBS_OWNERDRAWFIXED, rect, &m_toolbarMain, IDC_QUICKFIND))
 	{
@@ -1606,7 +1607,7 @@ BOOL CToDoListWnd::HandleEscapeTabReturn(MSG* pMsg)
 					// Add the item
 					if (m_cbQuickFind.FindStringExact(0, m_sQuickFind) == CB_ERR)
 					{
-						int nSel = m_cbQuickFind.AddUniqueItem(m_sQuickFind);
+						int nSel = m_cbQuickFind.AddUniqueItem(m_sQuickFind, TRUE);
 						m_cbQuickFind.SetCurSel(nSel);
 
 						// keep only the last 20 items
