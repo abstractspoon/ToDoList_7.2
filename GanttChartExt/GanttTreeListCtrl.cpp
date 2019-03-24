@@ -4964,10 +4964,14 @@ BOOL CGanttTreeListCtrl::CalcMilestoneRect(const GANTTITEM& gi, const CRect& rMo
 	COleDateTime dtDue = ((gi.bParent && HasOption(GTLCF_CALCPARENTDATES)) ? gi.dtMaxDue : gi.dtDue);
 	int nEndPos = GetDrawPosFromDate(dtDue);
 
-	// resize to a square
-	rMilestone.DeflateRect(0, 3, 0, 4);
+	// resize to a square ensuring even height
+	if ((rMilestone.Height() % 2) == 0)
+		rMilestone.DeflateRect(0, 4, 0, 4);
+	else
+		rMilestone.DeflateRect(0, 3, 0, 4);
 
 	int nHeight = rMilestone.Height();
+
 	rMilestone.left = (nEndPos - (nHeight / 2));
 	rMilestone.right = (nEndPos + (nHeight / 2));
 
