@@ -381,6 +381,15 @@ namespace Misc
 	BOOL IsNumber(const CString& sValue);
 	BOOL IsSymbol(const CString& sValue);
 
+	template <class T>
+	CString FormatT(LPCTSTR szFormat, T tVal)
+	{
+		CString sValue;
+		sValue.Format(szFormat, tVal);
+
+		return sValue;
+	}
+
 	const CString& GetLongest(const CString& str1, const CString& str2, BOOL bAsDouble = FALSE);
 
 	void Shuffle(LPTSTR szText);
