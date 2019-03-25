@@ -137,9 +137,6 @@ BOOL CToDoListApp::InitInstance()
 	// Set this before anything else
 	CWinHelpButton::SetDefaultIcon(GraphicsMisc::LoadIcon(IDI_HELPBUTTON));
 
-	// Remove any old components before they might get loaded
-	CleanupAppFolder();
-
 	// Process commandline switches
 	CEnCommandLineInfo cmdInfo(_T(".tdl;.xml"));
 	ParseCommandLine(cmdInfo);
@@ -210,9 +207,12 @@ BOOL CToDoListApp::InitInstance()
 		CFileEdit::SetDefaultButtonImages(iconBrowse.Detach(), iconGo.Detach());
 	
 	// init prefs 
-	if (!InitPreferences(cmdInfo))
+	CString sPrevVer = FileMisc::GetAppVersion();
+
+	if (!InitPreferences(cmdInfo, sPrevVer))
 		return FALSE; // quit app
 
+	CleanupAppFolder(sPrevVer);
 	// commandline options
 	CTDCStartupOptions startup(cmdInfo);
 
@@ -830,13 +830,12 @@ void CToDoListApp::DoHelp(UINT nHelpID)
 	FileMisc::Run(*m_pMainWnd, (WIKI_URL + sHelpPage), NULL, SW_SHOWNORMAL);
 }
 
-BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
+BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo, CString& sPrevVer)
 {
 	BOOL bUseIni = FALSE;
 	BOOL bSetMultiInstance = FALSE;
 	BOOL bRegKeyExists = CRegKey2::KeyExists(HKEY_CURRENT_USER, APPREGKEY);
-	BOOL bUpgraded = cmdInfo.HasOption(SWITCH_UPGRADED);
-
+	
 #ifdef _DEBUG
 	BOOL bQuiet = cmdInfo.HasOption(SWITCH_QUIET);
 #else
@@ -893,10 +892,9 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 		}
 	}
 
-	// Has the user already chosen a language?
+	// check existing prefs
 	BOOL bFirstTime = (!bUseIni && !bRegKeyExists);
 
-	// check existing prefs
 	if (!bFirstTime)
 	{
 		if (!SetPreferences(bUseIni, sIniPath, TRUE))
@@ -906,7 +904,8 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 			return FALSE; 
 		}
 
-		if (!InitTranslation(bFirstTime, bQuiet))
+		// Has the user already chosen a language?
+		if (!InitTranslation(FALSE, bQuiet))
 		{ 
 			// user cancelled -> Quit app
 			return FALSE;
@@ -921,7 +920,9 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 		if (bSetMultiInstance)
 			prefs.WriteProfileInt(_T("Preferences"), _T("MultiInstance"), TRUE);
 		
-		UpgradePreferences(prefs);
+		// Check for version change
+		sPrevVer = prefs.GetProfileString(_T("AppVer"), _T("Version"));
+		UpgradePreferences(prefs, sPrevVer);
 
 		// check for web updates
 		if (prefs.GetProfileInt(_T("Preferences"), _T("AutoCheckForUpdates"), FALSE))
@@ -1103,7 +1104,7 @@ BOOL CToDoListApp::InitTranslation(BOOL bFirstTime, BOOL bQuiet)
 	return TRUE;
 }
 
-void CToDoListApp::UpgradePreferences(CPreferences& prefs)
+void CToDoListApp::UpgradePreferences(CPreferences& prefs, LPCTSTR szPrevVer)
 {
 	UNREFERENCED_PARAMETER(prefs);
 
@@ -1111,10 +1112,7 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs)
 	if (!CPreferences::UsesIni())
 		return;
 
-	CString sLastUpgrade = prefs.GetProfileString(_T("Settings"), _T("LastPrefsUpgrade"));
-	CString sAppVer = FileMisc::GetAppVersion();
-
-	if (sLastUpgrade.IsEmpty() || (FileMisc::CompareVersions(sLastUpgrade, sAppVer) < 0))
+	if (FileMisc::CompareVersions(szPrevVer, _T("7.2.10")) < 0)
 	{
 		// Rename 'Tasklists' resource folder to 'Examples'
 		LPCTSTR szTasklists = _T(".\\Resources\\Tasklists\\");
@@ -1150,8 +1148,6 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs)
 				prefs.WriteProfileString(_T("Settings"), sKey, sFile);
 			}
 		}
-
-		prefs.WriteProfileString(_T("Settings"), _T("LastPrefsUpgrade"), sAppVer);
 	}
 }
 
@@ -1946,56 +1942,63 @@ CString CToDoListApp::GetResourcePath(LPCTSTR szSubFolder, LPCTSTR szFile)
 	return sResource;
 }
 
-void CToDoListApp::CleanupAppFolder()
+void CToDoListApp::CleanupAppFolder(LPCTSTR szPrevVer)
 {
-	CString sFolder = FileMisc::TerminatePath(FileMisc::GetAppFolder());
+	CScopedLogTime log(_T("CleanupAppFolder"));
 
-	// remove old web updater
-	FileMisc::DeleteFile(sFolder + _T("WebUpdateSvc.exe"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("WebUpdateSvc2.exe"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("WebUpdateSvc.log"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("WebUpdateSvc2.log"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("WebUpdateSvc.LIC"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("install.bmp"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("install.ico"), TRUE);
-
-	// remove old components
-	FileMisc::DeleteFile(sFolder + _T("GoogleDocsStorage.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("ToodleDoStorage.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("ToDoListLOC.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("RTFContentCtrlLOC.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("ChronicleWrap.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("StatisticsExt.dll"), TRUE);
-	FileMisc::DeleteFile(sFolder + _T("OutlookImpExp.dll"), TRUE);
-
-	// remove experimental manifest
-	FileMisc::DeleteFileBySize(sFolder + _T("ToDoList.exe.4K.manifest"), 1153, TRUE);
-
-	// gif translation 'flags' replaced with pngs
-	CString sTranslations = FileMisc::GetAppResourceFolder(_T("Resources\\Translations"));
-	FileMisc::DeleteFolderContents(sTranslations, FMDF_ALLOWDELETEONREBOOT | FMDF_HIDDENREADONLY, _T("*.gif"));
-
-	// Wrongly installed resource files
+	CString sAppFolder = FileMisc::TerminatePath(FileMisc::GetAppFolder());
 	CString sTasklists = FileMisc::TerminatePath(FileMisc::GetAppResourceFolder(_T("Resources\\Tasklists")));
 
-	FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.txt")), 395, TRUE);
-	FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.csv")), 10602, TRUE);
-	FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.xml")), 177520, TRUE);
-
-	// Rename 'Tasklists' resource folder
-	CString sExamples = FileMisc::TerminatePath(FileMisc::GetAppResourceFolder(_T("Resources\\Examples")));
-	FileMisc::MoveFolder(sTasklists, sExamples);
-
-	// Rename/move install instructions
-	CString sResources = FileMisc::TerminatePath(FileMisc::GetAppResourceFolder());
-	FileMisc::DeleteFileBySize(sResources + _T("Install.txt"), 1795, TRUE);
-
-	CString sReadme = (sResources + _T("ReadMe\\"));
-	
-	if (FileMisc::DeleteFileBySize(sReadme + _T("Readme.Linux.txt"), 3260, TRUE))
+	if (FileMisc::CompareVersions(szPrevVer, _T("7.0")) < 0)
 	{
-		// Intentionally use raw API call so it will fail if any files remain in the folder
-		RemoveDirectory(sReadme);
+		// remove old web updater
+		FileMisc::DeleteFile(sAppFolder + _T("WebUpdateSvc.exe"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("WebUpdateSvc2.exe"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("WebUpdateSvc.log"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("WebUpdateSvc2.log"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("WebUpdateSvc.LIC"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("install.bmp"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("install.ico"), TRUE);
+
+		// remove old components
+		FileMisc::DeleteFile(sAppFolder + _T("GoogleDocsStorage.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("ToodleDoStorage.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("ToDoListLOC.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("RTFContentCtrlLOC.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("ChronicleWrap.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("StatisticsExt.dll"), TRUE);
+		FileMisc::DeleteFile(sAppFolder + _T("OutlookImpExp.dll"), TRUE);
+
+		// gif translation 'flags' replaced with pngs
+		CString sTranslations = FileMisc::GetAppResourceFolder(_T("Resources\\Translations"));
+		FileMisc::DeleteFolderContents(sTranslations, FMDF_ALLOWDELETEONREBOOT | FMDF_HIDDENREADONLY, _T("*.gif"));
+
+		// Wrongly installed resource files
+		FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.txt")), 395, TRUE);
+		FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.csv")), 10602, TRUE);
+		FileMisc::DeleteFileBySize((sTasklists + _T("Introduction.xml")), 177520, TRUE);
 	}
 
+	if (FileMisc::CompareVersions(szPrevVer, _T("7.2.10")) < 0)
+	{
+		// remove experimental manifest
+		FileMisc::DeleteFileBySize(sAppFolder + _T("ToDoList.exe.4K.manifest"), 1153, TRUE);
+
+		// Rename 'Tasklists' resource folder
+		CString sExamples = FileMisc::TerminatePath(FileMisc::GetAppResourceFolder(_T("Resources\\Examples")));
+		FileMisc::MoveFolder(sTasklists, sExamples);
+
+		// Rename/move install instructions
+		CString sResources = FileMisc::TerminatePath(FileMisc::GetAppResourceFolder());
+		FileMisc::DeleteFileBySize(sResources + _T("Install.txt"), 1795, TRUE);
+
+		CString sReadme = (sResources + _T("ReadMe\\"));
+
+		if (FileMisc::DeleteFileBySize(sReadme + _T("Readme.Linux.txt"), 3260, TRUE))
+		{
+			// Intentionally use raw API call so it will fail if any files remain in the folder
+			RemoveDirectory(sReadme);
+		}
+	}
 }
+
