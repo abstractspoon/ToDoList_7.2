@@ -19,6 +19,7 @@
 #include "tdcimagelist.h"
 #include "tdltasktreectrl.h"
 #include "tdlcommentsctrl.h"
+#include "tdlcontentmgr.h"
 #include "tdcTimeTracking.h"
 
 #include "..\shared\runtimedlg.h"
@@ -75,7 +76,7 @@ class CToDoCtrl : public CRuntimeDlg, protected IFindReplaceCmdHandler
 {
 // Construction
 public:
-	CToDoCtrl(const CContentMgr& mgr, const CONTENTFORMAT& cfDefault, const TDCCOLEDITFILTERVISIBILITY& visDefault);
+	CToDoCtrl(const CTDLContentMgr& mgr, const CONTENTFORMAT& cfDefault, const TDCCOLEDITFILTERVISIBILITY& visDefault);
 	virtual ~CToDoCtrl();
 
 	BOOL Create(const CRect& rect, CWnd* pParentWnd, UINT nID, BOOL bVisible = TRUE, BOOL bEnabled = TRUE);
