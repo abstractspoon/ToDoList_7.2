@@ -699,16 +699,12 @@ BOOL CToDoCtrl::SetTreeFont(HFONT hFont)
 {
 	ASSERT(hFont);
 
-	if (hFont)
+	if (hFont && !GraphicsMisc::SameFontNameSize(hFont, m_hFontTree))
 	{
 		m_hFontTree = hFont;
 
 		if (m_taskTree.GetSafeHwnd())
-		{
-			UpdateCommentsFont(TRUE);
-
 			return m_taskTree.SetFont(hFont);
-		}
 	}
 
 	// no change
@@ -719,44 +715,28 @@ BOOL CToDoCtrl::SetCommentsFont(HFONT hFont)
 {
 	ASSERT(hFont);
 
-	if (hFont)
+	if (hFont && !GraphicsMisc::SameFontNameSize(hFont, m_hFontComments))
 	{
 		m_hFontComments = hFont;
 
-		return UpdateCommentsFont(TRUE);
-	}
+#ifdef _DEBUG
+		CString sFaceName;
+		int nPointSize = GraphicsMisc::GetFontNameAndPointSize(m_hFontComments, sFaceName);
 
-	// no change
-	return FALSE;
-}
+		ASSERT(!sFaceName.IsEmpty());
+		ASSERT(nPointSize > 0);
+#endif
 
-BOOL CToDoCtrl::UpdateCommentsFont(BOOL bResendComments)
-{
-	if (m_ctrlComments.GetSafeHwnd())
-	{
-		HFONT hCurFont = CDialogHelper::GetFont(m_ctrlComments), hFont = NULL;
-
-		if (HasStyle(TDCS_COMMENTSUSETREEFONT))
-			hFont = m_hFontTree;
-		else
-			hFont = m_hFontComments;
-
-		if (!hFont)
-			hFont = CDialogHelper::GetFont(GetParent());
-
-		if (GraphicsMisc::SameFontNameSize(hFont, hCurFont))
-			return FALSE;
-
-		m_ctrlComments.SetDefaultCommentsFont(hFont);
+		m_ctrlComments.SetContentFont(m_hFontComments);
 
 		// we've had some trouble with plugins using the richedit control 
 		// so after a font change we always resend the content
-		if (bResendComments)
-			m_ctrlComments.SetContent(m_sTextComments, m_customComments, FALSE);
+		m_ctrlComments.SetContent(m_sTextComments, m_customComments, FALSE);
 
 		return TRUE;
 	}
 
+	// no change
 	return FALSE;
 }
 
@@ -5757,13 +5737,10 @@ BOOL CToDoCtrl::SetStyle(TDC_STYLE nStyle, BOOL bOn, BOOL bWantUpdate)
 		case TDCS_SAVEUIVISINTASKLIST:
 		case TDCS_AUTOADJUSTDEPENDENCYDATES:
 		case TDCS_TRACKSELECTEDTASKONLY:
+		case TDCS_COMMENTSUSETREEFONT:
 			// do nothing
 			break;
 
-		case TDCS_COMMENTSUSETREEFONT:
-			UpdateCommentsFont(TRUE);
-			break;
-			
 		default:
 			//ASSERT(0); // just to help catch forgotten styles
 			break;

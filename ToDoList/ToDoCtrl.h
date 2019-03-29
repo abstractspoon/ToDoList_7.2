@@ -766,7 +766,6 @@ protected:
 	void SetCtrlDate(CDateTimeCtrl& ctrl, const COleDateTime& date, const COleDateTime& dateMin = 0.0);
 	void IncrementTrackedTime(BOOL bEnding);
 	int GetNextPercentDone(int nPercent, BOOL bUp);
-	BOOL UpdateCommentsFont(BOOL bResendComments);
 	BOOL ReplaceSelectedTaskTitle(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord);
 
 	// internal versions so we can tell how we've been called
