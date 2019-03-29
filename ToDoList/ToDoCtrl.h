@@ -764,12 +764,8 @@ protected:
 	void UpdateControls(BOOL bIncComments = TRUE, HTREEITEM hti = NULL);
 	void UpdateDateTimeControls(BOOL bHasSelection);
 	void SetCtrlDate(CDateTimeCtrl& ctrl, const COleDateTime& date, const COleDateTime& dateMin = 0.0);
-	int GetMaxTaskCategoryWidth(CDC* pDC, BOOL bVisibleOnly = TRUE);
-	int GetMaxTaskTagWidth(CDC* pDC, BOOL bVisibleOnly = TRUE);
 	void IncrementTrackedTime(BOOL bEnding);
-	int CalcMaxDateColWidth(TDC_DATE nDate, CDC* pDC);
 	int GetNextPercentDone(int nPercent, BOOL bUp);
-	BOOL ShowLabelEdit(const CRect& rPos);
 	BOOL UpdateCommentsFont(BOOL bResendComments);
 	BOOL ReplaceSelectedTaskTitle(const CString& sFind, const CString& sReplace, BOOL bCase, BOOL bWord);
 
@@ -916,8 +912,6 @@ protected:
 	int CreateTasksFromOutlookObjects(const TLDT_DATA* pData);
 
 	TDC_ATTRIBUTE GetFocusedControlAttribute() const;
-	void SetDefaultComboNames(CAutoComboBox& combo, const CStringArray& aNewNames, 
-								CStringArray& aDefNames, BOOL bReadOnly, BOOL bAddEmpty);
 	void BuildTasksForSave(CTaskFile& tasks, BOOL bFirstSave);
 	BOOL SetComboReadOnly(CAutoComboBox& combo, BOOL bReadOnly, const CStringArray& aDefContent, BOOL bAddEmpty);
 	
