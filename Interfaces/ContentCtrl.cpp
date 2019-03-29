@@ -111,6 +111,13 @@ void CContentCtrl::SetUITheme(const CUIThemeFile& theme)
 	}
 }
 
+void CContentCtrl::SetContentFont(HFONT hFont)
+{
+	ASSERT(hFont);
+
+	SendMessage(WM_SETFONT, (WPARAM)hFont);
+}
+
 void CContentCtrl::SavePreferences(IPreferences* pPrefs, LPCTSTR szKey) const
 {
 	if (m_pContentCtrl && !Misc::IsEmpty(szKey))
