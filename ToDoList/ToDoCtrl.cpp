@@ -347,6 +347,8 @@ void CToDoCtrl::UpdateComments(BOOL bSaveAndValidate)
 {
 	if (bSaveAndValidate)
 	{
+		ASSERT(!m_cfComments.IsEmpty());
+
 		m_ctrlComments.GetContent(m_sTextComments, m_customComments);
 	}
 	else
