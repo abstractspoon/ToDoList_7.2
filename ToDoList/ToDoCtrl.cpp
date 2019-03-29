@@ -3293,8 +3293,6 @@ TDC_SET CToDoCtrl::OffsetTaskStartAndDueDates(DWORD dwTaskID, int nAmount, TDC_U
 		// Handle subtasks at the end
 		if (pTDI->HasDue())
 			nRes = m_data.OffsetTaskDate(dwTaskID, TDCD_DUE, nAmount, nUnits, FALSE, FALSE);
-		else
-			nRes = SET_FAILED; // both not set
 	}
 	else if (!pTDI->HasDue())
 	{
@@ -3310,6 +3308,7 @@ TDC_SET CToDoCtrl::OffsetTaskStartAndDueDates(DWORD dwTaskID, int nAmount, TDC_U
 
 		nRes = m_data.MoveTaskStartAndDueDates(dwTaskID, dtStart);
 	}
+	ASSERT(nRes != SET_FAILED);
 
 	mapProcessed.Add(dwTaskID);
 
