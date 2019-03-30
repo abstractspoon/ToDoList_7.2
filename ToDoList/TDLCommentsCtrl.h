@@ -102,7 +102,6 @@ protected:
 protected:
 	void CalcCommentsCtrlRect(CRect& rCtrl, int cx = 0, int cy = 0) const;
 	BOOL UpdateControlFormat();
-	BOOL UpdateControlFormat(const CONTENTFORMAT& cf);
 	CString GetPreferencesKey() const;
 	void SavePreferences() const;
 	void LoadPreferences();

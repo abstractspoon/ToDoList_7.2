@@ -276,22 +276,15 @@ void CTDLCommentsCtrl::OnSelchangeCommentsformat()
 
 BOOL CTDLCommentsCtrl::UpdateControlFormat()
 {
-	ASSERT(GetSafeHwnd());
-
-	CONTENTFORMAT cf;
-	m_cbCommentsFmt.GetSelectedFormat(cf);
-
-	return UpdateControlFormat(cf);
-}
-
-BOOL CTDLCommentsCtrl::UpdateControlFormat(const CONTENTFORMAT& cf)
-{
-	ASSERT(m_pMgrContent && (m_pMgrContent->FindContent(cf) != -1));
+	ASSERT(m_pMgrContent);
 	ASSERT(GetSafeHwnd());
 
 	// save outgoing content prefs provided they've already been loaded
 	if (!m_bFirstLoadCommentsPrefs)
 		SavePreferences();
+
+	CONTENTFORMAT cf;
+	m_cbCommentsFmt.GetSelectedFormat(cf);
 
 	if (m_ctrlComments.GetContentFormat() == cf)
 	{
@@ -461,13 +454,12 @@ BOOL CTDLCommentsCtrl::SetSelectedFormat(const CONTENTFORMAT& cf)
 
 	if (m_ctrlComments.GetSafeHwnd() && (cf == cfSel))
 		return TRUE;
-
+	
 	if (m_cbCommentsFmt.SetSelectedFormat(cf) == CB_ERR)
 	{
-		// If multiple formats or an unknown format
-		// use simple text as a fallback
-		UpdateControlFormat(m_pMgrContent->GetSimpleTextContentFormat());
-		return FALSE;
+		// Setting to an empty format is not an error 
+		// it's just a way to indicate multiple formats
+		return cf.IsEmpty();
 	}
 
 	// else
