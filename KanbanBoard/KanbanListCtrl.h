@@ -26,13 +26,13 @@ const UINT WM_KLCN_WANTFOCUS	= (WM_APP+3); // WPARAM = HWND, LPARAM = 0L
 /////////////////////////////////////////////////////////////////////////////
 // CKanbanListCtrl window
 
-class CKanbanListCtrl : public CListCtrl
+class CKanbanColumnCtrl : public CListCtrl
 {
-	DECLARE_DYNAMIC(CKanbanListCtrl);
+	DECLARE_DYNAMIC(CKanbanColumnCtrl);
 
 // Construction
 public:
-	CKanbanListCtrl(const CKanbanItemMap& data, 
+	CKanbanColumnCtrl(const CKanbanItemMap& data, 
 					const KANBANCOLUMN& columnDef, 
 					CFontCache& fonts,
 					const CDWordArray& aPriorityColors,
@@ -46,7 +46,7 @@ public:
 	BOOL HasMultipleValues() const;
 	BOOL HasAnyValues() const;
 	BOOL IsBacklog() const;
-	BOOL AttributeValuesMatch(const CKanbanListCtrl& other) const;
+	BOOL AttributeValuesMatch(const CKanbanColumnCtrl& other) const;
 
 	BOOL Create(UINT nID, CWnd* pParentWnd);
 	int AddTask(const KANBANITEM& ki, BOOL bSelect);
@@ -99,7 +99,7 @@ public:
 
 	static BOOL IsSelectionChange(NMLISTVIEW* pNMLV);
 	static CString FormatAttribute(IUI_ATTRIBUTE nAttrib, const CString& sValue, KBC_ATTRIBLABELS nLabelVis);
-	static BOOL CanDrag(const CKanbanListCtrl* pSrcList, const CKanbanListCtrl* pDestList);
+	static BOOL CanDrag(const CKanbanColumnCtrl* pSrcList, const CKanbanColumnCtrl* pDestList);
 
 protected:
 	BOOL m_bTextColorIsBkgnd;
@@ -133,7 +133,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CKanbanListCtrl();
+	virtual ~CKanbanColumnCtrl();
 
 	// Generated message map functions
 protected:
@@ -186,10 +186,10 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 
-class CKanbanListCtrlArray : public CArray<CKanbanListCtrl*, CKanbanListCtrl*&>
+class CKanbanColumnCtrlArray : public CArray<CKanbanColumnCtrl*, CKanbanColumnCtrl*&>
 {
 public:
-	virtual ~CKanbanListCtrlArray();
+	virtual ~CKanbanColumnCtrlArray();
 	
 	void RemoveAll();
 	BOOL RemoveAt(int nList);
@@ -199,15 +199,15 @@ public:
 	int Find(const CDWordArray& aTaskIDs) const;
 	int Find(HWND hWnd) const;
 	int Find(const CString& sAttribValue) const;
-	int Find(const CKanbanListCtrl* pList) const;
+	int Find(const CKanbanColumnCtrl* pList) const;
 
-	CKanbanListCtrl* Get(DWORD dwTaskID) const;
-	CKanbanListCtrl* Get(DWORD dwTaskID, int& nItem) const;
-	CKanbanListCtrl* Get(HWND hWnd) const;
-	CKanbanListCtrl* Get(const CString& sAttribValue) const;
-	CKanbanListCtrl* GetFirstNonEmpty() const;
-	CKanbanListCtrl* GetLastNonEmpty() const;
-	CKanbanListCtrl* GetBacklog() const;
+	CKanbanColumnCtrl* Get(DWORD dwTaskID) const;
+	CKanbanColumnCtrl* Get(DWORD dwTaskID, int& nItem) const;
+	CKanbanColumnCtrl* Get(HWND hWnd) const;
+	CKanbanColumnCtrl* Get(const CString& sAttribValue) const;
+	CKanbanColumnCtrl* GetFirstNonEmpty() const;
+	CKanbanColumnCtrl* GetLastNonEmpty() const;
+	CKanbanColumnCtrl* GetBacklog() const;
 
 	void SetTextColorIsBackground(BOOL bSet = TRUE);
 	void SetShowTaskColorAsBar(BOOL bSet = TRUE);
@@ -226,8 +226,8 @@ public:
 	BOOL CanSaveToImage() const;
 	BOOL SaveToImage(CBitmap& bmImage);
 
-	CKanbanListCtrl* GetNext(const CKanbanListCtrl* pList, BOOL bNext, BOOL bExcludeEmpty, BOOL bFixedColumns) const;
-	CKanbanListCtrl* HitTest(const CPoint& ptScreen, BOOL* pbHeader = NULL) const;
+	CKanbanColumnCtrl* GetNext(const CKanbanColumnCtrl* pList, BOOL bNext, BOOL bExcludeEmpty, BOOL bFixedColumns) const;
+	CKanbanColumnCtrl* HitTest(const CPoint& ptScreen, BOOL* pbHeader = NULL) const;
 
 	void OnDisplayAttributeChanged();
 	void OnSetFont(HFONT hFont);
@@ -236,11 +236,11 @@ public:
 	void SortItems(IUI_ATTRIBUTE nBy, BOOL bAscending, BOOL bSubtasksBelowParent);
 
 	void Exclude(CDC* pDC);
-	void ClearOtherSelections(const CKanbanListCtrl* pIgnore);
+	void ClearOtherSelections(const CKanbanColumnCtrl* pIgnore);
 	void Redraw(BOOL bErase);
 	void RemoveDeletedTasks(const CDWordSet& mapCurIDs);
 	void RefreshColumnTitles();
-	void DeleteTaskFromOthers(DWORD dwTaskID, const CKanbanListCtrl* pIgnore);
+	void DeleteTaskFromOthers(DWORD dwTaskID, const CKanbanColumnCtrl* pIgnore);
 
 protected:
 	static int ListSortProc(const void* pV1, const void* pV2);
