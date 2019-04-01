@@ -86,7 +86,6 @@ protected:
 	BOOL m_bDragging;
 	BOOL m_bReadOnly;
 	BOOL m_bSortAscending;
-	BOOL m_bStrikeThruDone;
 	BOOL m_bSelectTasks;
 	BOOL m_bSettingListFocus;
 
