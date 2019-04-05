@@ -376,13 +376,14 @@ bool CCalendarWnd::DoAppCommand(IUI_APPCOMMAND nCmd, IUIAPPCOMMANDDATA* pData)
 					return true;
 			}
 		}
-
-	case IUI_SETTASKFONT:
-		m_BigCalendar.SendMessage(WM_SETFONT, (WPARAM)pData->hFont, TRUE);
-		break;
 	}
 
 	return false;
+}
+
+void CCalendarWnd::SetTaskFont(HFONT hFont)
+{
+	m_BigCalendar.SendMessage(WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 bool CCalendarWnd::CanDoAppCommand(IUI_APPCOMMAND nCmd, const IUIAPPCOMMANDDATA* pData) const 

@@ -294,6 +294,16 @@ void CBurndownWnd::SetUITheme(const UITHEME* pTheme)
 	}
 }
 
+void CBurndownWnd::SetTaskFont(HFONT hFont)
+{
+/*
+	CString sFontName;
+	int nFontSize = GraphicsMisc::GetFontNameAndPointSize(hFont, sFontName);
+
+	m_graph.SetFont(sFontName, nFontSize);
+*/
+}
+
 bool CBurndownWnd::ProcessMessage(MSG* /*pMsg*/) 
 {
 //	AFX_MANAGE_STATE(AfxGetStaticModuleState());
