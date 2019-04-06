@@ -407,7 +407,11 @@ BOOL CTDLTaskIconDlg::PreTranslateMessage(MSG* pMsg)
 		case '8':
 		case '9':
 			{
-				// List View searching seems to be broken so we do it manually
+				// List View seems to assume that items beginning with the
+				// same letter will be contiguous and so it stops as soon
+				// as the first character changes. Unfortunately our numbered
+				// icons are sorted 'naturally' and so the default searching
+				// is broken.
 				int nSelItem = m_lcIcons.GetNextItem(-1, LVNI_SELECTED);
 				int nNumItem = m_lcIcons.GetItemCount();
 
