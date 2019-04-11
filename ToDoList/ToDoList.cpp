@@ -1109,12 +1109,15 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs, LPCTSTR szPrevVer)
 	if (!CPreferences::UsesIni())
 		return;
 
-	if (FileMisc::CompareVersions(szPrevVer, _T("7.2.10")) < 0)
+	if (FileMisc::CompareVersions(szPrevVer, _T("7.2.11")) < 0)
 	{
 		// Rename 'Tasklists' resource folder to 'Examples'
-		LPCTSTR szTasklists = _T(".\\Resources\\Tasklists\\");
-		LPCTSTR szExamples = _T(".\\Resources\\Examples\\");
-
+		CString sTasklistDir = _T(".\\Resources\\Tasklists\\");
+		CString sExampleDir = _T(".\\Resources\\Examples\\");
+		
+		CString sIntroExample = (sTasklistDir + _T("Introduction.tdl"));
+		CString sDocoExample = (sTasklistDir + _T("ToDoListDocumentation.tdl"));
+		
 		for (int nFile = 1; nFile <= 16; nFile++)
 		{
 			CString sKey = Misc::FormatT(_T("TaskList%d"), nFile);
@@ -1123,10 +1126,10 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs, LPCTSTR szPrevVer)
 			if (sFile.IsEmpty())
 				break;
 
-			// Only replace if at the start of the filepath
-			if (Misc::Find(szTasklists, sFile, FALSE) == 0)
+			if ((sFile.CompareNoCase(sIntroExample) == 0) ||
+				(sFile.CompareNoCase(sDocoExample) == 0))
 			{
-				Misc::Replace(szTasklists, szExamples, sFile, FALSE);
+				Misc::Replace(sTasklistDir, sExampleDir, sFile, FALSE);
 				prefs.WriteProfileString(_T("MRU"), sKey, sFile);
 			}
 		}
@@ -1138,10 +1141,10 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs, LPCTSTR szPrevVer)
 			CString sKey = Misc::MakeKey(_T("LastFile%d"), nTDC);
 			CString sFile = prefs.GetProfileString(_T("Settings"), sKey);
 
-			// Only replace if at the start of the filepath
-			if (Misc::Find(szTasklists, sFile, FALSE) == 0)
+			if ((sFile.CompareNoCase(sIntroExample) == 0) ||
+				(sFile.CompareNoCase(sDocoExample) == 0))
 			{
-				Misc::Replace(szTasklists, szExamples, sFile, FALSE);
+				Misc::Replace(sTasklistDir, sExampleDir, sFile, FALSE);
 				prefs.WriteProfileString(_T("Settings"), sKey, sFile);
 			}
 		}
