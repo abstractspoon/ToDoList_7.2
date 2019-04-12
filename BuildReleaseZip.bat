@@ -7,7 +7,7 @@ set REPOROOT=C:\Users\Daniel.Godson\Documents\GitHub
 if NOT EXIST %REPOROOT% set REPOROOT=D:\_code
 if NOT EXIST %REPOROOT% exit
 
-set LATESTREPO="%~1"
+set LATESTREPO=%~1
 set RESREPO=%REPOROOT%\ToDoList_Resources
 
 ECHO LATESTREPO=%LATESTREPO%
@@ -21,7 +21,7 @@ if NOT EXIST %PATH7ZIP% exit
 
 ECHO PATH7ZIP=%PATH7ZIP%
 
-set OUTDIR=%1\ToDoList\Unicode_Release
+set OUTDIR=%LATESTREPO%\ToDoList\Unicode_Release
 set OUTZIP=%OUTDIR%\todolist_exe_.zip
 
 ECHO OUTDIR=%OUTDIR%
@@ -84,6 +84,8 @@ REM %PATH7ZIP% a %OUTZIP% %OUTDIR%\Microsoft.mshtml.dll"
 REM Copy latest Resources
 del %OUTDIR%\Resources\ /Q /S
 del %OUTDIR%\Resources\Translations\backup\ /Q
+
+echo Resource exclude file: %LATESTREPO%\BuildReleaseZip_Exclude.txt
 xcopy %RESREPO%\*.* %OUTDIR%\Resources\ /Y /D /E /EXCLUDE:%LATESTREPO%\BuildReleaseZip_Exclude.txt
 
 REM Zip install instructions to root

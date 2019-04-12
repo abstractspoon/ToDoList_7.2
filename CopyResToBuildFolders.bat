@@ -1,20 +1,16 @@
 REM - Copy Resources to own build folders
 
-cd ..\..
+cd ..
 echo %cd%
-
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Dev\ToDoList\Unicode_Debug\Resources\   /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
-
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Dev\ToDoList\Unicode_Release\Resources\ /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
 
 REM - Copy Resources to latest release
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_%1\ToDoList\Unicode_Debug\Resources\   /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy .\ToDoList_Resources\*.* .\ToDoList_7.2\ToDoList\Unicode_Debug\Resources\   /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_%1\ToDoList\Unicode_Release\Resources\ /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy .\ToDoList_Resources\*.* .\ToDoList_7.2\ToDoList\Unicode_Release\Resources\ /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
 
 REM - Copy Resources to Plugins
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins\Debug\Resources\   /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins_7.2\Debug\Resources\   /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins\Release\Resources\ /E /EXCLUDE:.\ToDoList_Dev\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins_7.2\Release\Resources\ /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
