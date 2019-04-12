@@ -200,6 +200,11 @@ HRESULT CTaskFile::QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObj
 		*ppvObject = reinterpret_cast<ITaskList16*>(this);
 		AddRef();
 	}
+	else if (IsEqualIID(riid, IID_TASKLIST17))
+	{
+		*ppvObject = reinterpret_cast<ITaskList17*>(this);
+		AddRef();
+	}
 	else
 	{
 		ASSERT(0);
@@ -2498,6 +2503,15 @@ bool CTaskFile::IsTaskFlagged(HTASKITEM hTask, bool bCalc) const
 		return TRUE;
 
 	return (GetTaskUChar(hTask, TDL_TASKFLAG) > 0);
+}
+
+LPCTSTR CTaskFile::GetFileName(bool bFullPath) const
+{
+	if (bFullPath)
+		return CXmlFile::GetFilePath();
+
+	// else
+	return GetAttribute(TDL_FILENAME);
 }
 
 bool CTaskFile::IsTaskLocked(HTASKITEM hTask, bool bCalc) const
