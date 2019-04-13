@@ -294,7 +294,7 @@ void CBurndownWnd::SetUITheme(const UITHEME* pTheme)
 	}
 }
 
-void CBurndownWnd::SetTaskFont(HFONT hFont)
+void CBurndownWnd::SetTaskFont(HFONT /*hFont*/)
 {
 /*
 	CString sFontName;
