@@ -282,30 +282,26 @@ void CTDLCommentsCtrl::OnSelchangeCommentsformat()
 
 BOOL CTDLCommentsCtrl::UpdateControlFormat()
 {
-	ASSERT(m_pMgrContent);
 	ASSERT(GetSafeHwnd());
 
-	// save outgoing content prefs provided they've already been loaded
-	if (!m_bFirstLoadCommentsPrefs)
+	CONTENTFORMAT cfNew;
+	m_cbCommentsFmt.GetSelectedFormat(cfNew);
+
+	CONTENTFORMAT cfOld = m_ctrlComments.GetContentFormat();
+
+	// save outgoing content prefs 
+	if (!cfOld.IsEmpty() && (cfNew != cfOld))
 		SavePreferences();
 
-	CONTENTFORMAT cf;
-	m_cbCommentsFmt.GetSelectedFormat(cf);
-
-	if (m_ctrlComments.GetContentFormat() == cf)
-	{
-		LoadPreferences();
-		m_bFirstLoadCommentsPrefs = m_sPrefsFilePath.IsEmpty();
-
+	if (cfNew == cfOld)
 		return FALSE;
-	}
 
 	CRect rComments;
 	CalcCommentsCtrlRect(rComments);
 
 	DWORD dwStyle = (WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_CLIPSIBLINGS); 
 
-	if (!m_pMgrContent->CreateContentControl(cf, m_ctrlComments, 
+	if (!m_pMgrContent->CreateContentControl(cfNew, m_ctrlComments, 
 		IDC_CTRL, dwStyle, WS_EX_CLIENTEDGE, rComments, *this))
 	{
 		return FALSE;
