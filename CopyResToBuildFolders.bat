@@ -1,16 +1,22 @@
-REM - Copy Resources to own build folders
+ECHO OFF
 
-cd ..
-echo %cd%
+pushd %~dp0
+set REPO=%CD%
+ECHO REPO=%REPO%
 
-REM - Copy Resources to latest release
+set PLUGINREPO=%REPO%\..\ToDoList_Plugins_7.2
+ECHO PLUGINREPO=%PLUGINREPO%
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_7.2\ToDoList\Unicode_Debug\Resources\   /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
+set RESREPO=%REPO%\..\ToDoList_Resources
+ECHO RESREPO=%RESREPO%
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_7.2\ToDoList\Unicode_Release\Resources\ /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
+REM - Copy to Core
+xcopy %RESREPO%\*.* %REPO%\ToDoList\Unicode_Debug\Resources\   /E /EXCLUDE:%REPO%\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy %RESREPO%\*.* %REPO%\ToDoList\Unicode_Release\Resources\   /E /EXCLUDE:%REPO%\CopyResToBuildFolders_Exclude.txt /Y 
 
 REM - Copy Resources to Plugins
+xcopy %RESREPO%\*.* %PLUGINREPO%\Debug\Resources\   /E /EXCLUDE:%REPO%\CopyResToBuildFolders_Exclude.txt /Y 
+xcopy %RESREPO%\*.* %PLUGINREPO%\Release\Resources\ /E /EXCLUDE:%REPO%\CopyResToBuildFolders_Exclude.txt /Y 
 
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins_7.2\Debug\Resources\   /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
-
-xcopy .\ToDoList_Resources\*.* .\ToDoList_Plugins_7.2\Release\Resources\ /E /EXCLUDE:.\ToDoList_7.2\CopyResToBuildFolders_Exclude.txt /Y 
+popd
+pause
