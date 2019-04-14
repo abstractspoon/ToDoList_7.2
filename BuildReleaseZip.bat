@@ -83,4 +83,5 @@ REM Zip Resources
 REM Open zip for inspection
 %OUTZIP%
 
+popd
 pause
