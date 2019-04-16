@@ -232,10 +232,6 @@ public:
 	BOOL SetTaskIsParent(HTASKITEM hTask);
 
 	//////////////////////////////////////////////////////////////
-	// ITaskList17 implementation 
-	LPCTSTR GetFileName(bool bFullPath) const;
-
-	//////////////////////////////////////////////////////////////
 	// ITaskList16 implementation 
 	bool IsTaskLocked(HTASKITEM hTask, bool bCalc) const;
 	bool SetTaskLock(HTASKITEM hTask, bool bLocked);
