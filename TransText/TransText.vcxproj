@@ -105,7 +105,7 @@
       <Command>mkdir ..\ToDoList
 mkdir ..\ToDoList\unicode_Release
 copy unicode_release\transtext.dll ..\todolist\unicode_release /y
-copy unicode_release\transtext.dll ..\..\todolist_Plugins\release /y
+copy unicode_release\transtext.dll ..\..\todolist_Plugins_7.2\release /y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -160,8 +160,8 @@ copy unicode_release\transtext.dll ..\..\todolist_Plugins\release /y
       <Command>mkdir ..\ToDoList
 mkdir ..\ToDoList\unicode_debug
 copy unicode_debug\transtext.dll ..\todolist\unicode_debug /y
-copy unicode_debug\transtext.dll ..\..\todolist_Plugins\debug /y
-copy unicode_debug\transtext.pdb ..\..\todolist_Plugins\debug /y
+copy unicode_debug\transtext.dll ..\..\todolist_Plugins_7.2\debug /y
+copy unicode_debug\transtext.pdb ..\..\todolist_Plugins_7.2\debug /y
 
 </Command>
     </PostBuildEvent>
