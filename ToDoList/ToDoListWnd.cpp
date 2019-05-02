@@ -663,6 +663,7 @@ void CToDoListWnd::SetupUIStrings()
 	CXmlFileEx::SetUIStrings(CEnString(IDS_ENCRYPTEDFILE), CEnString(IDS_DECRYPTFAILED));
 	CSpellCheckDlg::SetItemText(DLG_SCD_BROWSETITLE, IDS_SCD_BROWSETITLE);
 	CWinHelpButton::SetDefaultTooltip(CEnString(IDS_ONLINEHELP));
+	CPasswordDialog::SetItemText(PD_TITLE, IDS_PD_TITLE);
 }
 
 BOOL CToDoListWnd::OnHelpInfo(HELPINFO* /*pHelpInfo*/)
