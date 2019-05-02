@@ -664,6 +664,7 @@ void CToDoListWnd::SetupUIStrings()
 	CSpellCheckDlg::SetItemText(DLG_SCD_BROWSETITLE, IDS_SCD_BROWSETITLE);
 	CWinHelpButton::SetDefaultTooltip(CEnString(IDS_ONLINEHELP));
 	CPasswordDialog::SetItemText(PD_TITLE, IDS_PD_TITLE);
+	CServerDlg::SetItemText(SD_TITLE, IDS_SD_TITLE);
 }
 
 BOOL CToDoListWnd::OnHelpInfo(HELPINFO* /*pHelpInfo*/)

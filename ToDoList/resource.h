@@ -2218,6 +2218,7 @@
 #define IDS_TDLBC_CUSTOMATTRIBS         58485
 #define IDS_HANDLERNOTINSTALLED         58486
 #define IDS_SEARCHPREFS_PROMPT          58490
+#define IDS_SD_TITLE                    58491
 #define IDS_LASTSTRING                  58500
 
 // Next default values for new objects
