@@ -560,13 +560,13 @@ struct TDCCUSTOMATTRIBUTEDEFINITION
 
 	TDCCUSTOMATTRIBUTEDEFINITION(LPCTSTR szLabel = NULL) 
 		: 
-	sLabel(szLabel),
-	dwAttribType(TDCCA_STRING), 
-	nTextAlignment(DT_LEFT), 
-	dwFeatures(TDCCAF_SORT),
-	nColID(TDCC_NONE),
-	nAttribID(TDCA_NONE),
-	bEnabled(TRUE)
+		sLabel(szLabel),
+		dwAttribType(TDCCA_STRING), 
+		nTextAlignment(DT_LEFT), 
+		dwFeatures(TDCCAF_SORT),
+		nColID(TDCC_NONE),
+		nAttribID(TDCA_NONE),
+		bEnabled(TRUE)
 	{
 
 	}
