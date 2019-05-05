@@ -1250,13 +1250,7 @@ int CTaskFile::GetCustomAttributeDefs(CTDCCustomAttribDefinitionArray& aAttribs)
 
 		// list data can contain default-data and/or auto-data
 		if (attribDef.IsList())
-		{
 			attribDef.DecodeListData(pXIAttribDef->GetItemValue(TDL_CUSTOMATTRIBLISTDATA));
-
-			// Add 'Filterable' feature first time only
-//			if (GetFileFormat() < TDL_FILEFORMAT_LOCKING)
-				attribDef.dwFeatures |= TDCCAF_FILTER;
-		}
 
 		// good to go
 		aAttribs.Add(attribDef);
@@ -1303,6 +1297,7 @@ CXmlItem* CTaskFile::AddCustomAttributeDef(LPCTSTR szID, LPCTSTR szLabel, LPCTST
 	pXINewAttribDef->SetItemValue(TDL_CUSTOMATTRIBLABEL, szLabel);
 	pXINewAttribDef->SetItemValue(TDL_CUSTOMATTRIBENABLED, TRUE);
 	pXINewAttribDef->SetItemValue(TDL_CUSTOMATTRIBTYPE, (bList ? TDCCA_AUTOLIST : TDCCA_STRING));
+	pXINewAttribDef->SetItemValue(TDL_CUSTOMATTRIBFEATURES, (TDCCAF_SORT | (bList ? TDCCAF_FILTER : 0)));
 
 	// optionals
 	if (!Misc::IsEmpty(szColumn))

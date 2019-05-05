@@ -563,7 +563,7 @@ struct TDCCUSTOMATTRIBUTEDEFINITION
 	sLabel(szLabel),
 	dwAttribType(TDCCA_STRING), 
 	nTextAlignment(DT_LEFT), 
-	dwFeatures(TDCCAF_SORT | TDCCAF_FILTER),
+	dwFeatures(TDCCAF_SORT),
 	nColID(TDCC_NONE),
 	nAttribID(TDCA_NONE),
 	bEnabled(TRUE)
