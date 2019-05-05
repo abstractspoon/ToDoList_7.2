@@ -271,6 +271,10 @@ SOURCE=.\TDCImportExportMgr.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\TDCMainMenu.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\TDCMergeTasklist.cpp
 # End Source File
 # Begin Source File
@@ -816,6 +820,10 @@ SOURCE=.\TDCImageList.h
 # Begin Source File
 
 SOURCE=.\TDCImportExportMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TDCMainMenu.h
 # End Source File
 # Begin Source File
 
