@@ -451,7 +451,7 @@ void CTDLCustomAttributeDlg::OnItemchangedAttriblist(NMHDR* /*pNMHDR*/, LRESULT*
 
 		BuildListTypeCombo(m_dwDataType);
 
-		m_cbFeatures.SetAttributeDefintion(attrib);
+		m_cbFeatures.SetAttributeDefinition(attrib);
 	}
 	else
 	{
@@ -557,7 +557,7 @@ void CTDLCustomAttributeDlg::OnSelchangeDatatype()
 	m_lcAttributes.SetItemText(nSel, COL_DATATYPE, sDataType);
 
 	// update feature combo
-	m_cbFeatures.SetAttributeDefintion(attrib);
+	m_cbFeatures.SetAttributeDefinition(attrib);
 
 	// And features in case they changed
 	m_dwFeatures = m_cbFeatures.GetSelectedFeatures();
@@ -605,6 +605,10 @@ void CTDLCustomAttributeDlg::UpdateListDataMask()
 			
 	case TDCCA_DOUBLE:
 		m_eListData.SetMask(_T(".0123456789"), ME_LOCALIZEDECIMAL);
+		break;
+
+	default:
+		ASSERT(0);
 		break;
 	}
 }

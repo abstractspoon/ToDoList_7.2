@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTDLCustomAttribFeatureComboBox message handlers
 
-BOOL CTDLCustomAttribFeatureComboBox::SetAttributeDefintion(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef)
+BOOL CTDLCustomAttribFeatureComboBox::SetAttributeDefinition(const TDCCUSTOMATTRIBUTEDEFINITION& attribDef)
 {
 	ASSERT_VALID(this);
 
