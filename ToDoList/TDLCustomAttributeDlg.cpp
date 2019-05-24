@@ -646,7 +646,7 @@ void CTDLCustomAttributeDlg::OnSelchangeListtype()
 	m_dwListType = attrib.GetListType();
 
 	// update feature combo
-	m_cbFeatures.SetAttributeDefintion(attrib);
+	m_cbFeatures.SetAttributeDefinition(attrib);
 
 	// And features in case they changed
 	m_dwFeatures = m_cbFeatures.GetSelectedFeatures();

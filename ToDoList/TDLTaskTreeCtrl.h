@@ -205,7 +205,6 @@ protected:
 	inline HWND Tasks() const { return m_tcTasks; }
 	inline HWND TasksHeader() const { return m_hdrTasks; }
 	
-	void RedrawTree(BOOL bErase = FALSE);
 	void GetWindowRect(CRect& rWindow, BOOL bWithHeader) const;
 	BOOL GetItemTitleRect(HTREEITEM hti, TDC_TITLERECT nArea, CRect& rect, CDC* pDC = NULL, LPCTSTR szTitle = NULL) const;
 
@@ -213,7 +212,7 @@ protected:
 	BOOL BuildColumns();
 	void Release();
 	BOOL CreateTasksWnd(CWnd* pParentWnd, const CRect& rect, BOOL bVisible);
-	void SyncColumnSelectionToTasks(BOOL bUpdateWindow = FALSE);
+	void SyncColumnSelectionToTasks();
 	int SaveTreeExpandedState(CPreferences& prefs, const CString& sKey, HTREEITEM hti, int nStart) const; 
 	BOOL SelectItem(HTREEITEM hti, BOOL bSyncAndNotify, SELCHANGE_ACTION nBy); // internal version
 	int GetListItem(HTREEITEM hti) const;

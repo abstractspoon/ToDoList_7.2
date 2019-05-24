@@ -2547,7 +2547,7 @@ LRESULT CToDoListWnd::OnPostOnCreate(WPARAM /*wp*/, LPARAM /*lp*/)
 	PostMessage(WM_FW_FOCUSCHANGE, (WPARAM)::GetFocus(), 0L);
 	
 	// theme
-	SetUITheme(userPrefs.GetUITheme());
+	//SetUITheme(userPrefs.GetUITheme());
 
 	RefreshTabOrder();
 	Invalidate(TRUE);
@@ -11148,12 +11148,10 @@ void CToDoListWnd::UpdateCwd()
 	}
 }
 
-BOOL CToDoListWnd::OnCommand(WPARAM wParam, LPARAM lParam) 
-{
-	UpdateWindow();
-
-	return CFrameWnd::OnCommand(wParam, lParam);
-}
+// BOOL CToDoListWnd::OnCommand(WPARAM wParam, LPARAM lParam) 
+// {
+// 	return CFrameWnd::OnCommand(wParam, lParam);
+// }
 
 void CToDoListWnd::OnEnable(BOOL bEnable) 
 {
