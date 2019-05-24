@@ -309,7 +309,7 @@ void CTDLWelcomePage3::OnNosample()
 CString CTDLWelcomePage3::GetSampleFilePath() const 
 { 
 	if (m_bViewSample)
-		return FileMisc::GetFullPath(m_sSampleTaskList, FileMisc::GetAppResourceFolder() + _T("\\Examples"));
+		return FileMisc::GetFullPath(m_sSampleTaskList, FileMisc::GetAppFolder());
 	else
 		return _T("");
 }
