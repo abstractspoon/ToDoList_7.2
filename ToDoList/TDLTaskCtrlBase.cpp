@@ -1958,32 +1958,36 @@ BOOL CTDLTaskCtrlBase::SetStartedTaskColors(COLORREF crStarted, COLORREF crStart
 	return FALSE;
 }
 
+BOOL CTDLTaskCtrlBase::CheckUpdateDueBrushColor(COLORREF crNew, COLORREF& crCur, CBrush& brCur)
+{
+	if (crCur != crNew)
+	{
+		GraphicsMisc::VerifyDeleteObject(brCur);
+
+		if (HasColor(crNew))
+			brCur.CreateSolidBrush(crNew);
+
+		crCur = crNew;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 BOOL CTDLTaskCtrlBase::SetDueTaskColors(COLORREF crDue, COLORREF crDueToday)
 {
-	if ((m_crDue != crDue) || (m_crDueToday != crDueToday))
+	BOOL bResort = (IsSortingBy(TDCC_PRIORITY) && HasStyle(TDCS_DUEHAVEHIGHESTPRIORITY) && (HasColor(crDueToday) != HasColor(m_crDueToday)));
+
+	if (CheckUpdateDueBrushColor(crDue, m_crDue, m_brDue) || 
+		CheckUpdateDueBrushColor(crDueToday, m_crDueToday, m_brDueToday))
 	{
-		if (m_crDue != crDue)
-		{
-			GraphicsMisc::VerifyDeleteObject(m_brDue);
-			
-			if (HasColor(crDue))
-				m_brDue.CreateSolidBrush(crDue);
-
-			m_crDue = crDue;
-		}
-
-		if (m_crDueToday != crDueToday)
-		{
-			GraphicsMisc::VerifyDeleteObject(m_brDueToday);
-			
-			if (HasColor(crDueToday))
-				m_brDueToday.CreateSolidBrush(crDueToday);
-			
-			m_crDueToday = crDueToday;
-		}
-
 		if (GetSafeHwnd())
-			InvalidateAll();
+		{
+			if (bResort)
+				Resort(FALSE);
+			else
+				InvalidateAll();
+		}
 
 		return TRUE;
 	}
