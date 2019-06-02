@@ -2520,7 +2520,7 @@ BOOL CTDCTaskCalculator::HasDueTodayTasks(const TODOSTRUCTURE* pTDS) const
 
 		GET_TDI(dwTaskID, pTDI, FALSE);
 
-		if (IsTaskDue(pTDI, pTDS, TRUE))
+		if (IsTaskDueToday(pTDI, pTDS))
 			return TRUE;
 	}
 
@@ -2989,10 +2989,9 @@ int CTDCTaskCalculator::GetTaskHighestRisk(const TODOITEM* pTDI, const TODOSTRUC
 BOOL CTDCTaskCalculator::IsTaskDone(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, DWORD dwExtraCheck) const
 {
 	// sanity check
-	ASSERT (pTDS && pTDI);
-
 	if (!pTDS || !pTDI)
 	{
+		ASSERT(0);
 		return FALSE;
 	}
 
