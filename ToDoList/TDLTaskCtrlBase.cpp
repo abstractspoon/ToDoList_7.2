@@ -1791,8 +1791,8 @@ BOOL CTDLTaskCtrlBase::GetTaskTextColors(const TODOITEM* pTDI, const TODOSTRUCTU
 			}
 
 			// else
-			BOOL bDueToday = m_calculator.IsTaskDue(pTDI, pTDS, TRUE);
-			BOOL bOverDue = m_calculator.IsTaskDue(pTDI, pTDS, FALSE);
+			BOOL bDueToday = m_calculator.IsTaskDueToday(pTDI, pTDS);
+			BOOL bOverDue = m_calculator.IsTaskOverDue(pTDI, pTDS);
 
 			// overdue takes priority
 			if (HasColor(m_crDue) && bOverDue)
@@ -2455,33 +2455,38 @@ void CTDLTaskCtrlBase::DrawColumnsRowText(CDC* pDC, int nItem, DWORD dwTaskID, c
 				}
 				
 				// then, if the task is also due, draw a small tag
-				if (m_calculator.IsTaskDue(pTDI, pTDS))
+				// unless it's due today and the user doesn't want today's tasks marked as due
+				// or there's no due color 
+				HBRUSH brTag = NULL;
+				
+				if (HasColor(m_crDue) && m_calculator.IsTaskOverDue(pTDI, pTDS))
 				{
-					BOOL bDueToday = m_calculator.IsTaskDue(pTDI, pTDS, TRUE);
+					brTag = m_brDue;
+				}
+				else if (HasColor(m_crDueToday) && m_calculator.IsTaskDueToday(pTDI, pTDS))
+				{
+					brTag = m_brDueToday;
+				}
+
+				if (brTag != NULL)
+				{
+					POINT pt[3] = 
+					{ 
+						{ rSubItem.left, rSubItem.top + 7 }, 
+						{ rSubItem.left, rSubItem.top }, 
+						{ rSubItem.left + 7, rSubItem.top } 
+					};
 					
-					// unless it's due today and the user doesn't want today's tasks marked as due
-					// or there's no due color 
-					if ((!bDueToday && HasColor(m_crDue)) || 
-						(bDueToday && HasColor(m_crDueToday)))
-					{
-						POINT pt[3] = 
-						{ 
-							{ rSubItem.left, rSubItem.top + 7 }, 
-						 	{ rSubItem.left, rSubItem.top }, 
-						 	{ rSubItem.left + 7, rSubItem.top } 
-						};
-						
-						CBrush* pOldBr = pDC->SelectObject(bDueToday ? &m_brDueToday : &m_brDue);
-						pDC->SelectStockObject(NULL_PEN);
-						 
-						pDC->Polygon(pt, 3);
-						pDC->SelectObject(pOldBr);
-						
-						// a black line between the two
-						pDC->SelectStockObject(BLACK_PEN);
-						pDC->MoveTo(rSubItem.left, rSubItem.top + 6);
-						pDC->LineTo(rSubItem.left + 7, rSubItem.top - 1);
-					}
+					HGDIOBJ hOldBr = pDC->SelectObject(brTag);
+					pDC->SelectStockObject(NULL_PEN);
+					
+					pDC->Polygon(pt, 3);
+					pDC->SelectObject(hOldBr);
+					
+					// a black line between the two
+					pDC->SelectStockObject(BLACK_PEN);
+					pDC->MoveTo(rSubItem.left, rSubItem.top + 6);
+					pDC->LineTo(rSubItem.left + 7, rSubItem.top - 1);
 				}
 				
 				// draw priority number over the top
@@ -2519,11 +2524,9 @@ void CTDLTaskCtrlBase::DrawColumnsRowText(CDC* pDC, int nItem, DWORD dwTaskID, c
 						crBar = GetPriorityColor(nPriority);
 						
 						// check for due
-						if (m_calculator.IsTaskDue(pTDI, pTDS))
+						if (m_calculator.IsTaskOverDue(pTDI, pTDS))
 						{
-							BOOL bDueToday = m_calculator.IsTaskDue(pTDI, pTDS, TRUE);
-							
-							if (bDueToday && HasColor(m_crDueToday))
+							if (HasColor(m_crDueToday) && m_calculator.IsTaskDueToday(pTDI, pTDS))
 							{
 								crBar = m_crDueToday;
 							}
@@ -6146,7 +6149,7 @@ BOOL CTDLTaskCtrlBase::IsSelectedTaskDone() const
 
 BOOL CTDLTaskCtrlBase::IsSelectedTaskDue() const
 {
-	return m_calculator.IsTaskDue(GetSelectedTaskID());
+	return m_calculator.IsTaskOverDue(GetSelectedTaskID());
 }
 
 CString CTDLTaskCtrlBase::FormatInfoTip(DWORD dwTaskID, int nMaxLen) const

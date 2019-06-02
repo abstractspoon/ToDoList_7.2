@@ -39,7 +39,7 @@ public:
 	BOOL IsTaskLocked(DWORD dwTaskID) const;
 	BOOL IsTaskDone(DWORD dwTaskID, DWORD dwExtraCheck = TDCCHECKALL) const;
 	BOOL IsTaskStarted(DWORD dwTaskID, BOOL bToday = FALSE) const;
-	BOOL IsTaskDue(DWORD dwTaskID, BOOL bToday = FALSE) const;
+	BOOL IsTaskDueToday(DWORD dwTaskID) const;
 	BOOL IsTaskOverDue(DWORD dwTaskID) const;
 
 	double GetTaskDueDate(DWORD dwTaskID) const;
@@ -63,7 +63,7 @@ public:
 	BOOL IsTaskLocked(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	BOOL IsTaskStarted(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bToday = FALSE) const;
 	BOOL IsTaskDone(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, DWORD dwExtraCheck = TDCCHECKALL) const;
-	BOOL IsTaskDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bToday = FALSE) const;
+	BOOL IsTaskDueToday(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 	BOOL IsTaskOverDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
 
 	double GetTaskDueDate(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
@@ -97,6 +97,8 @@ protected:
 	BOOL HasDueTodayTasks(const TODOSTRUCTURE* pTDS) const;
 	BOOL HasLockedTasks(const TODOSTRUCTURE* pTDS) const;
 	BOOL IsParentTaskDone(const TODOSTRUCTURE* pTDS) const;
+	BOOL IsTaskDue(DWORD dwTaskID, BOOL bToday) const;
+	BOOL IsTaskDue(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, BOOL bToday) const;
 	
 	const TODOITEM* GetLastModifiedTask(DWORD dwTaskID) const;
 	const TODOITEM* GetLastModifiedTask(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS) const;
