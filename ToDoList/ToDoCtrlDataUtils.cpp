@@ -1198,7 +1198,6 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, const TDCCU
 	return bAscending ? nCompare : -nCompare;
 }
 
-
 int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN nSortBy, BOOL bAscending, 
 									BOOL bSortDueTodayHigh, BOOL bIncTime) const
 {
@@ -1386,8 +1385,11 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 				{
 					nPriority1 = -1;
 				}
-				else if ((bDueHaveHighestPriority && m_calculator.IsTaskOverDue(pTDI1, pTDS1) && 
-						(bSortDueTodayHigh || !m_calculator.IsTaskDueToday(pTDI1, pTDS1))))
+				else if (bDueHaveHighestPriority && m_calculator.IsTaskOverDue(pTDI1, pTDS1))
+				{
+					nPriority1 = pTDI1->nPriority + 22; // 'overdue' sort higher than 'due today'
+				}
+				else if (bDueHaveHighestPriority && bSortDueTodayHigh && m_calculator.IsTaskDueToday(pTDI1, pTDS1))
 				{
 					nPriority1 = pTDI1->nPriority + 11;
 				}
@@ -1401,8 +1403,11 @@ int CTDCTaskComparer::CompareTasks(DWORD dwTask1ID, DWORD dwTask2ID, TDC_COLUMN 
 				{
 					nPriority2 = -1;
 				}
-				else if (bDueHaveHighestPriority && m_calculator.IsTaskOverDue(pTDI2, pTDS2) && 
-					(bSortDueTodayHigh || !m_calculator.IsTaskDueToday(pTDI2, pTDS2)))
+				else if (bDueHaveHighestPriority && m_calculator.IsTaskOverDue(pTDI2, pTDS2))
+				{
+					nPriority2 = pTDI2->nPriority + 22; // 'overdue' sort higher than 'due today'
+				}
+				else if (bDueHaveHighestPriority && bSortDueTodayHigh && m_calculator.IsTaskDueToday(pTDI2, pTDS2))
 				{
 					nPriority2 = pTDI2->nPriority + 11;
 				}
