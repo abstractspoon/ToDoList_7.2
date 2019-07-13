@@ -9,6 +9,8 @@
 #include "enbitmapex.h"
 #include "AcceleratorString.h"
 #include "icon.h"
+#include "winclasses.h"
+#include "wclassdefines.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -382,17 +384,23 @@ void CEnEdit::OnSize(UINT nType, int cx, int cy)
 
 BOOL CEnEdit::InitializeTooltips()
 {
-	if (m_tooltip.GetSafeHwnd())
+	// Tooltips don't work when we're part of a combobox
+	if (!CWinClasses::IsClass(::GetParent(m_hWnd), WC_COMBOBOX))
 	{
-		return TRUE;
-	}
-	else if (m_tooltip.Create(this))
-	{
-		// hot tracking
-		if (CThemed().AreControlsThemed())
-			m_hotTrack.Initialize(this);
+		if (m_tooltip.GetSafeHwnd())
+		{
+			return TRUE;
+		}
+		else if (m_tooltip.Create(this))
+		{
+			m_tooltip.ModifyStyleEx(0, WS_EX_TRANSPARENT);
 
-		return TRUE;
+			// hot tracking
+			if (CThemed().AreControlsThemed())
+				m_hotTrack.Initialize(this);
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;
