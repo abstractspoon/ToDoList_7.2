@@ -49,7 +49,6 @@ REM Handle dlls explicitly to maintain control over plugins
 %PATH7ZIP% a %OUTZIP% %OUTDIR%\KanbanBoard.dll
 %PATH7ZIP% a %OUTZIP% %OUTDIR%\MLOImport.dll
 %PATH7ZIP% a %OUTZIP% %OUTDIR%\MySpellCheck.dll
-%PATH7ZIP% a %OUTZIP% %OUTDIR%\OdbcStorage.dll
 
 REM .Net Plugins
 %PATH7ZIP% a %OUTZIP% %OUTDIR%\PluginHelpers.dll
