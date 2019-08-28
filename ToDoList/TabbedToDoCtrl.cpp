@@ -3288,7 +3288,8 @@ void CTabbedToDoCtrl::UpdateExtensionViewsTasks(TDC_ATTRIBUTE nAttrib)
 
 			CTaskFile tasks;
 
-			if (GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib))
+			if (GetAllTasksForExtensionViewUpdate(tasks, pVData->mapWantedAttrib) ||
+				((nUpdate == IUI_DELETE) && (GetTaskCount() == 0)))
 			{
 				CWaitCursor cursor;
 				BeginExtensionProgress(pVData);
