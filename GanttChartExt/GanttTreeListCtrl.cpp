@@ -6045,11 +6045,25 @@ int CGanttTreeListCtrl::CompareTasks(DWORD dwTaskID1, DWORD dwTaskID2, const GAN
 			break;
 
 		case GTLCC_STARTDATE:
-			nCompare = CDateHelper::Compare(pGI1->dtStart, pGI2->dtStart, DHC_COMPARETIME);
+			{
+				COleDateTime dtStart1, dtStart2, dtUnused;
+
+				GetTaskStartDueDates(*pGI1, dtStart1, dtUnused);
+				GetTaskStartDueDates(*pGI2, dtStart2, dtUnused);
+
+				nCompare = CDateHelper::Compare(dtStart1, dtStart2, DHC_COMPARETIME);
+			}
 			break;
 
 		case GTLCC_DUEDATE:
-			nCompare = CDateHelper::Compare(pGI1->dtDue, pGI2->dtDue, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
+			{
+				COleDateTime dtDue1, dtDue2, dtUnused;
+
+				GetTaskStartDueDates(*pGI1, dtUnused, dtDue1);
+				GetTaskStartDueDates(*pGI2, dtUnused, dtDue2);
+
+				nCompare = CDateHelper::Compare(dtDue1, dtDue2, (DHC_COMPARETIME | DHC_NOTIMEISENDOFDAY));
+			}
 			break;
 
 		case GTLCC_DONEDATE:
