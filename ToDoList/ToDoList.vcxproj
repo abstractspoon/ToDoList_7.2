@@ -619,7 +619,6 @@ copy unicode_release\ToDoList.exe ..\..\todolist_Plugins_7.2\release /y
     <ClInclude Include="TaskListDropTarget.h" />
     <ClInclude Include="TaskListExporterBase.h" />
     <ClInclude Include="TaskListHtmlExporter.h" />
-    <ClInclude Include="..\Shared\TaskListStorageMgr.h" />
     <ClInclude Include="TaskListOutlookImporter.h" />
     <ClInclude Include="TaskListTdlExporter.h" />
     <ClInclude Include="TaskListTdlImporter.h" />

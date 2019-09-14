@@ -486,9 +486,6 @@
     <ClInclude Include="TaskListHtmlExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\TaskListStorageMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskListTdlExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>

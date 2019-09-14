@@ -639,9 +639,6 @@
     <ClInclude Include="LightBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LimitSingleInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Localizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -733,9 +730,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RichEditNcBorder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RichEditSpellCheck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RoundCorner.h">
