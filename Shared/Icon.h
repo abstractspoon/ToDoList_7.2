@@ -15,6 +15,7 @@ public:
 	virtual ~CIcon();
 
 	BOOL LoadIcon(UINT nIDIcon, int nSize = 16);
+	void Destroy();
 
 	BOOL IsValid() const;
 	BOOL SetIcon(HICON hIcon, BOOL bDeletePrev = TRUE);

@@ -80,6 +80,7 @@ BEGIN_MESSAGE_MAP(CEnEdit, CMaskEdit)
 	ON_MESSAGE(EM_SETREADONLY, OnSetReadOnly)
 	ON_WM_STYLECHANGED()
 	ON_WM_NCPAINT()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -380,6 +381,14 @@ void CEnEdit::OnSize(UINT nType, int cx, int cy)
 		
 	// update tool rects
 	RecalcBtnHotRects();
+}
+
+void CEnEdit::OnDestroy()
+{
+	CMaskEdit::OnDestroy();
+
+	m_tooltip.DestroyWindow();
+	m_hotTrack.Reset();
 }
 
 BOOL CEnEdit::InitializeTooltips()

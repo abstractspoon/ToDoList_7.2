@@ -484,8 +484,8 @@ BOOL CTDLTimeTrackerDlg::Recreate()
 	const CFilteredToDoCtrl* pTDC = GetSelectedTasklist();
 	DWORD dwTaskID = GetSelectedTaskID();
 	
-	CRect rWindow;
-	GetWindowRect(rWindow);
+	CRect rPrev;
+	GetWindowRect(rPrev);
 	
 	DestroyWindow();
 	
@@ -502,7 +502,7 @@ BOOL CTDLTimeTrackerDlg::Recreate()
 		return FALSE;
 	
 	// restore position
-	MoveWindow(rWindow);
+	MoveWindow(rPrev);
 	return TRUE;
 }
 
@@ -1267,6 +1267,8 @@ void CTDLTimeTrackerDlg::OnDestroy()
 	SaveSettings();
 
 	m_ilBtns.DeleteImageList();
+	m_iconResetElapsed.Destroy();
+	m_eElapsedTime.DeleteAllButtons();
 
 	CDialog::OnDestroy();
 }
