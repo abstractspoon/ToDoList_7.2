@@ -206,7 +206,6 @@ copy unicode_debug\myspellcheck.dll ..\todolist\unicode_debug /y
     <ClInclude Include="..\3rdParty\myspell\htypes.hxx" />
     <ClInclude Include="..\3rdParty\myspell\myspell.hxx" />
     <ClInclude Include="..\3rdParty\myspell\mythes.hxx" />
-    <ClInclude Include="..\Shared\SpellChecker.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="..\3rdParty\myspell\suggestmgr.hxx" />
   </ItemGroup>
