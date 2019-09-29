@@ -124,7 +124,10 @@ CToDoListApp theApp;
 BOOL CToDoListApp::InitInstance()
 {
 	// .NET plugins require VS2010 redistributable to be installed
-	if (::LoadLibrary(MSVCR100_DLL) == NULL)
+	CString sVs2010Runtime;
+	VERIFY(FileMisc::GetSpecialFilePath(CSIDL_SYSTEM, MSVCR100_DLL, sVs2010Runtime));
+
+	if (::LoadLibrary(sVs2010Runtime) == NULL)
 	{
 		if (DoMessageBox(MSVCR100_MSG, MB_OKCANCEL | MB_ICONEXCLAMATION) == IDOK)
 			FileMisc::Run(::GetDesktopWindow(), MSVCR100_URL);
