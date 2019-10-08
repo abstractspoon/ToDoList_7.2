@@ -7128,18 +7128,19 @@ BOOL CGanttTreeListCtrl::GetValidDragDate(const CPoint& ptCursor, COleDateTime& 
 	if (!GetDateFromPoint(ptDrag, dtDrag))
 		return FALSE;
 
-	// if dragging the whole task, then we calculate
-	// dtDrag as GANTTITEM::dtStart offset by the
-	// difference between the current drag pos and the
-	// initial drag pos
+	// if dragging the whole task, we calculate dtDrag as the 
+	// original start date plus the difference between the 
+	// current drag pos and the initial drag pos
 	if (m_nDragging == GTLCD_WHOLE)
 	{
 		COleDateTime dtOrg;
 		GetDateFromPoint(m_ptDragStart, dtOrg);
 		
-		// offset from pre-drag position
-		double dOffset = dtDrag.m_dt - dtOrg.m_dt;
-		dtDrag = m_giPreDrag.dtStart.m_dt + dOffset;
+		COleDateTime dtPreStart, dtNotUsed;
+		VERIFY(GetTaskStartDueDates(m_giPreDrag, dtPreStart, dtNotUsed));
+
+		double dOffset = (dtDrag.m_dt - dtOrg.m_dt);
+		dtDrag = (dtPreStart.m_dt + dOffset);
 	}
 	
 	// adjust date depending on modifier keys 
