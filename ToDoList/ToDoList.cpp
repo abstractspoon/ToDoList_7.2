@@ -123,30 +123,35 @@ CToDoListApp theApp;
 
 BOOL CToDoListApp::InitInstance()
 {
-	// .NET plugins require VS2010 redistributable to be installed
-	CString sVs2010Runtime;
-	VERIFY(FileMisc::GetSpecialFilePath(CSIDL_SYSTEM, MSVCR100_DLL, sVs2010Runtime));
-
-	if (::LoadLibrary(sVs2010Runtime) == NULL)
-	{
-		CToDoListWnd::EnableLogging();
-
-		FileMisc::LogText(_T("LoadLibrary(%s) failed"), sVs2010Runtime);
-		FileMisc::LogTextRaw(Misc::FormatGetLastError());
-		
-		if (DoMessageBox(MSVCR100_MSG, MB_OKCANCEL | MB_ICONEXCLAMATION) == IDOK)
-			FileMisc::Run(::GetDesktopWindow(), MSVCR100_URL);
-
-		// Always quit
-		return FALSE;
-	}
-
 	// Set this before anything else
 	CWinHelpButton::SetDefaultIcon(GraphicsMisc::LoadIcon(IDI_HELPBUTTON));
 
 	// Process commandline switches
 	CEnCommandLineInfo cmdInfo(_T(".tdl;.xml"));
 	ParseCommandLine(cmdInfo);
+
+	// .NET plugins require VS2010 redistributable to be installed
+	// Note: Sometimes LoadLibrary fails even though the runtime
+	//       has been installed so we allow the check to be disabled
+	if (!cmdInfo.HasOption(SWITCH_NOMSVCR100CHECK))
+	{
+		CString sVs2010Runtime;
+		VERIFY(FileMisc::GetSpecialFilePath(CSIDL_SYSTEM, MSVCR100_DLL, sVs2010Runtime));
+
+		if (::LoadLibrary(sVs2010Runtime) == NULL)
+		{
+			CToDoListWnd::EnableLogging();
+
+			FileMisc::LogText(_T("LoadLibrary(%s) failed"), sVs2010Runtime);
+			FileMisc::LogTextRaw(Misc::FormatGetLastError());
+
+			if (DoMessageBox(MSVCR100_MSG, MB_OKCANCEL | MB_ICONEXCLAMATION) == IDOK)
+				FileMisc::Run(::GetDesktopWindow(), MSVCR100_URL);
+
+			// Always quit
+			return FALSE;
+		}
+	}
 
 	// see if the user wants to uninstall
 	if (cmdInfo.HasOption(SWITCH_UNINSTALL))
