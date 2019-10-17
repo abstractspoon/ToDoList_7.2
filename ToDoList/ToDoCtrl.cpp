@@ -7710,7 +7710,6 @@ BOOL CToDoCtrl::PrepareTaskLinkForPaste(CString& sLink, const CMapID2ID& mapID) 
 	}
 
 	return FALSE;
-
 }
 
 BOOL CToDoCtrl::PreTranslateMessage(MSG* pMsg) 
@@ -7778,19 +7777,19 @@ BOOL CToDoCtrl::MoveSelectedTask(TDC_MOVETASK nDirection)
 	if (!CanMoveSelectedTask(nDirection))
 		return FALSE;
 	
-	// else
 	Flush(); // end any editing action
 	SetFocusToTasks(); // else datetime controls get their focus screwed
 
-	// do the move
-	// move the tasks
 	IMPLEMENT_DATA_UNDO(m_data, TDCUAT_MOVE);
 
 	DWORD dwDestParentID = 0, dwDestPrevSiblingID = 0;
 	VERIFY(m_taskTree.GetInsertLocation(nDirection, dwDestParentID, dwDestPrevSiblingID));
 
+	// Get selected tasks without duplicate subtasks
+	// because the subtasks will be moved with their parents
 	CDWordArray aSelTaskIDs;
-	m_taskTree.GetSelectedTaskIDs(aSelTaskIDs);
+	DWORD dwUnused;
+	m_taskTree.GetSelectedTaskIDs(aSelTaskIDs, dwUnused, TRUE);
 
 	if (!m_data.MoveTasks(aSelTaskIDs, dwDestParentID, dwDestPrevSiblingID))
 		return FALSE;
