@@ -193,6 +193,7 @@ public:
 	DWORD GetTaskID() const { return m_dwID; }
 	DWORD GetSubTaskID(int nPos) const;
 	BOOL HasSubTask(DWORD dwSubtaskID, BOOL bImmediate = TRUE) const;
+	BOOL HasParent(DWORD dwParentID, BOOL bImmediate = TRUE) const;
 	
 	int GetSubTaskPosition(DWORD dwID) const;
 	int GetPosition() const;

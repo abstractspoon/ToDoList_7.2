@@ -809,6 +809,21 @@ int TODOSTRUCTURE::GetSubTaskPosition(DWORD dwID) const
 	return -1;
 }
 
+BOOL TODOSTRUCTURE::HasParent(DWORD dwParentID, BOOL bImmediate) const
+{
+	const TODOSTRUCTURE* pTDSParent = GetParentTask();
+
+	while (pTDSParent && (pTDSParent->GetTaskID() != dwParentID))
+	{
+		if (bImmediate)
+			return FALSE;
+
+		pTDSParent = pTDSParent->GetParentTask();
+	}
+
+	return (pTDSParent != NULL);
+}
+
 int TODOSTRUCTURE::GetPosition() const
 {
 	if (m_pTDSParent == NULL) // root
