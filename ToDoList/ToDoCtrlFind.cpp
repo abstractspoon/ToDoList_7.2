@@ -725,7 +725,7 @@ BOOL CToDoCtrlFind::FindVisibleTaskWithDoneTime(HTREEITEM hti) const
 	return FALSE;
 }
 
-int CToDoCtrlFind::FindTasks(const SEARCHPARAMS& params, CResultArray& aResults) const
+int CToDoCtrlFind::FindTasks(const SEARCHPARAMS& params, CResultArray& aResults, BOOL bCheckDueToday) const
 {
 	if (!m_data.GetTaskCount())
 		return 0;
@@ -734,7 +734,7 @@ int CToDoCtrlFind::FindTasks(const SEARCHPARAMS& params, CResultArray& aResults)
 	
 	while (hti)
 	{
-		FindTasks(hti, params, aResults);
+		FindTasks(hti, params, aResults, bCheckDueToday);
 		hti = m_tree.GetNextItem(hti, TVGN_NEXT);
 	}
 	
@@ -742,7 +742,7 @@ int CToDoCtrlFind::FindTasks(const SEARCHPARAMS& params, CResultArray& aResults)
 	return aResults.GetSize();
 }
 
-void CToDoCtrlFind::FindTasks(HTREEITEM hti, const SEARCHPARAMS& params, CResultArray& aResults) const
+void CToDoCtrlFind::FindTasks(HTREEITEM hti, const SEARCHPARAMS& params, CResultArray& aResults, BOOL bCheckDueToday) const
 {
 	SEARCHRESULT result;
 	DWORD dwID = GetTaskID(hti);
@@ -754,7 +754,7 @@ void CToDoCtrlFind::FindTasks(HTREEITEM hti, const SEARCHPARAMS& params, CResult
 
 	// also we can ignore parent tasks if required but we still need 
 	// to process it's children
-	if (m_matcher.TaskMatches(dwID, params, result))
+	if (m_matcher.TaskMatches(dwID, params, result, bCheckDueToday))
 	{
 		// check for overdue tasks
 		if (!params.bIgnoreOverDue || !m_calculator.IsTaskOverDue(dwID))
@@ -766,15 +766,14 @@ void CToDoCtrlFind::FindTasks(HTREEITEM hti, const SEARCHPARAMS& params, CResult
 		
 	while (htiChild)
 	{
-		FindTasks(htiChild, params, aResults); // RECURSIVE call
+		FindTasks(htiChild, params, aResults, bCheckDueToday); // RECURSIVE call
 			
 		// next
 		htiChild = m_tree.GetNextItem(htiChild, TVGN_NEXT);
 	}
 }
 
-
-HTREEITEM CToDoCtrlFind::FindFirstTask(const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards) const
+HTREEITEM CToDoCtrlFind::FindFirstTask(const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards, BOOL bCheckDueToday) const
 {
 	if (!m_data.GetTaskCount())
 		return 0;
@@ -782,10 +781,10 @@ HTREEITEM CToDoCtrlFind::FindFirstTask(const SEARCHPARAMS& params, SEARCHRESULT&
 	CTreeCtrlHelper tch(m_tree);
 	HTREEITEM htiStart = (bForwards ? tch.GetFirstItem() : tch.GetLastItem());
 
-	return FindNextTask(htiStart, params, result, bForwards);
+	return FindNextTask(htiStart, params, result, bForwards, bCheckDueToday);
 }
 
-HTREEITEM CToDoCtrlFind::FindNextTask(HTREEITEM htiStart, const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards) const
+HTREEITEM CToDoCtrlFind::FindNextTask(HTREEITEM htiStart, const SEARCHPARAMS& params, SEARCHRESULT& result, BOOL bForwards, BOOL bCheckDueToday) const
 {
 	CTreeCtrlHelper tch(m_tree);
 	HTREEITEM hti = htiStart;
@@ -794,7 +793,7 @@ HTREEITEM CToDoCtrlFind::FindNextTask(HTREEITEM htiStart, const SEARCHPARAMS& pa
 	{
 		DWORD dwNextID = GetTaskID(hti);
 
-		if (m_matcher.TaskMatches(dwNextID, params, result))
+		if (m_matcher.TaskMatches(dwNextID, params, result, bCheckDueToday))
 			return hti;
 
 		// next item

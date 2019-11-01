@@ -77,6 +77,7 @@ public:
 	void Sort(TDC_COLUMN nBy, BOOL bAllowToggle = TRUE);
 	void SetModified(BOOL bMod = TRUE) { CTabbedToDoCtrl::SetModified(bMod); }
 	BOOL SetStyle(TDC_STYLE nStyle, BOOL bOn = TRUE) { return CTabbedToDoCtrl::SetStyle(nStyle, bOn); }
+	void SetDueTaskColors(COLORREF crDue, COLORREF crDueToday);
 
 	int GetArchivableTasks(CTaskFile& tasks, BOOL bSelectedOnly) const;
 	void EndTimeTracking(BOOL bAllowConfirm) { CTabbedToDoCtrl::EndTimeTracking(bAllowConfirm); }

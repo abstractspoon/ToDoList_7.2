@@ -225,9 +225,9 @@ public:
 	void GetStartedTaskColors(COLORREF& crStarted, COLORREF& crStartedToday) { crStarted = m_crStarted; crStartedToday = m_crStartedToday; }
 	BOOL SetDueTaskColors(COLORREF crDue, COLORREF crDueToday);
 	void GetDueTaskColors(COLORREF& crDue, COLORREF& crDueToday) const { crDue = m_crDue; crDueToday = m_crDueToday; }
+	BOOL HasDueTodayColor() const { return (m_crDueToday != CLR_NONE); }
 	BOOL ModCausesTaskTextColorChange(TDC_ATTRIBUTE nModType) const;
 
-	BOOL CancelOperation();
 	void SetReadOnly(bool bReadOnly) { m_bReadOnly = bReadOnly; }
 	void Resize(const CRect& rect);
 	void SetTimeTrackTaskID(DWORD dwTaskID);

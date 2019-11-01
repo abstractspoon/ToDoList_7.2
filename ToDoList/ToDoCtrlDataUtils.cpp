@@ -83,31 +83,31 @@ int CTDCTaskMatcher::Convert(const CResultArray& aResults, CDWordArray& aTaskIDs
 	return aTaskIDs.GetSize();
 }
 
-int CTDCTaskMatcher::FindTasks(TDC_ATTRIBUTE nAttrib, FIND_OPERATOR nOp, CString sValue, CDWordArray& aTaskIDs) const
+int CTDCTaskMatcher::FindTasks(TDC_ATTRIBUTE nAttrib, FIND_OPERATOR nOp, CString sValue, CDWordArray& aTaskIDs, BOOL bCheckDueToday) const
 {
 	CResultArray aResults;
-	FindTasks(nAttrib, nOp, sValue, aResults);
+	FindTasks(nAttrib, nOp, sValue, aResults, bCheckDueToday);
 
 	return Convert(aResults, aTaskIDs);
 }
 
-int CTDCTaskMatcher::FindTasks(const SEARCHPARAMS& query, CDWordArray& aTaskIDs) const
+int CTDCTaskMatcher::FindTasks(const SEARCHPARAMS& query, CDWordArray& aTaskIDs, BOOL bCheckDueToday) const
 {
 	CResultArray aResults;
-	FindTasks(query, aResults);
+	FindTasks(query, aResults, bCheckDueToday);
 
 	return Convert(aResults, aTaskIDs);
 }
 
-int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const SEARCHPARAMS& query, CDWordArray& aTaskIDs) const
+int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const SEARCHPARAMS& query, CDWordArray& aTaskIDs, BOOL bCheckDueToday) const
 {
 	CResultArray aResults;
-	FindTasks(pTDI, pTDS, query, aResults);
+	FindTasks(pTDI, pTDS, query, aResults, bCheckDueToday);
 
 	return Convert(aResults, aTaskIDs);
 }
 
-int CTDCTaskMatcher::FindTasks(TDC_ATTRIBUTE nAttrib, FIND_OPERATOR nOp, CString sValue, CResultArray& aResults) const
+int CTDCTaskMatcher::FindTasks(TDC_ATTRIBUTE nAttrib, FIND_OPERATOR nOp, CString sValue, CResultArray& aResults, BOOL bCheckDueToday) const
 {
 	// sanity check
 	if (!m_data.GetTaskCount())
@@ -116,10 +116,10 @@ int CTDCTaskMatcher::FindTasks(TDC_ATTRIBUTE nAttrib, FIND_OPERATOR nOp, CString
 	SEARCHPARAMS query;
 	query.aRules.Add(SEARCHPARAM(nAttrib, nOp, sValue));
 
-	return FindTasks(query, aResults);
+	return FindTasks(query, aResults, bCheckDueToday);
 }
 
-int CTDCTaskMatcher::FindTasks(const SEARCHPARAMS& query, CResultArray& aResults) const
+int CTDCTaskMatcher::FindTasks(const SEARCHPARAMS& query, CResultArray& aResults, BOOL bCheckDueToday) const
 {
 	// sanity check
 	if (!m_data.GetTaskCount())
@@ -133,13 +133,13 @@ int CTDCTaskMatcher::FindTasks(const SEARCHPARAMS& query, CResultArray& aResults
 		ASSERT(pTDIChild && pTDSChild);
 
 		if (pTDIChild && pTDSChild)
-			FindTasks(pTDIChild, pTDSChild, query, aResults);
+			FindTasks(pTDIChild, pTDSChild, query, aResults, bCheckDueToday);
 	}
 	
 	return aResults.GetSize();
 }
 
-int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const SEARCHPARAMS& query, CResultArray& aResults) const
+int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, const SEARCHPARAMS& query, CResultArray& aResults, BOOL bCheckDueToday) const
 {
 	// sanity check
 	ASSERT(pTDI && pTDS);
@@ -150,7 +150,7 @@ int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, 
 	SEARCHRESULT result;
 	int nResults = aResults.GetSize();
 	
-	if (TaskMatches(pTDI, pTDS, query, result))
+	if (TaskMatches(pTDI, pTDS, query, result, bCheckDueToday))
 	{
 		aResults.Add(result);
 	}
@@ -170,13 +170,13 @@ int CTDCTaskMatcher::FindTasks(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, 
 		ASSERT(pTDIChild && pTDSChild);
 
 		if (pTDIChild && pTDSChild)
-			FindTasks(pTDIChild, pTDSChild, query, aResults);
+			FindTasks(pTDIChild, pTDSChild, query, aResults, bCheckDueToday);
 	}
 	
 	return (aResults.GetSize() - nResults);
 }
 
-BOOL CTDCTaskMatcher::TaskMatches(DWORD dwTaskID, const SEARCHPARAMS& query, SEARCHRESULT& result) const
+BOOL CTDCTaskMatcher::TaskMatches(DWORD dwTaskID, const SEARCHPARAMS& query, SEARCHRESULT& result, BOOL bCheckDueToday) const
 {
 	// sanity check
 	if (!dwTaskID)
@@ -194,7 +194,7 @@ BOOL CTDCTaskMatcher::TaskMatches(DWORD dwTaskID, const SEARCHPARAMS& query, SEA
 		return FALSE;
 	}
 
-	if (TaskMatches(pTDI, pTDS, query, result))
+	if (TaskMatches(pTDI, pTDS, query, result, bCheckDueToday))
 	{
 		// test for 'reference'
 		if (dwOrgTaskID != dwTaskID)
@@ -208,7 +208,7 @@ BOOL CTDCTaskMatcher::TaskMatches(DWORD dwTaskID, const SEARCHPARAMS& query, SEA
 }
 
 BOOL CTDCTaskMatcher::AnyTaskParentMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, 
-											const SEARCHPARAMS& query, SEARCHRESULT& result) const
+											const SEARCHPARAMS& query, SEARCHRESULT& result, BOOL bCheckDueToday) const
 {
 	// sanity check
 	if (!pTDI || !pTDS)
@@ -230,7 +230,7 @@ BOOL CTDCTaskMatcher::AnyTaskParentMatches(const TODOITEM* pTDI, const TODOSTRUC
 			return FALSE;
 		}
 
-		if (TaskMatches(pTDIParent, pTDSParent, query, result))
+		if (TaskMatches(pTDIParent, pTDSParent, query, result, bCheckDueToday))
 			return TRUE;
 
 		pTDSParent = pTDSParent->GetParentTask();
@@ -240,7 +240,7 @@ BOOL CTDCTaskMatcher::AnyTaskParentMatches(const TODOITEM* pTDI, const TODOSTRUC
 }
 
 BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTDS, 
-									const SEARCHPARAMS& query, SEARCHRESULT& result) const
+									const SEARCHPARAMS& query, SEARCHRESULT& result, BOOL bCheckDueToday) const
 {
 	// sanity check
 	if (!pTDI || !pTDS)
@@ -250,7 +250,7 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 	}
 	
 	// special case: want all subtasks
-	if (query.bWantAllSubtasks && AnyTaskParentMatches(pTDI, pTDS, query, result))
+	if (query.bWantAllSubtasks && AnyTaskParentMatches(pTDI, pTDS, query, result, bCheckDueToday))
 	{
 		// Result will point to parent which we don't want
 		result.dwTaskID = pTDS->GetTaskID();
@@ -415,7 +415,20 @@ BOOL CTDCTaskMatcher::TaskMatches(const TODOITEM* pTDI, const TODOSTRUCTURE* pTD
 			
 		case TDCA_PRIORITY:
 			{
-				int nPriority = m_calculator.GetTaskHighestPriority(pTDI, pTDS);
+				// done items have even less than zero priority!
+				// and due items have greater than the highest priority
+				int nPriority = pTDI->nPriority;
+
+				if (bIsDone && m_data.HasStyle(TDCS_DONEHAVELOWESTPRIORITY))
+				{
+					nPriority = -1;
+				}
+				else if (m_data.HasStyle(TDCS_DUEHAVEHIGHESTPRIORITY))
+				{
+					if (m_calculator.IsTaskOverDue(pTDI, pTDS) || (bCheckDueToday && m_calculator.IsTaskDueToday(pTDI, pTDS)))
+						nPriority = 11; 
+				}
+
 				bMatch = ValueMatches(nPriority, rule, resTask);
 
 				// Replace '-2' with 'not set'
