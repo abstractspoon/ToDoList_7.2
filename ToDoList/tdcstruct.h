@@ -1496,11 +1496,15 @@ struct SEARCHPARAM
 
 	void SetTimeUnits(TDC_UNITS nUnits)
 	{
+		ASSERT(TypeIs(FT_TIMEPERIOD));
+
 		nTimeUnits = nUnits;
 	}
 
 	void SetMatchWholeWord(BOOL bMatchWhole)
 	{
+		ASSERT(TypeIs(FT_STRING));
+
 		bMatchWholeWord = bMatchWhole;
 	}
 
@@ -1511,6 +1515,8 @@ struct SEARCHPARAM
 
 	void SetRelativeDate(BOOL bRelative)
 	{
+		ASSERT(TypeIs(FT_DATE) || TypeIs(FT_DATERELATIVE));
+
 		bRelativeDate = bRelative;
 	}
 
@@ -1521,16 +1527,22 @@ struct SEARCHPARAM
 
 	TDC_UNITS GetTimeUnits() const
 	{
+		ASSERT(TypeIs(FT_TIMEPERIOD));
+
 		return nTimeUnits;
 	}
 
 	BOOL GetMatchWholeWord() const
 	{
+		ASSERT(TypeIs(FT_STRING));
+
 		return bMatchWholeWord;
 	}
 
 	BOOL GetRelativeDate() const
 	{
+		ASSERT(TypeIs(FT_DATE) || TypeIs(FT_DATERELATIVE));
+
 		return bRelativeDate;
 	}
 
