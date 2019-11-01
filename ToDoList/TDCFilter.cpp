@@ -891,7 +891,7 @@ BOOL CTDCFilter::ModNeedsRefilter(TDC_ATTRIBUTE nModType, const CTDCCustomAttrib
 
 	if (m_nState == TDCFS_ADVANCED) // 'Find' filter
 	{
-		bNeedRefilter = m_advFilter.params.HasAttribute(nModType); 
+		bNeedRefilter = HasAdvancedFilterAttribute(nModType); 
 
 		if (bNeedRefilter)
 		{
@@ -937,7 +937,7 @@ BOOL CTDCFilter::ModNeedsRefilter(TDC_ATTRIBUTE nModType, const CTDCCustomAttrib
 			break;
 
 		case TDCA_PRIORITY:		
-			bNeedRefilter = (m_filter.nPriority != -1); 
+			bNeedRefilter = (m_filter.nPriority != FM_ANYPRIORITY);
 			break;
 
 		case TDCA_FLAG:		
@@ -949,7 +949,7 @@ BOOL CTDCFilter::ModNeedsRefilter(TDC_ATTRIBUTE nModType, const CTDCCustomAttrib
 			break;
 
 		case TDCA_RISK:			
-			bNeedRefilter = (m_filter.nRisk != -1);
+			bNeedRefilter = (m_filter.nRisk != FM_ANYRISK);
 			break;
 
 		case TDCA_ALLOCBY:		
