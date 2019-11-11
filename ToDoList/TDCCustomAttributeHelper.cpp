@@ -319,7 +319,7 @@ CString CTDCCustomAttributeHelper::GetControlLabel(const TDCCUSTOMATTRIBUTEDEFIN
 			return _T("");
 			
 		case TDCCA_DATE:
-			return CEnString(_T("Time"));
+			return CEnString(_T("Time (%s)"), GetControlLabel(attribDef, FALSE));
 		}
 	}
 
