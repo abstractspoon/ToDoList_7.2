@@ -4379,8 +4379,9 @@ void CTDLTaskCtrlBase::SetModified(TDC_ATTRIBUTE nAttrib)
 		
 	case TDCA_DONEDATE:
 		{
-			bRedrawTasks = (HasStyle(TDCS_ALLOWTREEITEMCHECKBOX) && !IsColumnShowing(TDCC_DONE));
-
+			bRedrawTasks |= (HasStyle(TDCS_STRIKETHOUGHDONETASKS) ||
+							(HasStyle(TDCS_ALLOWTREEITEMCHECKBOX) && !IsColumnShowing(TDCC_DONE)));
+			
 			AccumulateRecalcColumn(TDCC_DONEDATE, aColIDs);
 			AccumulateRecalcColumn(TDCC_DUEDATE, aColIDs);
 			AccumulateRecalcColumn(TDCC_DONE, aColIDs);
