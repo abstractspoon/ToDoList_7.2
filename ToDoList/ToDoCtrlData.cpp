@@ -3530,11 +3530,10 @@ double CToDoCtrlData::CalcDuration(const COleDateTime& dateStart, const COleDate
 		{
 			if (CDateHelper::HasWeekend())
 			{
+				dDuration = 0.0;
+
 				// process each whole or part day  
 				double dDayStart(dateStart);
-
-				if (!CDateHelper::IsSameDay(dateStart, dateDue))
-					dDuration = 0.0;
 
 				while (dDayStart < dateDue)
 				{
