@@ -1905,10 +1905,8 @@ void CToDoCtrl::UpdateControls(BOOL bIncComments, HTREEITEM hti)
 	// and task header
 	UpdateSelectedTaskPath();
 	
-	// show hide controls
 	EnableDisableControls(hti);
-	
-	m_treeDragDrop.EnableDragDrop(!bReadOnly);
+	EnableDisableDragDrop();
 
 #ifdef _DEBUG
 //	TRACE(_T("CToDoCtrl::UpdateControls(took %d ms)\n"), (GetTickCount() - dwTick));
@@ -7186,8 +7184,8 @@ LRESULT CToDoCtrl::OnTreeDragOver(WPARAM /*wParam*/, LPARAM lParam)
 
 	if (nRes != DD_DROPEFFECT_NONE)
 	{
-		// Prevent dragging of locked tasks
-		if (m_taskTree.SelectionHasLocked(FALSE))
+		// Prevent dragging of locked tasks except references
+		if (m_taskTree.SelectionHasLocked(FALSE, TRUE))
 		{
 			nRes = DD_DROPEFFECT_NONE;
 		}
@@ -7202,7 +7200,11 @@ LRESULT CToDoCtrl::OnTreeDragOver(WPARAM /*wParam*/, LPARAM lParam)
 				HTREEITEM htiOver = m_taskTree.HitTestItem(pDDI->pt);
 				DWORD dwOverTaskID = GetTaskID(htiOver);
 
-				if (m_data.IsTaskReference(dwOverTaskID) && m_taskTree.SelectionHasNonReferences())
+				if (m_data.IsTaskLocked(dwOverTaskID) && !m_data.IsTaskReference(dwOverTaskID))
+				{
+					nRes = DD_DROPEFFECT_NONE;
+				}
+				else if (m_data.IsTaskReference(dwOverTaskID) && m_taskTree.SelectionHasNonReferences())
 				{
 					nRes = DD_DROPEFFECT_LINK;
 				}
@@ -7223,15 +7225,15 @@ LRESULT CToDoCtrl::OnTreeDragDrop(WPARAM /*wParam*/, LPARAM lParam)
 	
 	if (bDropped)
 	{
-		// Prevent dragging of locked tasks
-		if (m_taskTree.SelectionHasLocked(FALSE))
+		// Prevent dragging of locked tasks except references
+		if (m_taskTree.SelectionHasLocked(FALSE, TRUE))
 			return FALSE;
 
 		const DRAGDROPINFO* pDDI = (DRAGDROPINFO*)lParam;
 		HTREEITEM htiDrop, htiAfter;
 		
 		if (!m_treeDragDrop.GetDropTarget(htiDrop, htiAfter))
-			return 0;
+			return FALSE;
 
 		DWORD dwTargetID = GetTaskID(htiDrop);
 		BOOL bTargetIsRef = m_data.IsTaskReference(dwTargetID);
@@ -7249,6 +7251,12 @@ LRESULT CToDoCtrl::OnTreeDragDrop(WPARAM /*wParam*/, LPARAM lParam)
 
 		if (bDropOn)
 		{
+			// Can't drop on locked task
+			if (m_data.IsTaskLocked(dwTargetID) && !m_data.IsTaskReference(dwTargetID))
+			{
+				return FALSE;
+			}
+
 			if (m_bDragDropSubtasksAtTop)
 				htiAfter = TVI_FIRST;
 			else
@@ -8550,7 +8558,7 @@ LRESULT CToDoCtrl::OnTDCColumnEditClick(WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	m_treeDragDrop.EnableDragDrop(!IsReadOnly() && GetSelectedCount());
+	EnableDisableDragDrop();
 
 	return 0L;
 }
@@ -9051,8 +9059,7 @@ void CToDoCtrl::SelectItem(HTREEITEM hti)
 			UpdateControls(); // disable controls
 		
 		UpdateSelectedTaskPath();
-		
-		m_treeDragDrop.EnableDragDrop(!IsReadOnly());
+		EnableDisableDragDrop();
 
 		// notify parent
 		GetParent()->PostMessage(WM_TDCN_SELECTIONCHANGE);
@@ -9069,8 +9076,20 @@ void CToDoCtrl::SelectAll()
 		UpdateControls();
 	}
 	
-	// disable dragdrop
-	m_treeDragDrop.EnableDragDrop(FALSE);
+	EnableDisableDragDrop();
+}
+
+void CToDoCtrl::EnableDisableDragDrop()
+{
+	BOOL bEnabled = !IsReadOnly();
+
+	if (bEnabled)
+	{
+		// Allow dragging of refeerences to locked tasks
+		bEnabled = m_taskTree.SelectionHasUnlocked(TRUE);
+	}
+
+	m_treeDragDrop.EnableDragDrop(bEnabled);
 }
 
 LRESULT CToDoCtrl::OnGutterNotifyScroll(WPARAM /*wParam*/, LPARAM /*lParam*/)

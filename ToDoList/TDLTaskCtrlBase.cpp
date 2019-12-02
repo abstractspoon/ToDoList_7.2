@@ -5254,13 +5254,16 @@ BOOL CTDLTaskCtrlBase::SelectionHasIcons() const
 	return FALSE;
 }
 
-BOOL CTDLTaskCtrlBase::SelectionHasUnlocked() const
+BOOL CTDLTaskCtrlBase::SelectionHasUnlocked(BOOL bTreatRefsAsUnlocked) const
 {
 	POSITION pos = GetFirstSelectedTaskPos();
 	
 	while (pos)
 	{
 		DWORD dwTaskID = GetNextSelectedTaskID(pos);
+
+		if (bTreatRefsAsUnlocked && m_data.IsTaskReference(dwTaskID))
+			return TRUE;
 
 		if (!m_calculator.IsTaskLocked(dwTaskID))
 			return TRUE;
@@ -5269,7 +5272,7 @@ BOOL CTDLTaskCtrlBase::SelectionHasUnlocked() const
 	return FALSE;
 }
 
-BOOL CTDLTaskCtrlBase::SelectionHasLocked() const
+BOOL CTDLTaskCtrlBase::SelectionHasLocked(BOOL bTreatRefsAsUnlocked) const
 {
 	POSITION pos = GetFirstSelectedTaskPos();
 	
@@ -5277,8 +5280,11 @@ BOOL CTDLTaskCtrlBase::SelectionHasLocked() const
 	{
 		DWORD dwTaskID = GetNextSelectedTaskID(pos);
 
-		if (m_calculator.IsTaskLocked(dwTaskID))
-			return TRUE;
+		if (!bTreatRefsAsUnlocked || !m_data.IsTaskReference(dwTaskID))
+		{
+			if (m_calculator.IsTaskLocked(dwTaskID))
+				return TRUE;
+		}
 	}
 
 	return FALSE;

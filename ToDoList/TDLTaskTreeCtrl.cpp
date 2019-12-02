@@ -1885,9 +1885,9 @@ BOOL CTDLTaskTreeCtrl::CanMoveSelection(TDC_MOVETASK nDirection) const
 	return TRUE;
 }
 
-BOOL CTDLTaskTreeCtrl::SelectionHasLocked(BOOL bCheckChildren) const
+BOOL CTDLTaskTreeCtrl::SelectionHasLocked(BOOL bCheckChildren, BOOL bTreatRefsAsUnlocked) const
 {
-	BOOL bLocked = CTDLTaskCtrlBase::SelectionHasLocked();
+	BOOL bLocked = CTDLTaskCtrlBase::SelectionHasLocked(bTreatRefsAsUnlocked);
 
 	if (bLocked || !bCheckChildren)
 		return bLocked;
@@ -1899,14 +1899,14 @@ BOOL CTDLTaskTreeCtrl::SelectionHasLocked(BOOL bCheckChildren) const
 	{
 		DWORD dwTaskID = GetNextSelectedTaskID(pos);
 
-		if (TaskHasLockedSubtasks(dwTaskID))
+		if (TaskHasLockedSubtasks(dwTaskID, bTreatRefsAsUnlocked))
 			return TRUE;
 	}
 
 	return FALSE; // All subtasks were unlocked
 }
 
-BOOL CTDLTaskTreeCtrl::TaskHasLockedSubtasks(DWORD dwTaskID) const
+BOOL CTDLTaskTreeCtrl::TaskHasLockedSubtasks(DWORD dwTaskID, BOOL bTreatRefsAsUnlocked) const
 {
 	const TODOSTRUCTURE* pTDS = m_data.LocateTask(dwTaskID);
 
@@ -1914,8 +1914,15 @@ BOOL CTDLTaskTreeCtrl::TaskHasLockedSubtasks(DWORD dwTaskID) const
 	{
 		DWORD dwSubtaskID = pTDS->GetSubTaskID(nSubtask);
 
+		if (bTreatRefsAsUnlocked && m_data.IsTaskReference(dwTaskID))
+		{
+			// References can only contain other references
+			// so no need to check children
+			continue;
+		}
+		
 		// Check this task and its children
-		if (m_data.IsTaskLocked(dwSubtaskID) || TaskHasLockedSubtasks(dwSubtaskID))
+		if (m_data.IsTaskLocked(dwSubtaskID) || TaskHasLockedSubtasks(dwSubtaskID, bTreatRefsAsUnlocked))
 			return TRUE;
 	}
 
