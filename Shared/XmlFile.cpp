@@ -1129,7 +1129,7 @@ void CXmlFile::FixInputString(CString& sXml, const CString& sRootItem)
 	CXmlItem::ValidateString(sXml);
 	
 	// check for any other obvious problems
-	if (sRootItem)
+	if (!sRootItem.IsEmpty())
 	{
 		CString sRoot(sRootItem);
 		sRoot = '<' + sRoot;
