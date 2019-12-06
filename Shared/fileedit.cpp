@@ -542,7 +542,14 @@ void CFileEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp
 	CEnEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
 
 	if (bCalcValidRects)
-		lpncsp->rgrc[0].left += (m_ilSys.GetImageSize() + 4);
+	{
+		lpncsp->rgrc[0].left += m_ilSys.GetImageSize();
+
+		if (m_bParentIsCombo)
+			lpncsp->rgrc[0].left += 3;
+		else
+			lpncsp->rgrc[0].left += 1;
+	}
 }
 
 void CFileEdit::OnKillFocus(CWnd* pNewWnd) 
