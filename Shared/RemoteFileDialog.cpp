@@ -443,7 +443,6 @@ void CRemoteFileDialog::FillFileList()
 
 		BOOL bContinue = ff.FindFile();
 
-
 		while (bContinue)
 		{
 			bContinue = ff.FindNextFile();
