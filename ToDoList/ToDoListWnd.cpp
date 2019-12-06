@@ -4424,6 +4424,7 @@ TDC_FILE CToDoListWnd::OpenTaskList(LPCTSTR szFilePath, BOOL bNotifyDueTasks)
 	else // re-add
 	{
 		AddToDoCtrl(pTDC);
+		m_dlgTimeTracker.AddTasklist(pTDC);
 	}
 	
 	return nOpen;
