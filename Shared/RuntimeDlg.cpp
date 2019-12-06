@@ -297,6 +297,8 @@ void CRuntimeDlg::SetInitialPos(LPCRECT pRect, DWORD dwStyle)
 	{
 		MoveWindow(pRect);
 	}
+
+	UpdateWindow();
 }
 
 void CRuntimeDlg::SavePosition()
