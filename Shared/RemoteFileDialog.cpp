@@ -177,7 +177,7 @@ BOOL CRemoteFileDialog::OnInitDialog()
 		EndDialog(IDCANCEL);
 
 	if (FolderSelect())
-		GetDlgItem(IDC_FILENAMELABEL)->SetWindowText(_T("Remote folder &name:"));
+		SetDlgItemText(IDC_FILENAMELABEL, _T("Remote folder &name:"));
 
 	// set up list image lists
  	if (m_silLarge.Initialize())
@@ -209,10 +209,11 @@ BOOL CRemoteFileDialog::OnInitDialog()
 	m_lcFiles.InsertColumn(MODDATE, _T("Last Modified"), LVCFMT_LEFT, 150);
 
 	UpdateOKButton();
+	SetForegroundWindow();
 
-	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	m_eFilename.SetFocus();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 

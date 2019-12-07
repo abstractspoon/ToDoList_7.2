@@ -7301,7 +7301,7 @@ void CToDoListWnd::OnFileSaveToUserStorage(UINT nCmdID)
 	if (sTDCFile.IsEmpty())
 	{
 		sTDCFile = CEnString(IDS_TDC_UNTITLEDFILE);
-		sTDCExt = _T("tdl");
+		sTDCExt = GetDefaultFileExt(FALSE);
 	}
 
 	CString sTempPath = FileMisc::GetTempFilePath(sTDCFile, sTDCExt);
