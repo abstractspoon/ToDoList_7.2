@@ -4424,6 +4424,7 @@ TDC_FILE CToDoListWnd::OpenTaskList(LPCTSTR szFilePath, BOOL bNotifyDueTasks)
 	else // re-add
 	{
 		AddToDoCtrl(pTDC);
+		m_dlgTimeTracker.AddTasklist(pTDC);
 	}
 	
 	return nOpen;
@@ -7291,8 +7292,19 @@ void CToDoListWnd::OnFileSaveToUserStorage(UINT nCmdID)
 	}
 
 	// save the existing tasklist to temp path
-	CString sTempPath = FileMisc::GetTempFilePath();
 	CFilteredToDoCtrl& tdc = GetToDoCtrl();
+
+	// Use the existing tasklist's file name
+	CString sTDCFile = FileMisc::GetFileNameFromPath(tdc.GetFilePath(), FALSE);
+	CString sTDCExt = FileMisc::GetExtension(tdc.GetFilePath(), FALSE);
+
+	if (sTDCFile.IsEmpty())
+	{
+		sTDCFile = CEnString(IDS_TDC_UNTITLEDFILE);
+		sTDCExt = GetDefaultFileExt(FALSE);
+	}
+
+	CString sTempPath = FileMisc::GetTempFilePath(sTDCFile, sTDCExt);
 	CTaskFile tasks;
 
 	if (!bUsesStorage && (tdc.Save(tasks) == TDCF_SUCCESS))

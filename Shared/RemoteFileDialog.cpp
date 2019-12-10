@@ -177,7 +177,7 @@ BOOL CRemoteFileDialog::OnInitDialog()
 		EndDialog(IDCANCEL);
 
 	if (FolderSelect())
-		GetDlgItem(IDC_FILENAMELABEL)->SetWindowText(_T("Remote folder &name:"));
+		SetDlgItemText(IDC_FILENAMELABEL, _T("Remote folder &name:"));
 
 	// set up list image lists
  	if (m_silLarge.Initialize())
@@ -209,10 +209,11 @@ BOOL CRemoteFileDialog::OnInitDialog()
 	m_lcFiles.InsertColumn(MODDATE, _T("Last Modified"), LVCFMT_LEFT, 150);
 
 	UpdateOKButton();
+	SetForegroundWindow();
 
-	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	m_eFilename.SetFocus();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
@@ -438,6 +439,9 @@ void CRemoteFileDialog::FillFileList()
 		CFtpFileFind ff(m_pConnection);
 		int nID = 0;
 
+		CStringArray aFilterExt;
+		Misc::Split(m_sFilterExt, aFilterExt, ';');
+
 		BOOL bContinue = ff.FindFile();
 
 		while (bContinue)
@@ -446,21 +450,20 @@ void CRemoteFileDialog::FillFileList()
 
 			if (!ff.IsDots())
 			{
+				CString sPath(ff.GetFileName());
+
 				if (ff.IsDirectory())
 				{
-					AddFileItem(ff.GetFileName(), RFDT_FOLDER, nID++, 0, NULL, m_silLarge.GetFolderImageIndex());
+					AddFileItem(sPath, RFDT_FOLDER, nID++, 0, NULL, m_silLarge.GetFolderImageIndex());
 				}
 				else if (!FolderSelect()) // check extension matches filter
 				{
-					BOOL bMatch = m_sFilterExt.IsEmpty() || m_sFilterExt == _T(".*");
+					BOOL bMatch = (m_sFilterExt.IsEmpty() || (m_sFilterExt.Find(_T(".*")) != -1));
 					
-					if (!bMatch)
+					if (!bMatch && aFilterExt.GetSize())
 					{
 						CString sExt;
-						FileMisc::SplitPath(ff.GetFileName(), NULL, NULL, NULL, &sExt);
-						
-						CStringArray aFilterExt;
-						Misc::Split(m_sFilterExt, aFilterExt, ';');
+						FileMisc::SplitPath(sPath, NULL, NULL, NULL, &sExt);
 						
 						bMatch = Misc::Contains(sExt, aFilterExt);
 					}
@@ -470,8 +473,7 @@ void CRemoteFileDialog::FillFileList()
 						FILETIME tLastMod;
 						ff.GetLastWriteTime(&tLastMod);
 
-						/*int nIndex = */
-						AddFileItem(ff.GetFileName(), RFDT_FILE, nID++, (DWORD)ff.GetLength(), &tLastMod);
+						AddFileItem(sPath, RFDT_FILE, nID++, (DWORD)ff.GetLength(), &tLastMod);
 					}
 				}
 			}
