@@ -4,5 +4,4 @@
 
 #include "stdafx.h"
 
-
-
+#define COMPILE_MULTIMON_STUBS

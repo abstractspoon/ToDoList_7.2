@@ -58,7 +58,7 @@ LINK32=link.exe
 # ADD LINK32 /nologo /entry:"wWinMainCRTStartup" /subsystem:windows /debug /machine:I386 /nodefaultlib:"libc" /pdbtype:sept
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=mkdir ..\..\ToDoList_Plugins_7.2	mkdir ..\..\ToDoList_Plugins_7.2\Debug	copy unicode_debug\ToDoList.exe ..\..\ToDoList_Plugins_7.2\debug /y	copy unicode_debug\ToDoList.pdb ..\..\ToDoList_Plugins_7.2\debug /y
+PostBuild_Cmds=mkdir ..\..\ToDoList_Plugins_7.2	mkdir ..\..\ToDoList_Plugins_7.2\Debug	copy unicode_debug\ToDoList.exe ..\..\ToDoList_Plugins_7.2\debug /y	copy unicode_debug\ToDoList.pdb ..\..\ToDoList_Plugins_7.2\debug /y	unicode_debug\TDLTest.exe
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "ToDoList - Win32 Unicode Release"
@@ -92,7 +92,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none /map /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=mkdir ..\..\ToDoList_Plugins_7.2	mkdir ..\..\ToDoList_Plugins_7.2\Release	copy unicode_release\ToDoList.exe ..\..\ToDoList_Plugins_7.2\release /y
+PostBuild_Cmds=mkdir ..\..\ToDoList_Plugins_7.2	mkdir ..\..\ToDoList_Plugins_7.2\Release	copy unicode_release\ToDoList.exe ..\..\ToDoList_Plugins_7.2\release /y	unicode_release\TDLTest.exe
 # End Special Build Tool
 
 !ENDIF 
