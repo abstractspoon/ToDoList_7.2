@@ -38,11 +38,15 @@ CToDoCtrlTaskLinkTest::~CToDoCtrlTaskLinkTest()
 
 }
 
-void CToDoCtrlTaskLinkTest::Run()
+TESTRESULT CToDoCtrlTaskLinkTest::Run()
 {
+	ClearTotals();
+
 	TestFormatTaskLink();
 	TestFormatTaskDependency();
 	TestParseTaskLink();
+
+	return GetTotals();
 }
 
 void CToDoCtrlTaskLinkTest::TestFormatTaskLink()

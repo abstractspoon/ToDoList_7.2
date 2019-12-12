@@ -30,9 +30,13 @@ CTDCRECURRENCETest::~CTDCRECURRENCETest()
 
 }
 
-void CTDCRECURRENCETest::Run()
+TESTRESULT CTDCRECURRENCETest::Run()
 {
+	ClearTotals();
+
 	TestSetRegularity();
+
+	return GetTotals();
 }
 
 void CTDCRECURRENCETest::TestSetRegularity()

@@ -108,6 +108,8 @@
 mkdir ..\..\ToDoList_Plugins_7.2\debug
 copy unicode_debug\ToDoList.exe ..\..\todolist_Plugins_7.2\debug /y
 copy unicode_debug\ToDoList.pdb ..\..\todolist_Plugins_7.2\debug /y
+
+unicode_debug\TDLTest.exe
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -167,7 +169,8 @@ copy unicode_debug\ToDoList.pdb ..\..\todolist_Plugins_7.2\debug /y
       <Command>mkdir ..\..\ToDoList_Plugins_7.2
 mkdir ..\..\ToDoList_Plugins_7.2\release
 copy unicode_release\ToDoList.exe ..\..\todolist_Plugins_7.2\release /y
-</Command>
+
+unicode_release\TDLTest.exe</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
