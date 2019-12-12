@@ -5412,12 +5412,14 @@ BOOL CTDLTaskCtrlBase::ParseTaskLink(const CString& sLink, BOOL bURL, DWORD& dwT
 BOOL CTDLTaskCtrlBase::ParseTaskLink(const CString& sLink, BOOL bURL, const CString& sFolder, DWORD& dwTaskID, CString& sFile)
 {
 	CString sCleaned(sLink);
-	
+	Misc::Trim(sCleaned);
+
 	// strip off protocol (if not done)
 	int nProtocol = sCleaned.Find(TDL_PROTOCOL);
 	
 	if (nProtocol != -1)
 	{
+		ASSERT(nProtocol == 0);
 		sCleaned = sCleaned.Mid(nProtocol + lstrlen(TDL_PROTOCOL));
 	}
 	else if (bURL)
@@ -5426,11 +5428,13 @@ BOOL CTDLTaskCtrlBase::ParseTaskLink(const CString& sLink, BOOL bURL, const CStr
 	}
 	
 	// cleanup
+	Misc::Trim(sCleaned);
+
 	sCleaned.Replace(_T("%20"), _T(" "));
 	sCleaned.Replace(_T("/"), _T("\\"));
 
 	// Make full path only if it looks like a path
-	if (!sFolder.IsEmpty() && ((sCleaned.Find('?') != -1) || !Misc::IsNumber(sCleaned)))
+	if (!sFolder.IsEmpty() && !sCleaned.IsEmpty() && ((sCleaned.Find('?') != -1) || !Misc::IsNumber(sCleaned)))
 		FileMisc::MakeFullPath(sCleaned, sFolder);
 	
 	// parse the url
