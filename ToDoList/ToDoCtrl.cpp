@@ -5490,7 +5490,6 @@ LRESULT CToDoCtrl::OnEditEnd(WPARAM /*wParam*/, LPARAM lParam)
 		}
 	}
 
-	m_dwLastAddedID = 0;
 	SetEditTitleTaskID(0);
 
 	return 0L;
@@ -5500,6 +5499,9 @@ void CToDoCtrl::SetEditTitleTaskID(DWORD dwTaskID)
 {	
 	m_dwEditTitleTaskID = dwTaskID;
 	m_taskTree.SetEditTitleTaskID(dwTaskID);
+
+	if (dwTaskID == 0)
+		m_dwLastAddedID = 0;
 }
 
 LRESULT CToDoCtrl::OnEditCancel(WPARAM /*wParam*/, LPARAM lParam)
@@ -5538,8 +5540,8 @@ LRESULT CToDoCtrl::OnEditCancel(WPARAM /*wParam*/, LPARAM lParam)
 	}
 
 	SetFocusToTasks();
+	SetEditTitleTaskID(0);
 
-	m_dwEditTitleTaskID = m_dwLastAddedID = 0;
 	return 0L;
 }
 
