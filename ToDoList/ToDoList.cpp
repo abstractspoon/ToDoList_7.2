@@ -71,7 +71,6 @@ LPCTSTR WIKI_URL			= _T("http://www.abstractspoon.com/wiki/doku.php?id=");
 LPCTSTR GOOGLEGROUP_URL		= _T("https://groups.google.com/forum/#!forum/abstractspoon-todolist-support"); 
 LPCTSTR LICENSE_URL			= _T("http://www.abstractspoon.com/wiki/doku.php?id=free-open-source-software"); 
 LPCTSTR DONATE_URL			= _T("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=abstractspoon2%40optusnet%2ecom%2eau&item_name=Software"); 
-LPCTSTR FACEBOOK_URL		= _T("https://www.facebook.com/abstr.todolist/"); 
 
 LPCTSTR MSVCR100_DLL		= _T("MSVCR100.dll"); 
 LPCTSTR MSVCR100_URL		= _T("https://www.microsoft.com/en-hk/download/details.aspx?id=8328"); 
@@ -91,7 +90,6 @@ BEGIN_MESSAGE_MAP(CToDoListApp, CWinApp)
 	ON_COMMAND(ID_HELP_UNINSTALL, OnHelpUninstall)
 	ON_COMMAND(ID_HELP_RECORDBUGREPORT, OnHelpRecordBugReport)
 	ON_COMMAND(ID_HELP_WIKI, OnHelpWiki)
-	ON_COMMAND(ID_HELP_FACEBOOK, OnHelpFacebook)
 
 #ifdef _DEBUG
 	ON_COMMAND(ID_DEBUGTASKDIALOG_INFO, OnDebugTaskDialogInfo)
@@ -1344,11 +1342,6 @@ void CToDoListApp::OnUpdateExportPrefs(CCmdUI* pCmdUI)
 void CToDoListApp::OnHelpGoogleGroup() 
 {
 	FileMisc::Run(*m_pMainWnd, GOOGLEGROUP_URL);
-}
-
-void CToDoListApp::OnHelpFacebook() 
-{
-	FileMisc::Run(*m_pMainWnd, FACEBOOK_URL);
 }
 
 void CToDoListApp::OnHelpLicense() 

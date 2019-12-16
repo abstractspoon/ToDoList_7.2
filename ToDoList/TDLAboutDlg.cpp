@@ -204,7 +204,6 @@ BOOL CTDLAboutDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		AfxGetApp()->WinHelp(IDD_ABOUT_DIALOG);
 		return TRUE;
 		
-	case ID_HELP_FACEBOOK:
 	case ID_HELP_GOOGLEGROUP:
 		return AfxGetMainWnd()->SendMessage(WM_COMMAND, wParam, lParam);
 	}

@@ -1082,7 +1082,6 @@ void CToDoListWnd::InitMenuIconManager()
 	
 	aCmdIDs.Add(ID_HELP_WIKI);
 	aCmdIDs.Add(ID_HELP_GOOGLEGROUP);
-	aCmdIDs.Add(ID_HELP_FACEBOOK);
 
 	m_mgrMenuIcons.AddImages(aCmdIDs, IDB_SOCIAL_TOOLBAR, RGB(255, 0, 255));
 }

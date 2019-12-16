@@ -1344,7 +1344,6 @@
 #define ID_DEBUGTASKDIALOG_ERROR        34534
 #define ID_HELP_RECORDBUGREPORT         34535
 #define ID_VIEW_RESIZECOLSTOFIT         34536
-#define ID_HELP_FACEBOOK                34537
 #define ID_HELP_GOOGLEGROUP             34539
 #define ID_FIND_HELP                    34546
 #define ID_VIEW_SHOWTIMETRACKER         34547

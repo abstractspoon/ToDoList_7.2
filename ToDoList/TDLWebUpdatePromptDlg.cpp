@@ -163,7 +163,6 @@ BOOL CTDLWebUpdatePromptDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		AfxGetApp()->WinHelp(IDD_WEBUPDATE_PROMPT_PAGE);
 		return TRUE;
 
-	case ID_HELP_FACEBOOK:
 	case ID_HELP_GOOGLEGROUP:
 		return AfxGetMainWnd()->SendMessage(WM_COMMAND, wParam, lParam);
 	}
