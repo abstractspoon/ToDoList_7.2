@@ -904,6 +904,10 @@ BOOL CXmlFile::LoadContent(const CString& sContent, const CString& sRootItemName
 		// then try again
 		if (!m_xmlDoc.LoadXML(sTemp))
 		{
+			// PERMANENT LOGGING //////////////////////////////////////////////
+			FileMisc::LogTextRaw(_T("CXmlDocumentWrapper::LoadXML() failed"));
+			///////////////////////////////////////////////////////////////////
+
 			m_nFileError = XFL_BADMSXML;
 			return FALSE;
 		}
@@ -1100,7 +1104,13 @@ BOOL CXmlFile::LoadEx(const CString& sRootItemName, IXmlParse* pCallback)
 				
 				// then try again
 				if (!m_xmlDoc.LoadXML(sFileContents))
+				{
+					// PERMANENT LOGGING //////////////////////////////////////////////
+					FileMisc::LogTextRaw(_T("CXmlDocumentWrapper::LoadXML() failed"));
+					///////////////////////////////////////////////////////////////////
+
 					m_nFileError = XFL_BADMSXML;
+				}
 			}
 			
 			// now read it into CXmlItem structures
@@ -1115,6 +1125,10 @@ BOOL CXmlFile::LoadEx(const CString& sRootItemName, IXmlParse* pCallback)
 	}
 	catch (...)
 	{
+		// PERMANENT LOGGING //////////////////////////////////////////////
+		FileMisc::LogTextRaw(_T("CXmlFile::LoadEx(exception) failed"));
+		///////////////////////////////////////////////////////////////////
+
 		m_nFileError = XFL_BADMSXML;
 	}
 	
@@ -1308,12 +1322,20 @@ BOOL CXmlFile::Export(CString& sOutput) const
 			
 			if (bSuccess) // sanity check
 			{
+				// PERMANENT LOGGING //////////////////////////////////////////////
+				FileMisc::LogTextRaw(_T("CXmlDocumentWrapper::GetXML() failed"));
+				///////////////////////////////////////////////////////////////////
+
 				m_nFileError = XFL_BADMSXML;
 			}
 		}
 	}
 	catch (...)
 	{
+		// PERMANENT LOGGING //////////////////////////////////////////////
+		FileMisc::LogTextRaw(_T("CXmlFile::Export(exception) failed"));
+		///////////////////////////////////////////////////////////////////
+
 		m_nFileError = XFL_BADMSXML;
 	}
 	

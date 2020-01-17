@@ -7,6 +7,7 @@
 #include "stringres.h"
 #include "enstring.h"
 #include "misc.h"
+#include "filemisc.h"
 #include "passworddialog.h"
 
 #include "..\Interfaces\iencryption.h"
@@ -209,6 +210,10 @@ BOOL CXmlFileEx::Decrypt(LPCWSTR szPassword)
 				}
 				catch (...)
 				{
+					// PERMANENT LOGGING //////////////////////////////////////////////
+					FileMisc::LogTextRaw(_T("CXmlFileEx::Decrypt(exception) failed"));
+					///////////////////////////////////////////////////////////////////
+
 					m_nFileError = XFL_BADMSXML;
 				}
 				
