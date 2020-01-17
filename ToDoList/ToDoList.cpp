@@ -281,13 +281,12 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 	if (!nNumWnds)
 		return FALSE;
 
-	// Under multi-instance, having a non-empty commandline without
-	// a file path or task link is always treated as an error
-	BOOL bMultiInstance = CPreferences().GetProfileInt(_T("Preferences"), _T("MultiInstance"), FALSE);
+	// If more than one instance is open (ie. more than one possible target), 
+	// then a non-empty commandline without a file path or task link is treated as an error
 	BOOL bHasFilePath = startup.HasFilePath();
 	BOOL bTaskLink = startup.HasFlag(TLD_TASKLINK);
 
-	if (bMultiInstance && !bHasFilePath && !bTaskLink && !startup.IsEmpty(TRUE))
+	if ((nNumWnds > 1) && !bHasFilePath && !bTaskLink && !startup.IsEmpty(TRUE))
 	{
 		AfxMessageBox(CEnString(IDS_MULTIINSTANCENOFILEPATH), (MB_OK | MB_ICONERROR));
 		return TRUE; // handled
@@ -324,6 +323,7 @@ BOOL CToDoListApp::ProcessStartupOptions(CTDCStartupOptions& startup, const CEnC
 
 	// if no other instance had it open and _we_ are single instance
 	// we then see if any of the instances is willing to handle it
+	BOOL bMultiInstance = CPreferences().GetProfileInt(_T("Preferences"), _T("MultiInstance"), FALSE);
 	BOOL bTasklistOpened = FALSE;
 
 	if ((hwndOtherInst == NULL) && !bMultiInstance)
