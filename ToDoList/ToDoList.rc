@@ -834,7 +834,7 @@ BEGIN
     CONTROL         "U&se the following stylesheet",IDC_USESTYLESHEET,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,7,26,222,10
     EDITTEXT        IDC_STYLESHEET,18,39,211,13,ES_AUTOHSCROLL
-    LTEXT           "Stylesheet not found",IDC_STYLESHEETNOTFOUND,232,41,208,
+    LTEXT           "Stylesheet not found",IDC_STYLESHEETNOTFOUND,232,41,248,
                     8,NOT WS_VISIBLE
     GROUPBOX        "Style",IDC_STATIC,7,61,93,157
     CONTROL         "&Wrapped",IDC_STYLE_WRAP,"Button",BS_AUTORADIOBUTTON | 
@@ -961,9 +961,10 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,327,225,50,14
     COMBOBOX        IDC_TRANSFORMTITLE,40,7,128,30,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Stylesheet not found",IDC_STYLESHEETNOTFOUND,300,41,76,
+    LTEXT           "Stylesheet not found",IDC_STYLESHEETNOTFOUND,231,41,145,
                     16,NOT WS_VISIBLE
-    PUSHBUTTON      "Configure...",IDC_CONFIGURESTYLESHEET,233,38,63,14
+    PUSHBUTTON      "Configure...",IDC_CONFIGURESTYLESHEET,233,23,63,14,NOT 
+                    WS_VISIBLE | WS_DISABLED
 END
 
 IDD_FILTER_BAR DIALOG DISCARDABLE  0, 0, 406, 169
@@ -978,7 +979,7 @@ BEGIN
     LTEXT           "T&itle",IDC_TITLEFILTERLABEL,201,7,14,8,SS_CENTERIMAGE
     EDITTEXT        IDC_TITLEFILTERTEXT,223,7,40,12,ES_AUTOHSCROLL | 
                     ES_WANTRETURN
-    LTEXT           "St&arted by",IDC_STARTFILTERLABEL,11,35,35,8,
+    LTEXT           "St&art Date",IDC_STARTFILTERLABEL,11,35,35,8,
                     SS_CENTERIMAGE
     COMBOBOX        IDC_STARTFILTERCOMBO,61,34,33,118,CBS_DROPDOWNLIST | 
                     CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | 
@@ -988,7 +989,8 @@ BEGIN
                     13
     EDITTEXT        IDC_STARTNEXTNDAYS,161,34,40,14,ES_AUTOHSCROLL | 
                     ES_WANTRETURN
-    LTEXT           "&Due by",IDC_DUEFILTERLABEL,217,35,24,8,SS_CENTERIMAGE
+    LTEXT           "&Due Date",IDC_DUEFILTERLABEL,217,35,24,8,
+                    SS_CENTERIMAGE
     COMBOBOX        IDC_DUEFILTERCOMBO,267,34,33,118,CBS_DROPDOWNLIST | 
                     CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | 
                     WS_TABSTOP
@@ -1822,10 +1824,10 @@ FONT 8, "Tahoma"
 BEGIN
     CONTROL         "List2",IDC_BUTTONLIST,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_OWNERDRAWFIXED | 
-                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,321,224
-    PUSHBUTTON      "Move &Up",IDC_MOVEUP,337,7,50,14
-    PUSHBUTTON      "Move &Down",IDC_MOVEDOWN,337,26,50,14
-    PUSHBUTTON      "Delete",IDC_DELETE,337,52,50,14
+                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,312,224
+    PUSHBUTTON      "Move &Up",IDC_MOVEUP,328,7,59,14
+    PUSHBUTTON      "Move &Down",IDC_MOVEDOWN,328,26,59,14
+    PUSHBUTTON      "Delete",IDC_DELETE,328,52,59,14
 END
 
 IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 332, 238
@@ -1972,7 +1974,7 @@ BEGIN
                     WS_TABSTOP
     LTEXT           "T&itle",IDC_TITLEFILTERLABEL,128,7,109,8,SS_CENTERIMAGE
     EDITTEXT        IDC_TITLEFILTERTEXT,128,17,109,12,ES_AUTOHSCROLL
-    LTEXT           "St&arted by",IDC_STARTFILTERLABEL,7,37,109,8,
+    LTEXT           "St&art Date",IDC_STARTFILTERLABEL,7,37,109,8,
                     SS_CENTERIMAGE
     COMBOBOX        IDC_STARTFILTERCOMBO,7,47,109,118,CBS_DROPDOWNLIST | 
                     CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | 
@@ -1982,7 +1984,7 @@ BEGIN
     CONTROL         "DateTimePicker1",IDC_USERSTARTDATE,"SysDateTimePick32",
                     DTS_RIGHTALIGN | DTS_APPCANPARSE | WS_TABSTOP,128,47,109,
                     13
-    LTEXT           "&Due by",IDC_DUEFILTERLABEL,7,67,109,8,SS_CENTERIMAGE
+    LTEXT           "&Due Date",IDC_DUEFILTERLABEL,7,67,109,8,SS_CENTERIMAGE
     COMBOBOX        IDC_DUEFILTERCOMBO,7,77,109,118,CBS_DROPDOWNLIST | 
                     CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | 
                     WS_TABSTOP
@@ -2454,12 +2456,12 @@ END
 IDD_RECURRING_TASK_DIALOG DLGINIT
 BEGIN
     IDC_RECALCFROM, 0x403, 21, 0
-0x7266, 0x6d6f, 0x6320, 0x6d6f, 0x6c70, 0x7465, 0x6f69, 0x206e, 0x6164, 
+0x7246, 0x6d6f, 0x6320, 0x6d6f, 0x6c70, 0x7465, 0x6f69, 0x206e, 0x6164, 
 0x6574, "\000" 
     IDC_RECALCFROM, 0x403, 14, 0
-0x7266, 0x6d6f, 0x6420, 0x6575, 0x6420, 0x7461, 0x0065, 
+0x7246, 0x6d6f, 0x6420, 0x6575, 0x6420, 0x7461, 0x0065, 
     IDC_RECALCFROM, 0x403, 16, 0
-0x7266, 0x6d6f, 0x7320, 0x6174, 0x7472, 0x6420, 0x7461, 0x0065, 
+0x7246, 0x6d6f, 0x7320, 0x6174, 0x7472, 0x6420, 0x7461, 0x0065, 
     IDC_REUSEOPTIONS, 0x403, 24, 0
 0x6552, 0x7375, 0x2065, 0x6874, 0x2065, 0x7865, 0x7369, 0x6974, 0x676e, 
 0x7420, 0x7361, 0x006b, 
@@ -3140,28 +3142,28 @@ BEGIN
             , CHECKED, GRAYED
             MENUITEM SEPARATOR
             MENUITEM "List View",                   ID_SHOWVIEW_LISTVIEW
-            MENUITEM "Task View Visibility 1",      ID_SHOWVIEW_UIEXTENSION1
-            MENUITEM "Task View Visibility 2",      ID_SHOWVIEW_UIEXTENSION2
-            MENUITEM "Task View Visibility 3",      ID_SHOWVIEW_UIEXTENSION3
-            MENUITEM "Task View Visibility 4",      ID_SHOWVIEW_UIEXTENSION4
-            MENUITEM "Task View Visibility 5",      ID_SHOWVIEW_UIEXTENSION5
-            MENUITEM "Task View Visibility 6",      ID_SHOWVIEW_UIEXTENSION6
-            MENUITEM "Task View Visibility 7",      ID_SHOWVIEW_UIEXTENSION7
-            MENUITEM "Task View Visibility 8",      ID_SHOWVIEW_UIEXTENSION8
-            MENUITEM "Task View Visibility 9",      ID_SHOWVIEW_UIEXTENSION9
-            MENUITEM "Task View Visibility 10",     ID_SHOWVIEW_UIEXTENSION10
+            MENUITEM "Task View  1",                ID_SHOWVIEW_UIEXTENSION1
+            MENUITEM "Task View  2",                ID_SHOWVIEW_UIEXTENSION2
+            MENUITEM "Task View  3",                ID_SHOWVIEW_UIEXTENSION3
+            MENUITEM "Task View  4",                ID_SHOWVIEW_UIEXTENSION4
+            MENUITEM "Task View  5",                ID_SHOWVIEW_UIEXTENSION5
+            MENUITEM "Task View  6",                ID_SHOWVIEW_UIEXTENSION6
+            MENUITEM "Task View  7",                ID_SHOWVIEW_UIEXTENSION7
+            MENUITEM "Task View  8",                ID_SHOWVIEW_UIEXTENSION8
+            MENUITEM "Task View  9",                ID_SHOWVIEW_UIEXTENSION9
+            MENUITEM "Task View  10",               ID_SHOWVIEW_UIEXTENSION10
 
-            MENUITEM "Task View Visibility 11",     ID_SHOWVIEW_UIEXTENSION11
+            MENUITEM "Task View  11",               ID_SHOWVIEW_UIEXTENSION11
 
-            MENUITEM "Task View Visibility 12",     ID_SHOWVIEW_UIEXTENSION12
+            MENUITEM "Task View  12",               ID_SHOWVIEW_UIEXTENSION12
 
-            MENUITEM "Task View Visibility 13",     ID_SHOWVIEW_UIEXTENSION13
+            MENUITEM "Task View  13",               ID_SHOWVIEW_UIEXTENSION13
 
-            MENUITEM "Task View Visibility 14",     ID_SHOWVIEW_UIEXTENSION14
+            MENUITEM "Task View  14",               ID_SHOWVIEW_UIEXTENSION14
 
-            MENUITEM "Task View Visibility 15",     ID_SHOWVIEW_UIEXTENSION15
+            MENUITEM "Task View  15",               ID_SHOWVIEW_UIEXTENSION15
 
-            MENUITEM "Task View Visibility 16",     ID_SHOWVIEW_UIEXTENSION16
+            MENUITEM "Task View  16",               ID_SHOWVIEW_UIEXTENSION16
 
         END
         MENUITEM SEPARATOR
@@ -3626,7 +3628,7 @@ BEGIN
         MENUITEM "Select Task D&ependents",     ID_MOVE_SELECTTASKDEPENDENTS
         MENUITEM SEPARATOR
         MENUITEM "Spell Chec&k Task Title",     ID_EDIT_SPELLCHECKTITLE
-        MENUITEM "Spell Chec&k Task Comments",  ID_EDIT_SPELLCHECKCOMMENTS
+        MENUITEM "Spell Chec&k Comments",       ID_EDIT_SPELLCHECKCOMMENTS
         MENUITEM SEPARATOR
         MENUITEM "C&ut",                        ID_EDIT_CUT
         MENUITEM "&Copy",                       ID_EDIT_COPY
@@ -3793,7 +3795,7 @@ BEGIN
         , CHECKED, GRAYED
         MENUITEM SEPARATOR
         MENUITEM "List View",                   ID_SHOWVIEW_LISTVIEW
-        MENUITEM "Task View Visibility 1",      ID_SHOWVIEW_UIEXTENSION1
+        MENUITEM "Task View 1",                 ID_SHOWVIEW_UIEXTENSION1
     END
 END
 
@@ -5334,7 +5336,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    ID_UDTPREFS_COPY        "\nMake Copy of Tool"
+    ID_UDTPREFS_COPY        "\nDuplicate Tool"
     ID_UDTPREFS_DELETE      "\nDelete Tool"
 END
 

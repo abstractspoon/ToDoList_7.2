@@ -83,6 +83,12 @@ void CTDLToolbarButtonListCtrl::InitState()
 		menu.TranslateDynamicMenuItems(ID_FILE_OPEN_USERSTORAGE1, ID_FILE_OPEN_USERSTORAGE16, _T("3rd Party Storage %d"));
 		menu.TranslateDynamicMenuItems(ID_FILE_SAVE_USERSTORAGE1, ID_FILE_SAVE_USERSTORAGE16, _T("3rd Party Storage %d"));
 		menu.TranslateDynamicMenuItems(ID_SHOWVIEW_UIEXTENSION1, ID_SHOWVIEW_UIEXTENSION16, _T("Task View Visibility %d"));
+
+		// Exclude the debug menu in release build
+		HMENU hDebugMenu = NULL;
+		
+		if (CEnMenu::GetMenuItemPos(menu, ID_DEBUGENDSESSION, hDebugMenu) != -1)
+			menu.DeleteSubMenu(hDebugMenu);
 		
 		m_cbMenuItems.Initialise(menu, IDS_TOOLBARMENUSEPARATOR);
 	}
