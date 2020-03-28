@@ -9,6 +9,7 @@
 #include "..\Shared\DialogHelper.h"
 #include "..\Shared\enmenu.h"
 #include "..\Shared\GraphicsMisc.h"
+#include "..\Shared\Localizer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -74,8 +75,15 @@ void CTDLToolbarButtonListCtrl::InitState()
 	CreateControl(m_cbMenuItems, IDC_MENUID_COMBO, FALSE);
 
 	CEnMenu menu;
+	VERIFY(menu.LoadMenu(IDR_MAINFRAME, NULL, TRUE, TRUE));
 
-	if (menu.LoadMenu(IDR_MAINFRAME, NULL, TRUE, TRUE))
+	// Exclude the debug menu
+	HMENU hDebugMenu = NULL;
+
+	if (CEnMenu::GetMenuItemPos(menu, ID_DEBUGENDSESSION, hDebugMenu) != -1)
+		menu.DeleteSubMenu(hDebugMenu);
+
+	if (CLocalizer::IsInitialized())
 	{
 		menu.TranslateDynamicMenuItems(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, _T("Recent Tasklist %d"));
 		menu.TranslateDynamicMenuItems(ID_WINDOW1, ID_WINDOW16, _T("Window %d"));
@@ -83,19 +91,9 @@ void CTDLToolbarButtonListCtrl::InitState()
 		menu.TranslateDynamicMenuItems(ID_FILE_OPEN_USERSTORAGE1, ID_FILE_OPEN_USERSTORAGE16, _T("3rd Party Storage %d"));
 		menu.TranslateDynamicMenuItems(ID_FILE_SAVE_USERSTORAGE1, ID_FILE_SAVE_USERSTORAGE16, _T("3rd Party Storage %d"));
 		menu.TranslateDynamicMenuItems(ID_SHOWVIEW_UIEXTENSION1, ID_SHOWVIEW_UIEXTENSION16, _T("Task View Visibility %d"));
+	}
 
-		// Exclude the debug menu in release build
-		HMENU hDebugMenu = NULL;
-		
-		if (CEnMenu::GetMenuItemPos(menu, ID_DEBUGENDSESSION, hDebugMenu) != -1)
-			menu.DeleteSubMenu(hDebugMenu);
-		
-		m_cbMenuItems.Initialise(menu, IDS_TOOLBARMENUSEPARATOR);
-	}
-	else
-	{
-		m_cbMenuItems.Initialise(IDR_MAINFRAME, IDS_TOOLBARMENUSEPARATOR);
-	}
+	VERIFY(m_cbMenuItems.Initialise(menu, IDS_TOOLBARMENUSEPARATOR));
 
 	AddCol(_T("Menu Item"), GraphicsMisc::ScaleByDPIFactor(350));
 	SetColumnType(MENUID_COL, ILCT_DROPLIST);
