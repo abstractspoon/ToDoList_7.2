@@ -5,9 +5,9 @@
 #include "resource.h"
 #include "TDLToolbarButtonListCtrl.h"
 #include "TDLTaskIconDlg.h"
+#include "TDCMainMenu.h"
 
 #include "..\Shared\DialogHelper.h"
-#include "..\Shared\enmenu.h"
 #include "..\Shared\GraphicsMisc.h"
 #include "..\Shared\Localizer.h"
 
@@ -74,24 +74,8 @@ void CTDLToolbarButtonListCtrl::InitState()
 
 	CreateControl(m_cbMenuItems, IDC_MENUID_COMBO, FALSE);
 
-	CEnMenu menu;
-	VERIFY(menu.LoadMenu(IDR_MAINFRAME, NULL, TRUE, TRUE));
-
-	// Exclude the debug menu
-	HMENU hDebugMenu = NULL;
-
-	if (CEnMenu::GetMenuItemPos(menu, ID_DEBUGENDSESSION, hDebugMenu) != -1)
-		menu.DeleteSubMenu(hDebugMenu);
-
-	if (CLocalizer::IsInitialized())
-	{
-		menu.TranslateDynamicMenuItems(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, _T("Recent Tasklist %d"));
-		menu.TranslateDynamicMenuItems(ID_WINDOW1, ID_WINDOW16, _T("Window %d"));
-		menu.TranslateDynamicMenuItems(ID_TOOLS_USERTOOL1, ID_TOOLS_USERTOOL50, _T("User Defined Tool %d"));
-		menu.TranslateDynamicMenuItems(ID_FILE_OPEN_USERSTORAGE1, ID_FILE_OPEN_USERSTORAGE16, _T("3rd Party Storage %d"));
-		menu.TranslateDynamicMenuItems(ID_FILE_SAVE_USERSTORAGE1, ID_FILE_SAVE_USERSTORAGE16, _T("3rd Party Storage %d"));
-		menu.TranslateDynamicMenuItems(ID_SHOWVIEW_UIEXTENSION1, ID_SHOWVIEW_UIEXTENSION16, _T("Task View Visibility %d"));
-	}
+	CTDCMainMenu menu;
+	VERIFY(menu.LoadMenu(TRUE, TRUE));
 
 	VERIFY(m_cbMenuItems.Initialise(menu, IDS_TOOLBARMENUSEPARATOR));
 

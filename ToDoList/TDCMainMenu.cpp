@@ -5,6 +5,9 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "TDCMainMenu.h"
+#include "TDCEnum.h"
+
+#include "..\Shared\Localizer.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -35,8 +38,12 @@ BOOL CTDCMainMenu::LoadMenu(HWND hwndRef, BOOL bTranslate, BOOL bRecursiveTransl
 	if (!CEnMenu::LoadMenu(IDR_MAINFRAME, hwndRef, bTranslate, bRecursiveTranslate))
 		return FALSE;
 
-	// else
-	if (bTranslate && bRecursiveTranslate)
+#ifndef _DEBUG
+	// Exclude the debug menu in release builds
+	DeleteMenu(AM_DEBUG, MF_BYPOSITION);
+#endif
+
+	if (bTranslate && bRecursiveTranslate && CLocalizer::IsInitialized())
 	{
 		TranslateDynamicMenuItems(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, _T("Recent Tasklist %d"));
 		TranslateDynamicMenuItems(ID_WINDOW1, ID_WINDOW16, _T("Window %d"));
